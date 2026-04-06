@@ -1,0 +1,1 @@
+import{Z as e,bt as r}from"./vue-vendor-C9JtNgw0.js";import{t}from"./_plugin-vue_export-helper-B4yulpIB.js";var a={};function _(l,n){return r(),e("div",null,"测试3")}var f=t(a,[["render",_]]);export{f as default};

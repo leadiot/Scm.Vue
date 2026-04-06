@@ -1,0 +1,1 @@
+import{t as e}from"./api-D9vHyR-D.js";var l={dicApiObj:e.scmsysdicdetail.model,parseData:function(a){return{data:a.data,msg:a.message,code:a.code}},request:{name:"name"},props:{label:"label",value:"value"}};export{l as t};
