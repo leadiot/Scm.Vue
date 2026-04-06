@@ -1,38 +1,129 @@
-# Scm.Net
+# Scm.Vue
 
-#### Description
-一款基于.Net6/7及Vue3适用于中后台管理系统的快速开发框架。
+Frontend for Scm.Net project, an enterprise-level backend management system built with Vue 3 + Vite + Element Plus.
 
-#### Software Architecture
-Software architecture description
+## Tech Stack
 
-#### Installation
+| Technology | Version | Description |
+| --- | --- | --- |
+| [Vue](https://vuejs.org/) | ^3.5.32 | Progressive JavaScript Framework |
+| [Vite](https://vitejs.dev/) | ^8.0.3 | Next Generation Frontend Build Tool |
+| [Vue Router](https://router.vuejs.org/) | ^5.0.4 | Official Router for Vue.js |
+| [Pinia](https://pinia.vuejs.org/) | ^3.0.0 | Vue.js State Management |
+| [Element Plus](https://element-plus.org/) | ^2.13.6 | Vue 3 Component Library |
+| [Axios](https://axios-http.com/) | ^1.7.0 | HTTP Client |
+| [ECharts](https://echarts.apache.org/) | ^6.0.0 | Data Visualization Library |
+| [Sass](https://sass-lang.com/) | ^1.99.0 | CSS Preprocessor |
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Requirements
 
-#### Instructions
+- Node.js >= 18.0.0
+- npm >= 9.0.0 or pnpm >= 8.0.0
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Installation
 
-#### Contribution
+```bash
+# Clone the repository
+git clone https://gitee.com/openscm/scm.net.git
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+# Enter frontend directory
+cd Scm.Vue
 
+# Install dependencies
+npm install
+```
 
-#### Gitee Feature
+## Development
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+```bash
+# Start development server
+npm run dev
 
-#### Test
+# Or
+npm run serve
+```
+
+Visit http://localhost:2800 to view the project.
+
+## Build
+
+```bash
+# Build for production
+npm run build
+
+# Preview build result
+npm run preview
+```
+
+## Directory Structure
+
+```
+Scm.Vue/
+├── public/                 # Static assets
+│   ├── img/               # Images
+│   ├── lib/               # Third-party libraries
+│   └── index.html         # HTML template
+├── src/
+│   ├── api/               # API interfaces
+│   │   └── model/         # API modules
+│   ├── assets/            # Asset files
+│   │   ├── mp3/           # Audio files
+│   │   └── sass/          # Style files
+│   ├── components/        # Common components
+│   ├── config/            # Configuration files
+│   ├── directives/        # Custom directives
+│   ├── layout/            # Layout components
+│   ├── locales/           # Internationalization
+│   ├── router/            # Router configuration
+│   ├── stores/            # State management
+│   ├── style/             # Global styles
+│   ├── utils/             # Utility functions
+│   ├── views/             # Page views
+│   ├── App.vue            # Root component
+│   └── main.js            # Entry file
+├── .env                   # Environment variables
+├── .env.development       # Development variables
+├── .env.production        # Production variables
+├── vite.config.js         # Vite configuration
+└── package.json           # Project configuration
+```
+
+## Features
+
+- **Authentication** - Multiple login methods (account, phone, email, OAuth, etc.)
+- **Permission Management** - Multi-level access control (company, department, position, group, user, role)
+- **Internationalization** - Multi-language support
+- **Theme Customization** - Light/Dark theme support
+- **Rich Components** - 40+ custom business components
+- **Code Generation** - Automatic code generation support
+- **Workflow** - Custom approval workflow
+- **Messaging** - Real-time push notifications and chat
+- **Data Visualization** - ECharts integration
+- **File Management** - File upload, import and export
+
+## Browser Support
+
+| ![Chrome](https://img.shields.io/badge/Chrome->=80-success?logo=google-chrome) | ![Firefox](https://img.shields.io/badge/Firefox->=75-success?logo=firefox) | ![Safari](https://img.shields.io/badge/Safari->=13-success?logo=safari) | ![Edge](https://img.shields.io/badge/Edge->=80-success?logo=microsoft-edge) |
+| --- | --- | --- | --- |
+| Chrome >= 80 | Firefox >= 75 | Safari >= 13 | Edge >= 80 |
+
+## Links
+
+- [Backend Project](https://gitee.com/openscm/scm.net)
+- [Documentation](https://gitee.com/openscm/scm.net/wikis/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D)
+- [Live Demo](http://www.c-scm.net)
+
+## Demo Accounts
+
+| Role | Account | Password |
+| --- | --- | --- |
+| Administrator | admin@demo | 123456 |
+| User | user@demo | 123456 |
+
+## License
+
+[MIT License](LICENSE)
+
+## Community
+
+![QQ](https://img.shields.io/badge/QQ-415872667-green?logo=tencent-qq)
