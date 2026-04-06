@@ -333,7 +333,6 @@ export default {
 		this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
 		this.documentClickHandler = (e) => {
-			console.log(e.target);
 			if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
 				this.showStartMenu = false;
 			}

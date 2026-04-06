@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
             groups: [
               {
                 name: 'vue-vendor',
-                test: /node_modules[\\/](@?vue|vue-router|vuex|vue-i18n)/,
+                test: /node_modules[\\/](@?vue|vue-router|pinia|vue-i18n)/,
                 priority: 30
               },
               {
@@ -97,7 +97,7 @@ export default defineConfig(({ mode }) => {
     },
 
     optimizeDeps: {
-      include: ['vue', 'vue-router', 'vuex', 'axios', 'element-plus']
+      include: ['vue', 'vue-router', 'pinia', 'axios', 'element-plus']
     }
   }
 })
