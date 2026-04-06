@@ -16,19 +16,17 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
 	name: 'Download',
-	setup() {
-		const downloads = ref([
-			{ id: 1, name: '项目文件.zip', size: '125 MB', progress: 100, status: 'success' },
-			{ id: 2, name: '安装包.exe', size: '256 MB', progress: 75, status: '' },
-			{ id: 3, name: '文档.pdf', size: '5.2 MB', progress: 45, status: '' },
-			{ id: 4, name: '视频.mp4', size: '1.2 GB', progress: 20, status: '' },
-		]);
-
-		return { downloads };
+	data() {
+		return {
+			downloads: [
+				{ id: 1, name: '项目文件.zip', size: '125 MB', progress: 100, status: 'success' },
+				{ id: 2, name: '安装包.exe', size: '256 MB', progress: 75, status: '' },
+				{ id: 3, name: '文档.pdf', size: '5.2 MB', progress: 45, status: '' },
+				{ id: 4, name: '视频.mp4', size: '1.2 GB', progress: 20, status: '' },
+			],
+		};
 	},
 };
 </script>

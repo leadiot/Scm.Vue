@@ -20,25 +20,26 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-
 export default {
 	name: 'Calendar',
-	setup() {
+	data() {
 		const today = new Date();
-		const currentYear = ref(today.getFullYear());
-		const currentMonth = ref(today.getMonth());
-		const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-
-		const calendarDays = computed(() => {
-			const firstDay = new Date(currentYear.value, currentMonth.value, 1);
-			const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0);
+		return {
+			today: today,
+			currentYear: today.getFullYear(),
+			currentMonth: today.getMonth(),
+			weekdays: ['日', '一', '二', '三', '四', '五', '六'],
+		};
+	},
+	computed: {
+		calendarDays() {
+			const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+			const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
 			const days = [];
 
-			// 上个月的日期
 			const firstDayOfWeek = firstDay.getDay();
 			for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-				const date = new Date(currentYear.value, currentMonth.value, -i);
+				const date = new Date(this.currentYear, this.currentMonth, -i);
 				days.push({
 					key: `prev-${i}`,
 					day: date.getDate(),
@@ -47,12 +48,11 @@ export default {
 				});
 			}
 
-			// 当前月的日期
 			for (let i = 1; i <= lastDay.getDate(); i++) {
 				const isToday =
-					i === today.getDate() &&
-					currentMonth.value === today.getMonth() &&
-					currentYear.value === today.getFullYear();
+					i === this.today.getDate() &&
+					this.currentMonth === this.today.getMonth() &&
+					this.currentYear === this.today.getFullYear();
 				days.push({
 					key: `current-${i}`,
 					day: i,
@@ -61,7 +61,6 @@ export default {
 				});
 			}
 
-			// 下个月的日期
 			const remainingDays = 42 - days.length;
 			for (let i = 1; i <= remainingDays; i++) {
 				days.push({
@@ -73,34 +72,25 @@ export default {
 			}
 
 			return days;
-		});
-
-		const prevMonth = () => {
-			if (currentMonth.value === 0) {
-				currentMonth.value = 11;
-				currentYear.value--;
+		},
+	},
+	methods: {
+		prevMonth() {
+			if (this.currentMonth === 0) {
+				this.currentMonth = 11;
+				this.currentYear--;
 			} else {
-				currentMonth.value--;
+				this.currentMonth--;
 			}
-		};
-
-		const nextMonth = () => {
-			if (currentMonth.value === 11) {
-				currentMonth.value = 0;
-				currentYear.value++;
+		},
+		nextMonth() {
+			if (this.currentMonth === 11) {
+				this.currentMonth = 0;
+				this.currentYear++;
 			} else {
-				currentMonth.value++;
+				this.currentMonth++;
 			}
-		};
-
-		return {
-			currentYear,
-			currentMonth,
-			weekdays,
-			calendarDays,
-			prevMonth,
-			nextMonth,
-		};
+		},
 	},
 };
 </script>

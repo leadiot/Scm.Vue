@@ -42,52 +42,43 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-
 export default {
 	name: 'Message',
-	setup() {
-		const selectedContact = ref(1);
-		const newMessage = ref('');
-		const contacts = ref([
-			{ id: 1, name: '张三', lastMessage: '你好！' },
-			{ id: 2, name: '李四', lastMessage: '明天见' },
-			{ id: 3, name: '王五', lastMessage: '收到' },
-		]);
-		const messages = ref([
-			{ id: 1, text: '你好！', sent: false },
-			{ id: 2, text: '你好，有什么事吗？', sent: true },
-			{ id: 3, text: '想约你明天一起吃饭', sent: false },
-		]);
-
-		const currentContact = computed(() =>
-			contacts.value.find((c) => c.id === selectedContact.value)
-		);
-
-		const selectContact = (id) => {
-			selectedContact.value = id;
+	data() {
+		return {
+			selectedContact: 1,
+			newMessage: '',
+			contacts: [
+				{ id: 1, name: '张三', lastMessage: '你好！' },
+				{ id: 2, name: '李四', lastMessage: '明天见' },
+				{ id: 3, name: '王五', lastMessage: '收到' },
+			],
+			messages: [
+				{ id: 1, text: '你好！', sent: false },
+				{ id: 2, text: '你好，有什么事吗？', sent: true },
+				{ id: 3, text: '想约你明天一起吃饭', sent: false },
+			],
 		};
-
-		const sendMessage = () => {
-			if (newMessage.value.trim()) {
-				messages.value.push({
-					id: messages.value.length + 1,
-					text: newMessage.value,
+	},
+	computed: {
+		currentContact() {
+			return this.contacts.find((c) => c.id === this.selectedContact);
+		},
+	},
+	methods: {
+		selectContact(id) {
+			this.selectedContact = id;
+		},
+		sendMessage() {
+			if (this.newMessage.trim()) {
+				this.messages.push({
+					id: this.messages.length + 1,
+					text: this.newMessage,
 					sent: true,
 				});
-				newMessage.value = '';
+				this.newMessage = '';
 			}
-		};
-
-		return {
-			selectedContact,
-			newMessage,
-			contacts,
-			messages,
-			currentContact,
-			selectContact,
-			sendMessage,
-		};
+		},
 	},
 };
 </script>

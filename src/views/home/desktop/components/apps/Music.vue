@@ -32,30 +32,28 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
 	name: 'Music',
-	setup() {
-		const currentSong = ref(0);
-		const isPlaying = ref(false);
-		const songs = ref([
-			{ id: 1, title: '示例歌曲1', artist: '艺术家1', duration: '3:45' },
-			{ id: 2, title: '示例歌曲2', artist: '艺术家2', duration: '4:20' },
-			{ id: 3, title: '示例歌曲3', artist: '艺术家3', duration: '3:15' },
-			{ id: 4, title: '示例歌曲4', artist: '艺术家4', duration: '5:10' },
-		]);
-
-		const playSong = (index) => {
-			currentSong.value = index;
-			isPlaying.value = true;
+	data() {
+		return {
+			currentSong: 0,
+			isPlaying: false,
+			songs: [
+				{ id: 1, title: '示例歌曲1', artist: '艺术家1', duration: '3:45' },
+				{ id: 2, title: '示例歌曲2', artist: '艺术家2', duration: '4:20' },
+				{ id: 3, title: '示例歌曲3', artist: '艺术家3', duration: '3:15' },
+				{ id: 4, title: '示例歌曲4', artist: '艺术家4', duration: '5:10' },
+			],
 		};
-
-		const togglePlay = () => {
-			isPlaying.value = !isPlaying.value;
-		};
-
-		return { currentSong, isPlaying, songs, playSong, togglePlay };
+	},
+	methods: {
+		playSong(index) {
+			this.currentSong = index;
+			this.isPlaying = true;
+		},
+		togglePlay() {
+			this.isPlaying = !this.isPlaying;
+		},
 	},
 };
 </script>

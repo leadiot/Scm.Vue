@@ -1,18 +1,18 @@
 <template>
 	<div class="documents-app">
 		<div class="app-header">
-			<el-input v-model="searchQuery" placeholder="搜索文档..." prefix-icon="Search" />
+			<el-input v-model="searchQuery" placeholder="搜索文档..." prefix-icon="ms-search" />
 		</div>
 		<div class="app-content">
 			<div class="folder-list">
 				<div v-for="folder in folders" :key="folder.id" class="folder-item">
-					<el-icon :size="24"><Folder /></el-icon>
+					<sc-icon name="ms-folder" :size="24" />
 					<span>{{ folder.name }}</span>
 				</div>
 			</div>
 			<div class="file-list">
 				<div v-for="file in files" :key="file.id" class="file-item">
-					<el-icon :size="24"><Document /></el-icon>
+					<sc-icon name="ms-description" :size="24" />
 					<div class="file-info">
 						<span class="file-name">{{ file.name }}</span>
 						<span class="file-size">{{ file.size }}</span>
@@ -24,30 +24,29 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { Folder, Document } from '@element-plus/icons-vue';
+import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	name: 'Documents',
-	components: { Folder, Document },
-	setup() {
-		const searchQuery = ref('');
-		const folders = ref([
-			{ id: 1, name: '我的文档' },
-			{ id: 2, name: '桌面' },
-			{ id: 3, name: '下载' },
-			{ id: 4, name: '图片' },
-			{ id: 5, name: '音乐' },
-			{ id: 6, name: '视频' },
-		]);
-		const files = ref([
-			{ id: 1, name: '项目文档.docx', size: '2.3 MB' },
-			{ id: 2, name: '会议记录.pdf', size: '1.1 MB' },
-			{ id: 3, name: '数据表格.xlsx', size: '856 KB' },
-			{ id: 4, name: '演示文稿.pptx', size: '5.2 MB' },
-		]);
-
-		return { searchQuery, folders, files };
+	components: { scIcon },
+	data() {
+		return {
+			searchQuery: '',
+			folders: [
+				{ id: 1, name: '我的文档' },
+				{ id: 2, name: '桌面' },
+				{ id: 3, name: '下载' },
+				{ id: 4, name: '图片' },
+				{ id: 5, name: '音乐' },
+				{ id: 6, name: '视频' },
+			],
+			files: [
+				{ id: 1, name: '项目文档.docx', size: '2.3 MB' },
+				{ id: 2, name: '会议记录.pdf', size: '1.1 MB' },
+				{ id: 3, name: '数据表格.xlsx', size: '856 KB' },
+				{ id: 4, name: '演示文稿.pptx', size: '5.2 MB' },
+			],
+		};
 	},
 };
 </script>

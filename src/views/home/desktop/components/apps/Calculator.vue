@@ -34,79 +34,62 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
 	name: 'Calculator',
-	setup() {
-		const expression = ref('');
-		const result = ref('0');
-
-		const inputNumber = (num) => {
-			expression.value += num;
+	data() {
+		return {
+			expression: '',
+			result: '0',
 		};
-
-		const inputOperator = (op) => {
-			const lastChar = expression.value.slice(-1);
+	},
+	methods: {
+		inputNumber(num) {
+			this.expression += num;
+		},
+		inputOperator(op) {
+			const lastChar = this.expression.slice(-1);
 			if (['+', '-', '*', '/', '%'].includes(lastChar)) {
-				expression.value = expression.value.slice(0, -1) + op;
+				this.expression = this.expression.slice(0, -1) + op;
 			} else {
-				expression.value += op;
+				this.expression += op;
 			}
-		};
-
-		const inputDecimal = () => {
-			const parts = expression.value.split(/[\+\-\*\/\%]/);
+		},
+		inputDecimal() {
+			const parts = this.expression.split(/[\+\-\*\/\%]/);
 			const lastPart = parts[parts.length - 1];
 			if (!lastPart.includes('.')) {
-				expression.value += '.';
+				this.expression += '.';
 			}
-		};
-
-		const clear = () => {
-			expression.value = '';
-			result.value = '0';
-		};
-
-		const backspace = () => {
-			expression.value = expression.value.slice(0, -1);
-		};
-
-		const toggleSign = () => {
-			if (expression.value) {
-				if (expression.value.startsWith('-')) {
-					expression.value = expression.value.slice(1);
+		},
+		clear() {
+			this.expression = '';
+			this.result = '0';
+		},
+		backspace() {
+			this.expression = this.expression.slice(0, -1);
+		},
+		toggleSign() {
+			if (this.expression) {
+				if (this.expression.startsWith('-')) {
+					this.expression = this.expression.slice(1);
 				} else {
-					expression.value = '-' + expression.value;
+					this.expression = '-' + this.expression;
 				}
 			}
-		};
-
-		const calculate = () => {
+		},
+		calculate() {
 			try {
-				if (expression.value) {
-					const calculateExpr = new Function('return ' + expression.value);
+				if (this.expression) {
+					const calculateExpr = new Function('return ' + this.expression);
 					const evalResult = calculateExpr();
-					result.value = Number.isInteger(evalResult)
+					this.result = Number.isInteger(evalResult)
 						? evalResult.toString()
 						: evalResult.toFixed(8).replace(/\.?0+$/, '');
 				}
 			} catch (error) {
-				result.value = '错误';
+				this.result = '错误';
 			}
-		};
-
-		return {
-			expression,
-			result,
-			inputNumber,
-			inputOperator,
-			inputDecimal,
-			clear,
-			backspace,
-			toggleSign,
-			calculate,
-		};
+		},
 	},
 };
 </script>

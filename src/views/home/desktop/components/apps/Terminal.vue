@@ -18,56 +18,53 @@
 </template>
 
 <script>
-import { ref, nextTick } from 'vue';
-
 export default {
 	name: 'Terminal',
-	setup() {
-		const command = ref('');
-		const output = ref([
-			'Microsoft Windows [版本 10.0.19045]',
-			'(c) Microsoft Corporation。保留所有权利。',
-			'',
-		]);
-		const input = ref(null);
-		const outputEl = ref(null);
+	data() {
+		return {
+			command: '',
+			output: [
+				'Microsoft Windows [版本 10.0.19045]',
+				'(c) Microsoft Corporation。保留所有权利。',
+				'',
+			],
+		};
+	},
+	methods: {
+		executeCommand() {
+			if (this.command.trim()) {
+				this.output.push(`C:\\Users\\User> ${this.command}`);
 
-		const executeCommand = () => {
-			if (command.value.trim()) {
-				output.value.push(`C:\\Users\\User> ${command.value}`);
-
-				const cmd = command.value.toLowerCase().trim();
+				const cmd = this.command.toLowerCase().trim();
 				if (cmd === 'cls' || cmd === 'clear') {
-					output.value = [];
+					this.output = [];
 				} else if (cmd === 'help') {
-					output.value.push('可用命令:');
-					output.value.push('  help - 显示帮助信息');
-					output.value.push('  cls  - 清空屏幕');
-					output.value.push('  date - 显示当前日期');
-					output.value.push('  time - 显示当前时间');
-					output.value.push('  echo - 显示消息');
+					this.output.push('可用命令:');
+					this.output.push('  help - 显示帮助信息');
+					this.output.push('  cls  - 清空屏幕');
+					this.output.push('  date - 显示当前日期');
+					this.output.push('  time - 显示当前时间');
+					this.output.push('  echo - 显示消息');
 				} else if (cmd === 'date') {
-					output.value.push(new Date().toLocaleDateString('zh-CN'));
+					this.output.push(new Date().toLocaleDateString('zh-CN'));
 				} else if (cmd === 'time') {
-					output.value.push(new Date().toLocaleTimeString('zh-CN'));
+					this.output.push(new Date().toLocaleTimeString('zh-CN'));
 				} else if (cmd.startsWith('echo ')) {
-					output.value.push(command.value.substring(5));
+					this.output.push(this.command.substring(5));
 				} else {
-					output.value.push(`'${command.value}' 不是内部或外部命令，也不是可运行的程序或批处理文件。`);
+					this.output.push(`'${this.command}' 不是内部或外部命令，也不是可运行的程序或批处理文件。`);
 				}
 
-				output.value.push('');
-				command.value = '';
+				this.output.push('');
+				this.command = '';
 
-				nextTick(() => {
-					if (outputEl.value) {
-						outputEl.value.scrollTop = outputEl.value.scrollHeight;
+				this.$nextTick(() => {
+					if (this.$refs.output) {
+						this.$refs.output.scrollTop = this.$refs.output.scrollHeight;
 					}
 				});
 			}
-		};
-
-		return { command, output, input, outputEl, executeCommand };
+		},
 	},
 };
 </script>

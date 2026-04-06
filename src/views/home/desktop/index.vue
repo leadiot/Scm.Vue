@@ -6,7 +6,7 @@
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image">
-					<sc-icon name="sc-heart-3-line" :size="48" />
+					<sc-icon :name="app.icon" :size="48" />
 				</div>
 				<div class="icon-text">{{ app.name }}</div>
 			</div>
@@ -27,9 +27,7 @@
 			<div class="taskbar-apps">
 				<div v-for="window in windows" :key="window.id" class="taskbar-app"
 					:class="{ active: window.focused, minimized: window.minimized }" @click="toggleWindow(window.id)">
-					<el-icon :size="20">
-						<component :is="window.icon" />
-					</el-icon>
+					<sc-icon :name="window.icon" :size="20" />
 					<span>{{ window.title }}</span>
 				</div>
 			</div>
@@ -51,9 +49,7 @@
 					<div class="start-menu-app" @click="app.children ? null : openApp(app)">
 						<sc-icon name="sc-heart-3-line" />
 						<span>{{ app.name }}</span>
-						<el-icon v-if="app.children" class="arrow">
-							<ArrowRight />
-						</el-icon>
+						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="16" />
 					</div>
 				</div>
 			</div>
@@ -126,14 +122,14 @@
 </template>
 
 <script>
-import { ArrowRight } from '@element-plus/icons-vue';
+import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
 
 export default {
 	name: 'Desktop',
 	components: {
 		Window,
-		ArrowRight,
+		scIcon,
 	},
 	data() {
 		return {
@@ -159,45 +155,45 @@ export default {
 				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
 			],
 			desktopApps: [
-				{ id: 1, name: '我的文档', icon: 'Folder', component: 'Documents' },
-				{ id: 2, name: '浏览器', icon: 'Browser', component: 'Browser' },
-				{ id: 3, name: '计算器', icon: 'Calculator', component: 'Calculator' },
-				{ id: 4, name: '日历', icon: 'Calendar', component: 'Calendar' },
-				{ id: 5, name: '音乐', icon: 'Music', component: 'Music' },
-				{ id: 6, name: '视频', icon: 'VideoCamera', component: 'Video' },
-				{ id: 7, name: '消息', icon: 'Message', component: 'Message' },
-				{ id: 8, name: '终端', icon: 'Terminal', component: 'Terminal' },
+				{ id: 1, name: '我的文档', icon: 'ms-folder', component: 'Documents' },
+				{ id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' },
+				{ id: 3, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
+				{ id: 4, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
+				{ id: 5, name: '音乐', icon: 'ms-music_note', component: 'Music' },
+				{ id: 6, name: '视频', icon: 'ms-videocam', component: 'Video' },
+				{ id: 7, name: '消息', icon: 'ms-mail', component: 'Message' },
+				{ id: 8, name: '终端', icon: 'ms-terminal', component: 'Terminal' },
 			],
 			allApps: [
 				{
 					id: 1,
 					name: '常用应用',
-					icon: 'Folder',
+					icon: 'ms-folder',
 					children: [
-						{ id: 11, name: '我的文档', icon: 'Folder', component: 'Documents' },
-						{ id: 12, name: '浏览器', icon: 'Browser', component: 'Browser' },
-						{ id: 13, name: '计算器', icon: 'Calculator', component: 'Calculator' },
-						{ id: 14, name: '日历', icon: 'Calendar', component: 'Calendar' },
+						{ id: 11, name: '我的文档', icon: 'ms-folder', component: 'Documents' },
+						{ id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' },
+						{ id: 13, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
+						{ id: 14, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
 					]
 				},
 				{
 					id: 2,
 					name: '多媒体',
-					icon: 'VideoCamera',
+					icon: 'ms-videocam',
 					children: [
-						{ id: 21, name: '音乐', icon: 'Music', component: 'Music' },
-						{ id: 22, name: '视频', icon: 'VideoCamera', component: 'Video' },
-						{ id: 23, name: '图片', icon: 'Picture', component: 'Pictures' },
+						{ id: 21, name: '音乐', icon: 'ms-music_note', component: 'Music' },
+						{ id: 22, name: '视频', icon: 'ms-videocam', component: 'Video' },
+						{ id: 23, name: '图片', icon: 'ms-photo_library', component: 'Pictures' },
 					]
 				},
 				{
 					id: 3,
 					name: '系统工具',
-					icon: 'Setting',
+					icon: 'ms-settings',
 					children: [
-						{ id: 31, name: '终端', icon: 'Terminal', component: 'Terminal' },
-						{ id: 32, name: '下载', icon: 'Download', component: 'Download' },
-						{ id: 33, name: '消息', icon: 'Message', component: 'Message' },
+						{ id: 31, name: '终端', icon: 'ms-terminal', component: 'Terminal' },
+						{ id: 32, name: '下载', icon: 'ms-download', component: 'Download' },
+						{ id: 33, name: '消息', icon: 'ms-mail', component: 'Message' },
 					]
 				},
 			],

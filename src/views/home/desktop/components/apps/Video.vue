@@ -13,19 +13,17 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
 	name: 'Video',
-	setup() {
-		const videos = ref([
-			{ id: 1, title: '项目演示视频', duration: '15:30' },
-			{ id: 2, title: '会议录像', duration: '45:20' },
-			{ id: 3, title: '教学视频', duration: '20:15' },
-			{ id: 4, title: '产品介绍', duration: '10:45' },
-		]);
-
-		return { videos };
+	data() {
+		return {
+			videos: [
+				{ id: 1, title: '项目演示视频', duration: '15:30' },
+				{ id: 2, title: '会议录像', duration: '45:20' },
+				{ id: 3, title: '教学视频', duration: '20:15' },
+				{ id: 4, title: '产品介绍', duration: '10:45' },
+			],
+		};
 	},
 };
 </script>

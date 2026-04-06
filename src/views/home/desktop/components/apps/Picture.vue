@@ -15,25 +15,24 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
 	name: 'Picture',
-	setup() {
-		const pictures = ref([
-			{ id: 1, name: '风景照片.jpg' },
-			{ id: 2, name: '人物照片.png' },
-			{ id: 3, name: '产品图片.jpg' },
-			{ id: 4, name: '设计稿.png' },
-			{ id: 5, name: '截图.png' },
-			{ id: 6, name: '壁纸.jpg' },
-		]);
-
-		const viewPicture = (picture) => {
-			alert(`查看图片: ${picture.name}`);
+	data() {
+		return {
+			pictures: [
+				{ id: 1, name: '风景照片.jpg' },
+				{ id: 2, name: '人物照片.png' },
+				{ id: 3, name: '产品图片.jpg' },
+				{ id: 4, name: '设计稿.png' },
+				{ id: 5, name: '截图.png' },
+				{ id: 6, name: '壁纸.jpg' },
+			],
 		};
-
-		return { pictures, viewPicture };
+	},
+	methods: {
+		viewPicture(picture) {
+			alert(`查看图片: ${picture.name}`);
+		},
 	},
 };
 </script>
