@@ -1,19 +1,8 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+﻿################################################################################
+# 此文件由项目作者创建，您可以根据需要进行增删调整。
+################################################################################
 
-# Other files and folders
-.settings/
-
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
-
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
-node_modules
+# Vue 项目文件
+dist/
+node_modules/
+webpack/
