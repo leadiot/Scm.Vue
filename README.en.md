@@ -1,3 +1,5 @@
+
+
 # Scm.Vue
 
 Frontend for Scm.Net project, an enterprise-level backend management system built with Vue 3 + Vite + Element Plus.

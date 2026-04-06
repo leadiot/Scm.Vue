@@ -1,4 +1,6 @@
-﻿# Scm.Vue
+﻿
+
+# Scm.Vue
 
 Scm.Net 项目前端，基于 Vue 3 + Vite + Element Plus 构建的企业级后台管理系统。
 
