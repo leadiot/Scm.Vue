@@ -138,9 +138,11 @@ export default {
 		},
 		navigate() {
 			const formattedUrl = this.formatUrl(this.url);
-			if (formattedUrl) {
-				this.loadUrl(formattedUrl, true);
+			if (!formattedUrl) {
+				return;
 			}
+
+			this.loadUrl(formattedUrl, true);
 		},
 		loadUrl(targetUrl, addToHistory = true) {
 			if (this.isBlockedDomain(targetUrl)) {
@@ -168,7 +170,7 @@ export default {
 				if (this.isLoading) {
 					this.onFrameError(new Error('加载超时'));
 				}
-			}, 15000);
+			}, 5000);
 
 			if (this.isBlockedDomain(targetUrl)) {
 				setTimeout(() => {
@@ -181,6 +183,8 @@ export default {
 		showBlockedError(url) {
 			this.isLoading = false;
 			this.loadError = true;
+			this.currentUrl = url;
+			this.url = url;
 			try {
 				const hostname = new URL(url).hostname;
 				this.errorMessage = `${hostname} 不允许在嵌入式框架中显示`;

@@ -21,7 +21,7 @@
 		<!-- 任务栏 -->
 		<div class="taskbar">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<sc-icon name="sc-heart-3-line" :size="24" />
+				<sc-icon name="ms-menu" :size="24" />
 				<span>开始</span>
 			</div>
 			<div class="taskbar-apps">
@@ -39,7 +39,7 @@
 		<!-- 开始菜单 -->
 		<div v-if="showStartMenu" class="start-menu">
 			<div class="start-menu-header">
-				<sc-icon name="sc-heart-3-line" :size="32" />
+				<sc-icon name="ms-account_circle" :size="32" />
 				<span>用户名</span>
 			</div>
 			<div class="start-menu-apps">
@@ -47,7 +47,7 @@
 					:class="{ 'has-children': app.children }"
 					@mouseenter="app.children ? showSubmenu($event, app.id) : null" @mouseleave="hideSubmenu">
 					<div class="start-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon name="sc-heart-3-line" />
+						<sc-icon :name="app.icon" />
 						<span>{{ app.name }}</span>
 						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="16" />
 					</div>
@@ -55,11 +55,11 @@
 			</div>
 			<div class="start-menu-footer">
 				<div class="start-menu-action" @click="openSettings">
-					<sc-icon name="sc-heart-3-line" />
+					<sc-icon name="ms-settings" />
 					<span>设置</span>
 				</div>
 				<div class="start-menu-action">
-					<sc-icon name="sc-heart-3-line" />
+					<sc-icon name="ms-power_off" />
 					<span>关机</span>
 				</div>
 			</div>
@@ -69,7 +69,7 @@
 		<div v-if="activeSubmenu" class="submenu" :style="submenuStyle" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
 			<div v-for="child in activeSubmenuChildren" :key="child.id" class="submenu-item" @click="openApp(child)">
-				<sc-icon name="sc-heart-3-line" />
+				<sc-icon :name="child.icon" />
 				<span>{{ child.name }}</span>
 			</div>
 		</div>
@@ -81,9 +81,9 @@
 					<div class="settings-section">
 						<h4>背景类型</h4>
 						<el-radio-group v-model="backgroundType">
-							<el-radio label="color">纯色</el-radio>
-							<el-radio label="image">图片</el-radio>
-							<el-radio label="gradient">渐变</el-radio>
+							<el-radio value="color">纯色</el-radio>
+							<el-radio value="image">图片</el-radio>
+							<el-radio value="gradient">渐变</el-radio>
 						</el-radio-group>
 					</div>
 
