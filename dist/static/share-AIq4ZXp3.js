@@ -1,1 +1,0 @@
-import{J as r,Z as t,bt as a}from"./vue-vendor-C9JtNgw0.js";import{t as l}from"./_plugin-vue_export-helper-B4yulpIB.js";var n={};function o(_,e){return a(),t("div",null,[...e[0]||(e[0]=[r("h1",null,"NAS文档归档",-1)])])}var f=l(n,[["render",o]]);export{f as default};
