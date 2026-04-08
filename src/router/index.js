@@ -8,6 +8,7 @@ import systemRouter from "./systemRouter";
 import userRoutes from "@/config/route";
 import { beforeEach, afterEach } from "./scrollBehavior";
 import http from "@/utils/request";
+import { useGlobalStore } from "@/stores/global";
 
 //系统路由
 const routes = systemRouter;
@@ -18,6 +19,7 @@ const routes_404 = {
 	path: "/:pathMatch(.*)*",
 	hidden: true,
 	component: () => import("@/layout/other/404"),
+	meta: { layout: "none" },
 };
 let routes_404_r = () => { };
 
@@ -39,9 +41,15 @@ router.beforeEach(async (to, from) => {
 		? `${to.meta.title} - ${config.APP_NAME}`
 		: `${config.APP_NAME}`;
 
+	//动态布局切换
+	if (to.meta.layout) {
+		const globalStore = useGlobalStore();
+		if (globalStore.layout !== to.meta.layout) {
+			globalStore.SET_layout(to.meta.layout);
+		}
+	}
+
 	if (to.path === "/login") {
-		//删除路由(替换当前layout路由)
-		router.addRoute(routes[0]);
 		//删除路由(404)
 		routes_404_r();
 		isGetRouter = false;
@@ -76,7 +84,7 @@ router.beforeEach(async (to, from) => {
 		var menuRouter = filterAsyncRouter(menu);
 		menuRouter = flatAsyncRoutes(menuRouter);
 		menuRouter.forEach((item) => {
-			router.addRoute("layout", item);
+			router.addRoute(item);
 		});
 		routes_404_r = router.addRoute(routes_404);
 		if (to.matched.length == 0) {
