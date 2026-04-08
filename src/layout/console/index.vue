@@ -1,3 +1,4 @@
+<!-- 控制台布局 -->
 <template>
 
 	<!-- 桌面布局 -->
@@ -40,7 +41,7 @@
 			<div v-if="!ismobile && nextMenu.length > 0 || !pmenu.component"
 				:class="menuIsCollapse ? 'scmui-side isCollapse' : 'scmui-side'">
 				<div v-if="!menuIsCollapse" class="scmui-side-top">
-					<h2>{{ pmenu.meta.title }}</h2>
+					<h2>{{ pmenu.meta?.title }}</h2>
 				</div>
 				<div class="scmui-side-scroll">
 					<el-scrollbar>
@@ -172,7 +173,7 @@
 			<div v-if="!ismobile && nextMenu.length > 0 || !pmenu.component"
 				:class="menuIsCollapse ? 'scmui-side isCollapse' : 'scmui-side'">
 				<div v-if="!menuIsCollapse" class="scmui-side-top">
-					<h2>{{ pmenu.meta.title }}</h2>
+					<h2>{{ pmenu.meta?.title }}</h2>
 				</div>
 				<div class="scmui-side-scroll">
 					<el-scrollbar>
