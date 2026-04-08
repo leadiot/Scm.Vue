@@ -6,7 +6,7 @@
 			</div>
 		</div>
 		<div class="terminal-input">
-			<span class="prompt">C:\Users\User&gt;</span>
+			<span class="prompt">~/&gt;</span>
 			<input
 				v-model="command"
 				@keyup.enter="executeCommand"

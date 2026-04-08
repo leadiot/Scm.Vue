@@ -2,7 +2,7 @@
 	<div class="desktop" :style="desktopStyle" @click="clearSelection">
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
-			<div v-for="app in desktopApps" :key="app.id" class="desktop-icon"
+			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image">
@@ -43,9 +43,9 @@
 				<span>用户名</span>
 			</div>
 			<div class="start-menu-apps">
-				<div v-for="app in allApps" :key="app.id" class="start-menu-item"
-					:class="{ 'has-children': app.children }"
-					@mouseenter="app.children ? showSubmenu($event, app.id) : null" @mouseleave="hideSubmenu">
+				<div v-for="app in menuApps" :key="app.id" class="start-menu-item"
+					:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
+					@mouseleave="hideSubmenu">
 					<div class="start-menu-app" @click="app.children ? null : openApp(app)">
 						<sc-icon :name="app.icon" />
 						<span>{{ app.name }}</span>
@@ -68,7 +68,7 @@
 		<!-- 子菜单 -->
 		<div v-if="activeSubmenu" class="submenu" :style="submenuStyle" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
-			<div v-for="child in activeSubmenuChildren" :key="child.id" class="submenu-item" @click="openApp(child)">
+			<div v-for="child in activeSubmenu.children" :key="child.id" class="submenu-item" @click="openApp(child)">
 				<sc-icon :name="child.icon" />
 				<span>{{ child.name }}</span>
 			</div>
@@ -82,23 +82,23 @@
 						<h4>背景类型</h4>
 						<el-radio-group v-model="backgroundType">
 							<el-radio value="color">纯色</el-radio>
-							<el-radio value="image">图片</el-radio>
 							<el-radio value="gradient">渐变</el-radio>
+							<el-radio value="image">图片</el-radio>
 						</el-radio-group>
 					</div>
 
 					<div v-if="backgroundType === 'color'" class="settings-section">
-						<h4>选择颜色</h4>
-						<el-color-picker v-model="backgroundColor" />
-					</div>
-
-					<div v-if="backgroundType === 'image'" class="settings-section">
-						<h4>背景图片</h4>
-						<el-input v-model="backgroundImage" placeholder="输入图片URL或选择预设" />
-						<div class="preset-images">
-							<div v-for="(img, index) in presetImages" :key="index" class="preset-image"
-								:style="{ backgroundImage: `url(${img})` }" @click="backgroundImage = img" />
+						<h4>预设颜色</h4>
+						<div class="preset-colors">
+							<div v-for="color in presetColors" :key="color.value" class="preset-color"
+								:class="{ active: backgroundColor === color.value }"
+								:style="{ backgroundColor: color.value }" :title="color.name"
+								@click="backgroundColor = color.value">
+								<span v-if="backgroundColor === color.value" class="check-icon">✓</span>
+							</div>
 						</div>
+						<h4 style="margin-top: 15px;">自定义颜色</h4>
+						<el-color-picker v-model="backgroundColor" show-alpha />
 					</div>
 
 					<div v-if="backgroundType === 'gradient'" class="settings-section">
@@ -111,11 +111,20 @@
 							<el-option label="对角线" value="to bottom right" />
 						</el-select>
 					</div>
+
+					<div v-if="backgroundType === 'image'" class="settings-section">
+						<h4>背景图片</h4>
+						<el-input v-model="backgroundImage" placeholder="输入图片URL或选择预设" />
+						<div class="preset-images">
+							<div v-for="(img, index) in presetImages" :key="index" class="preset-image"
+								:style="{ backgroundImage: `url(${img})` }" @click="backgroundImage = img" />
+						</div>
+					</div>
 				</el-tab-pane>
 			</el-tabs>
 			<template #footer>
 				<el-button @click="showSettings = false">取消</el-button>
-				<el-button type="primary" @click="applySettings">应用</el-button>
+				<el-button type="primary" @click="saveSettings">保存</el-button>
 			</template>
 		</el-dialog>
 	</div>
@@ -143,28 +152,42 @@ export default {
 			submenuStyle: {},
 			submenuTimeout: null,
 			backgroundType: 'gradient',
-			backgroundColor: '#FFFFFF',
+			backgroundColor: '#0078d4',
 			backgroundImage: '',
 			gradientColor1: '#667eea',
 			gradientColor2: '#764ba2',
 			gradientDirection: 'to bottom right',
+			presetColors: [
+				{ name: '经典蓝', value: '#0078d4' },
+				{ name: '深空灰', value: '#2d2d2d' },
+				{ name: '午夜黑', value: '#0a0a0a' },
+				{ name: '森林绿', value: '#107c10' },
+				{ name: '海洋蓝', value: '#005a9e' },
+				{ name: '夕阳橙', value: '#d83b01' },
+				{ name: '葡萄紫', value: '#5c2d91' },
+				{ name: '玫瑰红', value: '#c30052' },
+				{ name: '天空蓝', value: '#00b7c3' },
+				{ name: '柠檬黄', value: '#ffb900' },
+				{ name: '薄荷绿', value: '#00cc6a' },
+				{ name: '珊瑚粉', value: '#ff6b6b' },
+			],
 			presetImages: [
 				'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
 				'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920',
 				'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=1920',
 				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
 			],
-			desktopApps: [
-				{ id: 1, name: '我的文档', icon: 'ms-folder', component: 'Documents' },
+			deskApps: [
+				{ id: 1, name: '我的文档', icon: 'ms-folder', component: 'Documents', width: 900, height: 600 },
 				{ id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' },
-				{ id: 3, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
-				{ id: 4, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
+				{ id: 3, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580 },
+				{ id: 4, name: '日历', icon: 'ms-calendar_today', component: 'Calendar', width: 400, height: 460 },
 				{ id: 5, name: '音乐', icon: 'ms-music_note', component: 'Music' },
 				{ id: 6, name: '视频', icon: 'ms-videocam', component: 'Video' },
 				{ id: 7, name: '消息', icon: 'ms-mail', component: 'Message' },
-				{ id: 8, name: '终端', icon: 'ms-terminal', component: 'Terminal' },
+				{ id: 8, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 },
 			],
-			allApps: [
+			menuApps: [
 				{
 					id: 1,
 					name: '常用应用',
@@ -216,12 +239,7 @@ export default {
 					background: `linear-gradient(${this.gradientDirection}, ${this.gradientColor1}, ${this.gradientColor2})`,
 				};
 			}
-		},
-		activeSubmenuChildren() {
-			if (!this.activeSubmenu) return [];
-			const app = this.allApps.find(a => a.id === this.activeSubmenu);
-			return app ? app.children : [];
-		},
+		}
 	},
 	methods: {
 		updateTime() {
@@ -229,6 +247,7 @@ export default {
 			this.currentTime = now.toLocaleTimeString('zh-CN', {
 				hour: '2-digit',
 				minute: '2-digit',
+				second: '2-digit',
 			});
 		},
 		selectApp(appId) {
@@ -250,17 +269,20 @@ export default {
 				focused: true,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
-				width: 800,
-				height: 600,
+				width: app.width || 800,
+				height: app.height || 600,
 			});
 			this.focusWindow(windowId);
 		},
-		showSubmenu(event, appId) {
-			const app = this.allApps.find(a => a.id === appId);
-			if (!app || !app.children) return;
+		showSubmenu(event, app) {
+			if (!app || !app.children) {
+				return;
+			}
+
+			this.keepSubmenu();
 
 			const rect = event.target.getBoundingClientRect();
-			this.activeSubmenu = appId;
+			this.activeSubmenu = app;
 			this.submenuStyle = {
 				left: `${rect.right}px`,
 				top: `${rect.top}px`,
@@ -320,7 +342,7 @@ export default {
 			this.showStartMenu = false;
 			this.showSettings = true;
 		},
-		applySettings() {
+		saveSettings() {
 			this.showSettings = false;
 		},
 	},
@@ -600,6 +622,42 @@ export default {
 .settings-section h4 {
 	margin-bottom: 10px;
 	color: #606266;
+}
+
+.preset-colors {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 10px;
+}
+
+.preset-color {
+	width: 100%;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	cursor: pointer;
+	border: 2px solid transparent;
+	transition: all 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.preset-color:hover {
+	transform: scale(1.1);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.preset-color.active {
+	border-color: #409eff;
+	box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
+}
+
+.check-icon {
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .preset-images {

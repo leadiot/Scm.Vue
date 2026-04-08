@@ -3,22 +3,22 @@
 		:style="windowStyle" @mousedown="handleFocus">
 		<div class="window-header" @mousedown="startDrag">
 			<div class="window-title">
-				<sc-icon :name="getIconName(window.icon)" :size="16" />
+				<sc-icon :name="window.icon" :size="16" />
 				<span>{{ window.title }}</span>
 			</div>
 			<div class="window-controls">
 				<button class="control-btn minimize" @click.stop="$emit('minimize', window.id)">
 					<svg width="12" height="12" viewBox="0 0 12 12">
-						<rect x="2" y="5.5" width="8" height="1" fill="currentColor" />
+						<rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" />
 					</svg>
 				</button>
 				<button class="control-btn maximize" @click.stop="$emit('maximize', window.id)">
 					<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
 						<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
-						<rect x="1" y="3" width="8" height="8" fill="var(--win-bg)" stroke="currentColor" stroke-width="1" />
+						<rect x="1" y="3" width="8" height="8" fill="white" stroke="currentColor" stroke-width="1.2" />
 					</svg>
 					<svg v-else width="12" height="12" viewBox="0 0 12 12">
-						<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1" />
+						<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.2" />
 					</svg>
 				</button>
 				<button class="control-btn close" @click.stop="$emit('close', window.id)">
@@ -51,33 +51,13 @@ import TerminalApp from './apps/Terminal.vue';
 import PictureApp from './apps/Picture.vue';
 import DownloadApp from './apps/Download.vue';
 
-const iconMap = {
-	Folder: 'ms-folder',
-	Browser: 'ms-language',
-	Calculator: 'ms-calculate',
-	Calendar: 'ms-calendar_today',
-	Message: 'ms-mail',
-	VideoCamera: 'ms-videocam',
-	Music: 'ms-music_note',
-	Terminal: 'ms-terminal',
-	Pictures: 'ms-photo_library',
-	Download: 'ms-download',
-	Minus: 'ms-remove',
-	Close: 'ms-close',
-	FullScreen: 'ms-fullscreen',
-	CopyDocument: 'ms-content_copy',
-};
-
 export default {
 	name: 'Window',
 	components: {
 		scIcon,
 	},
 	props: {
-		window: {
-			type: Object,
-			required: true,
-		},
+		window: { type: Object, required: true },
 	},
 	emits: ['close', 'minimize', 'maximize', 'focus'],
 	data() {
@@ -99,7 +79,8 @@ export default {
 					top: '0',
 					left: '0',
 					width: '100%',
-					height: 'calc(100% - 48px)',
+					// height: 'calc(100% - 48px)',
+					height: '100%',
 				};
 			}
 			return {
@@ -111,9 +92,6 @@ export default {
 		},
 	},
 	methods: {
-		getIconName(iconName) {
-			return iconMap[iconName] || 'ms-folder';
-		},
 		getComponent(componentName) {
 			const components = {
 				Documents,
