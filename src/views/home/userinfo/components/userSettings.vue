@@ -18,19 +18,20 @@
 				<el-color-picker v-model="colorPrimary" :predefine="colorList">></el-color-picker>
 			</el-form-item>
 			<el-divider></el-divider>
+			<el-form-item label="首页布局">
+				<el-select v-model="home" placeholder="请选择">
+					<el-option label="自定义" value="0"></el-option>
+					<el-option label="工作台" value="console"></el-option>
+					<el-option label="大屏幕" value="display"></el-option>
+					<el-option label="云桌面" value="desktop"></el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item label="框架布局">
 				<el-select v-model="layout" placeholder="请选择">
 					<el-option label="默认" value="default"></el-option>
 					<el-option label="通栏" value="header"></el-option>
 					<el-option label="经典" value="menu"></el-option>
 					<el-option label="功能坞" value="dock"></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="首页布局">
-				<el-select v-model="home" placeholder="请选择">
-					<el-option label="自定义" value="1"></el-option>
-					<el-option label="工作台" value="2"></el-option>
-					<el-option label="大屏幕" value="3"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="折叠菜单">
@@ -108,16 +109,16 @@ export default {
 		async init() {
 			var cfgRes = await this.$API.scmsysconfig.list.get(10);
 			cfgRes.data.forEach((item) => {
-				if ("app_lang" == item.key) {
-					this.lang = item.value;
-					return;
-				}
 				if ("app_theme" == item.key) {
 					this.dark = item.value == "true";
 					return;
 				}
 				if ("app_color" == item.key) {
 					this.colorPrimary = item.val;
+					return;
+				}
+				if ("app_lang" == item.key) {
+					this.lang = item.value;
 					return;
 				}
 			});

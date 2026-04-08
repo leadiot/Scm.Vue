@@ -23,8 +23,17 @@ const DEFAULT_CONFIG = {
 	// 参数加密签名Key
 	SIGN_KEY: "ab517f95fab7d57",
 
-	// 首页地址
-	DASHBOARD_URL: "/dashboard",
+	// 登录地址
+	LOGIN_URL: "/login",
+
+	// 工作台地址
+	CONSOLE_URL: "/console",
+
+	// 云桌面地址
+	DESKTOP_URL: "/desktop",
+
+	// 大屏幕地址
+	DISPLAY_URL: "/display",
 
 	// 服务器地址
 	SERVER_URL: import.meta.env.VITE_API_BASE,
@@ -70,7 +79,7 @@ const DEFAULT_CONFIG = {
 	COLOR: "",
 
 	// 首面
-	HOME: "1",
+	HOME: "console",
 
 	//控制台首页默认布局
 	DEFAULT_GRID: {

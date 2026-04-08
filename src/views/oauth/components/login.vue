@@ -151,11 +151,11 @@ export default {
                     return;
                 }
                 if ("app_color" == item.key) {
-                    //this.config.colorPrimary = item.val;
+                    this.config.colorPrimary = item.val;
                     return;
                 }
                 if ("app_lang" == item.key) {
-                    //this.config.lang = item.value;
+                    this.config.lang = item.value;
                 }
             });
         },

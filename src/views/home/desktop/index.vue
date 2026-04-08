@@ -121,6 +121,18 @@
 						</div>
 					</div>
 				</el-tab-pane>
+				<el-tab-pane label="框架布局">
+					<el-form ref="form" label-width="120px" style="margin-top:20px;">
+						<el-form-item label="首页布局">
+							<el-select v-model="home" placeholder="请选择">
+								<el-option label="自定义" value="0"></el-option>
+								<el-option label="工作台" value="console"></el-option>
+								<el-option label="云桌面" value="desktop"></el-option>
+								<el-option label="大屏幕" value="display"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
 			</el-tabs>
 			<template #footer>
 				<el-button @click="showSettings = false">取消</el-button>

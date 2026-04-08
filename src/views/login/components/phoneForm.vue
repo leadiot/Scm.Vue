@@ -30,6 +30,7 @@
 import i18n from "@/locales";
 
 export default {
+	emits: ['complete'],
 	data() {
 		return {
 			form: {
@@ -124,49 +125,7 @@ export default {
 			this.$TOOL.data.set("USER_INFO", userRes.data.userInfo);
 			this.$TOOL.data.set("USER_THEME", userRes.data.userTheme);
 
-			//获取菜单
-			var menuRes = await this.$API.operator.authority.get();
-			if (menuRes.code != 200) {
-				this.$message.warning(menuRes.message);
-				return false;
-			}
-			if (menuRes.data.length == 0) {
-				this.$alert(
-					"当前用户无任何菜单权限，请联系系统管理员",
-					"无权限访问",
-					{ type: "error", center: true }
-				);
-				return false;
-			}
-			var menuList = this.$SCM.recursive_menu(menuRes.data, this.$SCM.SYS_ID);
-			this.$TOOL.data.set("MENU", menuList);
-			this.$TOOL.data.set("PERMISSIONS", []);
-
-			this.loadCfg();
-
-			let path = '/';
-			this.$router.replace({ path: path });
-			this.$message.success("Login Success 登录成功");
-		},
-		async loadCfg() {
-			var cfgRes = await this.$API.scmsysconfig.list.get({ 'types': 10 });
-			cfgRes.data.forEach((item) => {
-				if ("app_theme" == item.key) {
-					if (item.value == "true") {
-						document.documentElement.classList.add("dark")
-					} else {
-						document.documentElement.classList.remove("dark")
-					}
-					return;
-				}
-				if ("app_color" == item.key) {
-					//this.config.colorPrimary = item.val;
-					return;
-				}
-				if ("app_lang" == item.key) {
-					//this.config.lang = item.value;
-				}
-			});
+			this.$emit('complete');
 		}
 	}
 }

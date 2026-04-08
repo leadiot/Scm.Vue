@@ -52,19 +52,19 @@
 										<div class="body">
 											<el-tabs>
 												<el-tab-pane :label="$t('login.accountLogin')" lazy v-if="hasMode(10)">
-													<pass-form></pass-form>
+													<pass-form @complete="complete"></pass-form>
 												</el-tab-pane>
 												<el-tab-pane :label="$t('login.otpLogin')" lazy v-if="hasMode(20)">
-													<otp-form></otp-form>
+													<otp-form @complete="complete"></otp-form>
 												</el-tab-pane>
 												<el-tab-pane :label="$t('login.phoneLogin')" lazy v-if="hasMode(21)">
-													<phone-form></phone-form>
+													<phone-form @complete="complete"></phone-form>
 												</el-tab-pane>
 												<el-tab-pane :label="$t('login.emailLogin')" lazy v-if="hasMode(22)">
-													<email-form></email-form>
+													<email-form @complete="complete"></email-form>
 												</el-tab-pane>
 												<el-tab-pane :label="$t('login.oauthLogin')" lazy v-if="hasMode(30)">
-													<oidc-form></oidc-form>
+													<oidc-form @complete="complete"></oidc-form>
 												</el-tab-pane>
 											</el-tabs>
 										</div>
@@ -146,6 +146,7 @@ export default {
 				{ name: "简体中文", value: "zh-cn", },
 				{ name: "English", value: "en", },
 			],
+			home: this.$TOOL.data.get('APP_HOME') || this.$CONFIG.HOME,
 		};
 	},
 	watch: {
@@ -212,6 +213,63 @@ export default {
 				}
 			}
 			return false;
+		},
+		async complete() {
+			//获取菜单
+			var menuRes = await this.$API.operator.authority.get();
+			if (menuRes.code != 200) {
+				this.$message.warning(menuRes.message);
+				return false;
+			}
+			if (menuRes.data.length == 0) {
+				this.$alert(
+					"当前用户无任何菜单权限，请联系系统管理员",
+					"无权限访问",
+					{ type: "error", center: true }
+				);
+				return false;
+			}
+			var menuList = this.$SCM.recursive_menu(menuRes.data, this.$SCM.SYS_ID);
+			this.$TOOL.data.set("MENU", menuList);
+			this.$TOOL.data.set("PERMISSIONS", []);
+
+			this.loadCfg();
+
+			this.$router.replace({ path: this.home });
+			this.$message.success("Login Success 登录成功");
+		},
+		async loadCfg() {
+			var cfgRes = await this.$API.scmsysconfig.list.get({ 'types': 10 });
+			if (!cfgRes || cfgRes.code != 200) {
+				return;
+			}
+			var data = cfgRes.data;
+			if (!data) {
+				return;
+			}
+
+			data.forEach((item) => {
+				if ("app_theme" == item.key) {
+					if (item.value == "true") {
+						document.documentElement.classList.add("dark")
+					} else {
+						document.documentElement.classList.remove("dark")
+					}
+					return;
+				}
+				if ("app_color" == item.key) {
+					this.config.colorPrimary = item.val;
+					return;
+				}
+				if ("app_lang" == item.key) {
+					this.config.lang = item.value;
+					return;
+				}
+				if ("app_home" == item.key) {
+					this.home = item.value;
+					return;
+				}
+			});
 		}
 	},
 };
