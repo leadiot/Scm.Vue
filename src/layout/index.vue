@@ -270,7 +270,7 @@ export default {
 	created() {
 		this.onLayoutResize();
 		window.addEventListener('resize', this.onLayoutResize);
-		var menu = this.$router.sc_getMenu();
+		var menu = this.$router.getMenu();
 		this.menu = this.filterUrl(menu);
 		this.showThis();
 	},

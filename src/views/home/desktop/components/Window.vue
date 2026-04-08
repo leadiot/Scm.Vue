@@ -8,13 +8,24 @@
 			</div>
 			<div class="window-controls">
 				<button class="control-btn minimize" @click.stop="$emit('minimize', window.id)">
-					<sc-icon name="ms-remove" :size="12" />
+					<svg width="12" height="12" viewBox="0 0 12 12">
+						<rect x="2" y="5.5" width="8" height="1" fill="currentColor" />
+					</svg>
 				</button>
 				<button class="control-btn maximize" @click.stop="$emit('maximize', window.id)">
-					<sc-icon :name="window.maximized ? 'ms-content_copy' : 'ms-fullscreen'" :size="12" />
+					<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
+						<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
+						<rect x="1" y="3" width="8" height="8" fill="var(--win-bg)" stroke="currentColor" stroke-width="1" />
+					</svg>
+					<svg v-else width="12" height="12" viewBox="0 0 12 12">
+						<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1" />
+					</svg>
 				</button>
 				<button class="control-btn close" @click.stop="$emit('close', window.id)">
-					<sc-icon name="ms-close" :size="12" />
+					<svg width="12" height="12" viewBox="0 0 12 12">
+						<line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" />
+						<line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.2" />
+					</svg>
 				</button>
 			</div>
 		</div>
@@ -181,18 +192,27 @@ export default {
 
 <style scoped>
 .window {
+	--win-bg: #f3f3f3;
+	--win-border: rgba(0, 0, 0, 0.1);
+	--win-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+	--win-shadow-focused: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.12);
+	--win-title-height: 32px;
+	--win-radius: 8px;
+
 	position: absolute;
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	background-color: var(--win-bg);
+	border-radius: var(--win-radius);
+	border: 1px solid var(--win-border);
+	box-shadow: var(--win-shadow);
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	transition: box-shadow 0.3s;
+	transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .window.focused {
-	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+	box-shadow: var(--win-shadow-focused);
+	border-color: rgba(0, 0, 0, 0.08);
 	z-index: 100;
 }
 
@@ -200,91 +220,104 @@ export default {
 	z-index: 1;
 }
 
+.window:not(.focused) .window-header {
+	background-color: #fafafa;
+}
+
 .window.maximized {
 	border-radius: 0;
+	border: none;
 }
 
 .window-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 8px 12px;
-	background-color: #f5f5f5;
-	border-bottom: 1px solid #e0e0e0;
+	height: var(--win-title-height);
+	padding: 0 4px 0 12px;
+	background-color: var(--win-bg);
 	cursor: move;
 	user-select: none;
-}
-
-.window.focused .window-header {
-	background-color: #e8f4ff;
+	-webkit-app-region: drag;
 }
 
 .window-title {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	font-size: 14px;
-	font-weight: 500;
-	color: #333;
+	font-size: 12px;
+	font-weight: 400;
+	color: #1a1a1a;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.window:not(.focused) .window-title {
+	color: #666;
 }
 
 .window-controls {
 	display: flex;
-	gap: 8px;
+	height: 100%;
+	-webkit-app-region: no-drag;
 }
 
 .control-btn {
-	width: 24px;
-	height: 24px;
+	width: 46px;
+	height: 100%;
 	border: none;
-	border-radius: 4px;
+	background: transparent;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.3s;
+	color: #1a1a1a;
+	transition: background-color 0.1s ease;
+	position: relative;
 }
 
-.control-btn.minimize {
-	background-color: #ffbd2e;
-	color: #fff;
+.control-btn:hover {
+	background-color: rgba(0, 0, 0, 0.05);
 }
 
-.control-btn.minimize:hover {
-	background-color: #ffa500;
-}
-
-.control-btn.maximize {
-	background-color: #28c940;
-	color: #fff;
-}
-
-.control-btn.maximize:hover {
-	background-color: #00a800;
-}
-
-.control-btn.close {
-	background-color: #ff5f57;
-	color: #fff;
+.control-btn:active {
+	background-color: rgba(0, 0, 0, 0.08);
 }
 
 .control-btn.close:hover {
-	background-color: #ff0000;
+	background-color: #c42b1c;
+	color: #fff;
+}
+
+.control-btn.close:active {
+	background-color: #a0261a;
+	color: #fff;
 }
 
 .window-content {
 	flex: 1;
 	overflow: auto;
-	background-color: #fff;
+	background-color: var(--win-bg);
 }
 
 .resize-handle {
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	width: 12px;
-	height: 12px;
+	width: 16px;
+	height: 16px;
 	cursor: nwse-resize;
-	background: linear-gradient(135deg, transparent 50%, #ccc 50%);
+}
+
+.resize-handle::after {
+	content: '';
+	position: absolute;
+	bottom: 4px;
+	right: 4px;
+	width: 8px;
+	height: 8px;
+	background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
+	border-radius: 0 0 6px 0;
 }
 </style>

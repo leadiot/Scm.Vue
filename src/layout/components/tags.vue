@@ -110,7 +110,7 @@ export default {
 		},
 	},
 	created() {
-		var menu = this.$router.sc_getMenu();
+		var menu = this.$router.getMenu();
 		var dashboardRoute = this.treeFind(
 			menu,
 			(node) => node.path == this.$CONFIG.DASHBOARD_URL
@@ -158,7 +158,7 @@ export default {
 			var nowTag = this.contextMenuItem;
 
 			// TODO: 此处还没有想好如何获取当前route的id，只能再全量查找一次，有待后续解决。
-			var menuList = this.$router.sc_getMenu();
+			var menuList = this.$router.getMenu();
 			var menu = this.treeFind(
 				menuList,
 				(node) => node.path == nowTag.path

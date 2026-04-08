@@ -101,8 +101,7 @@ router.onError((error) => {
 	});
 });
 
-//入侵追加自定义方法、对象
-router.sc_getMenu = () => {
+router.getMenu = () => {
 	var apiMenu = tool.data.get("MENU") || [];
 	let userInfo = tool.data.get("USER_INFO");
 	let userMenu = treeFilter(userRoutes, (node) => {

@@ -39,7 +39,7 @@ export default {
 
 	},
 	created() {
-		var menu = this.$router.sc_getMenu()
+		var menu = this.$router.getMenu()
 		this.menu = this.filterUrl(menu)
 	},
 
