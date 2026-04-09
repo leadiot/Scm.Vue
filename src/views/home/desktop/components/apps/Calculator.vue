@@ -1,41 +1,63 @@
 <template>
 	<div class="calculator-app">
+		<div class="app-header">
+			<span class="app-title">计算器</span>
+		</div>
 		<div class="display">
 			<div class="expression">{{ expression || '0' }}</div>
 			<div class="result">{{ result }}</div>
 		</div>
 		<div class="buttons">
-			<button @click="clear" class="btn function">C</button>
-			<button @click="backspace" class="btn function">⌫</button>
+			<button @click="clear" class="btn function">
+				<sc-icon name="ms-clear_all" :size="22" />
+			</button>
+			<button @click="backspace" class="btn function">
+				<sc-icon name="ms-backspace" :size="22" />
+			</button>
 			<button @click="inputOperator('%')" class="btn function">%</button>
-			<button @click="inputOperator('/')" class="btn operator">÷</button>
+			<button @click="inputOperator('/')" class="btn operator">
+				<sc-icon name="ms-close" :size="20" />
+			</button>
 
 			<button @click="inputNumber('7')" class="btn">7</button>
 			<button @click="inputNumber('8')" class="btn">8</button>
 			<button @click="inputNumber('9')" class="btn">9</button>
-			<button @click="inputOperator('*')" class="btn operator">×</button>
+			<button @click="inputOperator('-')" class="btn operator">
+				<sc-icon name="ms-remove" :size="22" />
+			</button>
 
 			<button @click="inputNumber('4')" class="btn">4</button>
 			<button @click="inputNumber('5')" class="btn">5</button>
 			<button @click="inputNumber('6')" class="btn">6</button>
-			<button @click="inputOperator('-')" class="btn operator">−</button>
+			<button @click="inputOperator('+')" class="btn operator">
+				<sc-icon name="ms-add" :size="22" />
+			</button>
 
 			<button @click="inputNumber('1')" class="btn">1</button>
 			<button @click="inputNumber('2')" class="btn">2</button>
 			<button @click="inputNumber('3')" class="btn">3</button>
-			<button @click="inputOperator('+')" class="btn operator">+</button>
+			<button @click="calculate" class="btn equals">
+				<sc-icon name="ms-equals" :size="22" />
+			</button>
 
 			<button @click="toggleSign" class="btn">±</button>
 			<button @click="inputNumber('0')" class="btn">0</button>
 			<button @click="inputDecimal" class="btn">.</button>
-			<button @click="calculate" class="btn equals">=</button>
+			<button @click="inputOperator('*')" class="btn operator">
+				<sc-icon name="ms-close" :size="18" style="transform: rotate(45deg)" />
+			</button>
 		</div>
 	</div>
 </template>
 
 <script>
+import scIcon from '@/components/scIcon/index.vue';
+
 export default {
 	name: 'Calculator',
+	components: {
+		scIcon,
+	},
 	data() {
 		return {
 			expression: '',
@@ -99,29 +121,43 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	background-color: #f5f5f5;
+	background-color: #1a1a1a;
+	color: #fff;
+}
+
+.app-header {
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	background-color: #252525;
+	border-bottom: 1px solid #333;
+}
+
+.app-title {
+	font-size: 14px;
+	font-weight: 500;
 }
 
 .display {
 	padding: 20px;
-	background-color: #fff;
-	border-bottom: 1px solid #e0e0e0;
+	background-color: #1a1a1a;
+	border-bottom: 1px solid #333;
 }
 
 .expression {
-	font-size: 18px;
-	color: #666;
-	min-height: 24px;
+	font-size: 16px;
+	color: #888;
+	min-height: 22px;
 	text-align: right;
 	word-break: break-all;
 }
 
 .result {
-	font-size: 36px;
-	font-weight: bold;
-	color: #333;
+	font-size: 40px;
+	font-weight: 300;
+	color: #fff;
 	text-align: right;
-	margin-top: 10px;
+	margin-top: 8px;
 	word-break: break-all;
 }
 
@@ -129,48 +165,56 @@ export default {
 	flex: 1;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 1px;
-	background-color: #e0e0e0;
-	padding: 1px;
+	gap: 2px;
+	background-color: #252525;
+	padding: 2px;
 }
 
 .btn {
 	border: none;
-	background-color: #fff;
+	background-color: #333;
+	color: #fff;
 	font-size: 24px;
 	cursor: pointer;
-	transition: background-color 0.2s;
-	padding: 20px;
+	transition: all 0.2s;
+	padding: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .btn:hover {
-	background-color: #f0f0f0;
+	background-color: #444;
 }
 
 .btn:active {
-	background-color: #e0e0e0;
+	background-color: #555;
 }
 
 .btn.function {
-	background-color: #f5f5f5;
-	color: #ff9500;
+	background-color: #3a3a3a;
+	color: #409eff;
+}
+
+.btn.function:hover {
+	background-color: #4a4a4a;
 }
 
 .btn.operator {
-	background-color: #ff9500;
+	background-color: #409eff;
 	color: #fff;
 }
 
 .btn.operator:hover {
-	background-color: #ff8000;
+	background-color: #66b1ff;
 }
 
 .btn.equals {
-	background-color: #4cd964;
+	background-color: #67c23a;
 	color: #fff;
 }
 
 .btn.equals:hover {
-	background-color: #3cb054;
+	background-color: #85ce61;
 }
 </style>
