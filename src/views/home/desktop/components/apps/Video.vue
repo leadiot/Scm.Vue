@@ -44,7 +44,7 @@
 			<div ref="playerWrapper" class="player-wrapper" :class="{ fullscreen: isFullscreen }">
 				<video ref="videoPlayer" class="video-player" :src="currentVideo.url" :poster="currentVideo.poster"
 					@timeupdate="updateProgress" @loadedmetadata="onVideoLoaded" @ended="onVideoEnded"
-					@click="togglePlay" @dblclick="toggleFullscreen"></video>
+					@click="togglePlay" @dblclick="toggleFullscreen" @error="onVideoError"></video>
 
 				<div class="video-controls">
 					<div class="progress-bar" @click="seekVideo">
@@ -232,6 +232,14 @@ export default {
 		onVideoEnded() {
 			this.isPlaying = false;
 			this.showCenterPlay = true;
+		},
+		onVideoError(e) {
+			console.error('视频加载错误:', e);
+			this.isPlaying = false;
+			this.showCenterPlay = true;
+			if (this.currentVideo) {
+				this.$message.error(`视频资源无法加载: ${this.currentVideo.title}`);
+			}
 		},
 		seekVideo(e) {
 			if (!this.$refs.videoPlayer || !this.$refs.playerWrapper) return;

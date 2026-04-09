@@ -77,7 +77,8 @@
 			</div>
 		</div>
 
-		<audio ref="audioPlayer" @timeupdate="updateProgress" @loadedmetadata="onLoaded" @ended="onEnded"></audio>
+		<audio ref="audioPlayer" @timeupdate="updateProgress" @loadedmetadata="onLoaded" @ended="onEnded"
+			@error="onError"></audio>
 	</div>
 </template>
 
@@ -186,7 +187,11 @@ export default {
 			this.$nextTick(() => {
 				if (this.$refs.audioPlayer && this.currentSong) {
 					this.$refs.audioPlayer.src = this.currentSong.url;
-					this.$refs.audioPlayer.play();
+					this.$refs.audioPlayer.play().catch(err => {
+						console.error('音频播放失败:', err);
+						this.$message.error(`无法播放: ${this.currentSong.title}`);
+						this.isPlaying = false;
+					});
 					this.isPlaying = true;
 				}
 			});
@@ -261,6 +266,13 @@ export default {
 				this.$refs.audioPlayer.play();
 			} else {
 				this.nextSong();
+			}
+		},
+		onError(e) {
+			console.error('音频加载错误:', e);
+			this.isPlaying = false;
+			if (this.currentSong) {
+				this.$message.error(`音频资源无法加载: ${this.currentSong.title}`);
 			}
 		},
 		seek(e) {

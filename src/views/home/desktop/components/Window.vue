@@ -40,7 +40,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
-import Documents from './apps/Documents.vue';
+import Files from './apps/Files.vue';
 import BrowserApp from './apps/Browser.vue';
 import CalculatorApp from './apps/Calculator.vue';
 import CalendarApp from './apps/Calendar.vue';
@@ -96,7 +96,7 @@ export default {
 	methods: {
 		getComponent(componentName) {
 			const components = {
-				Documents,
+				Files,
 				Browser: BrowserApp,
 				Calculator: CalculatorApp,
 				Calendar: CalendarApp,
@@ -110,7 +110,7 @@ export default {
 				Notepad: NotepadApp,
 				Text: NotepadApp,
 			};
-			return components[componentName] || Documents;
+			return components[componentName] || Files;
 		},
 		handleFocus() {
 			this.$emit('focus', this.window.id);

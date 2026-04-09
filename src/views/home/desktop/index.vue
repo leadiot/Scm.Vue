@@ -452,16 +452,19 @@ export default {
 			const videoExts = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm'];
 			const audioExts = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma'];
 
+			let kind = '';
 			if (imageExts.includes(ext)) {
-				this.openNasFileWithApp(file, 'image');
+				kind = 'image';
 			} else if (videoExts.includes(ext)) {
-				this.openNasFileWithApp(file, 'video');
+				kind = 'video';
 			} else if (audioExts.includes(ext)) {
-				this.openNasFileWithApp(file, 'audio');
+				kind = 'audio';
 			} else {
 				this.$message.info(`无法打开此类型文件: ${file.name}`);
 				return;
 			}
+
+			this.openNasFileWithApp(kind, [file], 0);
 		}
 	},
 	provide() {
