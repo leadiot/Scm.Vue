@@ -167,7 +167,7 @@ export default {
 	},
 	mounted() {
 		this.output.push(this.version);
-		this.output.push(this.build);
+		// this.output.push(this.build);
 		this.output.push(this.copyright);
 		this.output.push('');
 

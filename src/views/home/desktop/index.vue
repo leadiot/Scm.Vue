@@ -68,7 +68,8 @@
 		</div>
 
 		<!-- 子菜单 -->
-		<div v-if="activeSubmenu" class="submenu" :style="{ ...submenuStyle, backgroundColor: menuColor, color: menuTextColor }" @mouseenter="keepSubmenu"
+		<div v-if="activeSubmenu" class="submenu"
+			:style="{ ...submenuStyle, backgroundColor: menuColor, color: menuTextColor }" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
 			<div v-for="child in activeSubmenu.children" :key="child.id" class="submenu-item" @click="openApp(child)">
 				<sc-icon :name="child.icon" />
@@ -92,12 +93,13 @@
 							</div>
 						</div>
 					</div>
+				</el-tab-pane>
+				<el-tab-pane label="个性设置">
 					<div class="settings-section">
 						<h4>图标颜色</h4>
 						<el-color-picker v-model="iconColor" :predefine="colorList" show-alpha />
 					</div>
-				</el-tab-pane>
-				<el-tab-pane label="背景设置">
+
 					<div class="settings-section">
 						<h4>背景类型</h4>
 						<el-radio-group v-model="backgroundType">
@@ -116,7 +118,7 @@
 						<h4>渐变颜色</h4>
 						<el-color-picker v-model="gradientColor1" />
 						<el-color-picker v-model="gradientColor2" />
-						<el-select v-model="gradientDirection" style="margin-left: 10px;">
+						<el-select v-model="gradientDirection" style="margin-left: 10px; width: 120px;">
 							<el-option label="从左到右" value="to right" />
 							<el-option label="从上到下" value="to bottom" />
 							<el-option label="对角线" value="to bottom right" />
@@ -213,17 +215,17 @@ export default {
 					label: '默认',
 					backgroundType: 'color',
 					backgroundColor: '#0078d4',
-					taskbarColor: 'rgba(0, 0, 0, 0.6)',
+					taskbarColor: 'rgba(0, 60, 90, 0.75)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(0, 0, 0, 0.9)',
+					menuColor: 'rgba(0, 60, 90, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: '#f3f3f3',
-						headerBg: '#f3f3f3',
+						bg: '#f8f9fa',
+						headerBg: '#f8f9fa',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(0, 0, 0, 0.1)'
+						titleColorInactive: '#6c757d',
+						border: 'rgba(0, 120, 212, 0.15)'
 					},
 					previewStyle: { backgroundColor: '#0078d4' }
 				},
@@ -231,60 +233,60 @@ export default {
 					name: 'dark',
 					label: '深色',
 					backgroundType: 'color',
-					backgroundColor: '#1a1a2e',
-					taskbarColor: 'rgba(0, 0, 0, 0.85)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(10, 10, 20, 0.95)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
+					backgroundColor: '#0d1117',
+					taskbarColor: 'rgba(13, 17, 23, 0.92)',
+					taskbarTextColor: '#e6edf3',
+					menuColor: 'rgba(22, 27, 34, 0.95)',
+					menuTextColor: '#e6edf3',
+					iconColor: '#e6edf3',
 					windowTheme: {
-						bg: '#2d2d3a',
-						headerBg: '#2d2d3a',
-						titleColor: '#ffffff',
-						titleColorInactive: '#999999',
-						border: 'rgba(255, 255, 255, 0.1)'
+						bg: '#161b22',
+						headerBg: '#161b22',
+						titleColor: '#e6edf3',
+						titleColorInactive: '#7d8590',
+						border: 'rgba(48, 54, 61, 0.8)'
 					},
-					previewStyle: { backgroundColor: '#1a1a2e' }
+					previewStyle: { backgroundColor: '#0d1117' }
 				},
 				{
 					name: 'light',
 					label: '浅色',
 					backgroundType: 'color',
-					backgroundColor: '#f0f2f5',
-					taskbarColor: 'rgba(255, 255, 255, 0.8)',
-					taskbarTextColor: '#333333',
+					backgroundColor: '#f5f7fa',
+					taskbarColor: 'rgba(255, 255, 255, 0.85)',
+					taskbarTextColor: '#24292f',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#333333',
-					iconColor: '#333333',
+					menuTextColor: '#24292f',
+					iconColor: '#24292f',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#ffffff',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(0, 0, 0, 0.08)'
+						titleColor: '#24292f',
+						titleColorInactive: '#57606a',
+						border: 'rgba(27, 31, 36, 0.12)'
 					},
-					previewStyle: { backgroundColor: '#f0f2f5' }
+					previewStyle: { backgroundColor: '#f5f7fa' }
 				},
 				{
 					name: 'ocean',
 					label: '海洋',
 					backgroundType: 'gradient',
-					gradientColor1: '#667eea',
-					gradientColor2: '#764ba2',
+					gradientColor1: '#1e3c72',
+					gradientColor2: '#2a5298',
 					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(102, 126, 234, 0.7)',
+					taskbarColor: 'rgba(30, 60, 114, 0.8)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(102, 126, 234, 0.9)',
+					menuColor: 'rgba(30, 60, 114, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.95)',
-						headerBg: 'rgba(102, 126, 234, 0.15)',
+						bg: 'rgba(255, 255, 255, 0.96)',
+						headerBg: 'rgba(42, 82, 152, 0.12)',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(102, 126, 234, 0.3)'
+						titleColorInactive: '#6c757d',
+						border: 'rgba(42, 82, 152, 0.25)'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
+					previewStyle: { background: 'linear-gradient(to bottom right, #1e3c72, #2a5298)' }
 				},
 				{
 					name: 'sunset',
@@ -293,19 +295,19 @@ export default {
 					gradientColor1: '#ff6b6b',
 					gradientColor2: '#feca57',
 					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(255, 107, 107, 0.7)',
+					taskbarColor: 'rgba(255, 65, 108, 0.75)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(255, 107, 107, 0.9)',
+					menuColor: 'rgba(200, 50, 80, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.95)',
-						headerBg: 'rgba(255, 107, 107, 0.15)',
+						bg: 'rgba(255, 255, 255, 0.96)',
+						headerBg: 'rgba(255, 75, 43, 0.12)',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(255, 107, 107, 0.3)'
+						titleColorInactive: '#6c757d',
+						border: 'rgba(255, 75, 43, 0.25)'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #ff6b6b, #feca57)' }
+					previewStyle: { background: 'linear-gradient(to bottom right, #ff416c, #ff4b2b)' }
 				},
 				{
 					name: 'forest',
@@ -314,17 +316,17 @@ export default {
 					gradientColor1: '#134e5e',
 					gradientColor2: '#71b280',
 					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(19, 78, 94, 0.7)',
+					taskbarColor: 'rgba(19, 78, 94, 0.78)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(19, 78, 94, 0.9)',
+					menuColor: 'rgba(19, 78, 94, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.95)',
-						headerBg: 'rgba(19, 78, 94, 0.15)',
+						bg: 'rgba(255, 255, 255, 0.96)',
+						headerBg: 'rgba(113, 178, 128, 0.15)',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(19, 78, 94, 0.3)'
+						titleColorInactive: '#6c757d',
+						border: 'rgba(113, 178, 128, 0.3)'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
 				},
@@ -332,22 +334,22 @@ export default {
 					name: 'purple',
 					label: '紫罗兰',
 					backgroundType: 'gradient',
-					gradientColor1: '#a855f7',
-					gradientColor2: '#6366f1',
-					gradientDirection: 'to right',
-					taskbarColor: 'rgba(168, 85, 247, 0.7)',
+					gradientColor1: '#654ea3',
+					gradientColor2: '#eaafc8',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(101, 78, 163, 0.78)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(168, 85, 247, 0.9)',
+					menuColor: 'rgba(101, 78, 163, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.95)',
-						headerBg: 'rgba(168, 85, 247, 0.15)',
+						bg: 'rgba(255, 255, 255, 0.96)',
+						headerBg: 'rgba(101, 78, 163, 0.12)',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#666666',
-						border: 'rgba(168, 85, 247, 0.3)'
+						titleColorInactive: '#6c757d',
+						border: 'rgba(101, 78, 163, 0.25)'
 					},
-					previewStyle: { background: 'linear-gradient(to right, #a855f7, #6366f1)' }
+					previewStyle: { background: 'linear-gradient(to bottom right, #654ea3, #eaafc8)' }
 				},
 				{
 					name: 'midnight',
@@ -356,19 +358,61 @@ export default {
 					gradientColor1: '#0f0c29',
 					gradientColor2: '#302b63',
 					gradientDirection: 'to bottom',
-					taskbarColor: 'rgba(15, 12, 41, 0.85)',
+					taskbarColor: 'rgba(15, 12, 41, 0.88)',
+					taskbarTextColor: '#e8e8f0',
+					menuColor: 'rgba(30, 25, 60, 0.95)',
+					menuTextColor: '#e8e8f0',
+					iconColor: '#e8e8f0',
+					windowTheme: {
+						bg: 'rgba(25, 22, 45, 0.96)',
+						headerBg: 'rgba(30, 27, 55, 0.96)',
+						titleColor: '#e8e8f0',
+						titleColorInactive: '#8b8ba0',
+						border: 'rgba(80, 70, 120, 0.35)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
+				},
+				{
+					name: 'aurora',
+					label: '极光',
+					backgroundType: 'gradient',
+					gradientColor1: '#00c6ff',
+					gradientColor2: '#0072ff',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(0, 114, 255, 0.75)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(15, 12, 41, 0.95)',
+					menuColor: 'rgba(0, 114, 255, 0.92)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
 					windowTheme: {
-						bg: 'rgba(30, 30, 50, 0.95)',
-						headerBg: 'rgba(30, 30, 50, 0.95)',
-						titleColor: '#ffffff',
-						titleColorInactive: '#999999',
-						border: 'rgba(100, 100, 150, 0.3)'
+						bg: 'rgba(255, 255, 255, 0.96)',
+						headerBg: 'rgba(0, 198, 255, 0.12)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#6c757d',
+						border: 'rgba(0, 198, 255, 0.25)'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
+					previewStyle: { background: 'linear-gradient(to bottom right, #00c6ff, #0072ff)' }
+				},
+				{
+					name: 'rose',
+					label: '玫瑰',
+					backgroundType: 'gradient',
+					gradientColor1: '#ee9ca7',
+					gradientColor2: '#ffdde1',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(238, 156, 167, 0.8)',
+					taskbarTextColor: '#4a3f44',
+					menuColor: 'rgba(238, 156, 167, 0.92)',
+					menuTextColor: '#4a3f44',
+					iconColor: '#4a3f44',
+					windowTheme: {
+						bg: 'rgba(255, 255, 255, 0.98)',
+						headerBg: 'rgba(238, 156, 167, 0.18)',
+						titleColor: '#4a3f44',
+						titleColorInactive: '#8a7a80',
+						border: 'rgba(238, 156, 167, 0.4)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #ee9ca7, #ffdde1)' }
 				}
 			]
 		};
@@ -445,7 +489,7 @@ export default {
 			var app = { id: 11, name: '我的云盘', icon: 'ms-monitor', component: 'Files', width: 900, height: 600 };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
-			
+
 			app = { id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
