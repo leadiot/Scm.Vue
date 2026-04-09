@@ -50,6 +50,8 @@ import MusicApp from './apps/Music.vue';
 import TerminalApp from './apps/Terminal.vue';
 import PictureApp from './apps/Picture.vue';
 import DownloadApp from './apps/Download.vue';
+import TodoApp from './apps/Todo.vue';
+import NotepadApp from './apps/Notepad.vue';
 
 export default {
 	name: 'Window',
@@ -104,6 +106,8 @@ export default {
 				Terminal: TerminalApp,
 				Pictures: PictureApp,
 				Download: DownloadApp,
+				Todo: TodoApp,
+				Notepad: NotepadApp,
 			};
 			return components[componentName] || Documents;
 		},

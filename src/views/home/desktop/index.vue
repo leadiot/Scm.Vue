@@ -58,9 +58,9 @@
 					<sc-icon name="ms-settings" />
 					<span>设置</span>
 				</div>
-				<div class="start-menu-action">
-					<sc-icon name="ms-power_off" />
-					<span>关机</span>
+				<div class="start-menu-action" @click="logout">
+					<sc-icon name="ms-exit_to_app" />
+					<span>退出</span>
 				</div>
 			</div>
 		</div>
@@ -122,13 +122,13 @@
 					</div>
 				</el-tab-pane>
 				<el-tab-pane label="框架布局">
-					<el-form ref="form" label-width="120px" style="margin-top:20px;">
+					<el-form ref="form" label-width="100px">
 						<el-form-item label="首页布局">
 							<el-select v-model="home" placeholder="请选择">
-								<el-option label="自定义" value="0"></el-option>
-								<el-option label="工作台" value="console"></el-option>
-								<el-option label="云桌面" value="desktop"></el-option>
-								<el-option label="大屏幕" value="display"></el-option>
+								<el-option label="自定义" value="/"></el-option>
+								<el-option label="工作台" value="/console"></el-option>
+								<el-option label="云桌面" value="/desktop"></el-option>
+								<el-option label="大屏幕" value="/display"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
@@ -189,15 +189,18 @@ export default {
 				'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=1920',
 				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
 			],
+			home: '/',
 			deskApps: [
-				{ id: 1, name: '我的文档', icon: 'ms-folder', component: 'Documents', width: 900, height: 600 },
+				{ id: 1, name: '我的文档', icon: 'ms-monitor', component: 'Documents', width: 900, height: 600 },
 				{ id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' },
-				{ id: 3, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580 },
-				{ id: 4, name: '日历', icon: 'ms-calendar_today', component: 'Calendar', width: 400, height: 460 },
-				{ id: 5, name: '音乐', icon: 'ms-music_note', component: 'Music' },
-				{ id: 6, name: '视频', icon: 'ms-videocam', component: 'Video' },
-				{ id: 7, name: '消息', icon: 'ms-mail', component: 'Message' },
-				{ id: 8, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 },
+				{ id: 3, name: '记事本', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 },
+				{ id: 4, name: '待办事项', icon: 'ms-assignment', component: 'Todo', width: 400, height: 500 },
+				{ id: 5, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580 },
+				{ id: 6, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 400, height: 460 },
+				{ id: 7, name: '音乐', icon: 'ms-music_note', component: 'Music' },
+				{ id: 8, name: '视频', icon: 'ms-videocam', component: 'Video' },
+				{ id: 9, name: '消息', icon: 'ms-mail', component: 'Message' },
+				{ id: 10, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 },
 			],
 			menuApps: [
 				{
@@ -207,8 +210,10 @@ export default {
 					children: [
 						{ id: 11, name: '我的文档', icon: 'ms-folder', component: 'Documents' },
 						{ id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' },
-						{ id: 13, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
-						{ id: 14, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
+						{ id: 13, name: '记事本', icon: 'ms-description', component: 'Notepad' },
+						{ id: 14, name: '待办事项', icon: 'ms-assignment', component: 'Todo' },
+						{ id: 15, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
+						{ id: 16, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
 					]
 				},
 				{
@@ -254,6 +259,19 @@ export default {
 		}
 	},
 	methods: {
+		async init() {
+			this.updateTime();
+			this.updateTimeInterval = setInterval(this.updateTime, 1000);
+
+			this.documentClickHandler = (e) => {
+				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
+					this.showStartMenu = false;
+				}
+			};
+			document.addEventListener('click', this.documentClickHandler);
+
+			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
+		},
 		updateTime() {
 			const now = new Date();
 			this.currentTime = now.toLocaleTimeString('zh-CN', {
@@ -357,17 +375,22 @@ export default {
 		saveSettings() {
 			this.showSettings = false;
 		},
+		logout() {
+			this.$confirm("确认是否退出当前用户？", "提示", {
+				type: "warning",
+				confirmButtonText: "退出",
+				confirmButtonClass: "el-button--danger",
+			})
+				.then(() => {
+					this.$router.replace({ path: "/login" });
+				})
+				.catch(() => {
+					//取消退出
+				});
+		}
 	},
 	mounted() {
-		this.updateTime();
-		this.updateTimeInterval = setInterval(this.updateTime, 1000);
-
-		this.documentClickHandler = (e) => {
-			if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
-				this.showStartMenu = false;
-			}
-		};
-		document.addEventListener('click', this.documentClickHandler);
+		this.init();
 	},
 	unmounted() {
 		if (this.updateTimeInterval) {
@@ -392,12 +415,17 @@ export default {
 }
 
 .desktop-icons {
-	top: 20px;
+	position: absolute;
 	left: 20px;
+	top: 20px;
+	right: 20px;
+	bottom: 68px;
 	display: grid;
 	grid-template-columns: repeat(auto-fill, 100px);
-	gap: 20px;
-	max-width: 500px;
+	grid-auto-flow: column;
+	grid-template-rows: repeat(auto-fill, 100px);
+	gap: 10px;
+	align-content: start;
 }
 
 .desktop-icon {
