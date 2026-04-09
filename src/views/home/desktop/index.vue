@@ -6,9 +6,9 @@
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image">
-					<sc-icon :name="app.icon" :size="48" />
+					<sc-icon :name="app.icon" :size="48" :color="iconColor" />
 				</div>
-				<div class="icon-text">{{ app.name }}</div>
+				<div class="icon-text" :style="{ color: iconColor }">{{ app.name }}</div>
 			</div>
 		</div>
 
@@ -19,7 +19,7 @@
 		</div>
 
 		<!-- 任务栏 -->
-		<div class="taskbar" :style="{ backgroundColor: taskbarColor }">
+		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor }">
 			<div class="taskbar-start" @click="toggleStartMenu">
 				<sc-icon name="ms-window" :size="24" />
 				<span>开始</span>
@@ -39,7 +39,7 @@
 		</div>
 
 		<!-- 开始菜单 -->
-		<div v-if="showStartMenu" class="start-menu">
+		<div v-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor }">
 			<div class="start-menu-header">
 				<sc-icon name="ms-account_circle" :size="32" />
 				<span>{{ userName }}</span>
@@ -68,7 +68,7 @@
 		</div>
 
 		<!-- 子菜单 -->
-		<div v-if="activeSubmenu" class="submenu" :style="submenuStyle" @mouseenter="keepSubmenu"
+		<div v-if="activeSubmenu" class="submenu" :style="{ ...submenuStyle, backgroundColor: menuColor, color: menuTextColor }" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
 			<div v-for="child in activeSubmenu.children" :key="child.id" class="submenu-item" @click="openApp(child)">
 				<sc-icon :name="child.icon" />
@@ -91,6 +91,10 @@
 								<span class="theme-name">{{ theme.label }}</span>
 							</div>
 						</div>
+					</div>
+					<div class="settings-section">
+						<h4>图标颜色</h4>
+						<el-color-picker v-model="iconColor" :predefine="colorList" show-alpha />
 					</div>
 				</el-tab-pane>
 				<el-tab-pane label="背景设置">
@@ -190,8 +194,12 @@ export default {
 			menuApps: [],
 			updateTimeInterval: null,
 			documentClickHandler: null,
+			iconColor: '#ffffff',
 			currentTheme: 'default',
 			taskbarColor: 'rgba(0, 0, 0, 0.6)',
+			taskbarTextColor: '#ffffff',
+			menuColor: 'rgba(0, 0, 0, 0.9)',
+			menuTextColor: '#ffffff',
 			themes: [
 				{
 					name: 'default',
@@ -199,6 +207,10 @@ export default {
 					backgroundType: 'color',
 					backgroundColor: '#0078d4',
 					taskbarColor: 'rgba(0, 0, 0, 0.6)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(0, 0, 0, 0.9)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { backgroundColor: '#0078d4' }
 				},
 				{
@@ -207,6 +219,10 @@ export default {
 					backgroundType: 'color',
 					backgroundColor: '#1a1a2e',
 					taskbarColor: 'rgba(0, 0, 0, 0.85)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(10, 10, 20, 0.95)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { backgroundColor: '#1a1a2e' }
 				},
 				{
@@ -215,6 +231,10 @@ export default {
 					backgroundType: 'color',
 					backgroundColor: '#f0f2f5',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
+					taskbarTextColor: '#333333',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#333333',
+					iconColor: '#333333',
 					previewStyle: { backgroundColor: '#f0f2f5' }
 				},
 				{
@@ -225,6 +245,10 @@ export default {
 					gradientColor2: '#764ba2',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(102, 126, 234, 0.7)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(102, 126, 234, 0.9)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
 				},
 				{
@@ -235,6 +259,10 @@ export default {
 					gradientColor2: '#feca57',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(255, 107, 107, 0.7)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(255, 107, 107, 0.9)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { background: 'linear-gradient(to bottom right, #ff6b6b, #feca57)' }
 				},
 				{
@@ -245,6 +273,10 @@ export default {
 					gradientColor2: '#71b280',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(19, 78, 94, 0.7)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(19, 78, 94, 0.9)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
 				},
 				{
@@ -255,6 +287,10 @@ export default {
 					gradientColor2: '#6366f1',
 					gradientDirection: 'to right',
 					taskbarColor: 'rgba(168, 85, 247, 0.7)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(168, 85, 247, 0.9)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { background: 'linear-gradient(to right, #a855f7, #6366f1)' }
 				},
 				{
@@ -265,6 +301,10 @@ export default {
 					gradientColor2: '#302b63',
 					gradientDirection: 'to bottom',
 					taskbarColor: 'rgba(15, 12, 41, 0.85)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(15, 12, 41, 0.95)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
 					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
 				}
 			]
@@ -486,12 +526,17 @@ export default {
 			});
 		},
 		saveSettings() {
+			localStorage.setItem('desktop_icon_color', this.iconColor);
 			this.showSettings = false;
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
 			this.backgroundType = theme.backgroundType;
 			this.taskbarColor = theme.taskbarColor;
+			this.taskbarTextColor = theme.taskbarTextColor || '#ffffff';
+			this.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
+			this.menuTextColor = theme.menuTextColor || '#ffffff';
+			this.iconColor = theme.iconColor || '#ffffff';
 
 			if (theme.backgroundType === 'color') {
 				this.backgroundColor = theme.backgroundColor;
@@ -510,6 +555,10 @@ export default {
 				if (theme) {
 					this.applyTheme(theme);
 				}
+			}
+			const savedIconColor = localStorage.getItem('desktop_icon_color');
+			if (savedIconColor) {
+				this.iconColor = savedIconColor;
 			}
 		},
 		logout() {
@@ -675,13 +724,11 @@ export default {
 	justify-content: center;
 	width: 64px;
 	height: 64px;
-	color: white;
 	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .icon-text {
 	margin-top: 5px;
-	color: white;
 	font-size: 12px;
 	text-align: center;
 	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
@@ -719,7 +766,6 @@ export default {
 	align-items: center;
 	gap: 8px;
 	padding: 8px 16px;
-	color: white;
 	cursor: pointer;
 	border-radius: 4px;
 	transition: background-color 0.3s;
@@ -742,7 +788,6 @@ export default {
 	align-items: center;
 	gap: 8px;
 	padding: 6px 12px;
-	color: white;
 	cursor: pointer;
 	border-radius: 4px;
 	background-color: rgba(255, 255, 255, 0.05);
@@ -768,7 +813,6 @@ export default {
 	align-items: center;
 	gap: 15px;
 	padding: 0 10px;
-	color: white;
 }
 
 .time {
@@ -780,7 +824,6 @@ export default {
 	bottom: 58px;
 	left: 10px;
 	width: 300px;
-	background-color: rgba(0, 0, 0, 0.9);
 	backdrop-filter: blur(20px);
 	border-radius: 8px;
 	overflow: hidden;
@@ -793,7 +836,6 @@ export default {
 	align-items: center;
 	gap: 15px;
 	padding: 20px;
-	color: white;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -812,7 +854,6 @@ export default {
 	align-items: center;
 	gap: 15px;
 	padding: 12px;
-	color: white;
 	cursor: pointer;
 	border-radius: 4px;
 	transition: background-color 0.3s;
@@ -830,7 +871,6 @@ export default {
 .submenu {
 	position: fixed;
 	min-width: 180px;
-	background-color: rgba(0, 0, 0, 0.95);
 	backdrop-filter: blur(20px);
 	border-radius: 8px;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -843,7 +883,6 @@ export default {
 	align-items: center;
 	gap: 12px;
 	padding: 12px 16px;
-	color: white;
 	cursor: pointer;
 	transition: background-color 0.3s;
 }
@@ -864,7 +903,6 @@ export default {
 	align-items: center;
 	gap: 10px;
 	padding: 12px;
-	color: white;
 	cursor: pointer;
 	border-radius: 4px;
 	transition: background-color 0.3s;
