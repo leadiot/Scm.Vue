@@ -128,7 +128,7 @@
 								<el-option label="自定义" value="/"></el-option>
 								<el-option label="工作台" value="/console"></el-option>
 								<el-option label="云桌面" value="/desktop"></el-option>
-								<el-option label="大屏幕" value="/display"></el-option>
+								<el-option label="大屏幕" value="/monitor"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>

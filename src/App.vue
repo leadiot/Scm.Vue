@@ -13,13 +13,13 @@ import { useRoute } from "vue-router";
 import LayoutNone from "@/layout/none/index.vue";
 import LayoutConsole from "@/layout/console/index.vue";
 import LayoutDesktop from "@/layout/desktop/index.vue";
-import LayoutDisplay from "@/layout/display/index.vue";
+import LayoutMonitor from "@/layout/monitor/index.vue";
 
 const layouts = {
 	none: LayoutNone,
 	console: LayoutConsole,
 	desktop: LayoutDesktop,
-	display: LayoutDisplay,
+	monitor: LayoutMonitor,
 };
 
 export default {

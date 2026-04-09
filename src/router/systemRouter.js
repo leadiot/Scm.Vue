@@ -52,10 +52,10 @@ const routes = [
 	},
 	// {
 	// 	id: '1008',
-	// 	name: 'display',
-	// 	path: "/display",
-	// 	component: () => import("@/views/home/display"),
-	// 	meta: { title: "大屏幕", layout: "display" },
+	// 	name: 'monitor',
+	// 	path: "/monitor",
+	// 	component: () => import("@/views/home/monitor"),
+	// 	meta: { title: "大屏幕", layout: "monitor" },
 	// },
 	// {
 	// 	id: '1009',

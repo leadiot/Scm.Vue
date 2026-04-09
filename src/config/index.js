@@ -33,7 +33,7 @@ const DEFAULT_CONFIG = {
 	DESKTOP_URL: "/desktop",
 
 	// 大屏幕地址
-	DISPLAY_URL: "/display",
+	MONITOR_URL: "/monitor",
 
 	// 服务器地址
 	SERVER_URL: import.meta.env.VITE_API_BASE,
