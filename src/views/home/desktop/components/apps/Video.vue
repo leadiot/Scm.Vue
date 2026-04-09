@@ -94,6 +94,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { formatDuration } from './utils.js';
 
 export default {
 	name: 'Video',
@@ -280,14 +281,7 @@ export default {
 			}
 		},
 		formatTime(seconds) {
-			if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
-			const mins = Math.floor(seconds / 60);
-			const secs = Math.floor(seconds % 60);
-			const hours = Math.floor(mins / 60);
-			if (hours > 0) {
-				return `${hours}:${String(mins % 60).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-			}
-			return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+			return formatDuration(seconds);
 		},
 		handleFullscreenChange() {
 			this.isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);

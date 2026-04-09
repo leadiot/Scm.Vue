@@ -84,6 +84,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { formatDuration } from './utils.js';
 
 export default {
 	name: 'Music',
@@ -282,10 +283,7 @@ export default {
 			this.$refs.audioPlayer.currentTime = pos * this.duration;
 		},
 		formatTime(seconds) {
-			if (!seconds || isNaN(seconds)) return '00:00';
-			const mins = Math.floor(seconds / 60);
-			const secs = Math.floor(seconds % 60);
-			return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+			return formatDuration(seconds);
 		},
 	},
 	mounted() {

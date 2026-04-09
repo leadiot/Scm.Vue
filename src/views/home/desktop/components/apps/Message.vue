@@ -87,6 +87,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { getAvatarColor } from './utils.js';
 
 export default {
 	name: 'Message',
@@ -111,7 +112,6 @@ export default {
 				{ id: 4, text: '可以啊，什么时间？', sent: true, time: '10:29' },
 				{ id: 5, text: '好的，明天见！', sent: false, time: '10:30' },
 			],
-			avatarColors: ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399'],
 		};
 	},
 	computed: {
@@ -148,9 +148,6 @@ export default {
 					}
 				});
 			}
-		},
-		getAvatarColor(id) {
-			return this.avatarColors[(id - 1) % this.avatarColors.length];
 		},
 	},
 };

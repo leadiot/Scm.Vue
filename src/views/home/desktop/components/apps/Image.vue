@@ -102,6 +102,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { formatSize } from './utils.js';
 
 export default {
 	name: 'Picture',
@@ -242,12 +243,6 @@ export default {
 			if (!this.currentPicture) return;
 			this.$emit('set-wallpaper', this.currentPicture.url);
 			this.$message.success('已设为桌面壁纸');
-		},
-		formatSize(bytes) {
-			if (!bytes) return '';
-			if (bytes < 1024) return bytes + ' B';
-			if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-			return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 		},
 		onImageLoad() {
 		},

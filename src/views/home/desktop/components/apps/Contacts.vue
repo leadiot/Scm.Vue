@@ -143,6 +143,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { getRandomColor } from './utils.js';
 
 export default {
     name: 'Contacts',
@@ -253,11 +254,10 @@ export default {
                 this.$message.warning('请填写姓名和电话');
                 return;
             }
-            const colors = ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399', '#00bcd4'];
             this.contacts.push({
                 id: Date.now(),
                 ...this.newContact,
-                color: colors[Math.floor(Math.random() * colors.length)],
+                color: getRandomColor(),
             });
             this.newContact = { name: '', phone: '', email: '', company: '', address: '', notes: '' };
             this.showAddDialog = false;

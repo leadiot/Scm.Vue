@@ -113,6 +113,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { getCurrentTime, getRandomColor } from './utils.js';
 
 export default {
 	name: 'SMS',
@@ -232,8 +233,7 @@ export default {
 		},
 		sendMessage() {
 			if (!this.newMessage.trim()) return;
-			const now = new Date();
-			const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+			const time = getCurrentTime();
 			const convId = this.selectedConversation.id;
 			if (!this.messagesData[convId]) {
 				this.messagesData[convId] = [];
@@ -268,14 +268,12 @@ export default {
 				this.$message.warning('请填写收件人和内容');
 				return;
 			}
-			const now = new Date();
-			const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-			const colors = ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399'];
+			const time = getCurrentTime();
 			const newConv = {
 				id: Date.now(),
 				name: this.newSMS.recipient,
 				phone: this.newSMS.recipient,
-				color: colors[Math.floor(Math.random() * colors.length)],
+				color: getRandomColor(),
 				time,
 				lastMessage: this.newSMS.content,
 				unread: 0,
