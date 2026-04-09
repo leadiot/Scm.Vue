@@ -147,7 +147,7 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	name: 'Documents',
+	name: 'Files',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],
 	data() {
@@ -256,7 +256,7 @@ export default {
 		async listFolder() {
 			var res = await this.$API.nascfgfolder.list.get("");
 			if (res.code == 0) {
-				folder.children = res.data || [];
+				this.folderList = res.data || [];
 			}
 			this.folderList = res.data || [];
 		},

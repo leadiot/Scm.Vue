@@ -28,7 +28,7 @@
 					</div>
 					<div class="picture-info">
 						<span class="picture-name">{{ picture.name }}</span>
-						<span class="picture-size">{{ formatSize(picture.size) }}</span>
+						<span class="picture-size">{{ $TOOL.fileSizeFormat(picture.size) }}</span>
 					</div>
 					<div class="picture-actions">
 						<el-button text size="small" @click.stop="removePicture(picture.id)">
@@ -102,10 +102,9 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
-import { formatSize } from './utils.js';
 
 export default {
-	name: 'Picture',
+	name: 'Image',
 	components: {
 		scIcon,
 	},

@@ -175,17 +175,17 @@ export default {
 <style scoped>
 .todo-count {
 	font-size: 13px;
-	color: #999;
+	color: var(--color-text-tertiary);
 }
 
 .todo-input {
 	padding: 15px 20px;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .todo-input .el-input-group__append {
-	background-color: #409eff;
-	border-color: #409eff;
+	background-color: var(--color-primary);
+	border-color: var(--color-primary);
 }
 
 .todo-input .el-input-group__append .el-button {
@@ -194,7 +194,7 @@ export default {
 
 .todo-filters {
 	padding: 10px 20px;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--color-border-light);
 	display: flex;
 	justify-content: center;
 }
@@ -211,22 +211,22 @@ export default {
 	padding: 12px 20px;
 	gap: 12px;
 	transition: all 0.3s;
-	border-bottom: 1px solid #f0f0f0;
+	border-bottom: 1px solid var(--color-bg-hover);
 }
 
 .todo-item:hover {
-	background-color: #f9f9f9;
+	background-color: var(--color-bg-secondary);
 }
 
 .todo-item.completed .todo-text {
 	text-decoration: line-through;
-	color: #999;
+	color: var(--color-text-tertiary);
 }
 
 .todo-text {
 	flex: 1;
 	font-size: 14px;
-	color: #333;
+	color: var(--color-text);
 	cursor: pointer;
 	word-break: break-word;
 }
@@ -243,7 +243,7 @@ export default {
 
 .todo-time {
 	font-size: 12px;
-	color: #bbb;
+	color: var(--color-text-hint);
 }
 
 .todo-empty {
@@ -252,7 +252,7 @@ export default {
 	align-items: center;
 	justify-content: center;
 	padding: 60px 20px;
-	color: #ccc;
+	color: var(--color-text-tertiary);
 }
 
 .todo-empty p {
@@ -262,7 +262,7 @@ export default {
 
 .todo-footer {
 	padding: 10px 20px;
-	border-top: 1px solid #eee;
+	border-top: 1px solid var(--color-border-light);
 	text-align: center;
 }
 

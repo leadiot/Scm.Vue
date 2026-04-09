@@ -173,8 +173,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 16px;
-	background-color: #f9f9f9;
-	border-bottom: 1px solid #e5e5e5;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-border);
 }
 
 .header-left {
@@ -198,11 +198,11 @@ export default {
 	align-items: center;
 	gap: 4px;
 	font-size: 12px;
-	color: #67c23a;
+	color: var(--color-success);
 }
 
 .online-icon {
-	color: #67c23a;
+	color: var(--color-success);
 }
 
 .header-actions {
@@ -211,12 +211,12 @@ export default {
 }
 
 .action-btn {
-	color: #999 !important;
+	color: var(--color-text-tertiary) !important;
 }
 
 .action-btn:hover {
-	color: #333 !important;
-	background-color: #f0f0f0 !important;
+	color: var(--color-text) !important;
+	background-color: var(--color-bg-hover) !important;
 }
 
 .messages {
@@ -240,11 +240,11 @@ export default {
 	max-width: 70%;
 	padding: 10px 14px;
 	border-radius: 12px;
-	background-color: #f0f0f0;
+	background-color: var(--color-bg-hover);
 }
 
 .message.sent .message-content {
-	background-color: #409eff;
+	background-color: var(--color-primary);
 }
 
 .text {
@@ -270,17 +270,17 @@ export default {
 	align-items: center;
 	gap: 8px;
 	padding: 12px 16px;
-	background-color: #f9f9f9;
-	border-top: 1px solid #e5e5e5;
+	background-color: var(--color-bg-secondary);
+	border-top: 1px solid var(--color-border);
 }
 
 .attach-btn {
-	color: #999 !important;
+	color: var(--color-text-tertiary) !important;
 }
 
 .attach-btn:hover {
-	color: #333 !important;
-	background-color: #f0f0f0 !important;
+	color: var(--color-text) !important;
+	background-color: var(--color-bg-hover) !important;
 }
 
 .msg-input {
@@ -288,15 +288,15 @@ export default {
 }
 
 :deep(.el-input__wrapper) {
-	background-color: #fff;
-	box-shadow: 0 0 0 1px #ddd;
+	background-color: var(--color-bg);
+	box-shadow: 0 0 0 1px var(--color-border-dark);
 }
 
 :deep(.el-input__inner) {
-	color: #333;
+	color: var(--color-text);
 }
 
 :deep(.el-input__inner::placeholder) {
-	color: #bbb;
+	color: var(--color-text-hint);
 }
 </style>

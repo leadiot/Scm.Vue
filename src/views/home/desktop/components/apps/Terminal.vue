@@ -183,14 +183,14 @@ export default {
 <style scoped>
 .terminal-theme {
 	background-color: #0c0c0c;
-	color: #cccccc;
+	color: var(--color-text-secondary);
 	font-family: 'Consolas', 'Courier New', monospace;
 	font-size: 14px;
 }
 
 .app-toolbar {
-	background-color: #1a1a1a;
-	border-bottom: 1px solid #333;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-border);
 	padding: 12px 16px;
 }
 
@@ -218,7 +218,7 @@ export default {
 	display: flex;
 	align-items: center;
 	padding: 12px;
-	border-top: 1px solid #333;
+	border-top: 1px solid var(--color-border);
 	background-color: #0a0a0a;
 }
 
@@ -233,14 +233,14 @@ export default {
 	flex: 1;
 	background: transparent;
 	border: none;
-	color: #cccccc;
+	color: var(--color-text-secondary);
 	font-family: inherit;
 	font-size: inherit;
 	outline: none;
 }
 
 .terminal-input input::placeholder {
-	color: #555;
+	color: var(--color-text-hint);
 }
 
 .terminal-output::-webkit-scrollbar {
@@ -248,15 +248,15 @@ export default {
 }
 
 .terminal-output::-webkit-scrollbar-track {
-	background: #1a1a1a;
+	background: var(--color-bg-secondary);
 }
 
 .terminal-output::-webkit-scrollbar-thumb {
-	background: #333;
+	background: var(--color-border);
 	border-radius: 4px;
 }
 
 .terminal-output::-webkit-scrollbar-thumb:hover {
-	background: #444;
+	background: var(--color-border-dark);
 }
 </style>

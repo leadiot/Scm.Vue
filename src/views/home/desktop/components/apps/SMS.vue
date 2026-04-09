@@ -313,8 +313,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 16px;
-	border-bottom: 1px solid #e5e5e5;
-	background-color: #f9f9f9;
+	border-bottom: 1px solid var(--color-border);
+	background-color: var(--color-bg-secondary);
 }
 
 .header-left {
@@ -335,7 +335,7 @@ export default {
 
 .header-info .phone {
 	font-size: 12px;
-	color: #999;
+	color: var(--color-text-tertiary);
 }
 
 .header-actions {
@@ -344,11 +344,11 @@ export default {
 }
 
 .action-btn {
-	color: #999 !important;
+	color: var(--color-text-tertiary) !important;
 }
 
 .action-btn:hover {
-	color: #409eff !important;
+	color: var(--color-primary) !important;
 }
 
 .messages {
@@ -380,12 +380,12 @@ export default {
 }
 
 .message.sent .message-bubble {
-	background-color: #409eff;
+	background-color: var(--color-primary);
 	border-bottom-right-radius: 4px;
 }
 
 .message.received .message-bubble {
-	background-color: #f0f0f0;
+	background-color: var(--color-bg-hover);
 	border-bottom-left-radius: 4px;
 }
 
@@ -396,7 +396,7 @@ export default {
 }
 
 .message.received .message-bubble .text {
-	color: #333;
+	color: var(--color-text);
 }
 
 .message-bubble .msg-time {
@@ -416,12 +416,12 @@ export default {
 	align-items: flex-end;
 	gap: 8px;
 	padding: 12px 16px;
-	border-top: 1px solid #e5e5e5;
-	background-color: #f9f9f9;
+	border-top: 1px solid var(--color-border);
+	background-color: var(--color-bg-secondary);
 }
 
 .attach-btn {
-	color: #999 !important;
+	color: var(--color-text-tertiary) !important;
 }
 
 .msg-input {
@@ -429,9 +429,9 @@ export default {
 }
 
 .msg-input :deep(.el-textarea__inner) {
-	background-color: #fff;
-	border-color: #ddd;
-	color: #333;
+	background-color: var(--color-bg);
+	border-color: var(--color-border-dark);
+	color: var(--color-text);
 	resize: none !important;
 }
 

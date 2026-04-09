@@ -272,8 +272,8 @@ export default {
 <style scoped>
 .group-header {
     padding: 8px 16px;
-    background-color: #f5f5f5;
-    color: #999;
+    background-color: var(--color-bg-hover);
+    color: var(--color-text-tertiary);
     font-size: 12px;
     font-weight: 600;
     position: sticky;
@@ -287,7 +287,7 @@ export default {
 
 .phone {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-tertiary);
 }
 
 .contact-detail {
@@ -307,7 +307,7 @@ export default {
     flex-direction: column;
     align-items: center;
     padding-bottom: 24px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--color-border);
     gap: 16px;
 }
 
@@ -323,18 +323,18 @@ export default {
 
 .header-info .company {
     font-size: 14px;
-    color: #999;
+    color: var(--color-text-tertiary);
 }
 
 .detail-section {
     padding: 20px 0;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .section-title {
     font-size: 14px;
     font-weight: 600;
-    color: #999;
+    color: var(--color-text-tertiary);
     margin-bottom: 12px;
 }
 
@@ -343,7 +343,7 @@ export default {
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    color: #333;
+    color: var(--color-text);
 }
 
 .info-item span {
@@ -351,7 +351,7 @@ export default {
 }
 
 .notes {
-    color: #666;
+    color: var(--color-text-secondary);
     line-height: 1.6;
 }
 

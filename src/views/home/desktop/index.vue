@@ -768,7 +768,7 @@ export default {
 				appConfig = {
 					name: '图像',
 					icon: 'ms-photo_library',
-					component: 'Pictures',
+					component: 'Image',
 					width: 900,
 					height: 700,
 					props: { files: files, index: index }
@@ -786,7 +786,7 @@ export default {
 				appConfig = {
 					name: '音频',
 					icon: 'ms-music_note',
-					component: 'Music',
+					component: 'Audio',
 					width: 500,
 					height: 600,
 					props: { files: files, index: index }

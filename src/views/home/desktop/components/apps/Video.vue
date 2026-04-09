@@ -68,7 +68,7 @@
 								<el-button text class="control-btn" @click="toggleMute">
 									<sc-icon :name="isMuted ? 'ms-volume_off' : 'ms-volume_up'" :size="24" />
 								</el-button>
-								<el-slider v-model="volume" :show-tooltip="false" :width="80" @input="changeVolume" />
+								<el-slider v-model="volume" :show-tooltip="false" @input="changeVolume" />
 							</div>
 							<span class="time-display">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
 						</div>
@@ -466,7 +466,8 @@ export default {
 }
 
 .volume-control .el-slider {
-	margin-left: 5px;
+	flex-shrink: 0;
+	width: 80px;
 }
 
 :deep(.el-slider__runway) {

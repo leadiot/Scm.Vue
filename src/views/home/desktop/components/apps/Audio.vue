@@ -74,7 +74,7 @@
 					<el-button text class="control-btn" @click="toggleMute">
 						<sc-icon :name="isMuted ? 'ms-volume_off' : 'ms-volume_up'" :size="20" />
 					</el-button>
-					<el-slider v-model="volume" :show-tooltip="false" :width="80" @input="changeVolume" />
+					<el-slider v-model="volume" :show-tooltip="false" @input="changeVolume" />
 				</div>
 			</div>
 		</div>
@@ -89,7 +89,7 @@ import scIcon from '@/components/scIcon/index.vue';
 import { formatDuration } from './utils.js';
 
 export default {
-	name: 'Music',
+	name: 'Audio',
 	components: {
 		scIcon,
 	},
@@ -308,7 +308,7 @@ export default {
 
 .gallery-count {
 	font-size: 13px;
-	color: #999;
+	color: var(--color-text-tertiary);
 }
 
 .music-list {
@@ -317,18 +317,18 @@ export default {
 }
 
 .app-list-item.playing {
-	background-color: rgba(64, 158, 255, 0.1);
+	background-color: var(--color-primary-light);
 }
 
 .song-number {
 	width: 30px;
-	color: #666;
+	color: var(--color-text-hint);
 	font-size: 14px;
 	text-align: center;
 }
 
 .playing-icon {
-	color: #409eff;
+	color: var(--color-primary);
 	animation: pulse 1s ease-in-out infinite;
 }
 
@@ -346,17 +346,17 @@ export default {
 
 .song-artist {
 	font-size: 12px;
-	color: #888;
+	color: var(--color-text-preview);
 }
 
 .song-duration {
-	color: #888;
+	color: var(--color-text-preview);
 	font-size: 13px;
 }
 
 .player-controls {
-	background-color: #252525;
-	border-top: 1px solid #333;
+	background-color: var(--color-bg-secondary);
+	border-top: 1px solid var(--color-border);
 	padding: 15px;
 }
 
@@ -370,12 +370,12 @@ export default {
 .song-cover {
 	width: 48px;
 	height: 48px;
-	background-color: #333;
+	background-color: var(--color-border);
 	border-radius: 8px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #666;
+	color: var(--color-text-hint);
 }
 
 .song-meta {
@@ -397,7 +397,7 @@ export default {
 
 .progress-bar {
 	height: 4px;
-	background-color: #333;
+	background-color: var(--color-border);
 	border-radius: 2px;
 	cursor: pointer;
 	margin-bottom: 8px;
@@ -409,7 +409,7 @@ export default {
 
 .progress-played {
 	height: 100%;
-	background-color: #409eff;
+	background-color: var(--color-primary);
 	border-radius: 2px;
 }
 
@@ -417,7 +417,7 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	font-size: 11px;
-	color: #888;
+	color: var(--color-text-preview);
 	margin-bottom: 12px;
 }
 
@@ -429,7 +429,7 @@ export default {
 }
 
 .control-btn {
-	color: #fff !important;
+	color: var(--color-text) !important;
 	padding: 8px !important;
 }
 
@@ -438,7 +438,7 @@ export default {
 }
 
 .play-btn {
-	color: #409eff !important;
+	color: var(--color-primary) !important;
 }
 
 .volume-control {
@@ -454,14 +454,14 @@ export default {
 }
 
 :deep(.el-slider__runway) {
-	background-color: #333;
+	background-color: var(--color-border);
 }
 
 :deep(.el-slider__bar) {
-	background-color: #409eff;
+	background-color: var(--color-primary);
 }
 
 :deep(.el-slider__button) {
-	border-color: #fff;
+	border-color: var(--color-text);
 }
 </style>

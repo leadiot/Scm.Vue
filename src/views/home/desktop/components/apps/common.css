@@ -1,3 +1,55 @@
+:root {
+	--color-primary: #409eff;
+	--color-primary-light: rgba(64, 158, 255, 0.1);
+	--color-primary-lighter: rgba(64, 158, 255, 0.05);
+	--color-success: #67c23a;
+	--color-warning: #e6a23c;
+	--color-danger: #f56c6c;
+	--color-info: #909399;
+}
+
+.app-light {
+	--color-bg: #fff;
+	--color-bg-secondary: #f9f9f9;
+	--color-bg-hover: #f5f5f5;
+	--color-bg-active: #e8f4ff;
+	--color-border: #e5e5e5;
+	--color-border-light: #eee;
+	--color-border-dark: #ddd;
+	--color-text: #333;
+	--color-text-secondary: #666;
+	--color-text-tertiary: #999;
+	--color-text-hint: #bbb;
+	--color-text-time: #999;
+	--color-text-preview: #888;
+	--color-empty: #999;
+	--color-empty-hint: #bbb;
+	--color-dropzone-border: #ddd;
+	--color-dropzone-text: #666;
+	--color-dropzone-hint: #999;
+}
+
+.app-dark {
+	--color-bg: #1a1a1a;
+	--color-bg-secondary: #252525;
+	--color-bg-hover: #2a2a2a;
+	--color-bg-active: #333;
+	--color-border: #333;
+	--color-border-light: #333;
+	--color-border-dark: #444;
+	--color-text: #fff;
+	--color-text-secondary: #ccc;
+	--color-text-tertiary: #999;
+	--color-text-hint: #666;
+	--color-text-time: #909399;
+	--color-text-preview: #888;
+	--color-empty: #666;
+	--color-empty-hint: #555;
+	--color-dropzone-border: #444;
+	--color-dropzone-text: #999;
+	--color-dropzone-hint: #666;
+}
+
 .app-container {
 	height: 100%;
 	display: flex;
@@ -90,7 +142,7 @@
 }
 
 .app-empty.drag-over {
-	border: 2px dashed #409eff;
+	border: 2px dashed var(--color-primary);
 	border-radius: 8px;
 	margin: 10px;
 }
@@ -108,7 +160,7 @@
 
 .app-drop-zone:hover,
 .app-drop-zone.drag-over {
-	border-color: #409eff;
+	border-color: var(--color-primary);
 }
 
 .app-drop-zone p {
@@ -153,7 +205,7 @@
 	min-width: 18px;
 	height: 18px;
 	padding: 0 5px;
-	background-color: #409eff;
+	background-color: var(--color-primary);
 	color: #fff;
 	border-radius: 9px;
 	font-size: 11px;
@@ -170,7 +222,7 @@
 }
 
 .app-toolbar-btn {
-	color: #409eff !important;
+	color: var(--color-primary) !important;
 }
 
 .app-divider {
@@ -189,29 +241,29 @@
 }
 
 .app-light {
-	background-color: #fff;
-	color: #333;
+	background-color: var(--color-bg);
+	color: var(--color-text);
 }
 
 .app-light .app-sidebar {
-	background-color: #f9f9f9;
-	border-right: 1px solid #e5e5e5;
+	background-color: var(--color-bg-secondary);
+	border-right: 1px solid var(--color-border);
 }
 
 .app-light .app-header {
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .app-light .app-search-box {
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .app-light .app-list-item:hover {
-	background-color: #f5f5f5;
+	background-color: var(--color-bg-hover);
 }
 
 .app-light .app-list-item.active {
-	background-color: #e8f4ff;
+	background-color: var(--color-bg-active);
 }
 
 .app-light .app-avatar {
@@ -219,75 +271,75 @@
 }
 
 .app-light .app-empty {
-	color: #999;
+	color: var(--color-empty);
 }
 
 .app-light .app-empty .hint {
-	color: #bbb;
+	color: var(--color-empty-hint);
 }
 
 .app-light .app-empty.drag-over {
-	background-color: rgba(64, 158, 255, 0.05);
+	background-color: var(--color-primary-lighter);
 }
 
 .app-light .app-drop-zone {
-	border-color: #ddd;
+	border-color: var(--color-dropzone-border);
 }
 
 .app-light .app-drop-zone:hover,
 .app-light .app-drop-zone.drag-over {
-	background-color: rgba(64, 158, 255, 0.05);
+	background-color: var(--color-primary-lighter);
 }
 
 .app-light .app-drop-zone p {
-	color: #666;
+	color: var(--color-dropzone-text);
 }
 
 .app-light .app-drop-zone .hint {
-	color: #999;
+	color: var(--color-dropzone-hint);
 }
 
 .app-light .app-time {
-	color: #999;
+	color: var(--color-text-time);
 }
 
 .app-light .app-preview {
-	color: #888;
+	color: var(--color-text-preview);
 }
 
 .app-light .app-toolbar {
-	background-color: #f9f9f9;
-	border-bottom: 1px solid #eee;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-border-light);
 }
 
 .app-light .app-divider {
-	background-color: #ddd;
+	background-color: var(--color-border-dark);
 }
 
 .app-dark {
-	background-color: #1a1a1a;
-	color: #fff;
+	background-color: var(--color-bg);
+	color: var(--color-text);
 }
 
 .app-dark .app-sidebar {
-	background-color: #252525;
-	border-right: 1px solid #333;
+	background-color: var(--color-bg-secondary);
+	border-right: 1px solid var(--color-border);
 }
 
 .app-dark .app-header {
-	border-bottom: 1px solid #333;
+	border-bottom: 1px solid var(--color-border);
 }
 
 .app-dark .app-search-box {
-	border-bottom: 1px solid #333;
+	border-bottom: 1px solid var(--color-border);
 }
 
 .app-dark .app-list-item:hover {
-	background-color: #2a2a2a;
+	background-color: var(--color-bg-hover);
 }
 
 .app-dark .app-list-item.active {
-	background-color: #333;
+	background-color: var(--color-bg-active);
 }
 
 .app-dark .app-avatar {
@@ -295,47 +347,47 @@
 }
 
 .app-dark .app-empty {
-	color: #666;
+	color: var(--color-empty);
 }
 
 .app-dark .app-empty .hint {
-	color: #555;
+	color: var(--color-empty-hint);
 }
 
 .app-dark .app-empty.drag-over {
-	background-color: rgba(64, 158, 255, 0.1);
+	background-color: var(--color-primary-light);
 }
 
 .app-dark .app-drop-zone {
-	border-color: #444;
+	border-color: var(--color-dropzone-border);
 }
 
 .app-dark .app-drop-zone:hover,
 .app-dark .app-drop-zone.drag-over {
-	background-color: rgba(64, 158, 255, 0.1);
+	background-color: var(--color-primary-light);
 }
 
 .app-dark .app-drop-zone p {
-	color: #999;
+	color: var(--color-dropzone-text);
 }
 
 .app-dark .app-drop-zone .hint {
-	color: #666;
+	color: var(--color-dropzone-hint);
 }
 
 .app-dark .app-time {
-	color: #909399;
+	color: var(--color-text-time);
 }
 
 .app-dark .app-preview {
-	color: #888;
+	color: var(--color-text-preview);
 }
 
 .app-dark .app-toolbar {
-	background-color: #252525;
-	border-bottom: 1px solid #333;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-border);
 }
 
 .app-dark .app-divider {
-	background-color: #333;
+	background-color: var(--color-border);
 }
