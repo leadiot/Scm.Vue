@@ -164,10 +164,11 @@ export default {
 			gradientDirection: 'to bottom right',
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
 			presetImages: [
-				'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
-				'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920',
-				'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=1920',
-				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
+				'/images/01.jpg',
+				'/images/02.jpg',
+				'/images/03.jpg',
+				'/images/04.jpg',
+				'/images/05.jpg',
 			],
 			userName: 'User',
 			home: '/',
@@ -589,7 +590,7 @@ export default {
 	left: 0;
 	right: 0;
 	height: 48px;
-	background-color: rgba(0, 0, 0, 0.8);
+	background-color: rgba(0, 0, 0, 0.6);
 	backdrop-filter: blur(10px);
 	display: flex;
 	align-items: center;
