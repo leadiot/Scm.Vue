@@ -8,44 +8,34 @@
 			<div class="result">{{ result }}</div>
 		</div>
 		<div class="buttons">
-			<button @click="clear" class="btn function">
+			<button @click="clear" class="btn function" tooltip="清除">
 				<sc-icon name="ms-clear_all" :size="22" />
 			</button>
-			<button @click="backspace" class="btn function">
+			<button @click="backspace" class="btn function" tooltip="删除">
 				<sc-icon name="ms-backspace" :size="22" />
 			</button>
-			<button @click="inputOperator('%')" class="btn function">%</button>
-			<button @click="inputOperator('/')" class="btn operator">
-				<sc-icon name="ms-close" :size="20" />
-			</button>
+			<button @click="inputOperator('%')" class="btn function" tooltip="百分比">%</button>
+			<button @click="inputOperator('/')" class="btn operator" tooltip="除法">/</button>
 
 			<button @click="inputNumber('7')" class="btn">7</button>
 			<button @click="inputNumber('8')" class="btn">8</button>
 			<button @click="inputNumber('9')" class="btn">9</button>
-			<button @click="inputOperator('-')" class="btn operator">
-				<sc-icon name="ms-remove" :size="22" />
-			</button>
+			<button @click="inputOperator('*')" class="btn operator" tooltip="乘法">*</button>
 
 			<button @click="inputNumber('4')" class="btn">4</button>
 			<button @click="inputNumber('5')" class="btn">5</button>
 			<button @click="inputNumber('6')" class="btn">6</button>
-			<button @click="inputOperator('+')" class="btn operator">
-				<sc-icon name="ms-add" :size="22" />
-			</button>
+			<button @click="inputOperator('-')" class="btn operator" tooltip="减法">-</button>
 
 			<button @click="inputNumber('1')" class="btn">1</button>
 			<button @click="inputNumber('2')" class="btn">2</button>
 			<button @click="inputNumber('3')" class="btn">3</button>
-			<button @click="calculate" class="btn equals">
-				<sc-icon name="ms-equals" :size="22" />
-			</button>
+			<button @click="inputOperator('+')" class="btn operator" tooltip="加法">+</button>
 
-			<button @click="toggleSign" class="btn">±</button>
+			<button @click="inputDecimal" class="btn" tooltip="小数点">.</button>
 			<button @click="inputNumber('0')" class="btn">0</button>
-			<button @click="inputDecimal" class="btn">.</button>
-			<button @click="inputOperator('*')" class="btn operator">
-				<sc-icon name="ms-close" :size="18" style="transform: rotate(45deg)" />
-			</button>
+			<button @click="toggleSign" class="btn" tooltip="切换符号">±</button>
+			<button @click="calculate" class="btn equals" tooltip="等于">=</button>
 		</div>
 	</div>
 </template>

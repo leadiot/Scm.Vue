@@ -38,11 +38,12 @@ export default {
 	data() {
 		return {
 			command: '',
-			output: [
-				'Microsoft Windows [版本 10.0.19045]',
-				'(c) Microsoft Corporation。保留所有权利。',
-				'',
-			],
+			version: 'LeadIOT Scm.Net [版本 ' + this.$CONFIG.APP_VER + ']',
+			build: this.$CONFIG.APP_BUILD,
+			copyright: '(c) LeadIOT。保留所有权利。',
+			rootDir: 'nas://',
+			userName: 'User',
+			output: [],
 			history: [],
 			historyIndex: -1,
 		};
@@ -53,7 +54,7 @@ export default {
 				this.history.push(this.command);
 				this.historyIndex = this.history.length;
 
-				this.output.push(`C:\\Users\\User> ${this.command}`);
+				this.output.push(`${this.rootDir}> ${this.command}`);
 
 				const cmd = this.command.toLowerCase().trim();
 				const args = cmd.split(' ');
@@ -77,7 +78,7 @@ export default {
 						this.output.push(this.command.substring(5));
 						break;
 					case 'whoami':
-						this.output.push('User');
+						this.output.push(this.userName);
 						break;
 					case 'hostname':
 						this.output.push('DESKTOP-WIN11');
@@ -87,7 +88,7 @@ export default {
 						this.showDirectory();
 						break;
 					case 'ver':
-						this.output.push('Microsoft Windows [版本 10.0.19045]');
+						this.output.push(this.version);
 						break;
 					case 'color':
 						this.output.push('设置终端颜色功能暂未实现');
@@ -126,7 +127,7 @@ export default {
 			this.output.push(' 驱动器 C 中的卷没有标签。');
 			this.output.push(' 卷的序列号是 XXXX-XXXX');
 			this.output.push('');
-			this.output.push(' C:\\Users\\User 的目录');
+			this.output.push(`${this.rootDir} 的目录`);
 			this.output.push('');
 			this.output.push('2024/01/15  10:30    <DIR>          Desktop');
 			this.output.push('2024/01/15  10:30    <DIR>          Documents');
@@ -136,7 +137,7 @@ export default {
 			this.output.push('               4 个目录');
 		},
 		showIpConfig() {
-			this.output.push('Windows IP 配置');
+			this.output.push('您的 IP 配置');
 			this.output.push('');
 			this.output.push('以太网适配器 以太网:');
 			this.output.push('   连接特定的 DNS 后缀 . . . . . . . :');
@@ -165,6 +166,16 @@ export default {
 		},
 	},
 	mounted() {
+		this.output.push(this.version);
+		this.output.push(this.build);
+		this.output.push(this.copyright);
+		this.output.push('');
+
+		var userInfo = this.$TOOL.session.get("USER_INFO");
+		if (userInfo) {
+			this.userName = userInfo.userName;
+		}
+
 		this.$refs.input?.focus();
 	},
 };
