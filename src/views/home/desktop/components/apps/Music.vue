@@ -19,9 +19,9 @@
 
 		<div v-else class="music-list">
 			<div v-for="(song, index) in songs" :key="song.id" class="song-item"
-				:class="{ playing: currentSongIndex === index }" @click="playSong(index)">
+				:class="{ playing: currentIndex === index }" @click="playSong(index)">
 				<div class="song-number">
-					<sc-icon v-if="currentSongIndex === index && isPlaying" name="ms-music_note" :size="16"
+					<sc-icon v-if="currentIndex === index && isPlaying" name="ms-music_note" :size="16"
 						class="playing-icon" />
 					<span v-else>{{ index + 1 }}</span>
 				</div>
@@ -90,15 +90,13 @@ export default {
 		scIcon,
 	},
 	props: {
-		initialFile: {
-			type: Object,
-			default: null
-		}
+		files: { type: Array, default: () => [] },
+		index: { type: Number, default: 0 }
 	},
 	data() {
 		return {
 			songs: [],
-			currentSongIndex: -1,
+			currentIndex: -1,
 			isPlaying: false,
 			isMuted: false,
 			volume: 80,
@@ -112,7 +110,7 @@ export default {
 	},
 	computed: {
 		currentSong() {
-			return this.songs[this.currentSongIndex];
+			return this.songs[this.currentIndex];
 		},
 		progressPercent() {
 			return this.duration > 0 ? (this.currentTime / this.duration) * 100 : 0;
@@ -127,17 +125,20 @@ export default {
 		},
 	},
 	methods: {
-		loadInitialFile() {
-			if (this.initialFile && this.initialFile.url) {
-				this.songs.push({
-					id: this.songIdCounter++,
-					title: this.initialFile.name,
-					artist: '',
-					duration: '',
-					url: this.initialFile.url,
+		loadInitialFiles() {
+			if (this.files && this.files.length > 0) {
+				this.files.forEach(file => {
+					this.songs.push({
+						id: this.songIdCounter++,
+						title: file.name,
+						artist: '',
+						duration: '',
+						url: file.url,
+					});
 				});
+				this.currentIndex = Math.min(this.index, this.songs.length - 1);
 				this.$nextTick(() => {
-					this.playSong(0);
+					this.playSong(this.currentIndex);
 				});
 			}
 		},
@@ -171,7 +172,7 @@ export default {
 		removeSong(id) {
 			const index = this.songs.findIndex(s => s.id === id);
 			if (index > -1) {
-				if (index === this.currentSongIndex) {
+				if (index === this.currentIndex) {
 					this.stopPlay();
 				}
 				URL.revokeObjectURL(this.songs[index].url);
@@ -181,7 +182,7 @@ export default {
 		playSong(index) {
 			if (index < 0 || index >= this.songs.length) return;
 
-			this.currentSongIndex = index;
+			this.currentIndex = index;
 			this.$nextTick(() => {
 				if (this.$refs.audioPlayer && this.currentSong) {
 					this.$refs.audioPlayer.src = this.currentSong.url;
@@ -212,7 +213,7 @@ export default {
 		},
 		prevSong() {
 			if (this.songs.length === 0) return;
-			let index = this.currentSongIndex - 1;
+			let index = this.currentIndex - 1;
 			if (index < 0) index = this.songs.length - 1;
 			this.playSong(index);
 		},
@@ -222,7 +223,7 @@ export default {
 			if (this.playMode === 'random') {
 				index = Math.floor(Math.random() * this.songs.length);
 			} else {
-				index = this.currentSongIndex + 1;
+				index = this.currentIndex + 1;
 				if (index >= this.songs.length) index = 0;
 			}
 			this.playSong(index);
@@ -279,8 +280,8 @@ export default {
 		if (this.$refs.audioPlayer) {
 			this.$refs.audioPlayer.volume = this.volume / 100;
 		}
-		if (this.initialFile) {
-			this.loadInitialFile();
+		if (this.files && this.files.length > 0) {
+			this.loadInitialFiles();
 		}
 	},
 };
@@ -370,8 +371,15 @@ export default {
 }
 
 @keyframes pulse {
-	0%, 100% { opacity: 1; }
-	50% { opacity: 0.5; }
+
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
 }
 
 .song-info {

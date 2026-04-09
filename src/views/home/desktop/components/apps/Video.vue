@@ -42,9 +42,9 @@
 			</div>
 
 			<div ref="playerWrapper" class="player-wrapper" :class="{ fullscreen: isFullscreen }">
-				<video ref="videoPlayer" class="video-player" :src="currentVideo.url"
-					:poster="currentVideo.poster" @timeupdate="updateProgress" @loadedmetadata="onVideoLoaded"
-					@ended="onVideoEnded" @click="togglePlay" @dblclick="toggleFullscreen"></video>
+				<video ref="videoPlayer" class="video-player" :src="currentVideo.url" :poster="currentVideo.poster"
+					@timeupdate="updateProgress" @loadedmetadata="onVideoLoaded" @ended="onVideoEnded"
+					@click="togglePlay" @dblclick="toggleFullscreen"></video>
 
 				<div class="video-controls">
 					<div class="progress-bar" @click="seekVideo">
@@ -101,20 +101,14 @@ export default {
 		scIcon,
 	},
 	props: {
-		initialFile: {
-			type: Object,
-			default: null
-		}
+		files: { type: Array, default: () => [] },
+		index: { type: Number, default: 0 }
 	},
 	data() {
 		return {
 			currentVideo: null,
-			videos: [
-				{ id: 1, title: '项目演示视频', duration: '15:30', url: '' },
-				{ id: 2, title: '会议录像', duration: '45:20', url: '' },
-				{ id: 3, title: '教学视频', duration: '20:15', url: '' },
-				{ id: 4, title: '产品介绍', duration: '10:45', url: '' },
-			],
+			videos: [],
+			currentIndex: 0,
 			isDragOver: false,
 			isPlaying: false,
 			isMuted: false,
@@ -127,20 +121,24 @@ export default {
 			progressPercent: 0,
 			playbackRate: 1,
 			playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
-			videoIdCounter: 5,
+			videoIdCounter: 1,
 		};
 	},
 	methods: {
-		loadInitialFile() {
-			if (this.initialFile && this.initialFile.url) {
-				const video = {
-					id: this.videoIdCounter++,
-					title: this.initialFile.name,
-					url: this.initialFile.url,
-					duration: '--:--',
-				};
-				this.videos.push(video);
-				this.playVideo(video);
+		loadInitialFiles() {
+			if (this.files && this.files.length > 0) {
+				this.files.forEach(file => {
+					this.videos.push({
+						id: this.videoIdCounter++,
+						title: file.name,
+						url: file.url,
+						duration: '--:--',
+					});
+				});
+				this.currentIndex = Math.min(this.currentIndex, this.videos.length - 1);
+				this.$nextTick(() => {
+					this.playVideo(this.videos[this.currentIndex]);
+				});
 			}
 		},
 		handleDrop(e) {
@@ -290,8 +288,8 @@ export default {
 	mounted() {
 		document.addEventListener('fullscreenchange', this.handleFullscreenChange);
 		document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange);
-		if (this.initialFile) {
-			this.loadInitialFile();
+		if (this.files && this.files.length > 0) {
+			this.loadInitialFiles();
 		}
 	},
 	unmounted() {

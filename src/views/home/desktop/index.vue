@@ -294,6 +294,7 @@ export default {
 				title: app.name,
 				icon: app.icon,
 				component: app.component,
+				props: app.props,
 				minimized: false,
 				maximized: false,
 				focused: true,
@@ -388,68 +389,85 @@ export default {
 					//取消退出
 				});
 		},
-		openFileWithApp(file) {
-			const ext = file.name.split('.').pop().toLowerCase();
-			const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-			const videoExts = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm'];
-			const audioExts = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma'];
+		/**
+		 * 打开Nas文件
+		 * @param kind 文件类型，如：image, video, audio
+		 * @param files 文件列表
+		 * @param index 当前文件索引
+		 */
+		openNasFileWithApp(kind, files, index) {
+			if (!files || files.length === 0) return;
 
 			let appConfig = null;
-
-			if (imageExts.includes(ext)) {
+			if (kind === 'text') {
+				appConfig = {
+					name: '文本查看',
+					icon: 'ms-article',
+					component: 'Text',
+					width: 900,
+					height: 700,
+					props: { files: files, index: index }
+				};
+			} else if (kind === 'image') {
 				appConfig = {
 					name: '图片查看',
 					icon: 'ms-photo_library',
 					component: 'Pictures',
 					width: 900,
 					height: 700,
-					props: { initialFile: file }
+					props: { files: files, index: index }
 				};
-			} else if (videoExts.includes(ext)) {
+			} else if (kind === 'video') {
 				appConfig = {
 					name: '视频播放',
 					icon: 'ms-videocam',
 					component: 'Video',
 					width: 900,
 					height: 600,
-					props: { initialFile: file }
+					props: { files: files, index: index }
 				};
-			} else if (audioExts.includes(ext)) {
+			} else if (kind === 'audio') {
 				appConfig = {
 					name: '音乐播放',
 					icon: 'ms-music_note',
 					component: 'Music',
 					width: 500,
 					height: 600,
-					props: { initialFile: file }
+					props: { files: files, index: index }
 				};
+			} else {
+				this.$message.info(`无法打开此类型文件`);
+				return;
+			}
+
+			this.openApp(appConfig);
+		},
+		/**
+		 * 打开Web文件
+		 * @param file 文件路径URL
+		 */
+		openWebFileWithApp(file) {
+			const ext = file.name.split('.').pop().toLowerCase();
+			const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+			const videoExts = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm'];
+			const audioExts = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma'];
+
+			if (imageExts.includes(ext)) {
+				this.openNasFileWithApp(file, 'image');
+			} else if (videoExts.includes(ext)) {
+				this.openNasFileWithApp(file, 'video');
+			} else if (audioExts.includes(ext)) {
+				this.openNasFileWithApp(file, 'audio');
 			} else {
 				this.$message.info(`无法打开此类型文件: ${file.name}`);
 				return;
 			}
-
-			this.showStartMenu = false;
-			const windowId = ++this.windowIdCounter;
-			this.windows.push({
-				id: windowId,
-				title: appConfig.name,
-				icon: appConfig.icon,
-				component: appConfig.component,
-				props: appConfig.props,
-				minimized: false,
-				maximized: false,
-				focused: true,
-				x: 100 + (windowId % 5) * 30,
-				y: 100 + (windowId % 5) * 30,
-				width: appConfig.width || 800,
-				height: appConfig.height || 600,
-			});
-			this.focusWindow(windowId);
 		}
 	},
 	provide() {
 		return {
-			openFileWithApp: this.openFileWithApp
+			openWebFileWithApp: this.openWebFileWithApp,
+			openNasFileWithApp: this.openNasFileWithApp
 		};
 	},
 	mounted() {

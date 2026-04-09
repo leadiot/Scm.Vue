@@ -141,7 +141,7 @@ import scIcon from '@/components/scIcon/index.vue';
 export default {
 	name: 'Documents',
 	components: { scIcon },
-	inject: ['openFileWithApp'],
+	inject: ['openNasFileWithApp'],
 	data() {
 		return {
 			param: {
@@ -273,14 +273,54 @@ export default {
 
 			this.fileList = res.data || [];
 		},
+		/**
+		 * 打开文档
+		 * @param item 文档项
+		 */
+		openDocWithWeb(item) {
+			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
+			window.open(fileUrl, '_blank');
+		},
+		/**
+		 * 打开文档
+		 * @param item 文档项	
+		 */
+		openDocWithApp(item) {
+		},
 		openDoc(item) {
-			if (this.openFileWithApp) {
-				var file = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
-				console.log(file);
-				this.openFileWithApp(file);
-			} else {
-				this.$message.info(`打开文件: ${item.name}`);
+			if (!this.openNasFileWithApp) {
+				this.openDocWithWeb(item);
+				return;
 			}
+
+			var kind = '';
+			if (item.kind == 20) {
+				kind = 'text';
+			}
+			else if (item.kind == 31) {
+				kind = 'image';
+			}
+			else if (item.kind == 32) {
+				kind = 'audio';
+			}
+			else if (item.kind == 33) {
+				kind = 'video';
+			} else {
+				this.openDocWithWeb(item);
+				return;
+			}
+
+			const files = this.fileList.filter(f => {
+				return f.kind === item.kind;
+			}).map(f => ({
+				id: f.id,
+				name: f.name,
+				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.id),
+				size: f.size || 0,
+			}));
+
+			const index = files.findIndex(f => f.id === item.id);
+			this.openNasFileWithApp(kind, files, index);
 		},
 		clearSelection() {
 			this.selectedItems = [];

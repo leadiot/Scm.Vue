@@ -108,6 +108,7 @@ export default {
 				Download: DownloadApp,
 				Todo: TodoApp,
 				Notepad: NotepadApp,
+				Text: NotepadApp,
 			};
 			return components[componentName] || Documents;
 		},

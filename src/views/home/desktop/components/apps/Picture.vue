@@ -103,10 +103,8 @@ export default {
 		scIcon,
 	},
 	props: {
-		initialFile: {
-			type: Object,
-			default: null
-		}
+		files: { type: Array, default: () => [] },
+		index: { type: Number, default: 0 }
 	},
 	data() {
 		return {
@@ -126,19 +124,23 @@ export default {
 		},
 	},
 	methods: {
-		loadInitialFile() {
-			if (this.initialFile && this.initialFile.url) {
-				this.pictures.push({
-					id: this.pictureIdCounter++,
-					name: this.initialFile.name,
-					url: this.initialFile.url,
-					size: this.initialFile.size || 0,
-					type: this.initialFile.type || 'image/jpeg',
-				});
-				this.$nextTick(() => {
-					this.openPreview(0);
-				});
+		loadInitialFiles() {
+			if (!this.files || this.files.length < 1) {
+				return;
 			}
+
+			this.files.forEach(file => {
+				this.pictures.push({
+					id: file.id,
+					name: file.name,
+					url: file.url,
+					size: file.size || 0,
+					type: file.type || 'image/jpeg',
+				});
+			});
+			this.$nextTick(() => {
+				this.openPreview(this.index);
+			});
 		},
 		handleDrop(e) {
 			this.isDragOver = false;
@@ -177,6 +179,9 @@ export default {
 			}
 		},
 		openPreview(index) {
+			if (index < 0 || index >= this.pictures.length) {
+				index = 0;
+			}
 			this.currentIndex = index;
 			this.isPreviewMode = true;
 			this.resetZoom();
@@ -281,9 +286,7 @@ export default {
 	},
 	mounted() {
 		document.addEventListener('keydown', this.handleKeydown);
-		if (this.initialFile) {
-			this.loadInitialFile();
-		}
+		this.loadInitialFiles();
 	},
 	unmounted() {
 		document.removeEventListener('keydown', this.handleKeydown);
