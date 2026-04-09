@@ -276,7 +276,7 @@ scm.list_dic = async function (list, key, all, useCatch) {
  * @returns
  */
 scm.list_cfg = async function () {
-	var res = await http.get(`${config.API_URL}/scmsysconfig/list`, { 'types': 10 });
+	var res = await http.get(`${config.API_URL}/scmsysconfig/list`, { 'client': 10 });
 	if (!res || res.code != 200) {
 		return;
 	}
@@ -297,7 +297,7 @@ scm.read_cfg = async function (key, def, useCatch) {
 		return val;
 	}
 
-	var res = await http.get(`${config.API_URL}/scmsysconfig/config/` + key);
+	var res = await http.get(`${config.API_URL}/scmsysconfig/key/` + key);
 	if (!res || res.code != 200) {
 		return def;
 	}
@@ -323,11 +323,28 @@ scm.save_cfg = async function (key, value) {
 	scm.cache[key] = value;
 
 	let data = {};
+	data.client = 10;
 	data.key = key;
 	data.value = value;
-	data.types = 10;
 	data.data = 0;
 	await http.post(`${config.API_URL}/scmsysconfig/save`, data);
+}
+
+scm.save_cfgs = async function (cfgs) {
+	var list = [];
+	for (let idx in cfgs) {
+		var cfg = cfgs[idx];
+		console.log(cfg);
+		scm.cache[cfg.key] = cfg.value;
+		list.push({
+			client: 10,
+			key: cfg.key,
+			value: cfg.value,
+			data: 0,
+		});
+	}
+
+	await http.post(`${config.API_URL}/scmsysconfig/batch`, list);
 }
 
 /**

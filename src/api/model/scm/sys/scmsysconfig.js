@@ -57,4 +57,11 @@ export default {
 			return await http.delete(this.url + "?ids=" + params);
 		},
 	},
+	batch: {
+		url: `${config.API_URL}/scmsysconfig/batch`,
+		name: "批量操作",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
 };

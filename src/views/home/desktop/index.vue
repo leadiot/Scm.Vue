@@ -503,6 +503,8 @@ export default {
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
+			this.loadSettings();
+
 			this.listApp();
 			this.loadTheme();
 
@@ -689,8 +691,31 @@ export default {
 				resizable: false
 			});
 		},
-		saveSettings() {
-			localStorage.setItem('desktop_icon_color', this.iconColor);
+		async loadSettings() {
+			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
+			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
+			this.iconColor = await this.$SCM.read_cfg("desktop_icon_color", this.iconColor);
+			this.menuColor = await this.$SCM.read_cfg("desktop_menu_color", this.menuColor);
+			this.backgroundType = await this.$SCM.read_cfg("desktop_background_type", this.backgroundType);
+			this.backgroundColor = await this.$SCM.read_cfg("desktop_background_color", this.backgroundColor);
+			this.backgroundImage = await this.$SCM.read_cfg("desktop_background_image", this.backgroundImage);
+			this.gradientColor1 = await this.$SCM.read_cfg("desktop_gradient_color1", this.gradientColor1);
+			this.gradientColor2 = await this.$SCM.read_cfg("desktop_gradient_color2", this.gradientColor2);
+			this.gradientDirection = await this.$SCM.read_cfg("desktop_gradient_direction", this.gradientDirection);
+		},
+		async saveSettings() {
+			var cfgs = [];
+			cfgs.push({ key: "app_home", value: this.home, });
+			cfgs.push({ key: "desktop_theme", value: this.currentTheme.id, });
+			cfgs.push({ key: "desktop_icon_color", value: this.iconColor, });
+			cfgs.push({ key: "desktop_menu_color", value: this.menuColor, });
+			cfgs.push({ key: "desktop_background_type", value: this.backgroundType, });
+			cfgs.push({ key: "desktop_background_color", value: this.backgroundColor, });
+			cfgs.push({ key: "desktop_background_image", value: this.backgroundImage, });
+			cfgs.push({ key: "desktop_gradient_color1", value: this.gradientColor1, });
+			cfgs.push({ key: "desktop_gradient_color2", value: this.gradientColor2, });
+			cfgs.push({ key: "desktop_gradient_direction", value: this.gradientDirection, });
+			await this.$SCM.save_cfgs(cfgs);
 			this.showSettings = false;
 		},
 		applyTheme(theme) {
