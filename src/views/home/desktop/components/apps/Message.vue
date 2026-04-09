@@ -126,6 +126,7 @@ export default {
 		},
 	},
 	methods: {
+		getAvatarColor,
 		selectContact(id) {
 			this.selectedContact = id;
 			const contact = this.contacts.find((c) => c.id === id);

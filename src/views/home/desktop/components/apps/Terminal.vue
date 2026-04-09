@@ -1,23 +1,20 @@
 <template>
-	<div class="app-container app-dark terminal-theme">
-		<div class="app-header">
-			<div class="header-left">
-				<sc-icon name="ms-terminal" :size="18" />
-				<span class="app-header-title">终端</span>
-			</div>
-			<div class="header-actions">
-				<el-button text class="app-toolbar-btn" @click="clearTerminal" title="清空">
-					<sc-icon name="ms-delete_sweep" :size="18" />
-				</el-button>
-			</div>
+	<div class="app-container app-dark">
+		<div class="app-toolbar">
+			<sc-icon name="ms-terminal" :size="18" />
+			<span class="app-header-title">终端</span>
+			<div class="header-spacer"></div>
+			<el-button type="primary" size="small" @click="clearTerminal" title="清空">
+				<sc-icon name="ms-delete_sweep" />
+			</el-button>
 		</div>
-		<div class="terminal-output" ref="output">
+		<div class="terminal-output terminal-theme" ref="output">
 			<div v-for="(line, index) in output" :key="index" class="output-line"
 				:class="{ 'is-command': line.startsWith('C:\\') }">
 				{{ line }}
 			</div>
 		</div>
-		<div class="terminal-input">
+		<div class="terminal-input terminal-theme">
 			<span class="prompt">
 				<sc-icon name="ms-chevron_right" :size="16" />
 			</span>
@@ -191,15 +188,14 @@ export default {
 	font-size: 14px;
 }
 
-.terminal-theme .app-header {
+.app-toolbar {
 	background-color: #1a1a1a;
 	border-bottom: 1px solid #333;
+	padding: 12px 16px;
 }
 
-.header-left {
-	display: flex;
-	align-items: center;
-	gap: 8px;
+.header-spacer {
+	flex: 1;
 }
 
 .terminal-output {

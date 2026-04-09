@@ -2,6 +2,8 @@
 	<div class="app-container app-dark" @dragover.prevent @drop.prevent="handleDrop">
 		<div class="app-toolbar">
 			<span class="app-header-title">音频</span>
+			<span class="gallery-count">{{ songs.length }} 首音频</span>
+			<div class="header-spacer"></div>
 			<el-button type="primary" size="small" @click="openFileDialog">
 				<sc-icon name="ms-add" style="margin-right: 4px;" />
 				添加音频
@@ -300,6 +302,15 @@ export default {
 <style src="./common.css"></style>
 
 <style scoped>
+.header-spacer {
+	flex: 1;
+}
+
+.gallery-count {
+	font-size: 13px;
+	color: #999;
+}
+
 .music-list {
 	flex: 1;
 	overflow-y: auto;
