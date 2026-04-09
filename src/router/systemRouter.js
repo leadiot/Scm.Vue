@@ -43,13 +43,13 @@ const routes = [
 	// 	component: () => import("@/views/home/index"),
 	// 	meta: { title: "控制台", layout: "console" },
 	// },
-	// {
-	// 	id: '1007',
-	// 	name: 'desktop',
-	// 	path: "/desktop",
-	// 	component: () => import("@/views/home/desktop"),
-	// 	meta: { title: "云桌面", layout: "desktop" },
-	// },
+	{
+		id: '1007',
+		name: 'desktop',
+		path: "/desktop",
+		component: () => import("@/views/home/desktop"),
+		meta: { title: "云桌面", layout: "desktop" },
+	},
 	// {
 	// 	id: '1008',
 	// 	name: 'display',
