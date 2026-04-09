@@ -14,8 +14,8 @@
 
 		<!-- 窗口容器 -->
 		<div class="windows-container">
-			<Window v-for="window in windows" :key="window.id" :window="window" @close="closeWindow"
-				@minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow" />
+			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
+				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow" />
 		</div>
 
 		<!-- 任务栏 -->
@@ -200,6 +200,13 @@ export default {
 			taskbarTextColor: '#ffffff',
 			menuColor: 'rgba(0, 0, 0, 0.9)',
 			menuTextColor: '#ffffff',
+			windowTheme: {
+				bg: '#f3f3f3',
+				headerBg: '#f3f3f3',
+				titleColor: '#1a1a1a',
+				titleColorInactive: '#666666',
+				border: 'rgba(0, 0, 0, 0.1)'
+			},
 			themes: [
 				{
 					name: 'default',
@@ -211,6 +218,13 @@ export default {
 					menuColor: 'rgba(0, 0, 0, 0.9)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#f3f3f3',
+						headerBg: '#f3f3f3',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(0, 0, 0, 0.1)'
+					},
 					previewStyle: { backgroundColor: '#0078d4' }
 				},
 				{
@@ -223,6 +237,13 @@ export default {
 					menuColor: 'rgba(10, 10, 20, 0.95)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#2d2d3a',
+						headerBg: '#2d2d3a',
+						titleColor: '#ffffff',
+						titleColorInactive: '#999999',
+						border: 'rgba(255, 255, 255, 0.1)'
+					},
 					previewStyle: { backgroundColor: '#1a1a2e' }
 				},
 				{
@@ -235,6 +256,13 @@ export default {
 					menuColor: 'rgba(255, 255, 255, 0.95)',
 					menuTextColor: '#333333',
 					iconColor: '#333333',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#ffffff',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(0, 0, 0, 0.08)'
+					},
 					previewStyle: { backgroundColor: '#f0f2f5' }
 				},
 				{
@@ -249,6 +277,13 @@ export default {
 					menuColor: 'rgba(102, 126, 234, 0.9)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: 'rgba(255, 255, 255, 0.95)',
+						headerBg: 'rgba(102, 126, 234, 0.15)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(102, 126, 234, 0.3)'
+					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
 				},
 				{
@@ -263,6 +298,13 @@ export default {
 					menuColor: 'rgba(255, 107, 107, 0.9)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: 'rgba(255, 255, 255, 0.95)',
+						headerBg: 'rgba(255, 107, 107, 0.15)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(255, 107, 107, 0.3)'
+					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #ff6b6b, #feca57)' }
 				},
 				{
@@ -277,6 +319,13 @@ export default {
 					menuColor: 'rgba(19, 78, 94, 0.9)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: 'rgba(255, 255, 255, 0.95)',
+						headerBg: 'rgba(19, 78, 94, 0.15)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(19, 78, 94, 0.3)'
+					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
 				},
 				{
@@ -291,6 +340,13 @@ export default {
 					menuColor: 'rgba(168, 85, 247, 0.9)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: 'rgba(255, 255, 255, 0.95)',
+						headerBg: 'rgba(168, 85, 247, 0.15)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#666666',
+						border: 'rgba(168, 85, 247, 0.3)'
+					},
 					previewStyle: { background: 'linear-gradient(to right, #a855f7, #6366f1)' }
 				},
 				{
@@ -305,6 +361,13 @@ export default {
 					menuColor: 'rgba(15, 12, 41, 0.95)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					windowTheme: {
+						bg: 'rgba(30, 30, 50, 0.95)',
+						headerBg: 'rgba(30, 30, 50, 0.95)',
+						titleColor: '#ffffff',
+						titleColorInactive: '#999999',
+						border: 'rgba(100, 100, 150, 0.3)'
+					},
 					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
 				}
 			]
@@ -537,6 +600,13 @@ export default {
 			this.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
 			this.menuTextColor = theme.menuTextColor || '#ffffff';
 			this.iconColor = theme.iconColor || '#ffffff';
+			this.windowTheme = theme.windowTheme || {
+				bg: '#f3f3f3',
+				headerBg: '#f3f3f3',
+				titleColor: '#1a1a1a',
+				titleColorInactive: '#666666',
+				border: 'rgba(0, 0, 0, 0.1)'
+			};
 
 			if (theme.backgroundType === 'color') {
 				this.backgroundColor = theme.backgroundColor;

@@ -61,6 +61,7 @@ export default {
 	},
 	props: {
 		window: { type: Object, required: true },
+		theme: { type: Object, default: () => ({}) },
 	},
 	emits: ['close', 'minimize', 'maximize', 'focus'],
 	data() {
@@ -77,16 +78,25 @@ export default {
 	},
 	computed: {
 		windowStyle() {
+			const baseStyle = {
+				'--win-bg': this.theme.bg || '#f3f3f3',
+				'--win-header-bg': this.theme.headerBg || '#f3f3f3',
+				'--win-title-color': this.theme.titleColor || '#1a1a1a',
+				'--win-title-color-inactive': this.theme.titleColorInactive || '#666666',
+				'--win-border': this.theme.border || 'rgba(0, 0, 0, 0.1)',
+			};
+
 			if (this.window.maximized) {
 				return {
+					...baseStyle,
 					top: '0',
 					left: '0',
 					width: '100%',
-					// height: 'calc(100% - 48px)',
 					height: '100%',
 				};
 			}
 			return {
+				...baseStyle,
 				top: `${this.window.y}px`,
 				left: `${this.window.x}px`,
 				width: `${this.window.width}px`,
@@ -178,6 +188,9 @@ export default {
 <style scoped>
 .window {
 	--win-bg: #f3f3f3;
+	--win-header-bg: #f3f3f3;
+	--win-title-color: #1a1a1a;
+	--win-title-color-inactive: #666666;
 	--win-border: rgba(0, 0, 0, 0.1);
 	--win-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
 	--win-shadow-focused: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -192,7 +205,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	transition: box-shadow 0.2s ease, border-color 0.2s ease;
+	transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.3s ease;
 }
 
 .window.focused {
@@ -206,7 +219,8 @@ export default {
 }
 
 .window:not(.focused) .window-header {
-	background-color: #fafafa;
+	background-color: var(--win-header-bg);
+	opacity: 0.85;
 }
 
 .window.maximized {
@@ -220,10 +234,11 @@ export default {
 	align-items: center;
 	height: var(--win-title-height);
 	padding: 0 4px 0 12px;
-	background-color: var(--win-bg);
+	background-color: var(--win-header-bg);
 	cursor: move;
 	user-select: none;
 	-webkit-app-region: drag;
+	transition: background-color 0.3s ease;
 }
 
 .window-title {
@@ -232,14 +247,14 @@ export default {
 	gap: 8px;
 	font-size: 12px;
 	font-weight: 400;
-	color: #1a1a1a;
+	color: var(--win-title-color);
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
 .window:not(.focused) .window-title {
-	color: #666;
+	color: var(--win-title-color-inactive);
 }
 
 .window-controls {
@@ -257,7 +272,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #1a1a1a;
+	color: var(--win-title-color);
 	transition: background-color 0.1s ease;
 	position: relative;
 }
