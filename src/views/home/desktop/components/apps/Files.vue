@@ -13,8 +13,8 @@
 				</button>
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
-						<sc-icon name="ms-monitor" :size="16" />
-						<span>我的云盘</span>
+						<sc-icon name="ms-cloud" :size="16" />
+						<span>云空间</span>
 					</span>
 					<span v-for="(item, index) in currentPath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
@@ -37,7 +37,7 @@
 		<div class="app-content">
 			<div class="sidebar">
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的云盘</div>
+					<div class="sidebar-title">云空间</div>
 					<div v-for="item in stores" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
@@ -183,7 +183,7 @@ export default {
 				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
 				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
 				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
-				{ id: 'archives', name: '压缩', icon: 'ms-archive', type: 'folder', kind: 60 },
+				{ id: 'archives', name: '归档', icon: 'ms-archive', type: 'folder', kind: 60 },
 			],
 			deviceList: [],
 			folderList: [],
@@ -631,7 +631,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding: 6px 16px;
+	padding: 6px 24px;
 	cursor: pointer;
 	font-size: 13px;
 	color: #333;

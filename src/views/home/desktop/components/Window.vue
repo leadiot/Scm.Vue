@@ -32,10 +32,12 @@
 		</div>
 
 		<div class="window-content">
-			<component :is="getComponent(window.component)" v-bind="window.props || {}" @set-wallpaper="onSetWallpaper" />
+			<component :is="getComponent(window.component)" v-bind="window.props || {}"
+				@set-wallpaper="onSetWallpaper" />
 		</div>
 
-		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize"></div>
+		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize">
+		</div>
 	</div>
 </template>
 
@@ -47,9 +49,9 @@ import CalculatorApp from './apps/Calculator.vue';
 import CalendarApp from './apps/Calendar.vue';
 import MessageApp from './apps/Message.vue';
 import VideoApp from './apps/Video.vue';
-import MusicApp from './apps/Music.vue';
+import AudioApp from './apps/Audio.vue';
 import TerminalApp from './apps/Terminal.vue';
-import PictureApp from './apps/Picture.vue';
+import ImageApp from './apps/Image.vue';
 import DownloadApp from './apps/Download.vue';
 import TodoApp from './apps/Todo.vue';
 import NotepadApp from './apps/Notepad.vue';
@@ -115,9 +117,9 @@ export default {
 				Calendar: CalendarApp,
 				Message: MessageApp,
 				Video: VideoApp,
-				Music: MusicApp,
+				Audio: AudioApp,
 				Terminal: TerminalApp,
-				Pictures: PictureApp,
+				Image: ImageApp,
 				Download: DownloadApp,
 				Todo: TodoApp,
 				Notepad: NotepadApp,

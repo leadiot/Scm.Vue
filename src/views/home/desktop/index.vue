@@ -530,7 +530,7 @@ export default {
 			this.selectedApp = null;
 		},
 		listApp() {
-			var app = { id: 11, name: '我的云盘', icon: 'ms-monitor', component: 'Files', width: 900, height: 600 };
+			var app = { id: 11, name: '云空间', icon: 'ms-cloud', component: 'Files', width: 900, height: 600 };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
 
@@ -556,10 +556,10 @@ export default {
 
 			menu = { id: 2, name: '多媒体', icon: 'ms-videocam', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 21, name: '图像', icon: 'ms-photo_library', component: 'Pictures' };
+			app = { id: 21, name: '图像', icon: 'ms-photo_library', component: 'Image' };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 22, name: '音频', icon: 'ms-music_note', component: 'Music' };
+			app = { id: 22, name: '音频', icon: 'ms-music_note', component: 'Audio' };
 			this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 23, name: '视频', icon: 'ms-videocam', component: 'Video' };
