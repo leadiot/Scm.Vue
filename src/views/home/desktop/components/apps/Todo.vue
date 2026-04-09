@@ -25,12 +25,12 @@
 
 		<div class="todo-list">
 			<transition-group name="todo-list">
-				<div v-for="todo in filteredTodos" :key="todo.id" class="todo-item" :class="{ completed: todo.completed }">
+				<div v-for="todo in filteredTodos" :key="todo.id" class="todo-item"
+					:class="{ completed: todo.completed }">
 					<el-checkbox v-model="todo.completed" @change="saveTodos" />
 					<span class="todo-text" @dblclick="startEdit(todo)">{{ todo.text }}</span>
-					<el-input v-if="editingId === todo.id" v-model="editingText" size="small"
-						@blur="finishEdit(todo)" @keyup.enter="finishEdit(todo)" @keyup.escape="cancelEdit"
-						class="edit-input" ref="editInput" />
+					<el-input v-if="editingId === todo.id" v-model="editingText" size="small" @blur="finishEdit(todo)"
+						@keyup.enter="finishEdit(todo)" @keyup.escape="cancelEdit" class="edit-input" ref="editInput" />
 					<div class="todo-actions">
 						<span class="todo-time">{{ formatTime(todo.createdAt) }}</span>
 						<el-button text size="small" @click="removeTodo(todo.id)">
