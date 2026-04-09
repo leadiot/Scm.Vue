@@ -146,7 +146,7 @@ export default {
 				{ name: "简体中文", value: "zh-cn", },
 				{ name: "English", value: "en", },
 			],
-			home: this.$TOOL.data.get('APP_HOME') || this.$CONFIG.HOME,
+			home: this.$CONFIG.HOME,
 		};
 	},
 	watch: {
@@ -233,43 +233,11 @@ export default {
 			this.$TOOL.session.set("MENU", menuList);
 			this.$TOOL.session.set("PERMISSIONS", []);
 
-			this.loadCfg();
+			await this.$SCM.list_cfg();
+			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 
-			this.$router.replace({ path: this.home });
+			this.$router.replace({ path: this.home || this.$CONFIG.HOME });
 			this.$message.success("Login Success 登录成功");
-		},
-		async loadCfg() {
-			var cfgRes = await this.$API.scmsysconfig.list.get({ 'types': 10 });
-			if (!cfgRes || cfgRes.code != 200) {
-				return;
-			}
-			var data = cfgRes.data;
-			if (!data) {
-				return;
-			}
-
-			data.forEach((item) => {
-				if ("app_theme" == item.key) {
-					if (item.value == "true") {
-						document.documentElement.classList.add("dark")
-					} else {
-						document.documentElement.classList.remove("dark")
-					}
-					return;
-				}
-				if ("app_color" == item.key) {
-					this.config.colorPrimary = item.val;
-					return;
-				}
-				if ("app_lang" == item.key) {
-					this.config.lang = item.value;
-					return;
-				}
-				if ("app_home" == item.key) {
-					this.home = item.value;
-					return;
-				}
-			});
 		}
 	},
 };

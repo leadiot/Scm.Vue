@@ -19,11 +19,11 @@
 			</el-form-item>
 			<el-divider></el-divider>
 			<el-form-item label="首页布局">
-				<el-select v-model="home" placeholder="请选择">
-					<el-option label="自定义" value="0"></el-option>
-					<el-option label="工作台" value="console"></el-option>
-					<el-option label="大屏幕" value="display"></el-option>
-					<el-option label="云桌面" value="desktop"></el-option>
+				<el-select v-model="home" placeholder="请选择" @change="handleChangeHome">
+					<el-option label="自定义" value="/"></el-option>
+					<el-option label="工作台" value="/console"></el-option>
+					<el-option label="云桌面" value="/desktop"></el-option>
+					<el-option label="大屏幕" value="/display"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="框架布局">
@@ -60,8 +60,8 @@ export default {
 			menuIsCollapse: this.globalStore.menuIsCollapse,
 			layoutTags: this.globalStore.layoutTags,
 			lang: this.$TOOL.data.get('APP_LANG') || this.$CONFIG.LANG,
-			home: this.$TOOL.data.get('APP_HOME') || this.$CONFIG.HOME,
 			dark: this.$TOOL.data.get('APP_THEME') == 'dark',
+			home: this.$CONFIG.HOME,
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
 			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF'
 		}
@@ -89,9 +89,6 @@ export default {
 			this.$i18n.locale = val
 			this.$TOOL.data.set("APP_LANG", val);
 		},
-		home(val) {
-			this.$TOOL.data.set("APP_HOME", val);
-		},
 		colorPrimary(val) {
 			document.documentElement.style.setProperty('--el-color-primary', val);
 			for (let i = 1; i <= 9; i++) {
@@ -104,38 +101,14 @@ export default {
 		}
 	},
 	mounted() {
+		this.init();
 	},
 	methods: {
 		async init() {
-			var cfgRes = await this.$API.scmsysconfig.list.get(10);
-			cfgRes.data.forEach((item) => {
-				if ("app_theme" == item.key) {
-					this.dark = item.value == "true";
-					return;
-				}
-				if ("app_color" == item.key) {
-					this.colorPrimary = item.val;
-					return;
-				}
-				if ("app_lang" == item.key) {
-					this.lang = item.value;
-					return;
-				}
-			});
+			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 		},
-		async save(key, val) {
-			let data = {};
-			data.key = key;
-			data.value = val;
-			data.types = 10;
-			data.data = 0;
-			var res = await this.$API.scmsysconfig.save.post(data);
-			if (res.code == 200) {
-				this.$message.success("保存成功");
-				this.visible = false;
-			} else {
-				this.$alert(res.message, "提示", { type: "error" });
-			}
+		handleChangeHome() {
+			this.$SCM.save_cfg("app_home", this.home);
 		},
 	},
 }

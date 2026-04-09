@@ -275,32 +275,60 @@ scm.list_dic = async function (list, key, all, useCatch) {
  * @param {Boolean} useCatch 是否启用缓冲
  * @returns
  */
-scm.list_cfg = async function (key, def, useCatch) {
+scm.list_cfg = async function () {
+	var res = await http.get(`${config.API_URL}/scmsysconfig/list`, { 'types': 10 });
+	if (!res || res.code != 200) {
+		return;
+	}
+
+	var data = res.data;
+	data.forEach((item) => {
+		scm.cache[item.key] = item.value;
+	});
+};
+
+scm.read_cfg = async function (key, def, useCatch) {
 	if (!key) {
 		return def;
 	}
 
-	var data = useCatch ? scm.cache[key] : null;
-	if (data == null) {
-		var res = await http.get(
-			`${config.API_URL}/scmsysconfig/config/` + key
-		);
-		if (!res || res.code != 200) {
-			return;
-		}
+	var val = scm.cache[key];
+	if (val != null) {
+		return val;
+	}
 
-		data = res.data;
-		if (!data) {
-			return def;
-		}
-		data = data.value;
-		if (useCatch) {
-			scm.cache[key] = data;
-		}
+	var res = await http.get(`${config.API_URL}/scmsysconfig/config/` + key);
+	if (!res || res.code != 200) {
+		return def;
+	}
+
+	var data = res.data;
+	if (!data) {
+		return def;
+	}
+	data = data.value;
+	if (useCatch) {
+		scm.cache[key] = data;
 	}
 
 	return data ?? def;
 };
+
+/**
+ * 更新配置
+ * @param {*} key String
+ * @param {*} value String
+ */
+scm.save_cfg = async function (key, value) {
+	scm.cache[key] = value;
+
+	let data = {};
+	data.key = key;
+	data.value = value;
+	data.types = 10;
+	data.data = 0;
+	await http.post(`${config.API_URL}/scmsysconfig/save`, data);
+}
 
 /**
  * 获取数据状态列表
