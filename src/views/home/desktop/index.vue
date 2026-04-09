@@ -19,7 +19,7 @@
 		</div>
 
 		<!-- 任务栏 -->
-		<div class="taskbar">
+		<div class="taskbar" :style="{ backgroundColor: taskbarColor }">
 			<div class="taskbar-start" @click="toggleStartMenu">
 				<sc-icon name="ms-window" :size="24" />
 				<span>开始</span>
@@ -79,6 +79,20 @@
 		<!-- 设置窗口 -->
 		<el-dialog v-model="showSettings" title="桌面设置" width="500px" :modal-append-to-body="false">
 			<el-tabs>
+				<el-tab-pane label="主题设置">
+					<div class="settings-section">
+						<h4>预设主题</h4>
+						<div class="theme-grid">
+							<div v-for="theme in themes" :key="theme.name" class="theme-item"
+								:class="{ active: currentTheme === theme.name }" @click="applyTheme(theme)">
+								<div class="theme-preview" :style="theme.previewStyle">
+									<div class="theme-taskbar" :style="{ backgroundColor: theme.taskbarColor }"></div>
+								</div>
+								<span class="theme-name">{{ theme.label }}</span>
+							</div>
+						</div>
+					</div>
+				</el-tab-pane>
 				<el-tab-pane label="背景设置">
 					<div class="settings-section">
 						<h4>背景类型</h4>
@@ -176,6 +190,84 @@ export default {
 			menuApps: [],
 			updateTimeInterval: null,
 			documentClickHandler: null,
+			currentTheme: 'default',
+			taskbarColor: 'rgba(0, 0, 0, 0.6)',
+			themes: [
+				{
+					name: 'default',
+					label: '默认',
+					backgroundType: 'color',
+					backgroundColor: '#0078d4',
+					taskbarColor: 'rgba(0, 0, 0, 0.6)',
+					previewStyle: { backgroundColor: '#0078d4' }
+				},
+				{
+					name: 'dark',
+					label: '深色',
+					backgroundType: 'color',
+					backgroundColor: '#1a1a2e',
+					taskbarColor: 'rgba(0, 0, 0, 0.85)',
+					previewStyle: { backgroundColor: '#1a1a2e' }
+				},
+				{
+					name: 'light',
+					label: '浅色',
+					backgroundType: 'color',
+					backgroundColor: '#f0f2f5',
+					taskbarColor: 'rgba(255, 255, 255, 0.8)',
+					previewStyle: { backgroundColor: '#f0f2f5' }
+				},
+				{
+					name: 'ocean',
+					label: '海洋',
+					backgroundType: 'gradient',
+					gradientColor1: '#667eea',
+					gradientColor2: '#764ba2',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(102, 126, 234, 0.7)',
+					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
+				},
+				{
+					name: 'sunset',
+					label: '日落',
+					backgroundType: 'gradient',
+					gradientColor1: '#ff6b6b',
+					gradientColor2: '#feca57',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(255, 107, 107, 0.7)',
+					previewStyle: { background: 'linear-gradient(to bottom right, #ff6b6b, #feca57)' }
+				},
+				{
+					name: 'forest',
+					label: '森林',
+					backgroundType: 'gradient',
+					gradientColor1: '#134e5e',
+					gradientColor2: '#71b280',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(19, 78, 94, 0.7)',
+					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
+				},
+				{
+					name: 'purple',
+					label: '紫罗兰',
+					backgroundType: 'gradient',
+					gradientColor1: '#a855f7',
+					gradientColor2: '#6366f1',
+					gradientDirection: 'to right',
+					taskbarColor: 'rgba(168, 85, 247, 0.7)',
+					previewStyle: { background: 'linear-gradient(to right, #a855f7, #6366f1)' }
+				},
+				{
+					name: 'midnight',
+					label: '午夜',
+					backgroundType: 'gradient',
+					gradientColor1: '#0f0c29',
+					gradientColor2: '#302b63',
+					gradientDirection: 'to bottom',
+					taskbarColor: 'rgba(15, 12, 41, 0.85)',
+					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
+				}
+			]
 		};
 	},
 	computed: {
@@ -221,6 +313,7 @@ export default {
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
 			this.listApp();
+			this.loadTheme();
 
 			this.documentClickHandler = (e) => {
 				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
@@ -394,6 +487,30 @@ export default {
 		},
 		saveSettings() {
 			this.showSettings = false;
+		},
+		applyTheme(theme) {
+			this.currentTheme = theme.name;
+			this.backgroundType = theme.backgroundType;
+			this.taskbarColor = theme.taskbarColor;
+
+			if (theme.backgroundType === 'color') {
+				this.backgroundColor = theme.backgroundColor;
+			} else if (theme.backgroundType === 'gradient') {
+				this.gradientColor1 = theme.gradientColor1;
+				this.gradientColor2 = theme.gradientColor2;
+				this.gradientDirection = theme.gradientDirection;
+			}
+
+			localStorage.setItem('desktop_theme', theme.name);
+		},
+		loadTheme() {
+			const savedTheme = localStorage.getItem('desktop_theme');
+			if (savedTheme) {
+				const theme = this.themes.find(t => t.name === savedTheme);
+				if (theme) {
+					this.applyTheme(theme);
+				}
+			}
 		},
 		logout() {
 			this.$confirm("确认是否退出当前用户？", "提示", {
@@ -590,7 +707,6 @@ export default {
 	left: 0;
 	right: 0;
 	height: 48px;
-	background-color: rgba(0, 0, 0, 0.6);
 	backdrop-filter: blur(10px);
 	display: flex;
 	align-items: center;
@@ -823,5 +939,55 @@ export default {
 
 .preset-image:hover {
 	border-color: #409eff;
+}
+
+.theme-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 15px;
+	margin-top: 10px;
+}
+
+.theme-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 8px;
+	border: 2px solid transparent;
+	transition: all 0.3s;
+}
+
+.theme-item:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+.theme-item.active {
+	border-color: #409eff;
+	background-color: rgba(64, 158, 255, 0.1);
+}
+
+.theme-preview {
+	width: 100%;
+	height: 60px;
+	border-radius: 6px;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.theme-taskbar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 12px;
+}
+
+.theme-name {
+	margin-top: 8px;
+	font-size: 12px;
+	color: #606266;
 }
 </style>
