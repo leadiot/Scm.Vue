@@ -8,7 +8,6 @@
 			<el-button type="primary" plain round @click="gologin">重新登录</el-button>
 			<el-button type="primary" round @click="goback">返回上一页</el-button>
 		</el-empty>
-
 	</div>
 </template>
 

@@ -1,24 +1,8 @@
 <!-- 控制台布局 -->
 <template>
 
-	<!-- 桌面布局 -->
-	<template v-if="layout == 'none'">
-		<section class="scmui-wrapper">
-			<div class="scmui-body el-container">
-				<div class="scmui-main" id="scmui-main">
-					<router-view v-slot="{ Component }">
-						<keep-alive :include="keepLiveRoute">
-							<component :is="Component" :key="$route.fullPath" v-if="routeShow" />
-						</keep-alive>
-					</router-view>
-					<iframe-view></iframe-view>
-				</div>
-			</div>
-		</section>
-	</template>
-
 	<!-- 通栏布局 -->
-	<template v-else-if="layout == 'header'">
+	<template v-if="layout == 'header'">
 		<header class="scmui-header">
 			<div class="scmui-header-left">
 				<div class="logo-bar">
@@ -154,7 +138,7 @@
 		<section class="scmui-wrapper">
 			<div v-if="!ismobile" class="scmui-side-split">
 				<div class="scmui-side-split-top">
-					<router-link :to="$CONFIG.DASHBOARD_URL">
+					<router-link :to="$CONFIG.CONSOLE_URL">
 						<img class="logo" :title="$CONFIG.APP_NAME" src="/img/logo-r.png">
 					</router-link>
 				</div>

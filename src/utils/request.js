@@ -12,7 +12,7 @@ axios.defaults.timeout = sysConfig.TIMEOUT;
 // HTTP request 拦截器
 axios.interceptors.request.use(
 	(config) => {
-		let token = tool.data.get("TOKEN");
+		let token = tool.session.get("TOKEN");
 		if (token) {
 			config.headers[sysConfig.TOKEN_NAME] = sysConfig.TOKEN_PREFIX + token;
 		}
@@ -53,7 +53,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	(response) => {
 		if (response.headers["x-refresh-token"]) {
-			tool.data.set("TOKEN", response.headers["x-refresh-token"]);
+			tool.session.set("TOKEN", response.headers["x-refresh-token"]);
 		}
 		return response;
 	},

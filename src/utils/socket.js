@@ -8,7 +8,7 @@ const socket = {};
  * SingalR Hub
  */
 socket.open_wss = function (key, fun) {
-	var token = tool.data.get("TOKEN");
+	var token = tool.session.get("TOKEN");
 	var connection = window.scm_connection;
 	if (!connection) {
 		connection = new signalR.HubConnectionBuilder()

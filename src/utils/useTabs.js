@@ -30,7 +30,7 @@ export default {
 		const tagList = viewTagsStore.viewTags
 		const latestView = tagList.slice(-1)[0]
 		if (latestView) {
-			router.push(latestView)
+			router.push({ path: latestView.fullPath, query: latestView.query })
 		} else {
 			router.push('/')
 		}

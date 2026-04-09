@@ -102,7 +102,12 @@ export default {
 		};
 	},
 	created() {
-		var userInfo = this.$TOOL.data.get("USER_INFO");
+		var userInfo = this.$TOOL.session.get("USER_INFO");
+		if (!userInfo || !userInfo.userName) {
+			this.$router.replace({ path: "/login" });
+			return;
+		}
+
 		this.userName = userInfo.userName;
 		this.userNameF = this.userName.substring(0, 1);
 		this.unitName = userInfo.unitName;

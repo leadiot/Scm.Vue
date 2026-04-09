@@ -79,7 +79,7 @@ const DEFAULT_CONFIG = {
 	COLOR: "",
 
 	// 首面
-	HOME: "console",
+	HOME: "/console",
 
 	//控制台首页默认布局
 	DEFAULT_GRID: {

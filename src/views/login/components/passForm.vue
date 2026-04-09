@@ -109,9 +109,9 @@ export default {
 				this.$message.warning(userData.message);
 				return false;
 			}
-			this.$TOOL.data.set("TOKEN", userData.accessToken);
-			this.$TOOL.data.set("USER_INFO", userData.userInfo);
-			this.$TOOL.data.set("USER_THEME", userData.userTheme);
+			this.$TOOL.session.set("TOKEN", userData.accessToken);
+			this.$TOOL.session.set("USER_INFO", userData.userInfo);
+			this.$TOOL.session.set("USER_THEME", userData.userTheme);
 
 			this.$emit('complete');
 		},

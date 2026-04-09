@@ -111,9 +111,9 @@ export default {
             this.loadAuth(userData);
         },
         async loadAuth(userData) {
-            this.$TOOL.data.set("TOKEN", userData.accessToken);
-            this.$TOOL.data.set("USER_INFO", userData.userInfo);
-            this.$TOOL.data.set("USER_THEME", userData.userTheme);
+            this.$TOOL.session.set("TOKEN", userData.accessToken);
+            this.$TOOL.session.set("USER_INFO", userData.userInfo);
+            this.$TOOL.session.set("USER_THEME", userData.userTheme);
 
             //获取菜单
             var menuRes = await this.$API.operator.authority.get();
@@ -130,8 +130,8 @@ export default {
                 return false;
             }
             var menuList = this.$SCM.recursive_menu(menuRes.data, this.$SCM.SYS_ID);
-            this.$TOOL.data.set("MENU", menuList);
-            this.$TOOL.data.set("PERMISSIONS", []);
+            this.$TOOL.session.set("MENU", menuList);
+            this.$TOOL.session.set("PERMISSIONS", []);
 
             this.loadCfg();
 

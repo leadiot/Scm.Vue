@@ -49,6 +49,7 @@ router.beforeEach(async (to, from) => {
 		}
 	}
 
+	//登录页直接放行
 	if (to.path === "/login") {
 		//删除路由(404)
 		routes_404_r();
@@ -56,11 +57,13 @@ router.beforeEach(async (to, from) => {
 		return;
 	}
 
+	//静态路由直接放行
 	if (routes.findIndex((r) => r.path === to.path) >= 0) {
 		return;
 	}
 
-	let token = tool.data.get("TOKEN");
+	//检查token
+	let token = tool.session.get("TOKEN");
 	if (!token) {
 		return { path: "/login" };
 	}
@@ -71,8 +74,8 @@ router.beforeEach(async (to, from) => {
 	}
 	//加载动态/静态路由
 	if (!isGetRouter) {
-		let apiMenu = tool.data.get("MENU") || [];
-		let userInfo = tool.data.get("USER_INFO");
+		let apiMenu = tool.session.get("MENU") || [];
+		let userInfo = tool.session.get("USER_INFO");
 		let userMenu = treeFilter(userRoutes, (node) => {
 			return node.meta.role
 				? node.meta.role.filter(
@@ -83,13 +86,13 @@ router.beforeEach(async (to, from) => {
 		let menu = [...userMenu, ...apiMenu];
 		var menuRouter = filterAsyncRouter(menu);
 		menuRouter = flatAsyncRoutes(menuRouter);
+		const existingPaths = routes.map(r => r.path);
 		menuRouter.forEach((item) => {
-			router.addRoute(item);
+			if (!existingPaths.includes(item.path)) {
+				router.addRoute(item);
+			}
 		});
 		routes_404_r = router.addRoute(routes_404);
-		if (to.matched.length == 0) {
-			router.push(to.fullPath);
-		}
 		isGetRouter = true;
 	}
 	beforeEach(to, from);
@@ -110,8 +113,8 @@ router.onError((error) => {
 });
 
 router.getMenu = () => {
-	var apiMenu = tool.data.get("MENU") || [];
-	let userInfo = tool.data.get("USER_INFO");
+	var apiMenu = tool.session.get("MENU") || [];
+	let userInfo = tool.session.get("USER_INFO");
 	let userMenu = treeFilter(userRoutes, (node) => {
 		return node.meta.role
 			? node.meta.role.filter((item) => userInfo.role.indexOf(item) > -1)
@@ -165,12 +168,18 @@ function loadComponent(component) {
 	if (component) {
 		const modules = import.meta.glob('@/views/**/*.vue');
 		const paths = [
-			`/src/views/${component}.vue`,
-			`/src/views/${component}/index.vue`
+			`@/views/${component}.vue`,
+			`@/views/${component}/index.vue`
 		];
 		for (const path of paths) {
 			if (modules[path]) {
 				return modules[path];
+			}
+		}
+		const moduleKeys = Object.keys(modules);
+		for (const key of moduleKeys) {
+			if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
+				return modules[key];
 			}
 		}
 	}

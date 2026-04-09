@@ -8,15 +8,18 @@
 import colorTool from "@/utils/color";
 import { useI18n } from "vue-i18n";
 import { computed, shallowRef, watch } from "vue";
-import { defineAsyncComponent } from 'vue';
-import { useRoute } from 'vue-router';
-import { useGlobalStore } from '@/stores/global';
+import { useRoute } from "vue-router";
+
+import LayoutNone from "@/layout/none/index.vue";
+import LayoutConsole from "@/layout/console/index.vue";
+import LayoutDesktop from "@/layout/desktop/index.vue";
+import LayoutDisplay from "@/layout/display/index.vue";
 
 const layouts = {
-	none: defineAsyncComponent(() => import('@/layout/none/index.vue')),
-	console: defineAsyncComponent(() => import('@/layout/console/index.vue')),
-	desktop: defineAsyncComponent(() => import('@/layout/desktop/index.vue')),
-	display: defineAsyncComponent(() => import('@/layout/display/index.vue')),
+	none: LayoutNone,
+	console: LayoutConsole,
+	desktop: LayoutDesktop,
+	display: LayoutDisplay,
 };
 
 export default {
@@ -24,38 +27,18 @@ export default {
 	setup() {
 		const { locale, messages } = useI18n()
 		const elLocale = computed(() => messages.value[locale.value].el)
-		const globalStore = useGlobalStore()
 		const route = useRoute()
-		const layoutComponent = shallowRef(null)
-
-		const loadLayout = (layoutType) => {
-			const layout = layouts[layoutType || 'console']
-			if (layout) {
-				layoutComponent.value = layout
-			} else {
-				layoutComponent.value = layouts.console
-			}
-		}
+		const layoutComponent = shallowRef(layouts.console)
 
 		watch(
 			() => route.meta?.layout,
-			(newLayout) => {
-				if (newLayout && newLayout !== globalStore.layout) {
-					globalStore.SET_layout(newLayout)
-				}
-				loadLayout(newLayout || globalStore.layout || 'console')
+			(layoutType) => {
+				layoutComponent.value = layouts[layoutType] || layouts.console
 			},
 			{ immediate: true }
 		)
 
-		watch(
-			() => globalStore.layout,
-			(newLayout) => {
-				loadLayout(newLayout)
-			}
-		)
-
-		return { elLocale, globalStore, layoutComponent }
+		return { elLocale, layoutComponent }
 	},
 	data() {
 		return {
@@ -74,7 +57,6 @@ export default {
 		},
 	},
 	created() {
-		//设置主题颜色
 		const app_color = this.$CONFIG.COLOR || this.$TOOL.data.get("APP_COLOR");
 		if (app_color) {
 			document.documentElement.style.setProperty("--el-color-primary", app_color);

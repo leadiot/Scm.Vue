@@ -55,7 +55,7 @@ export default {
 	mounted() {
 		var searchHistory = this.$TOOL.data.get("SEARCH_HISTORY") || []
 		this.history = searchHistory
-		var menuTree = this.$TOOL.data.get("MENU")
+		var menuTree = this.$TOOL.session.get("MENU")
 		this.filterMenu(menuTree)
 		this.$refs.input.focus()
 	},

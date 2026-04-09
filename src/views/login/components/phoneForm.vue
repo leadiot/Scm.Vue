@@ -121,9 +121,9 @@ export default {
 			}
 
 			this.$SCM.save_cache('scm_login_pone', '');
-			this.$TOOL.data.set("TOKEN", userRes.data.accessToken);
-			this.$TOOL.data.set("USER_INFO", userRes.data.userInfo);
-			this.$TOOL.data.set("USER_THEME", userRes.data.userTheme);
+			this.$TOOL.session.set("TOKEN", userRes.data.accessToken);
+			this.$TOOL.session.set("USER_INFO", userRes.data.userInfo);
+			this.$TOOL.session.set("USER_THEME", userRes.data.userTheme);
 
 			this.$emit('complete');
 		}

@@ -166,11 +166,11 @@ export default {
 	},
 	created: function () {
 		this.$TOOL.cookie.remove("TOKEN");
-		this.$TOOL.data.remove("USER_INFO");
-		this.$TOOL.data.remove("MENU");
-		this.$TOOL.data.remove("PERMISSIONS");
-		this.$TOOL.data.remove("grid");
-		this.$TOOL.data.remove("ISLONINEND");
+		this.$TOOL.session.remove("USER_INFO");
+		this.$TOOL.session.remove("MENU");
+		this.$TOOL.session.remove("PERMISSIONS");
+		this.$TOOL.session.remove("grid");
+		this.$TOOL.session.remove("ISLONINEND");
 		this.viewTagsStore.clearViewTags();
 		this.keepAliveStore.clearKeepLive();
 		this.iframeStore.clearIframeList();
@@ -230,8 +230,8 @@ export default {
 				return false;
 			}
 			var menuList = this.$SCM.recursive_menu(menuRes.data, this.$SCM.SYS_ID);
-			this.$TOOL.data.set("MENU", menuList);
-			this.$TOOL.data.set("PERMISSIONS", []);
+			this.$TOOL.session.set("MENU", menuList);
+			this.$TOOL.session.set("PERMISSIONS", []);
 
 			this.loadCfg();
 

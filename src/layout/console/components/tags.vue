@@ -4,7 +4,7 @@
 			<li v-for="tag in tagList" v-bind:key="tag"
 				:class="[isActive(tag) ? 'active' : '', tag.meta.affix ? 'affix' : '',]"
 				@contextmenu.prevent="openContextMenu($event, tag)">
-				<router-link :to="tag">
+				<router-link :to="{ path: tag.fullPath, query: tag.query }">
 					<span>{{ tag.meta.title }}</span>
 					<el-icon v-if="!tag.meta.affix"
 						@click.prevent.stop="closeSelectedTag(tag)"><el-icon-close /></el-icon>
@@ -113,7 +113,7 @@ export default {
 		var menu = this.$router.getMenu();
 		var dashboardRoute = this.treeFind(
 			menu,
-			(node) => node.path == this.$CONFIG.DASHBOARD_URL
+			(node) => node.path == this.$CONFIG.CONSOLE_URL
 		);
 		if (dashboardRoute) {
 			dashboardRoute.fullPath = dashboardRoute.path;
@@ -191,7 +191,7 @@ export default {
 			if (autoPushLatestView && this.isActive(tag)) {
 				const leftView = this.tagList[nowTagIndex - 1];
 				if (leftView) {
-					this.$router.push(leftView);
+					this.$router.push({ path: leftView.fullPath, query: leftView.query });
 				} else {
 					this.$router.push("/");
 				}
