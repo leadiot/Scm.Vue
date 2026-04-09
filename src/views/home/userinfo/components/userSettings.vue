@@ -15,7 +15,7 @@
 			</el-form-item>
 			<el-divider></el-divider>
 			<el-form-item label="主题颜色">
-				<el-color-picker v-model="colorPrimary" :predefine="colorList">></el-color-picker>
+				<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
 			</el-form-item>
 			<el-divider></el-divider>
 			<el-form-item label="首页布局">

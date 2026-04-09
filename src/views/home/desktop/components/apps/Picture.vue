@@ -50,13 +50,13 @@
 			</div>
 
 			<div class="preview-container" @click="toggleControls">
-				<div class="preview-nav prev" @click.stop="prevPicture" :class="{ disabled: currentIndex === 0 }">
-					<sc-icon name="ms-chevron_left" :size="48" />
-				</div>
-
 				<div class="preview-image-wrapper" :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }">
 					<img :src="currentPicture?.url" :alt="currentPicture?.name" @load="onImageLoad"
 						@error="onImageError" />
+				</div>
+
+				<div class="preview-nav prev" @click.stop="prevPicture" :class="{ disabled: currentIndex === 0 }">
+					<sc-icon name="ms-chevron_left" :size="48" />
 				</div>
 
 				<div class="preview-nav next" @click.stop="nextPicture"

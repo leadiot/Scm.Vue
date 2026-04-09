@@ -91,16 +91,7 @@
 
 					<div v-if="backgroundType === 'color'" class="settings-section">
 						<h4>预设颜色</h4>
-						<div class="preset-colors">
-							<div v-for="color in presetColors" :key="color.value" class="preset-color"
-								:class="{ active: backgroundColor === color.value }"
-								:style="{ backgroundColor: color.value }" :title="color.name"
-								@click="backgroundColor = color.value">
-								<span v-if="backgroundColor === color.value" class="check-icon">✓</span>
-							</div>
-						</div>
-						<h4 style="margin-top: 15px;">自定义颜色</h4>
-						<el-color-picker v-model="backgroundColor" show-alpha />
+						<el-color-picker v-model="backgroundColor" :predefine="colorList" show-alpha />
 					</div>
 
 					<div v-if="backgroundType === 'gradient'" class="settings-section">
@@ -124,7 +115,7 @@
 					</div>
 				</el-tab-pane>
 				<el-tab-pane label="框架布局">
-					<el-form ref="form" label-width="100px">
+					<el-form ref="form">
 						<el-form-item label="首页布局">
 							<el-select v-model="home" placeholder="请选择">
 								<el-option label="自定义" value="/"></el-option>
@@ -171,20 +162,7 @@ export default {
 			gradientColor1: '#667eea',
 			gradientColor2: '#764ba2',
 			gradientDirection: 'to bottom right',
-			presetColors: [
-				{ name: '经典蓝', value: '#0078d4' },
-				{ name: '深空灰', value: '#2d2d2d' },
-				{ name: '午夜黑', value: '#0a0a0a' },
-				{ name: '森林绿', value: '#107c10' },
-				{ name: '海洋蓝', value: '#005a9e' },
-				{ name: '夕阳橙', value: '#d83b01' },
-				{ name: '葡萄紫', value: '#5c2d91' },
-				{ name: '玫瑰红', value: '#c30052' },
-				{ name: '天空蓝', value: '#00b7c3' },
-				{ name: '柠檬黄', value: '#ffb900' },
-				{ name: '薄荷绿', value: '#00cc6a' },
-				{ name: '珊瑚粉', value: '#ff6b6b' },
-			],
+			colorList: this.$CONFIG.PREDEFINE_COLORS,
 			presetImages: [
 				'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
 				'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920',
