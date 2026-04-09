@@ -31,7 +31,7 @@
 		</div>
 
 		<div class="window-content">
-			<component :is="getComponent(window.component)" />
+			<component :is="getComponent(window.component)" v-bind="window.props || {}" />
 		</div>
 
 		<div v-if="!window.maximized" class="resize-handle" @mousedown.stop="startResize"></div>

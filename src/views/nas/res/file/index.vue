@@ -52,7 +52,7 @@ export default {
 	data() {
 		return {
 			tableName: 'nas_res_file',
-			apiObj: this.$API.nasresdevice.page,
+			apiObj: this.$API.nasresfile.page,
 			param: {
 				dir_id: '0',
 				row_status: this.$SCM.DEF_STATUS,

@@ -102,6 +102,12 @@ export default {
 	components: {
 		scIcon,
 	},
+	props: {
+		initialFile: {
+			type: Object,
+			default: null
+		}
+	},
 	data() {
 		return {
 			pictures: [],
@@ -120,6 +126,20 @@ export default {
 		},
 	},
 	methods: {
+		loadInitialFile() {
+			if (this.initialFile && this.initialFile.url) {
+				this.pictures.push({
+					id: this.pictureIdCounter++,
+					name: this.initialFile.name,
+					url: this.initialFile.url,
+					size: this.initialFile.size || 0,
+					type: this.initialFile.type || 'image/jpeg',
+				});
+				this.$nextTick(() => {
+					this.openPreview(0);
+				});
+			}
+		},
 		handleDrop(e) {
 			this.isDragOver = false;
 			const files = e.dataTransfer.files;
@@ -261,6 +281,9 @@ export default {
 	},
 	mounted() {
 		document.addEventListener('keydown', this.handleKeydown);
+		if (this.initialFile) {
+			this.loadInitialFile();
+		}
 	},
 	unmounted() {
 		document.removeEventListener('keydown', this.handleKeydown);

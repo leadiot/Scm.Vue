@@ -387,7 +387,70 @@ export default {
 				.catch(() => {
 					//取消退出
 				});
+		},
+		openFileWithApp(file) {
+			const ext = file.name.split('.').pop().toLowerCase();
+			const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+			const videoExts = ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm'];
+			const audioExts = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma'];
+
+			let appConfig = null;
+
+			if (imageExts.includes(ext)) {
+				appConfig = {
+					name: '图片查看',
+					icon: 'ms-photo_library',
+					component: 'Pictures',
+					width: 900,
+					height: 700,
+					props: { initialFile: file }
+				};
+			} else if (videoExts.includes(ext)) {
+				appConfig = {
+					name: '视频播放',
+					icon: 'ms-videocam',
+					component: 'Video',
+					width: 900,
+					height: 600,
+					props: { initialFile: file }
+				};
+			} else if (audioExts.includes(ext)) {
+				appConfig = {
+					name: '音乐播放',
+					icon: 'ms-music_note',
+					component: 'Music',
+					width: 500,
+					height: 600,
+					props: { initialFile: file }
+				};
+			} else {
+				this.$message.info(`无法打开此类型文件: ${file.name}`);
+				return;
+			}
+
+			this.showStartMenu = false;
+			const windowId = ++this.windowIdCounter;
+			this.windows.push({
+				id: windowId,
+				title: appConfig.name,
+				icon: appConfig.icon,
+				component: appConfig.component,
+				props: appConfig.props,
+				minimized: false,
+				maximized: false,
+				focused: true,
+				x: 100 + (windowId % 5) * 30,
+				y: 100 + (windowId % 5) * 30,
+				width: appConfig.width || 800,
+				height: appConfig.height || 600,
+			});
+			this.focusWindow(windowId);
 		}
+	},
+	provide() {
+		return {
+			openFileWithApp: this.openFileWithApp
+		};
 	},
 	mounted() {
 		this.init();

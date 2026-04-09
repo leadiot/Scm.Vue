@@ -23,7 +23,7 @@
 				</div>
 			</div>
 			<div class="toolbar-right">
-				<el-input v-model="searchQuery" placeholder="搜索..." prefix-icon="el-icon-search" size="small"
+				<el-input v-model="param.key" placeholder="搜索..." prefix-icon="el-icon-search" size="small"
 					class="search-input" />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
@@ -46,7 +46,7 @@
 				</div>
 				<div class="sidebar-section">
 					<div class="sidebar-title">我的设备</div>
-					<div v-for="item in devices" :key="item.id" class="sidebar-item"
+					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
@@ -54,7 +54,7 @@
 				</div>
 				<div class="sidebar-section">
 					<div class="sidebar-title">我的目录</div>
-					<div v-for="item in folders" :key="item.id" class="sidebar-item"
+					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
@@ -64,7 +64,7 @@
 
 			<div class="main-content" ref="contentRef" @click.self="clearSelection">
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
-					<div v-for="item in filteredItems" :key="item.id" class="tile-item"
+					<div v-for="item in fileList" :key="item.id" class="tile-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)">
 						<div class="tile-icon">
@@ -75,7 +75,7 @@
 				</div>
 
 				<div v-else-if="viewMode === 'list'" class="view-list">
-					<div v-for="item in filteredItems" :key="item.id" class="list-item"
+					<div v-for="item in fileList" :key="item.id" class="list-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)">
 						<sc-icon :name="getFileIcon(item)" :size="20" />
@@ -107,7 +107,7 @@
 						</div>
 					</div>
 					<div class="details-body">
-						<div v-for="item in filteredItems" :key="item.id" class="details-row"
+						<div v-for="item in fileList" :key="item.id" class="details-row"
 							:class="{ selected: selectedItems.includes(item.id) }"
 							@click="handleItemClick($event, item)" @dblclick="handleItemDblClick(item)">
 							<div class="col-name">
@@ -115,13 +115,13 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.modifiedDate }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.type === 'folder' ? '文件夹' : '文件') }}</div>
-							<div class="col-size">{{ item.type === 'folder' ? '' : formatSize(item.size) }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? '目录' : '文件') }}</div>
+							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
 				</div>
 
-				<div v-if="filteredItems.length === 0" class="empty-state">
+				<div v-if="fileList.length === 0" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
 					<p>此文件夹为空</p>
 				</div>
@@ -129,7 +129,7 @@
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ filteredItems.length }} 个项目</span>
+			<span>{{ fileList.length }} 个项目</span>
 			<span v-if="selectedItems.length > 0">· 已选中 {{ selectedItems.length }} 个项目</span>
 		</div>
 	</div>
@@ -141,9 +141,14 @@ import scIcon from '@/components/scIcon/index.vue';
 export default {
 	name: 'Documents',
 	components: { scIcon },
+	inject: ['openFileWithApp'],
 	data() {
 		return {
-			searchQuery: '',
+			param: {
+				dir_id: '0',
+				folder_id: '0',
+				key: '',
+			},
 			viewMode: 'details',
 			sortField: 'name',
 			sortOrder: 'asc',
@@ -165,81 +170,12 @@ export default {
 				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder' },
 				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder' },
 			],
-			devices: [
-				{ id: 'c:', name: '本地磁盘 (C:)', icon: 'ms-storage', type: 'folder' },
-				{ id: 'd:', name: '本地磁盘 (D:)', icon: 'ms-storage', type: 'folder' },
-			],
-			folders: [
-				{ id: 'c:', name: '本地磁盘 (C:)', icon: 'ms-storage', type: 'folder' },
-				{ id: 'd:', name: '本地磁盘 (D:)', icon: 'ms-storage', type: 'folder' },
-			],
-			fileSystem: {
-				root: [
-					{
-						id: 'desktop', name: '桌面', type: 'folder', modifiedDate: '2024-01-15', children: [
-							{ id: 'd1', name: '新建文件夹', type: 'folder', modifiedDate: '2024-01-15' },
-							{ id: 'd2', name: '项目文档.docx', type: 'file', size: 2457600, modifiedDate: '2024-01-14', typeLabel: 'Word 文档' },
-							{ id: 'd3', name: '会议记录.pdf', type: 'file', size: 1153434, modifiedDate: '2024-01-13', typeLabel: 'PDF 文档' },
-						]
-					},
-					{
-						id: 'downloads', name: '下载', type: 'folder', modifiedDate: '2024-01-15', children: [
-							{ id: 'dl1', name: '软件安装包.exe', type: 'file', size: 52428800, modifiedDate: '2024-01-12', typeLabel: '应用程序' },
-							{ id: 'dl2', name: '素材图片.zip', type: 'file', size: 10485760, modifiedDate: '2024-01-11', typeLabel: '压缩文件' },
-						]
-					},
-					{
-						id: 'documents', name: '文档', type: 'folder', modifiedDate: '2024-01-15', children: [
-							{ id: 'doc1', name: '工作报告', type: 'folder', modifiedDate: '2024-01-10' },
-							{ id: 'doc2', name: '数据表格.xlsx', type: 'file', size: 876544, modifiedDate: '2024-01-09', typeLabel: 'Excel 工作表' },
-							{ id: 'doc3', name: '演示文稿.pptx', type: 'file', size: 5452595, modifiedDate: '2024-01-08', typeLabel: 'PowerPoint 演示文稿' },
-						]
-					},
-					{
-						id: 'pictures', name: '图片', type: 'folder', modifiedDate: '2024-01-15', children: [
-							{ id: 'pic1', name: '截图', type: 'folder', modifiedDate: '2024-01-07' },
-							{ id: 'pic2', name: '壁纸.jpg', type: 'file', size: 2097152, modifiedDate: '2024-01-06', typeLabel: 'JPEG 图像' },
-							{ id: 'pic3', name: '头像.png', type: 'file', size: 524288, modifiedDate: '2024-01-05', typeLabel: 'PNG 图像' },
-						]
-					},
-					{ id: 'music', name: '音乐', type: 'folder', modifiedDate: '2024-01-15', children: [] },
-					{
-						id: 'videos', name: '视频', type: 'folder', modifiedDate: '2024-01-15', children: [
-							{ id: 'vid1', name: '教程视频.mp4', type: 'file', size: 104857600, modifiedDate: '2024-01-04', typeLabel: 'MP4 视频' },
-						]
-					},
-				],
-			},
+			deviceList: [],
+			folderList: [],
+			fileList: [],
 		};
 	},
 	computed: {
-		currentItems() {
-			if (!this.currentFolder) {
-				return this.fileSystem.root;
-			}
-			return this.currentFolder.children || [];
-		},
-		filteredItems() {
-			let items = [...this.currentItems];
-			if (this.searchQuery) {
-				const query = this.searchQuery.toLowerCase();
-				items = items.filter(item => item.name.toLowerCase().includes(query));
-			}
-			items.sort((a, b) => {
-				if (a.type === 'folder' && b.type !== 'folder') return -1;
-				if (a.type !== 'folder' && b.type === 'folder') return 1;
-				let aVal = a[this.sortField];
-				let bVal = b[this.sortField];
-				if (typeof aVal === 'string') {
-					aVal = aVal.toLowerCase();
-					bVal = bVal.toLowerCase();
-				}
-				if (aVal < bVal) return this.sortOrder === 'asc' ? -1 : 1;
-				if (aVal > bVal) return this.sortOrder === 'asc' ? 1 : -1;
-				return 0;
-			});
-			return items;
-		},
 		canGoBack() {
 			return this.historyIndex > 0;
 		},
@@ -247,9 +183,18 @@ export default {
 			return this.historyIndex < this.history.length - 1;
 		},
 	},
+	mounted() {
+		this.listFolder();
+	},
 	methods: {
 		getFileIcon(item) {
-			if (item.type === 'folder') return 'ms-folder';
+			if (item.type === 10) {
+				return 'ms-folder';
+			}
+
+			if (!item.name) {
+				return;
+			}
 			const ext = item.name.split('.').pop().toLowerCase();
 			const iconMap = {
 				doc: 'ms-description', docx: 'ms-description',
@@ -265,17 +210,6 @@ export default {
 				js: 'ms-code', ts: 'ms-code', vue: 'ms-code', html: 'ms-code', css: 'ms-code',
 			};
 			return iconMap[ext] || 'ms-insert_drive_file';
-		},
-		formatSize(bytes) {
-			if (!bytes) return '';
-			const units = ['B', 'KB', 'MB', 'GB'];
-			let size = bytes;
-			let unitIndex = 0;
-			while (size >= 1024 && unitIndex < units.length - 1) {
-				size /= 1024;
-				unitIndex++;
-			}
-			return `${size.toFixed(1)} ${units[unitIndex]}`;
 		},
 		handleItemClick(event, item) {
 			if (event.ctrlKey || event.metaKey) {
@@ -298,72 +232,134 @@ export default {
 			}
 		},
 		handleItemDblClick(item) {
-			if (item.type === 'folder') {
-				this.openFolder(item);
+			if (item.type === 10) {
+				this.openDir(item);
 			} else {
-				this.openFile(item);
+				this.openDoc(item);
 			}
 		},
-		openFolder(folder) {
-			const folderData = this.fileSystem.root.find(f => f.id === folder.id) || folder;
-			this.currentPath.push(folderData);
-			this.currentFolder = folderData;
+		async listFolder() {
+			var res = await this.$API.nascfgfolder.list.get("");
+			if (res.code == 0) {
+				folder.children = res.data || [];
+			}
+			this.folderList = res.data || [];
+		},
+		async openFolder(folder) {
+			this.param.dir_id = '0';
+			this.param.folder_id = folder.id;
+			var res = await this.$API.nasresfile.list.get(this.param);
+			if (res.code != 200) {
+				this.fileList = [];
+				return;
+			}
+
+			this.fileList = res.data || [];
+		},
+		async openDir(item) {
+			this.currentPath.push(item);
+			this.currentFolder = item;
 			this.selectedItems = [];
 			this.history = this.history.slice(0, this.historyIndex + 1);
-			this.history.push({ folder: folderData, path: [...this.currentPath] });
+			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
+
+			this.param.dir_id = item.id;
+			var res = await this.$API.nasresfile.list.get(this.param);
+			if (res.code != 200) {
+				this.fileList = [];
+				return;
+			}
+
+			this.fileList = res.data || [];
 		},
-		openFile(file) {
-			this.$message.info(`打开文件: ${file.name}`);
+		openDoc(item) {
+			if (this.openFileWithApp) {
+				var file = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
+				console.log(file);
+				this.openFileWithApp(file);
+			} else {
+				this.$message.info(`打开文件: ${item.name}`);
+			}
 		},
 		clearSelection() {
 			this.selectedItems = [];
 		},
-		goBack() {
+		async goBack() {
 			if (this.canGoBack) {
 				this.historyIndex--;
 				const state = this.history[this.historyIndex];
 				this.currentFolder = state.folder;
-				this.currentPath = state.path;
+				this.currentPath = [...state.path];
 				this.selectedItems = [];
+				await this.loadCurrentFolder();
 			}
 		},
-		goForward() {
+		async goForward() {
 			if (this.canGoForward) {
 				this.historyIndex++;
 				const state = this.history[this.historyIndex];
 				this.currentFolder = state.folder;
-				this.currentPath = state.path;
+				this.currentPath = [...state.path];
 				this.selectedItems = [];
+				await this.loadCurrentFolder();
 			}
 		},
-		goUp() {
-			if (this.currentPath.length > 0) {
-				this.currentPath.pop();
-				this.currentFolder = this.currentPath.length > 0
-					? this.currentPath[this.currentPath.length - 1]
-					: null;
-				this.selectedItems = [];
+		async goUp() {
+			if (this.currentPath.length < 1) {
+				return;
+			}
+
+			this.currentPath.pop();
+			this.selectedItems = [];
+
+			if (this.currentPath.length === 0) {
+				this.currentFolder = null;
+				this.param.dir_id = '0';
+				this.param.folder_id = '0';
+				this.history = this.history.slice(0, this.historyIndex + 1);
+				this.history.push({ folder: null, path: [] });
+				this.historyIndex = this.history.length - 1;
+				this.fileList = [];
+			} else {
+				this.currentFolder = this.currentPath[this.currentPath.length - 1];
 				this.history = this.history.slice(0, this.historyIndex + 1);
 				this.history.push({ folder: this.currentFolder, path: [...this.currentPath] });
 				this.historyIndex = this.history.length - 1;
+				await this.loadCurrentFolder();
 			}
 		},
-		goToRoot() {
+		async goToRoot() {
 			this.currentPath = [];
 			this.currentFolder = null;
 			this.selectedItems = [];
+			this.param.dir_id = '0';
+			this.param.folder_id = '0';
 			this.history = this.history.slice(0, this.historyIndex + 1);
 			this.history.push({ folder: null, path: [] });
 			this.historyIndex = this.history.length - 1;
+			this.fileList = [];
 		},
-		goToPath(index) {
+		async goToPath(index) {
 			this.currentPath = this.currentPath.slice(0, index + 1);
 			this.currentFolder = this.currentPath[index];
 			this.selectedItems = [];
 			this.history = this.history.slice(0, this.historyIndex + 1);
 			this.history.push({ folder: this.currentFolder, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
+			await this.loadCurrentFolder();
+		},
+		async loadCurrentFolder() {
+			if (this.currentFolder) {
+				this.param.dir_id = this.currentFolder.id;
+				this.param.folder_id = '0';
+				var res = await this.$API.nasresfile.list.get(this.param);
+				if (res.code == 200) {
+					this.fileList = res.data || [];
+				} else {
+					this.fileList = [];
+				}
+			}
 		},
 		sortBy(field) {
 			if (this.sortField === field) {

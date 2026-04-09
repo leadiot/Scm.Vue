@@ -89,6 +89,12 @@ export default {
 	components: {
 		scIcon,
 	},
+	props: {
+		initialFile: {
+			type: Object,
+			default: null
+		}
+	},
 	data() {
 		return {
 			songs: [],
@@ -121,6 +127,20 @@ export default {
 		},
 	},
 	methods: {
+		loadInitialFile() {
+			if (this.initialFile && this.initialFile.url) {
+				this.songs.push({
+					id: this.songIdCounter++,
+					title: this.initialFile.name,
+					artist: '',
+					duration: '',
+					url: this.initialFile.url,
+				});
+				this.$nextTick(() => {
+					this.playSong(0);
+				});
+			}
+		},
 		handleDrop(e) {
 			this.isDragOver = false;
 			const files = e.dataTransfer.files;
@@ -258,6 +278,9 @@ export default {
 	mounted() {
 		if (this.$refs.audioPlayer) {
 			this.$refs.audioPlayer.volume = this.volume / 100;
+		}
+		if (this.initialFile) {
+			this.loadInitialFile();
 		}
 	},
 };

@@ -100,6 +100,12 @@ export default {
 	components: {
 		scIcon,
 	},
+	props: {
+		initialFile: {
+			type: Object,
+			default: null
+		}
+	},
 	data() {
 		return {
 			currentVideo: null,
@@ -125,6 +131,18 @@ export default {
 		};
 	},
 	methods: {
+		loadInitialFile() {
+			if (this.initialFile && this.initialFile.url) {
+				const video = {
+					id: this.videoIdCounter++,
+					title: this.initialFile.name,
+					url: this.initialFile.url,
+					duration: '--:--',
+				};
+				this.videos.push(video);
+				this.playVideo(video);
+			}
+		},
 		handleDrop(e) {
 			this.isDragOver = false;
 			const files = e.dataTransfer.files;
@@ -272,6 +290,9 @@ export default {
 	mounted() {
 		document.addEventListener('fullscreenchange', this.handleFullscreenChange);
 		document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+		if (this.initialFile) {
+			this.loadInitialFile();
+		}
 	},
 	unmounted() {
 		document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
