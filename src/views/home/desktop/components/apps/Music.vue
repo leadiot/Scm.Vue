@@ -1,10 +1,10 @@
 <template>
 	<div class="music-app" @dragover.prevent @drop.prevent="handleDrop">
 		<div class="app-header">
-			<span class="app-title">音乐播放器</span>
+			<span class="app-title">音频</span>
 			<el-button type="primary" size="small" @click="openFileDialog">
 				<sc-icon name="ms-add" style="margin-right: 4px;" />
-				添加音乐
+				添加音频
 			</el-button>
 			<input ref="fileInput" type="file" accept="audio/*" multiple style="display: none;"
 				@change="handleFileSelect">
@@ -13,7 +13,7 @@
 		<div v-if="songs.length === 0" class="empty-state" :class="{ 'drag-over': isDragOver }"
 			@dragover="isDragOver = true" @dragleave="isDragOver = false" @drop="handleDrop">
 			<sc-icon name="ms-music_note" :size="64" />
-			<p>拖放音乐文件到此处或点击上方按钮添加</p>
+			<p>拖放音频文件到此处或点击上方按钮添加</p>
 			<p class="hint">支持 MP3, WAV, OGG 格式</p>
 		</div>
 
@@ -521,6 +521,12 @@ export default {
 	display: flex;
 	align-items: center;
 	margin-left: 10px;
+	gap: 8px;
+}
+
+.volume-control .el-slider {
+	flex-shrink: 0;
+	width: 80px;
 }
 
 :deep(.el-slider__runway) {

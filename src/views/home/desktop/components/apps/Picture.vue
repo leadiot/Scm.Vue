@@ -2,11 +2,12 @@
 	<div class="picture-app" @dragover.prevent @drop.prevent="handleDrop">
 		<div v-if="!isPreviewMode" class="picture-gallery">
 			<div class="gallery-header">
-				<span class="gallery-title">图片库</span>
-				<span class="gallery-count">{{ pictures.length }} 张图片</span>
+				<span class="gallery-title">图像</span>
+				<span class="gallery-count">{{ pictures.length }} 张图像</span>
+				<div class="header-spacer"></div>
 				<el-button type="primary" size="small" @click="openFileDialog">
 					<sc-icon name="ms-add" style="margin-right: 4px;" />
-					添加图片
+					添加图像
 				</el-button>
 				<input ref="fileInput" type="file" accept="image/*" multiple style="display: none;"
 					@change="handleFileSelect">
@@ -15,7 +16,7 @@
 			<div v-if="pictures.length === 0" class="empty-gallery" :class="{ 'drag-over': isDragOver }"
 				@dragover="isDragOver = true" @dragleave="isDragOver = false" @drop="handleDrop">
 				<sc-icon name="ms-image" :size="64" />
-				<p>拖放图片到此处或点击上方按钮添加</p>
+				<p>拖放图像到此处或点击上方按钮添加</p>
 				<p class="hint">支持 JPG, PNG, GIF, WebP 格式</p>
 			</div>
 
@@ -241,7 +242,7 @@ export default {
 		onImageLoad() {
 		},
 		onImageError() {
-			this.$message.error('图片加载失败');
+			this.$message.error('图像加载失败');
 		},
 		saveToStorage() {
 			const data = this.pictures.map(p => ({
@@ -316,6 +317,10 @@ export default {
 	padding: 15px 20px;
 	gap: 15px;
 	border-bottom: 1px solid #333;
+}
+
+.header-spacer {
+	flex: 1;
 }
 
 .gallery-title {

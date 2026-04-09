@@ -28,12 +28,12 @@ export default {
 		const { locale, messages } = useI18n()
 		const elLocale = computed(() => messages.value[locale.value].el)
 		const route = useRoute()
-		const layoutComponent = shallowRef(layouts.console)
+		const layoutComponent = shallowRef(layouts.none)
 
 		watch(
 			() => route.meta?.layout,
 			(layoutType) => {
-				layoutComponent.value = layouts[layoutType] || layouts.console
+				layoutComponent.value = layouts[layoutType] || layouts.none
 			},
 			{ immediate: true }
 		)

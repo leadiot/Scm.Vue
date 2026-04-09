@@ -37,17 +37,17 @@
 		<div class="app-content">
 			<div class="sidebar">
 				<div class="sidebar-section">
-					<div class="sidebar-title">快速访问</div>
-					<div v-for="item in quickAccess" :key="item.id" class="sidebar-item"
+					<div class="sidebar-title">我的云盘</div>
+					<div v-for="item in stores" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的设备</div>
-					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
+					<div class="sidebar-title">快速访问</div>
+					<div v-for="item in libs" :key="item.id" class="sidebar-item"
+						:class="{ active: currentFolder?.id === item.id }" @click="openLib(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
@@ -56,7 +56,15 @@
 					<div class="sidebar-title">我的目录</div>
 					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon :name="item.icon" :size="18" />
+						<sc-icon name="ms-folder" :size="18" />
+						<span>{{ item.name }}</span>
+					</div>
+				</div>
+				<div class="sidebar-section">
+					<div class="sidebar-title">我的设备</div>
+					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
+						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
+						<sc-icon name="ms-device" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
@@ -114,7 +122,7 @@
 								<sc-icon :name="getFileIcon(item)" :size="18" />
 								<span>{{ item.name }}</span>
 							</div>
-							<div class="col-date">{{ item.modifiedDate }}</div>
+							<div class="col-date">{{ item.update_times }}</div>
 							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? '目录' : '文件') }}</div>
 							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
@@ -145,6 +153,7 @@ export default {
 	data() {
 		return {
 			param: {
+				opt: '1',
 				dir_id: '0',
 				folder_id: '0',
 				key: '',
@@ -162,13 +171,19 @@ export default {
 				{ value: 'list', label: '列表', icon: 'ms-list' },
 				{ value: 'details', label: '详细信息', icon: 'ms-table_rows' },
 			],
-			quickAccess: [
+			stores: [
 				{ id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				{ id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
-				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder' },
-				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder' },
-				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder' },
-				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder' },
+				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
+			],
+			libs: [
+				// { id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
+				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
+				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder', kind: 30 },
+				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder', kind: 41 },
+				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
+				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
+				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
+				{ id: 'archives', name: '压缩', icon: 'ms-archive', type: 'folder', kind: 60 },
 			],
 			deviceList: [],
 			folderList: [],
@@ -245,9 +260,40 @@ export default {
 			}
 			this.folderList = res.data || [];
 		},
+		async openLib(item) {
+			this.currentPath = [];
+			this.currentPath.push(item);
+			this.currentFolder = item;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: item, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
+
+			this.param.opt = '2';
+			// this.param.dir_id = '0';
+			// this.param.folder_id = '0';
+			this.param.kind = item.kind;
+			var res = await this.$API.nasresfile.list.get(this.param);
+			if (res.code != 200) {
+				this.fileList = [];
+				return;
+			}
+
+			this.fileList = res.data || [];
+		},
 		async openFolder(folder) {
-			this.param.dir_id = '0';
-			this.param.folder_id = folder.id;
+			this.currentPath = [];
+			this.currentPath.push(folder);
+			this.currentFolder = folder;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: folder, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
+
+			this.param.opt = '1';
+			this.param.dir_id = folder.res_id;
+			// this.param.folder_id = '0';
+			// this.param.kind = item.kind;
 			var res = await this.$API.nasresfile.list.get(this.param);
 			if (res.code != 200) {
 				this.fileList = [];
@@ -294,16 +340,16 @@ export default {
 			}
 
 			var kind = '';
-			if (item.kind == 20) {
+			if (item.kind == 30) {
 				kind = 'text';
 			}
-			else if (item.kind == 31) {
+			else if (item.kind == 41) {
 				kind = 'image';
 			}
-			else if (item.kind == 32) {
+			else if (item.kind == 42) {
 				kind = 'audio';
 			}
-			else if (item.kind == 33) {
+			else if (item.kind == 43) {
 				kind = 'video';
 			} else {
 				this.openDocWithWeb(item);
@@ -435,6 +481,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 4px;
+	flex: 1;
 }
 
 .toolbar-btn {
@@ -467,8 +514,9 @@ export default {
 	background-color: #fff;
 	border: 1px solid #e5e5e5;
 	border-radius: 4px;
-	min-width: 200px;
+	flex: 1;
 	font-size: 13px;
+	overflow: hidden;
 }
 
 .path-root {
@@ -508,7 +556,21 @@ export default {
 }
 
 .search-input {
-	width: 200px;
+	width: 160px;
+	font-size: 13px;
+}
+
+.search-input :deep(.el-input__wrapper) {
+	padding: 3px 8px;
+	box-shadow: 0 0 0 1px #e5e5e5;
+}
+
+.search-input :deep(.el-input__wrapper:hover) {
+	box-shadow: 0 0 0 1px #c0c4cc;
+}
+
+.search-input :deep(.el-input__wrapper.is-focus) {
+	box-shadow: 0 0 0 1px #409eff;
 }
 
 .view-switch {

@@ -97,6 +97,7 @@ export default {
 					this.result = Number.isInteger(evalResult)
 						? evalResult.toString()
 						: evalResult.toFixed(8).replace(/\.?0+$/, '');
+					this.expression = this.result;
 				}
 			} catch (error) {
 				this.result = '错误';

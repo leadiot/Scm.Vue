@@ -32,7 +32,9 @@
 				</div>
 			</div>
 			<div class="taskbar-tray">
-				<span class="time">{{ currentTime }}</span>
+				<el-tooltip :content="currentDateTime" placement="top">
+					<span class="time" @dblclick="openCalendar">{{ currentTime }}</span>
+				</el-tooltip>
 			</div>
 		</div>
 
@@ -83,7 +85,7 @@
 						<el-radio-group v-model="backgroundType">
 							<el-radio value="color">纯色</el-radio>
 							<el-radio value="gradient">渐变</el-radio>
-							<el-radio value="image">图片</el-radio>
+							<el-radio value="image">图像</el-radio>
 						</el-radio-group>
 					</div>
 
@@ -113,8 +115,8 @@
 					</div>
 
 					<div v-if="backgroundType === 'image'" class="settings-section">
-						<h4>背景图片</h4>
-						<el-input v-model="backgroundImage" placeholder="输入图片URL或选择预设" />
+						<h4>背景图像</h4>
+						<el-input v-model="backgroundImage" placeholder="输入图像URL或选择预设" />
 						<div class="preset-images">
 							<div v-for="(img, index) in presetImages" :key="index" class="preset-image"
 								:style="{ backgroundImage: `url(${img})` }" @click="backgroundImage = img" />
@@ -190,53 +192,8 @@ export default {
 				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
 			],
 			home: '/',
-			deskApps: [
-				{ id: 1, name: '我的文档', icon: 'ms-monitor', component: 'Documents', width: 900, height: 600 },
-				{ id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' },
-				{ id: 3, name: '记事本', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 },
-				{ id: 4, name: '待办事项', icon: 'ms-assignment', component: 'Todo', width: 400, height: 500 },
-				{ id: 5, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580 },
-				{ id: 6, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 400, height: 460 },
-				{ id: 7, name: '音乐', icon: 'ms-music_note', component: 'Music' },
-				{ id: 8, name: '视频', icon: 'ms-videocam', component: 'Video' },
-				{ id: 9, name: '消息', icon: 'ms-mail', component: 'Message' },
-				{ id: 10, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 },
-			],
-			menuApps: [
-				{
-					id: 1,
-					name: '常用应用',
-					icon: 'ms-folder',
-					children: [
-						{ id: 11, name: '我的文档', icon: 'ms-folder', component: 'Documents' },
-						{ id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' },
-						{ id: 13, name: '记事本', icon: 'ms-description', component: 'Notepad' },
-						{ id: 14, name: '待办事项', icon: 'ms-assignment', component: 'Todo' },
-						{ id: 15, name: '计算器', icon: 'ms-calculate', component: 'Calculator' },
-						{ id: 16, name: '日历', icon: 'ms-calendar_today', component: 'Calendar' },
-					]
-				},
-				{
-					id: 2,
-					name: '多媒体',
-					icon: 'ms-videocam',
-					children: [
-						{ id: 21, name: '音乐', icon: 'ms-music_note', component: 'Music' },
-						{ id: 22, name: '视频', icon: 'ms-videocam', component: 'Video' },
-						{ id: 23, name: '图片', icon: 'ms-photo_library', component: 'Pictures' },
-					]
-				},
-				{
-					id: 3,
-					name: '系统工具',
-					icon: 'ms-settings',
-					children: [
-						{ id: 31, name: '终端', icon: 'ms-terminal', component: 'Terminal' },
-						{ id: 32, name: '下载', icon: 'ms-download', component: 'Download' },
-						{ id: 33, name: '消息', icon: 'ms-mail', component: 'Message' },
-					]
-				},
-			],
+			deskApps: [],
+			menuApps: [],
 			updateTimeInterval: null,
 			documentClickHandler: null,
 		};
@@ -256,12 +213,29 @@ export default {
 					background: `linear-gradient(${this.gradientDirection}, ${this.gradientColor1}, ${this.gradientColor2})`,
 				};
 			}
+		},
+		currentDateTime() {
+			const now = new Date();
+			const dateStr = now.toLocaleDateString('zh-CN', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				weekday: 'long'
+			});
+			const timeStr = now.toLocaleTimeString('zh-CN', {
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit'
+			});
+			return `${dateStr} ${timeStr}`;
 		}
 	},
 	methods: {
 		async init() {
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
+
+			this.listApp();
 
 			this.documentClickHandler = (e) => {
 				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
@@ -286,6 +260,53 @@ export default {
 		clearSelection() {
 			this.selectedApp = null;
 		},
+		listApp() {
+			var menu = { id: 1, name: '常用应用', icon: 'ms-folder', children: [] };
+			this.menuApps.push(menu);
+
+			var app = { id: 11, name: '我的文档', icon: 'ms-monitor', component: 'Documents', width: 900, height: 600 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 13, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 14, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 400, height: 500 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 15, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 16, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
+			// this.deskApps.push(app);
+			menu.children.push(app);
+
+			menu = { id: 2, name: '多媒体', icon: 'ms-videocam', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 21, name: '图像', icon: 'ms-photo_library', component: 'Pictures' };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 22, name: '音频', icon: 'ms-music_note', component: 'Music' };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 23, name: '视频', icon: 'ms-videocam', component: 'Video' };
+			this.deskApps.push(app);
+			menu.children.push(app);
+
+			menu = { id: 3, name: '系统工具', icon: 'ms-settings', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 31, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			// app = { id: 32, name: '下载', icon: 'ms-download', component: 'Download' };
+			// this.deskApps.push(app);
+			// menu.children.push(app);
+			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
+			// this.deskApps.push(app);
+			menu.children.push(app);
+		},
 		openApp(app) {
 			this.showStartMenu = false;
 			const windowId = ++this.windowIdCounter;
@@ -298,6 +319,7 @@ export default {
 				minimized: false,
 				maximized: false,
 				focused: true,
+				resizable: app.resizable,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
 				width: app.width || 800,
@@ -373,6 +395,16 @@ export default {
 			this.showStartMenu = false;
 			this.showSettings = true;
 		},
+		openCalendar() {
+			this.openApp({
+				name: '日历',
+				icon: 'ms-calendar_month',
+				component: 'Calendar',
+				width: 320,
+				height: 460,
+				resizable: false
+			});
+		},
 		saveSettings() {
 			this.showSettings = false;
 		},
@@ -401,16 +433,16 @@ export default {
 			let appConfig = null;
 			if (kind === 'text') {
 				appConfig = {
-					name: '文本查看',
+					name: '记事',
 					icon: 'ms-article',
 					component: 'Text',
-					width: 900,
-					height: 700,
+					width: 800,
+					height: 600,
 					props: { files: files, index: index }
 				};
 			} else if (kind === 'image') {
 				appConfig = {
-					name: '图片查看',
+					name: '图像',
 					icon: 'ms-photo_library',
 					component: 'Pictures',
 					width: 900,
@@ -419,7 +451,7 @@ export default {
 				};
 			} else if (kind === 'video') {
 				appConfig = {
-					name: '视频播放',
+					name: '视频',
 					icon: 'ms-videocam',
 					component: 'Video',
 					width: 900,
@@ -428,7 +460,7 @@ export default {
 				};
 			} else if (kind === 'audio') {
 				appConfig = {
-					name: '音乐播放',
+					name: '音频',
 					icon: 'ms-music_note',
 					component: 'Music',
 					width: 500,

@@ -99,8 +99,8 @@
 		</div>
 
 		<div class="notepad-tabs">
-			<div v-for="note in notes" :key="note.id" class="note-tab"
-				:class="{ active: currentNoteId === note.id }" @click="switchNote(note.id)">
+			<div v-for="note in notes" :key="note.id" class="note-tab" :class="{ active: currentNoteId === note.id }"
+				@click="switchNote(note.id)">
 				<span class="note-tab-title">{{ note.title || '未命名' }}</span>
 				<el-icon class="note-tab-close" @click.stop="closeNote(note.id)">
 					<el-icon-close />
@@ -111,8 +111,8 @@
 			</div>
 		</div>
 
-		<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput"
-			@paste="onPaste"></div>
+		<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput" @paste="onPaste">
+		</div>
 
 		<div class="notepad-status">
 			<span>字数：{{ wordCount }}</span>
@@ -128,6 +128,10 @@ export default {
 	name: 'Notepad',
 	components: {
 		scIcon,
+	},
+	props: {
+		files: { type: Array, default: () => [] },
+		index: { type: Number, default: 0 }
 	},
 	data() {
 		return {
@@ -166,16 +170,16 @@ export default {
 				this.$message.warning('请先选择要修改字号的文字');
 				return;
 			}
-			
+
 			const selection = window.getSelection();
 			selection.removeAllRanges();
 			selection.addRange(this.savedRange);
-			
+
 			const span = document.createElement('span');
 			span.style.fontSize = size + 'px';
 			span.appendChild(this.savedRange.extractContents());
 			this.savedRange.insertNode(span);
-			
+
 			this.savedRange = null;
 			this.$refs.editorRef?.focus();
 			this.onEditorInput();
@@ -191,13 +195,13 @@ export default {
 				this.$message.warning('请先选择要修改颜色的文字');
 				return;
 			}
-			
+
 			const selection = window.getSelection();
 			selection.removeAllRanges();
 			selection.addRange(this.savedColorRange);
-			
+
 			document.execCommand('foreColor', false, color);
-			
+
 			this.savedColorRange = null;
 			this.$refs.editorRef?.focus();
 			this.onEditorInput();
@@ -207,13 +211,13 @@ export default {
 				this.$message.warning('请先选择要修改背景色的文字');
 				return;
 			}
-			
+
 			const selection = window.getSelection();
 			selection.removeAllRanges();
 			selection.addRange(this.savedColorRange);
-			
+
 			document.execCommand('hiliteColor', false, color);
-			
+
 			this.savedColorRange = null;
 			this.$refs.editorRef?.focus();
 			this.onEditorInput();
@@ -237,8 +241,42 @@ export default {
 		getTitle(html) {
 			const div = document.createElement('div');
 			div.innerHTML = html;
-			const text = div.innerText.trim();
-			return text.substring(0, 20) || '未命名';
+			
+			let firstLine = '';
+			let currentNode = div.firstChild;
+			
+			while (currentNode) {
+				if (currentNode.nodeType === Node.TEXT_NODE) {
+					const text = currentNode.textContent;
+					const newlineIndex = text.indexOf('\n');
+					if (newlineIndex >= 0) {
+						firstLine += text.substring(0, newlineIndex);
+						break;
+					}
+					firstLine += text;
+				} else if (currentNode.nodeType === Node.ELEMENT_NODE) {
+					const tagName = currentNode.tagName.toLowerCase();
+					if (tagName === 'br') {
+						break;
+					}
+					if (['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'].includes(tagName)) {
+						if (firstLine) {
+							break;
+						}
+					}
+					const childText = currentNode.textContent || '';
+					const newlineIndex = childText.indexOf('\n');
+					if (newlineIndex >= 0) {
+						firstLine += childText.substring(0, newlineIndex);
+						break;
+					}
+					firstLine += childText;
+				}
+				currentNode = currentNode.nextSibling;
+			}
+			
+			firstLine = firstLine.trim().substring(0, 20);
+			return firstLine || '未命名';
 		},
 		createNote() {
 			const note = {
@@ -255,9 +293,14 @@ export default {
 		switchNote(id) {
 			this.currentNoteId = id;
 			this.$nextTick(() => {
-				if (this.$refs.editorRef && this.currentNote) {
-					this.$refs.editorRef.innerHTML = this.currentNote.content || '';
-					this.wordCount = this.$refs.editorRef.innerText.length;
+				if (this.$refs.editorRef) {
+					if (this.currentNote) {
+						this.$refs.editorRef.innerHTML = this.currentNote.content || '';
+						this.wordCount = this.$refs.editorRef.innerText.length;
+					} else {
+						this.$refs.editorRef.innerHTML = '';
+						this.wordCount = 0;
+					}
 				}
 			});
 		},
@@ -297,13 +340,67 @@ export default {
 				}
 			}
 		},
+		async loadInitialFiles() {
+			if (this.files && this.files.length > 0) {
+				// for (const file of this.files) {
+				// 	await this.openFile(file);
+				// }
+				// const targetIndex = Math.min(this.index, this.notes.length - 1);
+				// if (this.notes.length > 0 && targetIndex >= 0) {
+				// 	this.switchNote(this.notes[targetIndex].id);
+				// }
+				var index = Math.min(this.index, this.files.length - 1);
+				await this.openFile(this.files[index]);
+				this.switchNote(this.notes[0].id);
+			}
+		},
+		async openFile(file) {
+			try {
+				let content = '';
+				if (file.url) {
+					const response = await fetch(file.url);
+					if (response.ok) {
+						content = await response.text();
+					}
+				} else if (file.content) {
+					content = file.content;
+				}
+
+				const note = {
+					id: this.noteIdCounter++,
+					title: file.name || '未命名',
+					content: this.escapeHtml(content),
+					fileId: file.id,
+					fileUrl: file.url,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				};
+				this.notes.push(note);
+			} catch (error) {
+				console.error('加载文件失败:', error);
+				this.$message.error(`无法打开文件: ${file.name}`);
+			}
+		},
+		escapeHtml(text) {
+			return text
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#039;')
+				.replace(/\n/g, '<br>');
+		},
 	},
 	mounted() {
-		this.loadFromStorage();
-		if (this.notes.length === 0) {
-			this.createNote();
+		if (this.files && this.files.length > 0) {
+			this.loadInitialFiles();
 		} else {
-			this.switchNote(this.currentNoteId);
+			this.loadFromStorage();
+			if (this.notes.length === 0) {
+				this.createNote();
+			} else {
+				this.switchNote(this.currentNoteId);
+			}
 		}
 	},
 };

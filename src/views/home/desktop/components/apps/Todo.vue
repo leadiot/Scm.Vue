@@ -1,12 +1,12 @@
 <template>
 	<div class="todo-app">
 		<div class="todo-header">
-			<h3>待办事项</h3>
+			<h3>待办</h3>
 			<span class="todo-count">{{ remainingCount }} 项待完成</span>
 		</div>
 
 		<div class="todo-input">
-			<el-input v-model="newTodo" placeholder="添加新待办事项..." @keyup.enter="addTodo">
+			<el-input v-model="newTodo" placeholder="添加新待办..." @keyup.enter="addTodo">
 				<template #append>
 					<el-button @click="addTodo" :disabled="!newTodo.trim()">
 						<sc-icon name="ms-add" />

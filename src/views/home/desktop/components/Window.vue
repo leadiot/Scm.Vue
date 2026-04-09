@@ -12,7 +12,8 @@
 						<rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" />
 					</svg>
 				</button>
-				<button class="control-btn maximize" @click.stop="$emit('maximize', window.id)">
+				<button v-if="window.resizable !== false" class="control-btn maximize"
+					@click.stop="$emit('maximize', window.id)">
 					<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
 						<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
 						<rect x="1" y="3" width="8" height="8" fill="white" stroke="currentColor" stroke-width="1.2" />
@@ -34,7 +35,7 @@
 			<component :is="getComponent(window.component)" v-bind="window.props || {}" />
 		</div>
 
-		<div v-if="!window.maximized" class="resize-handle" @mousedown.stop="startResize"></div>
+		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize"></div>
 	</div>
 </template>
 
@@ -145,6 +146,7 @@ export default {
 		},
 		startResize(e) {
 			if (this.window.maximized) return;
+			if (this.window.resizable === false) return;
 
 			this.isResizing = true;
 			this.resizeStartX = e.clientX;
@@ -161,7 +163,7 @@ export default {
 			const deltaX = e.clientX - this.resizeStartX;
 			const deltaY = e.clientY - this.resizeStartY;
 
-			this.window.width = Math.max(400, this.resizeStartWidth + deltaX);
+			this.window.width = Math.max(300, this.resizeStartWidth + deltaX);
 			this.window.height = Math.max(300, this.resizeStartHeight + deltaY);
 		},
 		stopResize() {
