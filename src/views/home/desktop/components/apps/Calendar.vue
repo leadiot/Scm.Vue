@@ -1,10 +1,10 @@
 <template>
-	<div class="calendar-app">
+	<div class="app-container app-light">
 		<div class="app-header">
 			<button @click="prevMonth" class="nav-btn">
 				<sc-icon name="ms-chevron_left" :size="20" />
 			</button>
-			<h3 class="app-title">{{ currentYear }}年 {{ currentMonth + 1 }}月</h3>
+			<h3 class="app-header-title">{{ currentYear }}年 {{ currentMonth + 1 }}月</h3>
 			<button @click="nextMonth" class="nav-btn">
 				<sc-icon name="ms-chevron_right" :size="20" />
 			</button>
@@ -106,36 +106,16 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.calendar-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.app-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 12px 16px;
-	background-color: #252525;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 16px;
-	font-weight: 500;
-}
-
 .nav-btn {
 	width: 32px;
 	height: 32px;
 	border: none;
 	border-radius: 4px;
-	background-color: #333;
-	color: #fff;
+	background-color: #f0f0f0;
+	color: #333;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -144,7 +124,7 @@ export default {
 }
 
 .nav-btn:hover {
-	background-color: #444;
+	background-color: #e0e0e0;
 }
 
 .calendar-grid {
@@ -152,7 +132,7 @@ export default {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 1px;
-	background-color: #252525;
+	background-color: #e5e5e5;
 	padding: 1px;
 	margin: 10px;
 	border-radius: 8px;
@@ -161,23 +141,24 @@ export default {
 .weekday {
 	padding: 12px;
 	text-align: center;
-	background-color: #333;
+	background-color: #f5f5f5;
 	font-weight: 500;
-	color: #888;
+	color: #666;
 	font-size: 13px;
 }
 
 .day {
 	padding: 12px;
 	text-align: center;
-	background-color: #2a2a2a;
+	background-color: #fff;
 	cursor: pointer;
 	transition: all 0.2s;
 	font-size: 14px;
+	color: #333;
 }
 
 .day:hover {
-	background-color: #3a3a3a;
+	background-color: #f5f5f5;
 }
 
 .day.today {
@@ -188,13 +169,13 @@ export default {
 }
 
 .day.otherMonth {
-	color: #555;
+	color: #bbb;
 }
 
 .calendar-footer {
 	padding: 12px 16px;
-	background-color: #252525;
-	border-top: 1px solid #333;
+	background-color: #f9f9f9;
+	border-top: 1px solid #e5e5e5;
 }
 
 .today-info {
@@ -202,6 +183,6 @@ export default {
 	align-items: center;
 	gap: 8px;
 	font-size: 13px;
-	color: #888;
+	color: #666;
 }
 </style>

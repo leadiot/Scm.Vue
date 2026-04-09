@@ -1,20 +1,20 @@
 <template>
-	<div class="download-app">
-		<div class="app-header">
-			<span class="app-title">下载管理</span>
+	<div class="app-container app-light">
+		<div class="app-toolbar">
+			<span class="app-header-title">下载管理</span>
 			<div class="header-actions">
-				<el-button text class="action-btn" @click="clearCompleted">
+				<el-button text class="app-toolbar-btn" @click="clearCompleted">
 					<sc-icon name="ms-delete_sweep" :size="18" />
 					<span class="btn-text">清除已完成</span>
 				</el-button>
-				<el-button text class="action-btn" @click="pauseAll">
+				<el-button text class="app-toolbar-btn" @click="pauseAll">
 					<sc-icon name="ms-pause" :size="18" />
 					<span class="btn-text">全部暂停</span>
 				</el-button>
 			</div>
 		</div>
 
-		<div v-if="downloads.length === 0" class="empty-state">
+		<div v-if="downloads.length === 0" class="app-empty">
 			<sc-icon name="ms-download" :size="64" />
 			<p>暂无下载任务</p>
 		</div>
@@ -190,65 +190,17 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.download-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.app-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 12px 16px;
-	background-color: #252525;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 14px;
-	font-weight: 500;
-}
-
 .header-actions {
 	display: flex;
 	gap: 8px;
 }
 
-.action-btn {
-	color: #888 !important;
-	padding: 6px 10px !important;
-}
-
-.action-btn:hover {
-	color: #fff !important;
-	background-color: #333 !important;
-}
-
-.action-btn.remove:hover {
-	color: #f56c6c !important;
-}
-
 .btn-text {
 	margin-left: 4px;
 	font-size: 12px;
-}
-
-.empty-state {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: #555;
-}
-
-.empty-state p {
-	margin-top: 16px;
-	font-size: 14px;
 }
 
 .download-list {
@@ -262,14 +214,14 @@ export default {
 	align-items: center;
 	gap: 12px;
 	padding: 12px;
-	background-color: #252525;
+	background-color: #f9f9f9;
 	border-radius: 8px;
 	margin-bottom: 8px;
 	transition: background-color 0.2s;
 }
 
 .download-item:hover {
-	background-color: #2a2a2a;
+	background-color: #f0f0f0;
 }
 
 .download-item.completed {
@@ -283,7 +235,7 @@ export default {
 .download-icon {
 	width: 48px;
 	height: 48px;
-	background-color: #333;
+	background-color: #f0f0f0;
 	border-radius: 8px;
 	display: flex;
 	align-items: center;
@@ -310,11 +262,12 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	color: #333;
 }
 
 .download-size {
 	font-size: 12px;
-	color: #888;
+	color: #999;
 	flex-shrink: 0;
 	margin-left: 12px;
 }
@@ -336,7 +289,7 @@ export default {
 
 .download-status {
 	font-size: 12px;
-	color: #888;
+	color: #999;
 }
 
 .download-status.completed {
@@ -353,25 +306,29 @@ export default {
 	flex-shrink: 0;
 }
 
+.download-actions .app-action-btn {
+	opacity: 1;
+}
+
 .app-footer {
 	padding: 12px 16px;
-	background-color: #252525;
-	border-top: 1px solid #333;
+	background-color: #f9f9f9;
+	border-top: 1px solid #e5e5e5;
 }
 
 .footer-stats {
 	display: flex;
 	gap: 20px;
 	font-size: 12px;
-	color: #888;
+	color: #999;
 }
 
 :deep(.el-progress-bar__outer) {
-	background-color: #333;
+	background-color: #e5e5e5;
 }
 
 :deep(.el-progress__text) {
-	color: #888;
+	color: #999;
 	font-size: 12px !important;
 }
 </style>

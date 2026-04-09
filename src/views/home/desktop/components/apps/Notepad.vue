@@ -1,5 +1,5 @@
 <template>
-	<div class="notepad-app">
+	<div class="app-container app-light">
 		<div class="notepad-toolbar">
 			<div class="toolbar-group">
 				<el-dropdown trigger="click" @command="setFontSize" @visible-change="onDropdownVisible">
@@ -406,14 +406,9 @@ export default {
 };
 </script>
 
-<style scoped>
-.notepad-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #fff;
-}
+<style src="./common.css"></style>
 
+<style scoped>
 .notepad-toolbar {
 	display: flex;
 	align-items: center;
@@ -507,6 +502,7 @@ export default {
 	font-size: 14px;
 	line-height: 1.8;
 	color: #333;
+	background-color: #fff;
 }
 
 .notepad-editor:empty::before {

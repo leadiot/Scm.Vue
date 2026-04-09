@@ -1,7 +1,7 @@
 <template>
-	<div class="music-app" @dragover.prevent @drop.prevent="handleDrop">
-		<div class="app-header">
-			<span class="app-title">音频</span>
+	<div class="app-container app-dark" @dragover.prevent @drop.prevent="handleDrop">
+		<div class="app-toolbar">
+			<span class="app-header-title">音频</span>
 			<el-button type="primary" size="small" @click="openFileDialog">
 				<sc-icon name="ms-add" style="margin-right: 4px;" />
 				添加音频
@@ -10,7 +10,7 @@
 				@change="handleFileSelect">
 		</div>
 
-		<div v-if="songs.length === 0" class="empty-state" :class="{ 'drag-over': isDragOver }"
+		<div v-if="songs.length === 0" class="app-empty" :class="{ 'drag-over': isDragOver }"
 			@dragover="isDragOver = true" @dragleave="isDragOver = false" @drop="handleDrop">
 			<sc-icon name="ms-music_note" :size="64" />
 			<p>拖放音频文件到此处或点击上方按钮添加</p>
@@ -18,19 +18,19 @@
 		</div>
 
 		<div v-else class="music-list">
-			<div v-for="(song, index) in songs" :key="song.id" class="song-item"
+			<div v-for="(song, index) in songs" :key="song.id" class="app-list-item"
 				:class="{ playing: currentIndex === index }" @click="playSong(index)">
 				<div class="song-number">
 					<sc-icon v-if="currentIndex === index && isPlaying" name="ms-music_note" :size="16"
 						class="playing-icon" />
 					<span v-else>{{ index + 1 }}</span>
 				</div>
-				<div class="song-info">
-					<span class="song-title">{{ song.title }}</span>
+				<div class="app-info">
+					<span class="app-name">{{ song.title }}</span>
 					<span class="song-artist">{{ song.artist || '未知艺术家' }}</span>
 				</div>
 				<span class="song-duration">{{ song.duration || '--:--' }}</span>
-				<el-button text size="small" class="remove-btn" @click.stop="removeSong(song.id)">
+				<el-button text size="small" class="app-action-btn" @click.stop="removeSong(song.id)">
 					<sc-icon name="ms-delete" :size="16" />
 				</el-button>
 			</div>
@@ -42,7 +42,7 @@
 					<sc-icon name="ms-album" :size="32" />
 				</div>
 				<div class="song-meta">
-					<span class="song-title">{{ currentSong?.title || '未播放' }}</span>
+					<span class="app-name">{{ currentSong?.title || '未播放' }}</span>
 					<span class="song-artist">{{ currentSong?.artist || '未知艺术家' }}</span>
 				</div>
 			</div>
@@ -297,74 +297,15 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.music-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.app-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 12px 16px;
-	background-color: #252525;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 14px;
-	font-weight: 500;
-}
-
-.empty-state {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: #666;
-}
-
-.empty-state p {
-	margin-top: 15px;
-}
-
-.empty-state .hint {
-	font-size: 12px;
-	color: #555;
-}
-
-.empty-state.drag-over {
-	background-color: rgba(64, 158, 255, 0.1);
-	border: 2px dashed #409eff;
-	border-radius: 8px;
-	margin: 10px;
-}
-
 .music-list {
 	flex: 1;
 	overflow-y: auto;
 }
 
-.song-item {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-	padding: 12px 16px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-	position: relative;
-}
-
-.song-item:hover {
-	background-color: #2a2a2a;
-}
-
-.song-item.playing {
+.app-list-item.playing {
 	background-color: rgba(64, 158, 255, 0.1);
 }
 
@@ -392,22 +333,6 @@ export default {
 	}
 }
 
-.song-info {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	overflow: hidden;
-}
-
-.song-title {
-	font-size: 14px;
-	color: #fff;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
 .song-artist {
 	font-size: 12px;
 	color: #888;
@@ -416,16 +341,6 @@ export default {
 .song-duration {
 	color: #888;
 	font-size: 13px;
-}
-
-.remove-btn {
-	opacity: 0;
-	transition: opacity 0.2s;
-	color: #888 !important;
-}
-
-.song-item:hover .remove-btn {
-	opacity: 1;
 }
 
 .player-controls {
@@ -460,7 +375,7 @@ export default {
 	overflow: hidden;
 }
 
-.song-meta .song-title {
+.song-meta .app-name {
 	font-size: 14px;
 	font-weight: 500;
 }

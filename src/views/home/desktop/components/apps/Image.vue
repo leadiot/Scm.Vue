@@ -1,8 +1,8 @@
 <template>
-	<div class="picture-app" @dragover.prevent @drop.prevent="handleDrop">
+	<div class="app-container app-dark" @dragover.prevent @drop.prevent="handleDrop">
 		<div v-if="!isPreviewMode" class="picture-gallery">
-			<div class="gallery-header">
-				<span class="gallery-title">图像</span>
+			<div class="app-toolbar">
+				<span class="app-header-title">图像</span>
 				<span class="gallery-count">{{ pictures.length }} 张图像</span>
 				<div class="header-spacer"></div>
 				<el-button type="primary" size="small" @click="openFileDialog">
@@ -13,7 +13,7 @@
 					@change="handleFileSelect">
 			</div>
 
-			<div v-if="pictures.length === 0" class="empty-gallery" :class="{ 'drag-over': isDragOver }"
+			<div v-if="pictures.length === 0" class="app-empty" :class="{ 'drag-over': isDragOver }"
 				@dragover="isDragOver = true" @dragleave="isDragOver = false" @drop="handleDrop">
 				<sc-icon name="ms-image" :size="64" />
 				<p>拖放图像到此处或点击上方按钮添加</p>
@@ -300,15 +300,9 @@ export default {
 };
 </script>
 
-<style scoped>
-.picture-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
+<style src="./common.css"></style>
 
+<style scoped>
 .picture-gallery {
 	flex: 1;
 	display: flex;
@@ -316,51 +310,13 @@ export default {
 	overflow: hidden;
 }
 
-.gallery-header {
-	display: flex;
-	align-items: center;
-	padding: 15px 20px;
-	gap: 15px;
-	border-bottom: 1px solid #333;
-}
-
 .header-spacer {
 	flex: 1;
-}
-
-.gallery-title {
-	font-size: 18px;
-	font-weight: 500;
 }
 
 .gallery-count {
 	font-size: 13px;
 	color: #999;
-}
-
-.empty-gallery {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: #666;
-}
-
-.empty-gallery p {
-	margin-top: 15px;
-}
-
-.empty-gallery .hint {
-	font-size: 12px;
-	color: #555;
-}
-
-.empty-gallery.drag-over {
-	background-color: rgba(64, 158, 255, 0.1);
-	border: 2px dashed #409eff;
-	border-radius: 8px;
-	margin: 10px;
 }
 
 .picture-grid {
@@ -379,6 +335,7 @@ export default {
 	border-radius: 8px;
 	overflow: hidden;
 	background-color: #2a2a2a;
+	position: relative;
 }
 
 .picture-item:hover {
@@ -431,10 +388,6 @@ export default {
 	right: 8px;
 	opacity: 0;
 	transition: opacity 0.3s;
-}
-
-.picture-item {
-	position: relative;
 }
 
 .picture-preview {

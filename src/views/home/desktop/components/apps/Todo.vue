@@ -1,7 +1,7 @@
 <template>
-	<div class="todo-app">
-		<div class="todo-header">
-			<h3>待办</h3>
+	<div class="app-container app-light">
+		<div class="app-header">
+			<span class="app-header-title">待办</span>
 			<span class="todo-count">{{ remainingCount }} 项待完成</span>
 		</div>
 
@@ -170,28 +170,9 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.todo-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #fff;
-}
-
-.todo-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 15px 20px;
-	border-bottom: 1px solid #eee;
-}
-
-.todo-header h3 {
-	margin: 0;
-	font-size: 18px;
-	color: #333;
-}
-
 .todo-count {
 	font-size: 13px;
 	color: #999;
@@ -230,11 +211,11 @@ export default {
 	padding: 12px 20px;
 	gap: 12px;
 	transition: all 0.3s;
-	border-bottom: 1px solid #f5f5f5;
+	border-bottom: 1px solid #f0f0f0;
 }
 
 .todo-item:hover {
-	background-color: #fafafa;
+	background-color: #f9f9f9;
 }
 
 .todo-item.completed .todo-text {

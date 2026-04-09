@@ -8,7 +8,7 @@
     "serve": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-pattern node_modules --ignore-pattern dist"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -36,6 +36,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vitejs/plugin-vue": "^6.0.5",
     "esbuild": "^0.27.7",
     "eslint": "^10.2.0",
@@ -43,29 +44,6 @@
     "sass": "^1.99.0",
     "vite": "^8.0.3",
     "vue-eslint-parser": "^10.4.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "globals": {
-      "APP_CONFIG": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "ecmaVersion": "latest"
-    },
-    "rules": {
-      "indent": 0,
-      "no-tabs": 0,
-      "no-mixed-spaces-and-tabs": 0,
-      "vue/no-unused-components": 0,
-      "vue/multi-word-component-names": 0
-    }
   },
   "browserslist": [
     "> 1%",

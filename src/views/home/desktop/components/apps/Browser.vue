@@ -1,5 +1,5 @@
 <template>
-	<div class="browser-app">
+	<div class="app-container app-light">
 		<div class="browser-toolbar">
 			<button @click="goBack" class="nav-btn" :disabled="!canGoBack">
 				<sc-icon name="ms-arrow_back" :size="18" />
@@ -267,13 +267,9 @@ export default {
 };
 </script>
 
-<style scoped>
-.browser-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-}
+<style src="./common.css"></style>
 
+<style scoped>
 .browser-toolbar {
 	display: flex;
 	align-items: center;
@@ -289,6 +285,7 @@ export default {
 	border: none;
 	border-radius: 4px;
 	background-color: transparent;
+	color: #333;
 	cursor: pointer;
 	display: flex;
 	align-items: center;

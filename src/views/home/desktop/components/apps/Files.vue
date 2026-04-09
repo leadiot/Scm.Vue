@@ -1,5 +1,5 @@
 <template>
-	<div class="documents-app" @click.self="clearSelection">
+	<div class="app-container app-light" @click.self="clearSelection">
 		<div class="app-toolbar">
 			<div class="toolbar-left">
 				<button class="toolbar-btn" :disabled="!canGoBack" @click="goBack">
@@ -459,24 +459,9 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.documents-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #fff;
-}
-
-.app-toolbar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 8px 12px;
-	background-color: #f9f9f9;
-	border-bottom: 1px solid #e5e5e5;
-	gap: 12px;
-}
-
 .toolbar-left {
 	display: flex;
 	align-items: center;
@@ -499,11 +484,11 @@ export default {
 }
 
 .toolbar-btn:hover:not(:disabled) {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: #e0e0e0;
 }
 
 .toolbar-btn:disabled {
-	color: #ccc;
+	color: #bbb;
 	cursor: not-allowed;
 }
 
@@ -512,7 +497,7 @@ export default {
 	align-items: center;
 	padding: 4px 8px;
 	background-color: #fff;
-	border: 1px solid #e5e5e5;
+	border: 1px solid #ddd;
 	border-radius: 4px;
 	flex: 1;
 	font-size: 13px;
@@ -526,16 +511,17 @@ export default {
 	cursor: pointer;
 	padding: 2px 4px;
 	border-radius: 3px;
+	color: #333;
 }
 
 .path-root:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: #f0f0f0;
 }
 
 .path-segment {
 	display: flex;
 	align-items: center;
-	color: #666;
+	color: #999;
 }
 
 .path-segment span:last-child {
@@ -545,7 +531,7 @@ export default {
 }
 
 .path-segment span:last-child:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: #f0f0f0;
 	color: #333;
 }
 
@@ -562,11 +548,12 @@ export default {
 
 .search-input :deep(.el-input__wrapper) {
 	padding: 3px 8px;
-	box-shadow: 0 0 0 1px #e5e5e5;
+	box-shadow: 0 0 0 1px #ddd;
+	background-color: #fff;
 }
 
 .search-input :deep(.el-input__wrapper:hover) {
-	box-shadow: 0 0 0 1px #c0c4cc;
+	box-shadow: 0 0 0 1px #ccc;
 }
 
 .search-input :deep(.el-input__wrapper.is-focus) {
@@ -575,7 +562,7 @@ export default {
 
 .view-switch {
 	display: flex;
-	border: 1px solid #e5e5e5;
+	border: 1px solid #ddd;
 	border-radius: 4px;
 	overflow: hidden;
 }
@@ -594,12 +581,12 @@ export default {
 }
 
 .view-btn:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: #f0f0f0;
 }
 
 .view-btn.active {
-	background-color: rgba(0, 120, 212, 0.1);
-	color: #0078d4;
+	background-color: rgba(64, 158, 255, 0.15);
+	color: #409eff;
 }
 
 .app-content {
@@ -624,7 +611,7 @@ export default {
 	padding: 8px 16px 4px;
 	font-size: 12px;
 	font-weight: 600;
-	color: #666;
+	color: #999;
 }
 
 .sidebar-item {
@@ -639,12 +626,12 @@ export default {
 }
 
 .sidebar-item:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: #f0f0f0;
 }
 
 .sidebar-item.active {
-	background-color: rgba(0, 120, 212, 0.1);
-	color: #0078d4;
+	background-color: rgba(64, 158, 255, 0.15);
+	color: #409eff;
 }
 
 .main-content {
@@ -671,11 +658,11 @@ export default {
 }
 
 .tile-item:hover {
-	background-color: rgba(0, 0, 0, 0.04);
+	background-color: #f5f5f5;
 }
 
 .tile-item.selected {
-	background-color: rgba(0, 120, 212, 0.12);
+	background-color: rgba(64, 158, 255, 0.15);
 }
 
 .tile-icon {
@@ -684,7 +671,7 @@ export default {
 }
 
 .tile-item.selected .tile-icon {
-	color: #0078d4;
+	color: #409eff;
 }
 
 .tile-name {
@@ -711,11 +698,11 @@ export default {
 }
 
 .list-item:hover {
-	background-color: rgba(0, 0, 0, 0.04);
+	background-color: #f5f5f5;
 }
 
 .list-item.selected {
-	background-color: rgba(0, 120, 212, 0.12);
+	background-color: rgba(64, 158, 255, 0.15);
 }
 
 .list-name {
@@ -735,7 +722,7 @@ export default {
 	border-bottom: 1px solid #e5e5e5;
 	font-size: 12px;
 	font-weight: 500;
-	color: #666;
+	color: #999;
 }
 
 .details-header>div {
@@ -784,11 +771,11 @@ export default {
 }
 
 .details-row:hover {
-	background-color: rgba(0, 0, 0, 0.04);
+	background-color: #f5f5f5;
 }
 
 .details-row.selected {
-	background-color: rgba(0, 120, 212, 0.12);
+	background-color: rgba(64, 158, 255, 0.15);
 }
 
 .details-row .col-name {

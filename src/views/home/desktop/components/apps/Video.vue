@@ -1,7 +1,7 @@
 <template>
-	<div class="video-app" @dragover.prevent @drop.prevent="handleDrop">
-		<div v-if="!currentVideo" class="video-empty">
-			<div class="drop-zone" :class="{ 'drag-over': isDragOver }" @dragover="isDragOver = true"
+	<div class="app-container app-dark" @dragover.prevent @drop.prevent="handleDrop">
+		<div v-if="!currentVideo" class="app-empty">
+			<div class="app-drop-zone" :class="{ 'drag-over': isDragOver }" @dragover="isDragOver = true"
 				@dragleave="isDragOver = false" @drop="handleDrop">
 				<sc-icon name="ms-video_library" :size="64" />
 				<p>拖放视频文件到此处播放</p>
@@ -15,13 +15,13 @@
 			<div v-if="videos.length > 0" class="video-history">
 				<h4>最近播放</h4>
 				<div class="history-list">
-					<div v-for="video in videos" :key="video.id" class="history-item" @click="playVideo(video)">
+					<div v-for="video in videos" :key="video.id" class="app-list-item" @click="playVideo(video)">
 						<sc-icon name="ms-play_circle" :size="32" />
-						<div class="history-info">
-							<span class="history-title">{{ video.title }}</span>
+						<div class="app-info">
+							<span class="app-name">{{ video.title }}</span>
 							<span class="history-duration">{{ video.duration }}</span>
 						</div>
-						<el-icon class="remove-btn" @click.stop="removeVideo(video.id)">
+						<el-icon class="app-action-btn" @click.stop="removeVideo(video.id)">
 							<el-icon-close />
 						</el-icon>
 					</div>
@@ -301,49 +301,11 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.video-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.video-empty {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+.app-empty {
 	padding: 20px;
-}
-
-.drop-zone {
-	width: 100%;
-	max-width: 500px;
-	padding: 60px 40px;
-	border: 2px dashed #444;
-	border-radius: 12px;
-	text-align: center;
-	transition: all 0.3s;
-	cursor: pointer;
-}
-
-.drop-zone:hover,
-.drop-zone.drag-over {
-	border-color: #409eff;
-	background-color: rgba(64, 158, 255, 0.1);
-}
-
-.drop-zone p {
-	margin: 10px 0;
-	color: #999;
-}
-
-.drop-zone .hint {
-	font-size: 12px;
-	color: #666;
 }
 
 .video-history {
@@ -364,45 +326,9 @@ export default {
 	gap: 10px;
 }
 
-.history-item {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-	padding: 12px;
-	background-color: #2a2a2a;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
-
-.history-item:hover {
-	background-color: #333;
-}
-
-.history-info {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.history-title {
-	font-size: 14px;
-}
-
 .history-duration {
 	font-size: 12px;
 	color: #666;
-}
-
-.remove-btn {
-	opacity: 0;
-	transition: opacity 0.3s;
-	color: #999;
-}
-
-.history-item:hover .remove-btn {
-	opacity: 1;
 }
 
 .video-player-container {

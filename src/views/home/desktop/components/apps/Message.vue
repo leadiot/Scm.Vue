@@ -1,45 +1,45 @@
 <template>
-	<div class="message-app">
-		<div class="contact-list">
-			<div class="list-header">
-				<span class="app-title">消息</span>
-				<el-button text class="add-btn">
+	<div class="app-container-row app-light">
+		<div class="app-sidebar">
+			<div class="app-header">
+				<span class="app-header-title">消息</span>
+				<el-button text class="app-toolbar-btn">
 					<sc-icon name="ms-add" :size="20" />
 				</el-button>
 			</div>
-			<div class="search-box">
+			<div class="app-search-box">
 				<el-input v-model="searchQuery" placeholder="搜索联系人..." prefix-icon="el-icon-search" size="small"
 					clearable />
 			</div>
-			<div v-for="contact in filteredContacts" :key="contact.id" class="contact-item"
+			<div v-for="contact in filteredContacts" :key="contact.id" class="app-list-item"
 				:class="{ active: selectedContact === contact.id }" @click="selectContact(contact.id)">
-				<div class="avatar" :style="{ backgroundColor: getAvatarColor(contact.id) }">
+				<div class="app-avatar" :style="{ backgroundColor: getAvatarColor(contact.id) }">
 					{{ contact.name.charAt(0) }}
 				</div>
-				<div class="contact-info">
-					<div class="contact-top">
-						<span class="name">{{ contact.name }}</span>
-						<span class="time">{{ contact.time }}</span>
+				<div class="app-info">
+					<div class="app-info-row">
+						<span class="app-name">{{ contact.name }}</span>
+						<span class="app-time">{{ contact.time }}</span>
 					</div>
-					<span class="last-message">{{ contact.lastMessage }}</span>
+					<span class="app-preview">{{ contact.lastMessage }}</span>
 				</div>
-				<div v-if="contact.unread > 0" class="unread-badge">{{ contact.unread }}</div>
+				<div v-if="contact.unread > 0" class="app-badge">{{ contact.unread }}</div>
 			</div>
 		</div>
 
 		<div class="chat-area">
-			<div v-if="!currentContact" class="empty-chat">
+			<div v-if="!currentContact" class="app-empty">
 				<sc-icon name="ms-chat_bubble_outline" :size="64" />
 				<p>选择一个联系人开始聊天</p>
 			</div>
 			<template v-else>
 				<div class="chat-header">
 					<div class="header-left">
-						<div class="avatar small" :style="{ backgroundColor: getAvatarColor(currentContact.id) }">
+						<div class="app-avatar small" :style="{ backgroundColor: getAvatarColor(currentContact.id) }">
 							{{ currentContact.name.charAt(0) }}
 						</div>
 						<div class="header-info">
-							<span class="name">{{ currentContact.name }}</span>
+							<span class="app-name">{{ currentContact.name }}</span>
 							<span class="status">
 								<sc-icon name="ms-circle" :size="8" class="online-icon" />
 								在线
@@ -153,141 +153,16 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.message-app {
-	height: 100%;
-	display: flex;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.contact-list {
-	width: 280px;
-	background-color: #252525;
-	border-right: 1px solid #333;
-	display: flex;
-	flex-direction: column;
-}
-
-.list-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 16px;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 18px;
-	font-weight: 600;
-}
-
-.add-btn {
-	color: #409eff !important;
-}
-
-.search-box {
-	padding: 8px 12px;
-	border-bottom: 1px solid #333;
-}
-
-.contact-item {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 12px 16px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-	position: relative;
-}
-
-.contact-item:hover {
-	background-color: #2a2a2a;
-}
-
-.contact-item.active {
-	background-color: #333;
-}
-
-.avatar {
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	color: #fff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 600;
-	font-size: 16px;
-	flex-shrink: 0;
-}
-
-.avatar.small {
-	width: 36px;
-	height: 36px;
-	font-size: 14px;
-}
-
-.contact-info {
-	flex: 1;
-	overflow: hidden;
-}
-
-.contact-top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.name {
-	font-size: 14px;
-	font-weight: 500;
-}
-
-.time {
-	font-size: 11px;
-	color: #666;
-}
-
-.last-message {
-	font-size: 12px;
-	color: #888;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	margin-top: 4px;
-}
-
-.unread-badge {
-	position: absolute;
-	right: 16px;
-	top: 50%;
-	transform: translateY(-50%);
-	background-color: #409eff;
-	color: #fff;
-	font-size: 11px;
-	padding: 2px 6px;
-	border-radius: 10px;
-	min-width: 18px;
-	text-align: center;
-}
-
 .chat-area {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 }
 
-.empty-chat {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: #555;
-}
-
-.empty-chat p {
+.app-empty p {
 	margin-top: 16px;
 	font-size: 14px;
 }
@@ -297,8 +172,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 16px;
-	background-color: #252525;
-	border-bottom: 1px solid #333;
+	background-color: #f9f9f9;
+	border-bottom: 1px solid #e5e5e5;
 }
 
 .header-left {
@@ -313,7 +188,7 @@ export default {
 	gap: 2px;
 }
 
-.header-info .name {
+.header-info .app-name {
 	font-size: 15px;
 }
 
@@ -335,12 +210,12 @@ export default {
 }
 
 .action-btn {
-	color: #888 !important;
+	color: #999 !important;
 }
 
 .action-btn:hover {
-	color: #fff !important;
-	background-color: #333 !important;
+	color: #333 !important;
+	background-color: #f0f0f0 !important;
 }
 
 .messages {
@@ -364,7 +239,7 @@ export default {
 	max-width: 70%;
 	padding: 10px 14px;
 	border-radius: 12px;
-	background-color: #333;
+	background-color: #f0f0f0;
 }
 
 .message.sent .message-content {
@@ -380,9 +255,13 @@ export default {
 .msg-time {
 	display: block;
 	font-size: 10px;
-	color: rgba(255, 255, 255, 0.6);
+	color: rgba(0, 0, 0, 0.45);
 	margin-top: 4px;
 	text-align: right;
+}
+
+.message.sent .msg-time {
+	color: rgba(255, 255, 255, 0.8);
 }
 
 .input-area {
@@ -390,17 +269,17 @@ export default {
 	align-items: center;
 	gap: 8px;
 	padding: 12px 16px;
-	background-color: #252525;
-	border-top: 1px solid #333;
+	background-color: #f9f9f9;
+	border-top: 1px solid #e5e5e5;
 }
 
 .attach-btn {
-	color: #888 !important;
+	color: #999 !important;
 }
 
 .attach-btn:hover {
-	color: #fff !important;
-	background-color: #333 !important;
+	color: #333 !important;
+	background-color: #f0f0f0 !important;
 }
 
 .msg-input {
@@ -408,15 +287,15 @@ export default {
 }
 
 :deep(.el-input__wrapper) {
-	background-color: #333;
-	box-shadow: none;
+	background-color: #fff;
+	box-shadow: 0 0 0 1px #ddd;
 }
 
 :deep(.el-input__inner) {
-	color: #fff;
+	color: #333;
 }
 
 :deep(.el-input__inner::placeholder) {
-	color: #666;
+	color: #bbb;
 }
 </style>

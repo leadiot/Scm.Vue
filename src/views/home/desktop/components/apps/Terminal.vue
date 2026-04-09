@@ -1,12 +1,12 @@
 <template>
-	<div class="terminal-app">
+	<div class="app-container app-dark terminal-theme">
 		<div class="app-header">
 			<div class="header-left">
 				<sc-icon name="ms-terminal" :size="18" />
-				<span class="app-title">终端</span>
+				<span class="app-header-title">终端</span>
 			</div>
 			<div class="header-actions">
-				<el-button text class="action-btn" @click="clearTerminal" title="清空">
+				<el-button text class="app-toolbar-btn" @click="clearTerminal" title="清空">
 					<sc-icon name="ms-delete_sweep" :size="18" />
 				</el-button>
 			</div>
@@ -181,22 +181,17 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.terminal-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+.terminal-theme {
 	background-color: #0c0c0c;
 	color: #cccccc;
 	font-family: 'Consolas', 'Courier New', monospace;
 	font-size: 14px;
 }
 
-.app-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 16px;
+.terminal-theme .app-header {
 	background-color: #1a1a1a;
 	border-bottom: 1px solid #333;
 }
@@ -205,21 +200,6 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-}
-
-.app-title {
-	font-size: 13px;
-	font-weight: 500;
-}
-
-.action-btn {
-	color: #888 !important;
-	padding: 4px !important;
-}
-
-.action-btn:hover {
-	color: #fff !important;
-	background-color: #333 !important;
 }
 
 .terminal-output {

@@ -1,45 +1,45 @@
 <template>
-	<div class="sms-app">
-		<div class="conversation-list">
-			<div class="list-header">
-				<span class="app-title">短信</span>
-				<el-button text class="add-btn" @click="showNewSMS = true">
+	<div class="app-container-row app-light">
+		<div class="app-sidebar">
+			<div class="app-header">
+				<span class="app-header-title">短信</span>
+				<el-button text class="app-toolbar-btn" @click="showNewSMS = true">
 					<sc-icon name="ms-edit" :size="20" />
 				</el-button>
 			</div>
-			<div class="search-box">
+			<div class="app-search-box">
 				<el-input v-model="searchQuery" placeholder="搜索短信..." prefix-icon="el-icon-search" size="small" clearable />
 			</div>
-			<div class="conversations">
-				<div v-for="conv in filteredConversations" :key="conv.id" class="conversation-item" :class="{ active: selectedConversation?.id === conv.id }" @click="selectConversation(conv)">
-					<div class="avatar" :style="{ backgroundColor: conv.color }">
+			<div class="app-list">
+				<div v-for="conv in filteredConversations" :key="conv.id" class="app-list-item" :class="{ active: selectedConversation?.id === conv.id }" @click="selectConversation(conv)">
+					<div class="app-avatar" :style="{ backgroundColor: conv.color }">
 						{{ conv.name.charAt(0) }}
 					</div>
-					<div class="conv-info">
-						<div class="conv-top">
-							<span class="name">{{ conv.name }}</span>
-							<span class="time">{{ conv.time }}</span>
+					<div class="app-info">
+						<div class="app-info-row">
+							<span class="app-name">{{ conv.name }}</span>
+							<span class="app-time">{{ conv.time }}</span>
 						</div>
-						<span class="preview">{{ conv.lastMessage }}</span>
+						<span class="app-preview">{{ conv.lastMessage }}</span>
 					</div>
-					<div v-if="conv.unread > 0" class="unread-badge">{{ conv.unread }}</div>
+					<div v-if="conv.unread > 0" class="app-badge">{{ conv.unread }}</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="message-area">
-			<div v-if="!selectedConversation" class="empty-message">
+			<div v-if="!selectedConversation" class="app-empty">
 				<sc-icon name="ms-sms" :size="64" />
 				<p>选择一个会话查看短信</p>
 			</div>
 			<template v-else>
 				<div class="message-header">
 					<div class="header-left">
-						<div class="avatar small" :style="{ backgroundColor: selectedConversation.color }">
+						<div class="app-avatar small" :style="{ backgroundColor: selectedConversation.color }">
 							{{ selectedConversation.name.charAt(0) }}
 						</div>
 						<div class="header-info">
-							<span class="name">{{ selectedConversation.name }}</span>
+							<span class="app-name">{{ selectedConversation.name }}</span>
 							<span class="phone">{{ selectedConversation.phone }}</span>
 						</div>
 					</div>
@@ -295,143 +295,16 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.sms-app {
-	height: 100%;
-	display: flex;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.conversation-list {
-	width: 280px;
-	background-color: #252525;
-	border-right: 1px solid #333;
-	display: flex;
-	flex-direction: column;
-}
-
-.list-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 16px;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 18px;
-	font-weight: 600;
-}
-
-.add-btn {
-	color: #409eff !important;
-}
-
-.search-box {
-	padding: 8px 12px;
-	border-bottom: 1px solid #333;
-}
-
-.conversations {
-	flex: 1;
-	overflow-y: auto;
-}
-
-.conversation-item {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 12px 16px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-	position: relative;
-}
-
-.conversation-item:hover {
-	background-color: #2a2a2a;
-}
-
-.conversation-item.active {
-	background-color: #333;
-}
-
-.avatar {
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	color: #fff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 600;
-	font-size: 16px;
-	flex-shrink: 0;
-}
-
-.avatar.small {
-	width: 36px;
-	height: 36px;
-	font-size: 14px;
-}
-
-.conv-info {
-	flex: 1;
-	overflow: hidden;
-}
-
-.conv-top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.name {
-	font-size: 14px;
-	font-weight: 500;
-}
-
-.time {
-	font-size: 12px;
-	color: #909399;
-}
-
-.preview {
-	font-size: 12px;
-	color: #909399;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: block;
-}
-
-.unread-badge {
-	position: absolute;
-	right: 12px;
-	top: 50%;
-	transform: translateY(-50%);
-	background-color: #409eff;
-	color: #fff;
-	font-size: 10px;
-	padding: 2px 6px;
-	border-radius: 10px;
-	min-width: 18px;
-	text-align: center;
-}
-
 .message-area {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 }
 
-.empty-message {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: #606266;
+.app-empty {
 	gap: 16px;
 }
 
@@ -440,8 +313,8 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px 16px;
-	border-bottom: 1px solid #333;
-	background-color: #252525;
+	border-bottom: 1px solid #e5e5e5;
+	background-color: #f9f9f9;
 }
 
 .header-left {
@@ -455,14 +328,14 @@ export default {
 	flex-direction: column;
 }
 
-.header-info .name {
+.header-info .app-name {
 	font-size: 14px;
 	font-weight: 500;
 }
 
 .header-info .phone {
 	font-size: 12px;
-	color: #909399;
+	color: #999;
 }
 
 .header-actions {
@@ -471,7 +344,7 @@ export default {
 }
 
 .action-btn {
-	color: #909399 !important;
+	color: #999 !important;
 }
 
 .action-btn:hover {
@@ -512,7 +385,7 @@ export default {
 }
 
 .message.received .message-bubble {
-	background-color: #333;
+	background-color: #f0f0f0;
 	border-bottom-left-radius: 4px;
 }
 
@@ -522,12 +395,20 @@ export default {
 	display: block;
 }
 
+.message.received .message-bubble .text {
+	color: #333;
+}
+
 .message-bubble .msg-time {
 	font-size: 10px;
-	color: rgba(255, 255, 255, 0.6);
+	color: rgba(255, 255, 255, 0.8);
 	display: block;
 	text-align: right;
 	margin-top: 4px;
+}
+
+.message.received .message-bubble .msg-time {
+	color: rgba(0, 0, 0, 0.45);
 }
 
 .input-area {
@@ -535,12 +416,12 @@ export default {
 	align-items: flex-end;
 	gap: 8px;
 	padding: 12px 16px;
-	border-top: 1px solid #333;
-	background-color: #252525;
+	border-top: 1px solid #e5e5e5;
+	background-color: #f9f9f9;
 }
 
 .attach-btn {
-	color: #909399 !important;
+	color: #999 !important;
 }
 
 .msg-input {
@@ -548,9 +429,9 @@ export default {
 }
 
 .msg-input :deep(.el-textarea__inner) {
-	background-color: #1a1a1a;
-	border-color: #333;
-	color: #fff;
+	background-color: #fff;
+	border-color: #ddd;
+	color: #333;
 	resize: none !important;
 }
 

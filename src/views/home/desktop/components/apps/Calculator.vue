@@ -1,7 +1,7 @@
 <template>
-	<div class="calculator-app">
-		<div class="app-header">
-			<span class="app-title">计算器</span>
+	<div class="app-container app-light">
+		<div class="app-toolbar">
+			<span class="app-header-title">计算器</span>
 		</div>
 		<div class="display">
 			<div class="expression">{{ expression || '0' }}</div>
@@ -107,37 +107,18 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.calculator-app {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	background-color: #1a1a1a;
-	color: #fff;
-}
-
-.app-header {
-	display: flex;
-	align-items: center;
-	padding: 12px 16px;
-	background-color: #252525;
-	border-bottom: 1px solid #333;
-}
-
-.app-title {
-	font-size: 14px;
-	font-weight: 500;
-}
-
 .display {
 	padding: 20px;
-	background-color: #1a1a1a;
-	border-bottom: 1px solid #333;
+	background-color: #fff;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .expression {
 	font-size: 16px;
-	color: #888;
+	color: #999;
 	min-height: 22px;
 	text-align: right;
 	word-break: break-all;
@@ -146,7 +127,7 @@ export default {
 .result {
 	font-size: 40px;
 	font-weight: 300;
-	color: #fff;
+	color: #333;
 	text-align: right;
 	margin-top: 8px;
 	word-break: break-all;
@@ -157,14 +138,14 @@ export default {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 2px;
-	background-color: #252525;
+	background-color: #f5f5f5;
 	padding: 2px;
 }
 
 .btn {
 	border: none;
-	background-color: #333;
-	color: #fff;
+	background-color: #fff;
+	color: #333;
 	font-size: 24px;
 	cursor: pointer;
 	transition: all 0.2s;
@@ -175,20 +156,20 @@ export default {
 }
 
 .btn:hover {
-	background-color: #444;
+	background-color: #f0f0f0;
 }
 
 .btn:active {
-	background-color: #555;
+	background-color: #e8e8e8;
 }
 
 .btn.function {
-	background-color: #3a3a3a;
+	background-color: #f5f5f5;
 	color: #409eff;
 }
 
 .btn.function:hover {
-	background-color: #4a4a4a;
+	background-color: #e8e8e8;
 }
 
 .btn.operator {

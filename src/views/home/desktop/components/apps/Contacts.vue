@@ -1,26 +1,26 @@
 <template>
-    <div class="contacts-app">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <span class="app-title">联系人</span>
-                <el-button text class="add-btn" @click="showAddDialog = true">
+    <div class="app-container-row app-light">
+        <div class="app-sidebar wide">
+            <div class="app-header">
+                <span class="app-header-title">联系人</span>
+                <el-button text class="app-toolbar-btn" @click="showAddDialog = true">
                     <sc-icon name="ms-person_add" :size="20" />
                 </el-button>
             </div>
-            <div class="search-box">
+            <div class="app-search-box">
                 <el-input v-model="searchQuery" placeholder="搜索联系人..." prefix-icon="el-icon-search" size="small"
                     clearable />
             </div>
-            <div class="contact-groups">
+            <div class="app-list">
                 <div v-for="group in groupedContacts" :key="group.letter" class="contact-group">
                     <div class="group-header">{{ group.letter }}</div>
-                    <div v-for="contact in group.contacts" :key="contact.id" class="contact-item"
+                    <div v-for="contact in group.contacts" :key="contact.id" class="app-list-item"
                         :class="{ active: selectedContact?.id === contact.id }" @click="selectContact(contact)">
-                        <div class="avatar" :style="{ backgroundColor: contact.color }">
+                        <div class="app-avatar" :style="{ backgroundColor: contact.color }">
                             {{ contact.name.charAt(0) }}
                         </div>
-                        <div class="contact-info">
-                            <span class="name">{{ contact.name }}</span>
+                        <div class="app-info">
+                            <span class="app-name">{{ contact.name }}</span>
                             <span class="phone">{{ contact.phone }}</span>
                         </div>
                     </div>
@@ -29,17 +29,17 @@
         </div>
 
         <div class="contact-detail">
-            <div v-if="!selectedContact" class="empty-detail">
+            <div v-if="!selectedContact" class="app-empty">
                 <sc-icon name="ms-contacts" :size="64" />
                 <p>选择一个联系人查看详情</p>
             </div>
             <template v-else>
                 <div class="detail-header">
-                    <div class="avatar large" :style="{ backgroundColor: selectedContact.color }">
+                    <div class="app-avatar large" :style="{ backgroundColor: selectedContact.color }">
                         {{ selectedContact.name.charAt(0) }}
                     </div>
                     <div class="header-info">
-                        <span class="name">{{ selectedContact.name }}</span>
+                        <span class="app-name">{{ selectedContact.name }}</span>
                         <span class="company">{{ selectedContact.company || '未设置公司' }}</span>
                     </div>
                 </div>
@@ -267,111 +267,27 @@ export default {
 };
 </script>
 
+<style src="./common.css"></style>
+
 <style scoped>
-.contacts-app {
-    height: 100%;
-    display: flex;
-    background-color: #1a1a1a;
-    color: #fff;
-}
-
-.sidebar {
-    width: 300px;
-    background-color: #252525;
-    border-right: 1px solid #333;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #333;
-}
-
-.app-title {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.add-btn {
-    color: #409eff !important;
-}
-
-.search-box {
-    padding: 8px 12px;
-    border-bottom: 1px solid #333;
-}
-
-.contact-groups {
-    flex: 1;
-    overflow-y: auto;
-}
-
 .group-header {
     padding: 8px 16px;
-    background-color: #1a1a1a;
-    color: #909399;
+    background-color: #f5f5f5;
+    color: #999;
     font-size: 12px;
     font-weight: 600;
     position: sticky;
     top: 0;
 }
 
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.contact-item:hover {
-    background-color: #2a2a2a;
-}
-
-.contact-item.active {
-    background-color: #333;
-}
-
-.avatar {
+.app-avatar {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    flex-shrink: 0;
-}
-
-.avatar.large {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
-}
-
-.contact-info {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.name {
-    font-size: 14px;
-    font-weight: 500;
 }
 
 .phone {
     font-size: 12px;
-    color: #909399;
+    color: #999;
 }
 
 .contact-detail {
@@ -382,13 +298,7 @@ export default {
     overflow-y: auto;
 }
 
-.empty-detail {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #606266;
+.app-empty {
     gap: 16px;
 }
 
@@ -397,7 +307,7 @@ export default {
     flex-direction: column;
     align-items: center;
     padding-bottom: 24px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e5e5e5;
     gap: 16px;
 }
 
@@ -405,7 +315,7 @@ export default {
     text-align: center;
 }
 
-.header-info .name {
+.header-info .app-name {
     font-size: 20px;
     font-weight: 600;
     display: block;
@@ -413,18 +323,18 @@ export default {
 
 .header-info .company {
     font-size: 14px;
-    color: #909399;
+    color: #999;
 }
 
 .detail-section {
     padding: 20px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .section-title {
     font-size: 14px;
     font-weight: 600;
-    color: #909399;
+    color: #999;
     margin-bottom: 12px;
 }
 
@@ -433,7 +343,7 @@ export default {
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    color: #e0e0e0;
+    color: #333;
 }
 
 .info-item span {
@@ -441,7 +351,7 @@ export default {
 }
 
 .notes {
-    color: #b0b0b0;
+    color: #666;
     line-height: 1.6;
 }
 
