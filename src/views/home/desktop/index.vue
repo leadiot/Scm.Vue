@@ -15,7 +15,8 @@
 		<!-- 窗口容器 -->
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
-				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow" />
+				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
+				@set-wallpaper="setWallpaper" />
 		</div>
 
 		<!-- 任务栏 -->
@@ -576,6 +577,15 @@ export default {
 			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
 			// this.deskApps.push(app);
 			menu.children.push(app);
+
+			menu = { id: 4, name: '通讯', icon: 'ms-contacts', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 41, name: '联系人', icon: 'ms-contacts', component: 'Contacts', width: 800, height: 560 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 42, name: '短信', icon: 'ms-sms', component: 'SMS', width: 800, height: 560 };
+			this.deskApps.push(app);
+			menu.children.push(app);
 		},
 		openApp(app) {
 			this.showStartMenu = false;
@@ -644,6 +654,10 @@ export default {
 					w.minimized = false;
 				}
 			});
+		},
+		setWallpaper(url) {
+			this.backgroundType = 'image';
+			this.backgroundImage = url;
 		},
 		toggleWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);

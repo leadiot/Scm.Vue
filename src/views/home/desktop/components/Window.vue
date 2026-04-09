@@ -32,7 +32,7 @@
 		</div>
 
 		<div class="window-content">
-			<component :is="getComponent(window.component)" v-bind="window.props || {}" />
+			<component :is="getComponent(window.component)" v-bind="window.props || {}" @set-wallpaper="onSetWallpaper" />
 		</div>
 
 		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize"></div>
@@ -53,6 +53,8 @@ import PictureApp from './apps/Picture.vue';
 import DownloadApp from './apps/Download.vue';
 import TodoApp from './apps/Todo.vue';
 import NotepadApp from './apps/Notepad.vue';
+import ContactsApp from './apps/Contacts.vue';
+import SMSApp from './apps/SMS.vue';
 
 export default {
 	name: 'Window',
@@ -63,7 +65,7 @@ export default {
 		window: { type: Object, required: true },
 		theme: { type: Object, default: () => ({}) },
 	},
-	emits: ['close', 'minimize', 'maximize', 'focus'],
+	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper'],
 	data() {
 		return {
 			isDragging: false,
@@ -120,8 +122,13 @@ export default {
 				Todo: TodoApp,
 				Notepad: NotepadApp,
 				Text: NotepadApp,
+				Contacts: ContactsApp,
+				SMS: SMSApp,
 			};
 			return components[componentName] || Files;
+		},
+		onSetWallpaper(url) {
+			this.$emit('set-wallpaper', url);
 		},
 		handleFocus() {
 			this.$emit('focus', this.window.id);

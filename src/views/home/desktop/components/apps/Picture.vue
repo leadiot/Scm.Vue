@@ -49,8 +49,9 @@
 				<span class="preview-index">{{ currentIndex + 1 }} / {{ pictures.length }}</span>
 			</div>
 
-			<div class="preview-container" @click="toggleControls">
-				<div class="preview-image-wrapper" :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }">
+			<div class="preview-container">
+				<div class="preview-image-wrapper" :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }"
+					@click="toggleControls">
 					<img :src="currentPicture?.url" :alt="currentPicture?.name" @load="onImageLoad"
 						@error="onImageError" />
 				</div>
@@ -82,6 +83,10 @@
 				</el-button>
 				<el-button text @click="rotateRight" title="向右旋转">
 					<sc-icon name="ms-rotate_right" :size="24" />
+				</el-button>
+				<div class="toolbar-divider"></div>
+				<el-button text @click="setAsWallpaper" title="设为壁纸">
+					<sc-icon name="ms-wallpaper" :size="24" />
 				</el-button>
 			</div>
 
@@ -232,6 +237,11 @@ export default {
 		},
 		toggleControls() {
 			this.controlsHidden = !this.controlsHidden;
+		},
+		setAsWallpaper() {
+			if (!this.currentPicture) return;
+			this.$emit('set-wallpaper', this.currentPicture.url);
+			this.$message.success('已设为桌面壁纸');
 		},
 		formatSize(bytes) {
 			if (!bytes) return '';
@@ -434,6 +444,7 @@ export default {
 
 .picture-preview {
 	flex: 1;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
 }
@@ -444,6 +455,7 @@ export default {
 	padding: 10px 15px;
 	background-color: #252525;
 	gap: 15px;
+	flex-shrink: 0;
 }
 
 .preview-header .el-button {
@@ -465,6 +477,7 @@ export default {
 
 .preview-container {
 	flex: 1;
+	min-height: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -474,11 +487,16 @@ export default {
 
 .preview-image-wrapper {
 	transition: transform 0.3s ease;
+	max-width: 100%;
+	max-height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .preview-image-wrapper img {
-	max-width: 90vw;
-	max-height: 70vh;
+	max-width: 100%;
+	max-height: 100%;
 	object-fit: contain;
 }
 
@@ -522,12 +540,16 @@ export default {
 	padding: 15px;
 	background-color: rgba(0, 0, 0, 0.8);
 	gap: 10px;
-	transition: opacity 0.3s, transform 0.3s;
+	transition: opacity 0.3s, height 0.3s, padding 0.3s;
+	flex-shrink: 0;
+	overflow: hidden;
 }
 
 .preview-toolbar.hidden {
 	opacity: 0;
-	transform: translateY(100%);
+	height: 0;
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 .preview-toolbar .el-button {
@@ -555,12 +577,15 @@ export default {
 	padding: 10px;
 	background-color: #252525;
 	overflow-x: auto;
-	transition: opacity 0.3s, transform 0.3s;
+	transition: opacity 0.3s, height 0.3s, padding 0.3s;
+	flex-shrink: 0;
 }
 
 .preview-thumbnails.hidden {
 	opacity: 0;
-	transform: translateY(100%);
+	height: 0;
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 .thumbnail-item {
