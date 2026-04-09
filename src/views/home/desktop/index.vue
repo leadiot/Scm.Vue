@@ -1,5 +1,5 @@
 <template>
-	<div class="desktop" :style="desktopStyle" @click="clearSelection">
+	<div class="desktop" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent>
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
@@ -21,7 +21,7 @@
 		<!-- 任务栏 -->
 		<div class="taskbar">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<sc-icon name="ms-menu" :size="24" />
+				<sc-icon name="ms-window" :size="24" />
 				<span>开始</span>
 			</div>
 			<div class="taskbar-apps">
@@ -42,7 +42,7 @@
 		<div v-if="showStartMenu" class="start-menu">
 			<div class="start-menu-header">
 				<sc-icon name="ms-account_circle" :size="32" />
-				<span>用户名</span>
+				<span>{{ userName }}</span>
 			</div>
 			<div class="start-menu-apps">
 				<div v-for="app in menuApps" :key="app.id" class="start-menu-item"
@@ -156,8 +156,8 @@ export default {
 			activeSubmenu: null,
 			submenuStyle: {},
 			submenuTimeout: null,
-			backgroundType: 'gradient',
-			backgroundColor: '#0078d4',
+			backgroundType: 'color',
+			backgroundColor: '#409eff',
 			backgroundImage: '',
 			gradientColor1: '#667eea',
 			gradientColor2: '#764ba2',
@@ -169,6 +169,7 @@ export default {
 				'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=1920',
 				'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?w=1920',
 			],
+			userName: 'User',
 			home: '/',
 			deskApps: [],
 			menuApps: [],
@@ -210,6 +211,11 @@ export default {
 	},
 	methods: {
 		async init() {
+			var userInfo = this.$TOOL.session.get("USER_INFO");
+			if (userInfo) {
+				this.userName = userInfo.userName;
+			}
+
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
@@ -239,25 +245,27 @@ export default {
 			this.selectedApp = null;
 		},
 		listApp() {
+			var app = { id: 11, name: '我的云盘', icon: 'ms-monitor', component: 'Files', width: 900, height: 600 };
+			this.deskApps.push(app);
+			this.menuApps.push(app);
+			
+			app = { id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' };
+			this.deskApps.push(app);
+			this.menuApps.push(app);
+
 			var menu = { id: 1, name: '常用应用', icon: 'ms-folder', children: [] };
 			this.menuApps.push(menu);
 
-			var app = { id: 11, name: '我的文档', icon: 'ms-monitor', component: 'Documents', width: 900, height: 600 };
-			this.deskApps.push(app);
-			menu.children.push(app);
-			app = { id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' };
-			this.deskApps.push(app);
-			menu.children.push(app);
 			app = { id: 13, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 14, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 400, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 15, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
-			this.deskApps.push(app);
+			app = { id: 15, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
+			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 16, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
+			app = { id: 16, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
 

@@ -13,8 +13,8 @@
 				</button>
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
-						<sc-icon name="ms-folder" :size="16" />
-						<span>此电脑</span>
+						<sc-icon name="ms-monitor" :size="16" />
+						<span>我的云盘</span>
 					</span>
 					<span v-for="(item, index) in currentPath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
