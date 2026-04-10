@@ -1,7 +1,7 @@
 <template>
 	<div class="app-container app-light">
 		<div class="app-toolbar">
-			<span class="app-header-title">设备管理</span>
+			<span class="app-header-title">设备</span>
 			<span class="device-count">{{ devices.length }} 台设备</span>
 			<div class="header-spacer"></div>
 			<el-button type="primary" size="small" @click="editVisible = true">
@@ -111,12 +111,12 @@ import scIcon from '@/components/scIcon/index.vue';
 import scQrcode from '@/components/scQrcode';
 
 const DEVICE_COLORS = {
-	phone: '#409eff',
-	tablet: '#67c23a',
-	laptop: '#e6a23c',
-	desktop: '#f56c6c',
-	watch: '#909399',
-	other: '#00bcd4',
+	'10': '#409eff',
+	'20': '#67c23a',
+	'30': '#e6a23c',
+	'40': '#f56c6c',
+	'50': '#909399',
+	'other': '#00bcd4',
 };
 
 export default {

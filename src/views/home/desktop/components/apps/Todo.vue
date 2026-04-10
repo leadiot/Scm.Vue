@@ -6,7 +6,7 @@
 		</div>
 
 		<div class="todo-input">
-			<el-input v-model="title" maxlength="256" show-word-limit clearable="true" placeholder="添加新待办..."
+			<el-input v-model="title" maxlength="256" show-word-limit clearable placeholder="添加新待办..."
 				@keyup.enter="addTodo">
 				<template #append>
 					<el-button @click="addTodo" :disabled="!title.trim()">
@@ -30,7 +30,7 @@
 					:class="{ completed: gtd.handle === 3 }">
 					<el-checkbox v-model="gtd.checked" @change="handleTodo(gtd)" />
 					<el-input v-if="currentGtd.id === gtd.id" v-model="gtd.title" maxlength="256" show-word-limit
-						clearable="true" size="small" @blur="finishEdit(gtd)" @keyup.enter="finishEdit(gtd)"
+						clearable size="small" @blur="finishEdit(gtd)" @keyup.enter="finishEdit(gtd)"
 						@keyup.escape="cancelEdit" class="edit-input" ref="editInput" />
 					<span v-else class="todo-text" @dblclick="startEdit(gtd)">{{ gtd.title }}</span>
 					<div class="todo-actions">

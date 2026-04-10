@@ -20,7 +20,7 @@
                 <el-form-item label="展示名称" prop="namec">
                     <el-input v-model="form.namec"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名称" prop="names">
+                <el-form-item label="真实姓名" prop="names">
                     <el-input v-model="form.names"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" prop="sex">

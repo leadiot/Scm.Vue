@@ -740,21 +740,27 @@ export default {
 .col-name {
 	flex: 2;
 	min-width: 200px;
+	margin: 0 6px;
+}
+
+.col-name span {
+	word-break: break-all;
 }
 
 .col-date {
-	flex: 1;
-	min-width: 120px;
+	min-width: 140px;
+	margin: 0 6px;
 }
 
 .col-type {
-	flex: 1;
 	min-width: 100px;
+	margin: 0 6px;
 }
 
 .col-size {
-	width: 100px;
+	width: 80px;
 	text-align: right;
+	margin: 0 6px;
 }
 
 .details-body {

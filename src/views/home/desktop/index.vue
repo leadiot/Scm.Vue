@@ -552,6 +552,9 @@ export default {
 			menu = { id: 1, name: '应用', icon: 'ms-folder', children: [] };
 			this.menuApps.push(menu);
 
+			app = { id: 16, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
+			// this.deskApps.push(app);
+			menu.children.push(app);
 			app = { id: 13, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
@@ -561,8 +564,8 @@ export default {
 			app = { id: 15, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 16, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
-			// this.deskApps.push(app);
+			app = { id: 32, name: '下载', icon: 'ms-download', component: 'Download' };
+			this.deskApps.push(app);
 			menu.children.push(app);
 
 			menu = { id: 4, name: '通讯', icon: 'ms-contacts', children: [] };
@@ -577,9 +580,6 @@ export default {
 			menu = { id: 3, name: '系统工具', icon: 'ms-settings', children: [] };
 			this.menuApps.push(menu);
 			app = { id: 31, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 };
-			this.deskApps.push(app);
-			menu.children.push(app);
-			app = { id: 32, name: '下载', icon: 'ms-download', component: 'Download' };
 			this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
@@ -660,6 +660,7 @@ export default {
 		setWallpaper(url) {
 			this.backgroundType = 'image';
 			this.backgroundImage = url;
+			this.saveSettings();
 		},
 		toggleWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);

@@ -320,6 +320,7 @@ export default {
 			var node = this.notes[index];
 			if (node.content === node.last_content) {
 				this.closeNoteByIndex(index, id);
+				this.saveToStorage();
 				return;
 			}
 
@@ -329,6 +330,7 @@ export default {
 				type: 'warning',
 			}).then(async () => {
 				this.closeNoteByIndex(index, id);
+				this.saveToStorage();
 			}).catch(() => { });
 		},
 		closeNoteByIndex(index, noteId) {
@@ -340,29 +342,31 @@ export default {
 		},
 		async saveNote() {
 			var note = this.currentNote;
-			if (note) {
-				var data = {
-					id: note.id,
-					types: note.types,
-					url: note.url,
-					title: note.title,
-					content: note.content,
-					cat_id: note.cat_id,
-					ver: note.ver,
-				};
-				var res = await this.$API.scmsysnote.save.post(data);
-				if (res.code != 200) {
-					this.$message.warning(res.message);
-					return false;
-				}
-				data = res.data || {};
-				note.id = data.id || note.id;
-				note.last_content = note.content;
-				note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
-				console.log(note.last_content);
-				this.$message.success('保存成功');
-				this.saveToStorage();
+			if (!note) {
+				return false;
 			}
+
+			var data = {
+				id: note.id,
+				types: note.types,
+				url: note.url,
+				title: note.title,
+				content: note.content,
+				cat_id: note.cat_id,
+				ver: note.ver,
+			};
+			var res = await this.$API.scmsysnote.save.post(data);
+			if (res.code != 200) {
+				this.$message.warning(res.message);
+				return false;
+			}
+			data = res.data || {};
+			note.id = data.id || note.id;
+			note.last_content = note.content;
+			note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
+			console.log(note.last_content);
+			this.$message.success('保存成功');
+			this.saveToStorage();
 		},
 		/**
 		 * 保存笔记到本地存储

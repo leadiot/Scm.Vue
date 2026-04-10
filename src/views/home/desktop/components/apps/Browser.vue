@@ -307,7 +307,7 @@ export default {
 }
 
 .go-btn {
-	padding: 8px 16px;
+	padding: 7px 16px;
 	border: none;
 	border-radius: 4px;
 	background-color: #409eff;
