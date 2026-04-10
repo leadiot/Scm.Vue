@@ -107,8 +107,9 @@ export default {
 		async init() {
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 		},
-		handleChangeHome() {
-			this.$SCM.save_cfg("app_home", this.home);
+		async handleChangeHome() {
+			var cfgs = [{ key: "app_home", value: this.home }];
+			await this.$SCM.save_cfg(cfgs);
 		},
 	},
 }

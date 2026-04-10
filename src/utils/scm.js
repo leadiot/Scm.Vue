@@ -297,7 +297,7 @@ scm.read_cfg = async function (key, def, useCatch) {
 		return val;
 	}
 
-	var res = await http.get(`${config.API_URL}/scmsysconfig/key/` + key);
+	var res = await http.get(`${config.API_URL}/scmsysconfig/config/` + key);
 	if (!res || res.code != 200) {
 		return def;
 	}
@@ -314,27 +314,10 @@ scm.read_cfg = async function (key, def, useCatch) {
 	return data ?? def;
 };
 
-/**
- * 更新配置
- * @param {*} key String
- * @param {*} value String
- */
-scm.save_cfg = async function (key, value) {
-	scm.cache[key] = value;
-
-	let data = {};
-	data.client = 10;
-	data.key = key;
-	data.value = value;
-	data.data = 0;
-	await http.post(`${config.API_URL}/scmsysconfig/save`, data);
-}
-
-scm.save_cfgs = async function (cfgs) {
+scm.save_cfg = async function (cfgs) {
 	var list = [];
 	for (let idx in cfgs) {
 		var cfg = cfgs[idx];
-		console.log(cfg);
 		scm.cache[cfg.key] = cfg.value;
 		list.push({
 			client: 10,
@@ -344,7 +327,7 @@ scm.save_cfgs = async function (cfgs) {
 		});
 	}
 
-	await http.post(`${config.API_URL}/scmsysconfig/batch`, list);
+	await http.post(`${config.API_URL}/scmsysconfig/config`, list);
 }
 
 /**

@@ -55,7 +55,6 @@ export default {
         }
 
         this.state = route.query.state;
-        console.log(this.state)
     }
 }
 </script>

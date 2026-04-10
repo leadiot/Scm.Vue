@@ -258,7 +258,7 @@ export default {
 			let currentNode = div.firstChild;
 
 			while (currentNode) {
-				if (currentNode.nodeType === Node.TEXT_NODE) {
+				if (currentNode.nodeType === 3) {//Node.TEXT_NODE
 					const text = currentNode.textContent;
 					const newlineIndex = text.indexOf('\n');
 					if (newlineIndex >= 0) {
@@ -266,7 +266,7 @@ export default {
 						break;
 					}
 					firstLine += text;
-				} else if (currentNode.nodeType === Node.ELEMENT_NODE) {
+				} else if (currentNode.nodeType === 1) {//Node.ELEMENT_NODE
 					const tagName = currentNode.tagName.toLowerCase();
 					if (tagName === 'br') {
 						break;
@@ -364,7 +364,6 @@ export default {
 			note.id = data.id || note.id;
 			note.last_content = note.content;
 			note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
-			console.log(note.last_content);
 			this.$message.success('保存成功');
 			this.saveToStorage();
 		},

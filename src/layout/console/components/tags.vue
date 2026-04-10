@@ -163,7 +163,6 @@ export default {
 				menuList,
 				(node) => node.path == nowTag.path
 			);
-			console.log('menu.id=' + menu.id)
 
 			var res = await this.$API.scmcfgmenu.save.post({ 'id': menu.id });
 			if (!res) {

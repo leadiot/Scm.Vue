@@ -1,5 +1,5 @@
 <template>
-	<div class="desktop" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent>
+	<div class="desktop" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
@@ -152,7 +152,33 @@
 				<el-button @click="showSettings = false">取消</el-button>
 				<el-button type="primary" @click="saveSettings">保存</el-button>
 			</template>
-		</el-dialog>
+			</el-dialog>
+
+		<!-- 右键菜单 -->
+		<div v-if="contextMenu.visible" class="context-menu" :style="{ ...contextMenu.style, backgroundColor: menuColor, color: menuTextColor }">
+			<div class="context-menu-item" @click="refreshDesktop">
+				<sc-icon name="ms-refresh" :size="16" />
+				<span>刷新</span>
+			</div>
+			<div class="context-menu-divider"></div>
+			<div class="context-menu-item" @click="openSettings">
+				<sc-icon name="ms-settings" :size="16" />
+				<span>桌面设置</span>
+			</div>
+			<div class="context-menu-item" @click="openProfile">
+				<sc-icon name="ms-account_circle" :size="16" />
+				<span>个人信息</span>
+			</div>
+			<div class="context-menu-divider"></div>
+			<div class="context-menu-item" @click="openApp({ name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+				<sc-icon name="ms-terminal" :size="16" />
+				<span>打开终端</span>
+			</div>
+			<div class="context-menu-item" @click="openApp({ name: '文件', icon: 'ms-folder', component: 'Files' })">
+				<sc-icon name="ms-folder" :size="16" />
+				<span>打开文件</span>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -171,6 +197,10 @@ export default {
 			selectedApp: null,
 			showStartMenu: false,
 			showSettings: false,
+			contextMenu: {
+				visible: false,
+				style: {},
+			},
 			currentTime: '',
 			windows: [],
 			windowIdCounter: 0,
@@ -509,6 +539,9 @@ export default {
 				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
 					this.showStartMenu = false;
 				}
+				if (!e.target.closest('.context-menu')) {
+					this.hideContextMenu();
+				}
 			};
 			document.addEventListener('click', this.documentClickHandler);
 
@@ -527,6 +560,38 @@ export default {
 		},
 		clearSelection() {
 			this.selectedApp = null;
+			this.hideContextMenu();
+		},
+		showContextMenu(event) {
+			this.showStartMenu = false;
+			this.activeSubmenu = null;
+
+			const menuWidth = 160;
+			const menuHeight = 200;
+			let x = event.clientX;
+			let y = event.clientY;
+
+			if (x + menuWidth > window.innerWidth) {
+				x = window.innerWidth - menuWidth - 10;
+			}
+			if (y + menuHeight > window.innerHeight) {
+				y = window.innerHeight - menuHeight - 10;
+			}
+
+			this.contextMenu = {
+				visible: true,
+				style: {
+					left: `${x}px`,
+					top: `${y}px`,
+				},
+			};
+		},
+		hideContextMenu() {
+			this.contextMenu.visible = false;
+		},
+		refreshDesktop() {
+			this.hideContextMenu();
+			//this.$message.success('桌面已刷新');
 		},
 		listApp() {
 			var app = { id: 11, name: '云空间', icon: 'ms-cloud', component: 'Files', width: 900, height: 600 };
@@ -591,6 +656,7 @@ export default {
 		},
 		openApp(app) {
 			this.showStartMenu = false;
+			this.hideContextMenu();
 			const windowId = ++this.windowIdCounter;
 			this.windows.push({
 				id: windowId,
@@ -680,6 +746,7 @@ export default {
 		},
 		openSettings() {
 			this.showStartMenu = false;
+			this.hideContextMenu();
 			this.showSettings = true;
 		},
 		openCalendar() {
@@ -693,6 +760,7 @@ export default {
 			});
 		},
 		openProfile() {
+			this.hideContextMenu();
 			this.openApp({
 				name: '个人信息',
 				icon: 'ms-account_circle',
@@ -731,7 +799,7 @@ export default {
 			cfgs.push({ key: "desktop_gradient_color1", value: this.gradientColor1, });
 			cfgs.push({ key: "desktop_gradient_color2", value: this.gradientColor2, });
 			cfgs.push({ key: "desktop_gradient_direction", value: this.gradientDirection, });
-			await this.$SCM.save_cfgs(cfgs);
+			await this.$SCM.save_cfg(cfgs);
 			this.showSettings = false;
 		},
 		applyTheme(theme) {
@@ -1245,5 +1313,36 @@ export default {
 	margin-top: 8px;
 	font-size: 12px;
 	color: #606266;
+}
+
+.context-menu {
+	position: fixed;
+	min-width: 160px;
+	backdrop-filter: blur(20px);
+	border-radius: 8px;
+	padding: 6px 0;
+	z-index: 2000;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.context-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 16px;
+	cursor: pointer;
+	transition: all 0.15s;
+	font-size: 13px;
+}
+
+.context-menu-item:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.context-menu-divider {
+	height: 1px;
+	background-color: rgba(255, 255, 255, 0.1);
+	margin: 4px 0;
 }
 </style>

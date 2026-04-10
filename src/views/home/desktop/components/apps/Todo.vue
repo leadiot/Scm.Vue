@@ -140,7 +140,6 @@ export default {
 			}
 		},
 		async handleTodo(gtd) {
-			console.log(gtd.handle);
 			gtd.handle = gtd.handle === 1 ? 3 : 1;
 			var res = await this.$API.scmsysgtdheader.handle.post(gtd);
 			if (res.code == 200) {

@@ -27,7 +27,7 @@
 					class="search-input" />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
-						:class="{ active: viewMode === v.value }" :title="v.label" @click="viewMode = v.value">
+						:class="{ active: viewMode === v.value }" :title="v.label" @click="changeViewMode(v.value)">
 						<sc-icon :name="v.icon" :size="18" />
 					</button>
 				</div>
@@ -199,9 +199,20 @@ export default {
 		},
 	},
 	mounted() {
+		this.loadCfg();
 		this.listFolder();
 	},
 	methods: {
+		async listFolder() {
+			var res = await this.$API.nascfgfolder.list.get("");
+			if (res.code == 0) {
+				this.folderList = res.data || [];
+			}
+			this.folderList = res.data || [];
+		},
+		async loadCfg() {
+			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
+		},
 		getFileIcon(item) {
 			if (item.type === 10) {
 				return 'ms-folder';
@@ -225,6 +236,12 @@ export default {
 				js: 'ms-code', ts: 'ms-code', vue: 'ms-code', html: 'ms-code', css: 'ms-code',
 			};
 			return iconMap[ext] || 'ms-insert_drive_file';
+		},
+		async changeViewMode(mode) {
+			this.viewMode = mode;
+			var cfgs = [];
+			cfgs.push({ key: "desktop_files_view_mode", value: mode });
+			await this.$SCM.save_cfg(cfgs);
 		},
 		handleItemClick(event, item) {
 			if (event.ctrlKey || event.metaKey) {
@@ -252,13 +269,6 @@ export default {
 			} else {
 				this.openDoc(item);
 			}
-		},
-		async listFolder() {
-			var res = await this.$API.nascfgfolder.list.get("");
-			if (res.code == 0) {
-				this.folderList = res.data || [];
-			}
-			this.folderList = res.data || [];
 		},
 		async openLib(item) {
 			this.currentPath = [];

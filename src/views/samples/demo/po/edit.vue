@@ -109,9 +109,7 @@ export default {
 		async init() {
 			var route = useRoute();
 			var id = route.query.id;
-			console.log(id);
 			if (!this.$SCM.is_valid_id(id)) {
-				console.log('无效的id');
 				return;
 			}
 
