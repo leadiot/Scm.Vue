@@ -116,7 +116,7 @@
 
 		<div class="notepad-status">
 			<span>字数：{{ wordCount }}</span>
-			<span v-if="lastSaved">上次保存：{{ lastSaved }}</span>
+			<span v-if="currentNote.last_saved">上次保存：{{ currentNote.last_saved }}</span>
 		</div>
 	</div>
 </template>
@@ -137,11 +137,10 @@ export default {
 		return {
 			notes: [],
 			currentNoteId: null,
-			textColor: '#333333',
 			bgColor: '#ffff00',
+			textColor: '#333333',
 			fontSizes: [12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72],
 			wordCount: 0,
-			lastSaved: null,
 			noteIdCounter: 1,
 			savedRange: null,
 			savedColorRange: null,
@@ -149,10 +148,23 @@ export default {
 	},
 	computed: {
 		currentNote() {
-			return this.notes.find(n => n.id === this.currentNoteId);
+			return this.notes.find(n => n.id === this.currentNoteId) || {};
 		},
 	},
 	methods: {
+		def_data() {
+			return {
+				id: this.$SCM.DEF_ID,
+				ver: 0,
+				types: 1,
+				title: '',
+				url: '',
+				content: '',
+				cat_id: '0',
+				last_content: '',
+				last_saved: '',
+			}
+		},
 		execCommand(command, value = null) {
 			document.execCommand(command, false, value);
 			this.$refs.editorRef?.focus();
@@ -241,10 +253,10 @@ export default {
 		getTitle(html) {
 			const div = document.createElement('div');
 			div.innerHTML = html;
-			
+
 			let firstLine = '';
 			let currentNode = div.firstChild;
-			
+
 			while (currentNode) {
 				if (currentNode.nodeType === Node.TEXT_NODE) {
 					const text = currentNode.textContent;
@@ -274,18 +286,13 @@ export default {
 				}
 				currentNode = currentNode.nextSibling;
 			}
-			
+
 			firstLine = firstLine.trim().substring(0, 20);
 			return firstLine || '未命名';
 		},
 		createNote() {
-			const note = {
-				id: this.noteIdCounter++,
-				title: '未命名',
-				content: '',
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			};
+			const note = this.def_data();
+			note.id = '' + this.noteIdCounter++;
 			this.notes.push(note);
 			this.switchNote(note.id);
 			this.saveToStorage();
@@ -306,29 +313,70 @@ export default {
 		},
 		closeNote(id) {
 			const index = this.notes.findIndex(n => n.id === id);
-			if (index > -1) {
-				this.notes.splice(index, 1);
-				if (this.currentNoteId === id) {
-					this.currentNoteId = this.notes.length > 0 ? this.notes[0].id : null;
-					this.switchNote(this.currentNoteId);
+			if (index < 0) {
+				return;
+			}
+
+			var node = this.notes[index];
+			if (node.content === node.last_content) {
+				this.closeNoteByIndex(index, id);
+				return;
+			}
+
+			this.$confirm('笔记尚未保存，是否确认关闭？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning',
+			}).then(async () => {
+				this.closeNoteByIndex(index, id);
+			}).catch(() => { });
+		},
+		closeNoteByIndex(index, noteId) {
+			this.notes.splice(index, 1);
+			if (this.currentNoteId === noteId) {
+				this.currentNoteId = this.notes.length > 0 ? this.notes[0].id : null;
+				this.switchNote(this.currentNoteId);
+			}
+		},
+		async saveNote() {
+			var note = this.currentNote;
+			if (note) {
+				var data = {
+					id: note.id,
+					types: note.types,
+					url: note.url,
+					title: note.title,
+					content: note.content,
+					cat_id: note.cat_id,
+					ver: note.ver,
+				};
+				var res = await this.$API.scmsysnote.save.post(data);
+				if (res.code != 200) {
+					this.$message.warning(res.message);
+					return false;
 				}
-				this.saveToStorage();
-			}
-		},
-		saveNote() {
-			if (this.currentNote) {
-				this.currentNote.updatedAt = new Date();
-				this.saveToStorage();
-				this.lastSaved = new Date().toLocaleTimeString('zh-CN');
+				data = res.data || {};
+				note.id = data.id || note.id;
+				note.last_content = note.content;
+				note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
+				console.log(note.last_content);
 				this.$message.success('保存成功');
+				this.saveToStorage();
 			}
 		},
+		/**
+		 * 保存笔记到本地存储
+		 */
 		saveToStorage() {
 			localStorage.setItem('desktop_notepad', JSON.stringify({
 				notes: this.notes,
 				noteIdCounter: this.noteIdCounter,
 			}));
 		},
+		/**
+		 * 从本地存储加载笔记
+		 * @param {Array} files - 包含文件信息的数组
+		 */
 		loadFromStorage() {
 			const saved = localStorage.getItem('desktop_notepad');
 			if (saved) {
@@ -366,15 +414,10 @@ export default {
 					content = file.content;
 				}
 
-				const note = {
-					id: this.noteIdCounter++,
-					title: file.name || '未命名',
-					content: this.escapeHtml(content),
-					fileId: file.id,
-					fileUrl: file.url,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				};
+				const note = this.def_data();
+				note.title = file.name || '未命名';
+				note.content = this.escapeHtml(content);
+				note.url = file.url || '';
 				this.notes.push(note);
 			} catch (error) {
 				console.error('加载文件失败:', error);

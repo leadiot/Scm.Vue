@@ -19,7 +19,7 @@
 		<div v-else class="device-list">
 			<div v-for="device in devices" :key="device.id" class="device-item">
 				<div class="device-icon" :style="{ backgroundColor: getDeviceColor(device.types) }">
-					<sc-icon :name="getDeviceIcon(device.types)" :size="24" />
+					<sc-icon :name="device.icon" :size="24" />
 				</div>
 				<div class="device-info" @click="showDevice(device)">
 					<div class="device-name">{{ device.names }}</div>
@@ -100,7 +100,7 @@
 			</el-row>
 
 			<template #footer>
-				<el-button type="primary" @click="close">确 定</el-button>
+				<el-button type="primary" @click="infoVisible = false">确 定</el-button>
 			</template>
 		</sc-dialog>
 	</div>
@@ -170,10 +170,6 @@ export default {
 				this.devices = res.data || [];
 			}
 		},
-		getDeviceIcon(types) {
-			const typeInfo = this.types_list.find((t) => t.value === types);
-			return typeInfo ? typeInfo.icon : 'ms-devices';
-		},
 		getDeviceColor(types) {
 			return DEVICE_COLORS[types] || DEVICE_COLORS.other;
 		},
@@ -237,10 +233,9 @@ export default {
 			});
 
 			this.editVisible = false;
-			this.deviceForm = null;
+			// this.deviceForm = null;
 		},
 		resetForm() {
-			this.deviceForm = null;
 			this.deviceForm = this.def_data();
 		},
 	},

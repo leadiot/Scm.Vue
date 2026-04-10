@@ -2,13 +2,14 @@
 	<div class="app-container app-light">
 		<div class="app-toolbar">
 			<span class="app-header-title">待办</span>
-			<span class="todo-count">{{ remainingCount }} 项待完成</span>
+			<span class="todo-count">{{ todoCount }} 项待完成</span>
 		</div>
 
 		<div class="todo-input">
-			<el-input v-model="newTodo" placeholder="添加新待办..." @keyup.enter="addTodo">
+			<el-input v-model="title" maxlength="256" show-word-limit clearable="true" placeholder="添加新待办..."
+				@keyup.enter="addTodo">
 				<template #append>
-					<el-button @click="addTodo" :disabled="!newTodo.trim()">
+					<el-button @click="addTodo" :disabled="!title.trim()">
 						<sc-icon name="ms-add" style="color: #000;" />
 					</el-button>
 				</template>
@@ -17,23 +18,24 @@
 
 		<div class="todo-filters">
 			<el-radio-group v-model="filter" size="small">
-				<el-radio-button value="all">全部 ({{ todos.length }})</el-radio-button>
-				<el-radio-button value="active">待完成 ({{ remainingCount }})</el-radio-button>
-				<el-radio-button value="completed">已完成 ({{ completedCount }})</el-radio-button>
+				<el-radio-button value="all">全部 ({{ gtd_list.length }})</el-radio-button>
+				<el-radio-button value="todo">待完成 ({{ todoCount }})</el-radio-button>
+				<el-radio-button value="done">已完成 ({{ doneCount }})</el-radio-button>
 			</el-radio-group>
 		</div>
 
 		<div class="todo-list">
 			<transition-group name="todo-list">
-				<div v-for="todo in filteredTodos" :key="todo.id" class="todo-item"
-					:class="{ completed: todo.completed }">
-					<el-checkbox v-model="todo.completed" @change="saveTodos" />
-					<span class="todo-text" @dblclick="startEdit(todo)">{{ todo.text }}</span>
-					<el-input v-if="editingId === todo.id" v-model="editingText" size="small" @blur="finishEdit(todo)"
-						@keyup.enter="finishEdit(todo)" @keyup.escape="cancelEdit" class="edit-input" ref="editInput" />
+				<div v-for="gtd in filteredTodos" :key="gtd.id" class="todo-item"
+					:class="{ completed: gtd.handle === 3 }">
+					<el-checkbox v-model="gtd.checked" @change="handleTodo(gtd)" />
+					<el-input v-if="currentGtd.id === gtd.id" v-model="gtd.title" maxlength="256" show-word-limit
+						clearable="true" size="small" @blur="finishEdit(gtd)" @keyup.enter="finishEdit(gtd)"
+						@keyup.escape="cancelEdit" class="edit-input" ref="editInput" />
+					<span v-else class="todo-text" @dblclick="startEdit(gtd)">{{ gtd.title }}</span>
 					<div class="todo-actions">
-						<span class="todo-time">{{ formatTime(todo.createdAt) }}</span>
-						<el-button text size="small" @click="removeTodo(todo.id)">
+						<span class="todo-time">{{ formatTime(gtd.create_time) }}</span>
+						<el-button text size="small" @click="deleteTodo(gtd)">
 							<sc-icon name="ms-delete" :size="16" />
 						</el-button>
 					</div>
@@ -42,13 +44,13 @@
 
 			<div v-if="filteredTodos.length === 0" class="todo-empty">
 				<sc-icon name="ms-assignment_turned_in" :size="48" />
-				<p>{{ filter === 'completed' ? '暂无已完成事项' : '暂无待办事项' }}</p>
+				<p>{{ filter === 'todo' ? '暂无待办事项' : '暂无已完成事项' }}</p>
 			</div>
 		</div>
 
-		<div v-if="todos.length > 0" class="todo-footer">
-			<el-button v-if="completedCount > 0" text type="danger" @click="clearCompleted">
-				清除已完成 ({{ completedCount }})
+		<div v-if="gtd_list.length > 0" class="todo-footer">
+			<el-button v-if="doneCount > 0" text type="danger" @click="clearDone">
+				清除已完成 ({{ doneCount }})
 			</el-button>
 		</div>
 	</div>
@@ -64,52 +66,48 @@ export default {
 	},
 	data() {
 		return {
-			newTodo: '',
-			todos: [],
+			title: '',
+			gtd_list: [],
 			filter: 'all',
-			editingId: null,
-			editingText: '',
-			todoIdCounter: 1,
+			currentGtd: {}
 		};
 	},
 	computed: {
 		filteredTodos() {
-			if (this.filter === 'active') {
-				return this.todos.filter(todo => !todo.completed);
-			} else if (this.filter === 'completed') {
-				return this.todos.filter(todo => todo.completed);
+			if (this.filter === 'todo') {
+				return this.gtd_list.filter(todo => todo.handle === 1);
+			} else if (this.filter === 'done') {
+				return this.gtd_list.filter(todo => todo.handle === 3);
 			}
-			return this.todos;
+
+			return this.gtd_list;
 		},
-		remainingCount() {
-			return this.todos.filter(todo => !todo.completed).length;
+		todoCount() {
+			return this.gtd_list.filter(gtd => gtd.handle === 1).length;
 		},
-		completedCount() {
-			return this.todos.filter(todo => todo.completed).length;
+		doneCount() {
+			return this.gtd_list.filter(gtd => gtd.handle === 3).length;
 		},
 	},
 	methods: {
-		addTodo() {
-			const text = this.newTodo.trim();
+		async addTodo() {
+			const text = this.title.trim();
 			if (!text) return;
 
-			this.todos.unshift({
-				id: this.todoIdCounter++,
-				text: text,
-				completed: false,
-				createdAt: new Date(),
-			});
+			var gtd = {
+				title: text
+			};
+			var res = await this.$API.scmsysgtdheader.add.post(gtd);
+			if (res.code == 200) {
+				await this.loadTodos();
+			} else {
+				this.$alert(res.message, "提示", { type: "error" });
+			}
 
-			this.newTodo = '';
-			this.saveTodos();
-		},
-		removeTodo(id) {
-			this.todos = this.todos.filter(todo => todo.id !== id);
-			this.saveTodos();
+			this.title = '';
 		},
 		startEdit(todo) {
-			this.editingId = todo.id;
-			this.editingText = todo.text;
+			this.currentGtd = todo;
 			this.$nextTick(() => {
 				const inputs = this.$refs.editInput;
 				if (inputs) {
@@ -123,36 +121,52 @@ export default {
 			});
 		},
 		finishEdit(todo) {
-			const text = this.editingText.trim();
-			if (text) {
-				todo.text = text;
-				this.saveTodos();
-			}
-			this.editingId = null;
-			this.editingText = '';
+			this.saveTodo(todo);
+			this.currentGtd = {};
 		},
 		cancelEdit() {
-			this.editingId = null;
-			this.editingText = '';
+			this.currentGtd = {};
 		},
-		clearCompleted() {
-			this.todos = this.todos.filter(todo => !todo.completed);
-			this.saveTodos();
+		async clearDone() {
+			var res = await this.$API.scmsysgtdheader.remove.post();
+			if (res.code == 200) {
+				await this.loadTodos();
+			}
 		},
-		saveTodos() {
-			localStorage.setItem('desktop_todos', JSON.stringify(this.todos));
+		async saveTodo(gtd) {
+			var res = await this.$API.scmsysgtdheader.update.put(gtd);
+			if (res.code == 200) {
+				await this.loadTodos();
+			}
 		},
-		loadTodos() {
-			const saved = localStorage.getItem('desktop_todos');
-			if (saved) {
-				this.todos = JSON.parse(saved);
-				const maxId = this.todos.reduce((max, todo) => Math.max(max, todo.id), 0);
-				this.todoIdCounter = maxId + 1;
+		async handleTodo(gtd) {
+			console.log(gtd.handle);
+			gtd.handle = gtd.handle === 1 ? 3 : 1;
+			var res = await this.$API.scmsysgtdheader.handle.post(gtd);
+			if (res.code == 200) {
+				await this.loadTodos();
+			}
+		},
+		async deleteTodo(gtd) {
+			var res = await this.$API.scmsysgtdheader.delete.delete(gtd.id);
+			if (res.code == 200) {
+				await this.loadTodos();
+			}
+		},
+		async loadTodos() {
+			var res = await this.$API.scmsysgtdheader.list.get();
+			if (res.code == 200) {
+				this.gtd_list = res.data;
+			}
+
+			this.gtd_list = res.data || {};
+			for (let todo of this.gtd_list) {
+				todo.checked = todo.handle === 3;
 			}
 		},
 		formatTime(date) {
 			if (!date) return '';
-			const d = new Date(date);
+			const d = new Date(Number(date));
 			const now = new Date();
 			const diff = now - d;
 

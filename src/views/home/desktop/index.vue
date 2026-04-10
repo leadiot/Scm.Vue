@@ -555,7 +555,7 @@ export default {
 			app = { id: 13, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 14, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 320, height: 580 };
+			app = { id: 14, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580 };
 			this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 15, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
@@ -585,7 +585,7 @@ export default {
 			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 34, name: '设备管理', icon: 'ms-devices', component: 'Device', width: 600, height: 500 };
+			app = { id: 34, name: '设备', icon: 'ms-devices', component: 'Device', width: 680, height: 460 };
 			this.deskApps.push(app);
 			menu.children.push(app);
 		},
