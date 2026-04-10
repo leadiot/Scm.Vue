@@ -16,7 +16,7 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
-				@set-wallpaper="setWallpaper" />
+				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" />
 		</div>
 
 		<!-- 任务栏 -->
@@ -41,9 +41,9 @@
 
 		<!-- 开始菜单 -->
 		<div v-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor }">
-			<div class="start-menu-header">
+			<div class="start-menu-header" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="32" />
-				<span>{{ userName }}</span>
+				<span>{{ user.userName || 'User' }}</span>
 			</div>
 			<div class="start-menu-apps">
 				<div v-for="app in menuApps" :key="app.id" class="start-menu-item"
@@ -79,7 +79,7 @@
 		</div>
 
 		<!-- 设置窗口 -->
-		<el-dialog v-model="showSettings" title="桌面设置" width="500px" :modal-append-to-body="false">
+		<el-dialog v-model="showSettings" title="桌面设置" width="500px" :modal-append-to-body="false" draggable>
 			<el-tabs>
 				<el-tab-pane label="主题设置">
 					<div class="settings-section">
@@ -191,7 +191,7 @@ export default {
 				'/images/04.jpg',
 				'/images/05.jpg',
 			],
-			userName: 'User',
+			user: {},
 			home: '/',
 			deskApps: [],
 			menuApps: [],
@@ -495,10 +495,7 @@ export default {
 	},
 	methods: {
 		async init() {
-			var userInfo = this.$TOOL.session.get("USER_INFO");
-			if (userInfo) {
-				this.userName = userInfo.userName;
-			}
+			this.user = this.$TOOL.session.get("USER_INFO") || {};
 
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
@@ -587,6 +584,9 @@ export default {
 			menu.children.push(app);
 			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
 			// this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 34, name: '设备管理', icon: 'ms-devices', component: 'Device', width: 600, height: 500 };
+			this.deskApps.push(app);
 			menu.children.push(app);
 		},
 		openApp(app) {
@@ -690,6 +690,21 @@ export default {
 				height: 460,
 				resizable: false
 			});
+		},
+		openProfile() {
+			this.openApp({
+				name: '个人信息',
+				icon: 'ms-account_circle',
+				component: 'Profile',
+				width: 460,
+				height: 680,
+				resizable: false
+			});
+		},
+		onProfileUpdated(profile) {
+			if (profile.namec) {
+				this.user.userName = profile.namec;
+			}
 		},
 		async loadSettings() {
 			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
@@ -1033,6 +1048,12 @@ export default {
 	gap: 15px;
 	padding: 20px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.start-menu-header:hover {
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 .start-menu-apps {

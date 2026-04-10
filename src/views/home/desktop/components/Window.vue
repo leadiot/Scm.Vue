@@ -33,7 +33,7 @@
 
 		<div class="window-content">
 			<component :is="getComponent(window.component)" v-bind="window.props || {}"
-				@set-wallpaper="onSetWallpaper" />
+				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" />
 		</div>
 
 		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize">
@@ -57,6 +57,8 @@ import TodoApp from './apps/Todo.vue';
 import NotepadApp from './apps/Notepad.vue';
 import ContactsApp from './apps/Contacts.vue';
 import SMSApp from './apps/SMS.vue';
+import ProfileApp from './apps/Profile.vue';
+import DeviceApp from './apps/Device.vue';
 
 export default {
 	name: 'Window',
@@ -67,7 +69,7 @@ export default {
 		window: { type: Object, required: true },
 		theme: { type: Object, default: () => ({}) },
 	},
-	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper'],
+	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated'],
 	data() {
 		return {
 			isDragging: false,
@@ -126,11 +128,16 @@ export default {
 				Text: NotepadApp,
 				Contacts: ContactsApp,
 				SMS: SMSApp,
+				Profile: ProfileApp,
+				Device: DeviceApp,
 			};
 			return components[componentName] || Files;
 		},
 		onSetWallpaper(url) {
 			this.$emit('set-wallpaper', url);
+		},
+		onProfileUpdated(profile) {
+			this.$emit('profile-updated', profile);
 		},
 		handleFocus() {
 			this.$emit('focus', this.window.id);

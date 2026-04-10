@@ -7,11 +7,11 @@
 					用户代码用于登录系统，不允许修改
 				</div>
 			</el-form-item>
-			<el-form-item label="用户名称" prop="names">
-				<el-input v-model="form.names"></el-input>
-			</el-form-item>
 			<el-form-item label="展示名称" prop="namec">
 				<el-input v-model="form.namec"></el-input>
+			</el-form-item>
+			<el-form-item label="用户名称" prop="names">
+				<el-input v-model="form.names"></el-input>
 			</el-form-item>
 			<el-form-item label="性别" prop="sex">
 				<sc-select v-model="form.sex" placeholder="请选择" :data="sex_list"></sc-select>
@@ -23,7 +23,7 @@
 				<el-input v-model="form.email"></el-input>
 			</el-form-item>
 			<el-form-item label="个性签名" prop="remark">
-				<el-input v-model="form.remark" type="textarea"></el-input>
+				<el-input v-model="form.remark" type="textarea" :rows="3"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="saveBasic">保存</el-button>
@@ -36,19 +36,7 @@
 export default {
 	data() {
 		return {
-			form: {
-				id: this.$SCM.DEF_ID,
-				codec: "",
-				names: "",
-				namec: "",
-				cellphone: '',
-				email: '',
-				avatar: '',
-				sex: 1,
-				remark: '',
-				role: [],
-				post: [],
-			},
+			form: this.def_data(),
 			rules: {
 				codec: [
 					{ required: true, trigger: "blur", message: "请输入用户代码" },
@@ -74,6 +62,21 @@ export default {
 		this.init();
 	},
 	methods: {
+		def_data() {
+			return {
+				id: this.$SCM.DEF_ID,
+				codec: "",
+				names: "",
+				namec: "",
+				cellphone: '',
+				email: '',
+				avatar: '',
+				sex: 1,
+				remark: '',
+				role: [],
+				post: [],
+			}
+		},
 		async init() {
 			const res = await this.$API.operator.userwork.get();
 			if (!res || res.code != 200) {
