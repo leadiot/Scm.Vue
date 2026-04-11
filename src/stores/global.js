@@ -7,6 +7,7 @@ export const useGlobalStore = defineStore('global', {
 		ismobile: false,
 		home: config.HOME,
 		layout: config.LAYOUT,
+		consoleLayout: config.CONSOLE_LAYOUT,
 		theme: config.THEME,
 		menuIsCollapse: config.MENU_IS_COLLAPSE,
 		layoutTags: config.LAYOUT_TAGS,
@@ -23,6 +24,9 @@ export const useGlobalStore = defineStore('global', {
 		},
 		SET_layout(value) {
 			this.layout = value
+		},
+		SET_consoleLayout(value) {
+			this.consoleLayout = value
 		},
 		SET_theme(value) {
 			this.theme = value

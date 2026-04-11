@@ -48,7 +48,7 @@ export default {
 	name: "home_unit",
 	components: {
 		account: defineAsyncComponent(() => import("./components/account")),
-		seting: defineAsyncComponent(() => import("./components/seting")),
+		unitSetings: defineAsyncComponent(() => import("./components/unitSetings")),
 		pushSettings: defineAsyncComponent(() => import("./components/pushSettings")),
 		password: defineAsyncComponent(() => import("./components/password")),
 		space: defineAsyncComponent(() => import("./components/space")),
@@ -68,7 +68,7 @@ export default {
 						// {
 						// 	icon: "el-icon-operation",
 						// 	title: "财务信息",
-						// 	component: "seting",
+						// 	component: "unitSetings",
 						// },
 						// {
 						// 	icon: "el-icon-lock",

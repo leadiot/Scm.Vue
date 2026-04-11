@@ -2,7 +2,7 @@
 <template>
 
 	<!-- 通栏布局 -->
-	<template v-if="layout == 'header'">
+	<template v-if="consoleLayout == 'header'">
 		<header class="scmui-header">
 			<div class="scmui-header-left">
 				<div class="logo-bar">
@@ -56,7 +56,7 @@
 	</template>
 
 	<!-- 经典布局 -->
-	<template v-else-if="layout == 'menu'">
+	<template v-else-if="consoleLayout == 'menu'">
 		<header class="scmui-header">
 			<div class="scmui-header-left">
 				<div class="logo-bar">
@@ -99,7 +99,7 @@
 	</template>
 
 	<!-- 功能坞布局 -->
-	<template v-else-if="layout == 'dock'">
+	<template v-else-if="consoleLayout == 'dock'">
 		<header class="scmui-header">
 			<div class="scmui-header-left">
 				<div class="logo-bar">
@@ -236,8 +236,8 @@ export default {
 		ismobile() {
 			return this.globalStore.ismobile
 		},
-		layout() {
-			return this.globalStore.layout
+		consoleLayout() {
+			return this.globalStore.consoleLayout
 		},
 		layoutTags() {
 			return this.globalStore.layoutTags
@@ -263,7 +263,7 @@ export default {
 		$route() {
 			this.showThis()
 		},
-		layout: {
+		consoleLayout: {
 			handler(val) {
 				document.body.setAttribute('data-layout', val)
 			},

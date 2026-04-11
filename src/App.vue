@@ -9,6 +9,7 @@ import colorTool from "@/utils/color";
 import { useI18n } from "vue-i18n";
 import { computed, shallowRef, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useGlobalStore } from "@/stores/global";
 
 import LayoutNone from "@/layout/none/index.vue";
 import LayoutConsole from "@/layout/console/index.vue";
@@ -28,12 +29,14 @@ export default {
 		const { locale, messages } = useI18n()
 		const elLocale = computed(() => messages.value[locale.value].el)
 		const route = useRoute()
-		const layoutComponent = shallowRef(layouts.none)
+		const globalStore = useGlobalStore()
+		const layoutComponent = shallowRef(layouts.console)
 
 		watch(
-			() => route.meta?.layout,
-			(layoutType) => {
-				layoutComponent.value = layouts[layoutType] || layouts.none
+			[() => route.meta?.layout, () => globalStore.layout],
+			([routeLayout, storeLayout]) => {
+				const layoutType = routeLayout || storeLayout || 'console'
+				layoutComponent.value = layouts[layoutType] || layouts.console
 			},
 			{ immediate: true }
 		)

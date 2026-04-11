@@ -19,7 +19,7 @@
 			</el-form-item>
 			<el-divider></el-divider>
 			<el-form-item label="框架布局">
-				<el-select v-model="layout" placeholder="请选择">
+				<el-select v-model="consoleLayout" placeholder="请选择">
 					<el-option label="默认" value="default"></el-option>
 					<el-option label="通栏" value="header"></el-option>
 					<el-option label="经典" value="menu"></el-option>
@@ -48,7 +48,7 @@ export default {
 	},
 	data() {
 		return {
-			layout: this.globalStore.layout,
+			consoleLayout: this.globalStore.consoleLayout,
 			menuIsCollapse: this.globalStore.menuIsCollapse,
 			layoutTags: this.globalStore.layoutTags,
 			lang: this.$TOOL.data.get('APP_LANG') || this.$CONFIG.LANG,
@@ -58,8 +58,8 @@ export default {
 		}
 	},
 	watch: {
-		layout(val) {
-			this.globalStore.SET_layout(val)
+		consoleLayout(val) {
+			this.globalStore.SET_consoleLayout(val)
 		},
 		menuIsCollapse() {
 			this.globalStore.TOGGLE_menuIsCollapse()

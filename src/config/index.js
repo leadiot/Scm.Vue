@@ -59,9 +59,11 @@ const DEFAULT_CONFIG = {
 	// 请求是否开启缓存
 	REQUEST_CACHE: false,
 
-	// 布局 默认：default | 通栏：header | 经典：menu | 功能坞：dock
-	// dock将关闭标签和面包屑栏
-	LAYOUT: "default",
+	// 布局类型：none | console | desktop | monitor
+	LAYOUT: "console",
+
+	// Console布局风格：默认：default | 通栏：header | 经典：menu | 功能坞：dock
+	CONSOLE_LAYOUT: "default",
 
 	// 菜单是否折叠
 	MENU_IS_COLLAPSE: false,
