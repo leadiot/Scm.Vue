@@ -616,7 +616,7 @@ scm.recursive_menu2 = function (menuList, pid) {
 				hidden: !menu.visible,
 				fullpage: !!menu.fullpage,
 				keepAlive: menu.keepAlive,
-				affix: menu.codec == "dashboard",
+				affix: menu.codec == "console",
 			},
 			children: children,
 		};

@@ -101,15 +101,12 @@ export default {
 					let t = e.clientY - disY;
 
 					//移动当前元素
-
 					if (t > 0 && t < document.body.clientHeight - 50) {
 						oDiv.style.top = t + "px";
 					}
 					if (l > 0 && l < document.body.clientWidth - 50) {
 						oDiv.style.left = l + "px";
 					}
-
-
 				}
 				document.onmouseup = function () {
 					lastTime = new Date().getTime();
