@@ -42,22 +42,23 @@ router.beforeEach(async (to, from) => {
 		: `${config.APP_NAME}`;
 
 	//动态布局切换
-	if (to.meta.layout) {
-		const globalStore = useGlobalStore();
-		if (globalStore.layout !== to.meta.layout) {
-			globalStore.SET_layout(to.meta.layout);
-		}
-	}
+	// if (to.meta.layout) {
+	// 	const globalStore = useGlobalStore();
+	// 	if (globalStore.layout !== to.meta.layout) {
+	// 		globalStore.SET_layout(to.meta.layout);
+	// 	}
+	// }
 
 	//登录页直接放行
 	if (to.path === "/login") {
+		//删除路由(替换当前layout路由)
+		router.addRoute(routes[0]);
 		//删除路由(404)
 		routes_404_r();
 		isGetRouter = false;
 		return;
 	}
 
-	//静态路由直接放行
 	if (routes.findIndex((r) => r.path === to.path) >= 0) {
 		return;
 	}
@@ -93,6 +94,9 @@ router.beforeEach(async (to, from) => {
 			}
 		});
 		routes_404_r = router.addRoute(routes_404);
+		if (to.matched.length == 0) {
+			router.push(to.fullPath);
+		}
 		isGetRouter = true;
 	}
 	beforeEach(to, from);

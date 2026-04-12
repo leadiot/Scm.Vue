@@ -1,13 +1,14 @@
+// import config from "@/config";
+
 const routes = [
-	{
-		id: '1000',
-		name: 'landing',
-		path: "/",
-		component: () => import("@/layout/console/index.vue"),
-		redirect: '/login',
-		meta: { title: "登录", layout: "none" },
-		children: []
-	},
+	// {
+	// 	id: '1000',
+	// 	name: "layout",
+	// 	path: "/",
+	// 	component: () => import("@/layout/console"),
+	// 	redirect: config.CONSOLE_URL || "/console",
+	// 	children: [],
+	// },
 	{
 		id: '1001',
 		name: 'login',
@@ -43,13 +44,14 @@ const routes = [
 		component: () => import("@/views/login/resetPassword"),
 		meta: { title: "重置密码", layout: "none" },
 	},
-	{
-		id: '1006',
-		name: 'console',
-		path: "/console",
-		component: () => import("@/views/home/index"),
-		meta: { title: "控制台", layout: "console" },
-	},
+	// {
+	// 	id: '1006',
+	// 	name: 'console',
+	// 	path: "/console",
+	// 	component: () => import("@/views/home/index"),
+	// 	meta: { title: "控制台", layout: "console" },
+	// 	children: [],
+	// },
 	{
 		id: '1007',
 		name: 'desktop',

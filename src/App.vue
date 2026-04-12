@@ -30,13 +30,13 @@ export default {
 		const elLocale = computed(() => messages.value[locale.value].el)
 		const route = useRoute()
 		const globalStore = useGlobalStore()
-		const layoutComponent = shallowRef(layouts.console)
+		const layoutComponent = shallowRef(layouts.none)
 
 		watch(
 			[() => route.meta?.layout, () => globalStore.layout],
 			([routeLayout, storeLayout]) => {
-				const layoutType = routeLayout || storeLayout || 'console'
-				layoutComponent.value = layouts[layoutType] || layouts.console
+				const layoutType = routeLayout || storeLayout || 'none'
+				layoutComponent.value = layouts[layoutType] || layouts.none
 			},
 			{ immediate: true }
 		)
