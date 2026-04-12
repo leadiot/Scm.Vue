@@ -59,6 +59,8 @@ import ContactsApp from './apps/Contacts.vue';
 import SMSApp from './apps/SMS.vue';
 import ProfileApp from './apps/Profile.vue';
 import DeviceApp from './apps/Device.vue';
+import MinesweeperApp from './apps/Minesweeper.vue';
+import Game2048App from './apps/Game2048.vue';
 
 export default {
 	name: 'Window',
@@ -130,6 +132,8 @@ export default {
 				SMS: SMSApp,
 				Profile: ProfileApp,
 				Device: DeviceApp,
+				Minesweeper: MinesweeperApp,
+				Game2048: Game2048App,
 			};
 			return components[componentName] || Files;
 		},

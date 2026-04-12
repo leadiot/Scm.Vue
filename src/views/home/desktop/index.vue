@@ -22,7 +22,7 @@
 		<!-- 任务栏 -->
 		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor }">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<sc-icon name="ms-window" :size="24" />
+				<sc-icon name="ms-grid_view" :size="24" />
 				<span>开始</span>
 			</div>
 			<div class="taskbar-apps">
@@ -152,10 +152,11 @@
 				<el-button @click="showSettings = false">取消</el-button>
 				<el-button type="primary" @click="saveSettings">保存</el-button>
 			</template>
-			</el-dialog>
+		</el-dialog>
 
 		<!-- 右键菜单 -->
-		<div v-if="contextMenu.visible" class="context-menu" :style="{ ...contextMenu.style, backgroundColor: menuColor, color: menuTextColor }">
+		<div v-if="contextMenu.visible" class="context-menu"
+			:style="{ ...contextMenu.style, backgroundColor: menuColor, color: menuTextColor }">
 			<div class="context-menu-item" @click="refreshDesktop">
 				<sc-icon name="ms-refresh" :size="16" />
 				<span>刷新</span>
@@ -170,7 +171,8 @@
 				<span>个人信息</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item" @click="openApp({ name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+			<div class="context-menu-item"
+				@click="openApp({ name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
 				<sc-icon name="ms-terminal" :size="16" />
 				<span>打开终端</span>
 			</div>
@@ -597,63 +599,71 @@ export default {
 			//this.$message.success('桌面已刷新');
 		},
 		listApp() {
-			var app = { id: 11, name: '云空间', icon: 'ms-cloud', component: 'Files', width: 900, height: 600 };
+			var app = { id: 1, name: '云空间', icon: 'ms-cloud', component: 'Files', width: 900, height: 600 };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
 
-			app = { id: 12, name: '浏览器', icon: 'ms-language', component: 'Browser' };
+			app = { id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
 
-			var menu = { id: 2, name: '多媒体', icon: 'ms-videocam', children: [] };
+			var menu = { id: 3, name: '多媒体', icon: 'ms-videocam', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 21, name: '图像', icon: 'ms-photo_library', component: 'Image' };
+			app = { id: 31, name: '图像', icon: 'ms-photo_library', component: 'Image' };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 22, name: '音频', icon: 'ms-music_note', component: 'Audio' };
+			app = { id: 32, name: '音频', icon: 'ms-music_note', component: 'Audio' };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 23, name: '视频', icon: 'ms-videocam', component: 'Video' };
+			app = { id: 33, name: '视频', icon: 'ms-videocam', component: 'Video' };
 			this.deskApps.push(app);
 			menu.children.push(app);
 
-			menu = { id: 1, name: '应用', icon: 'ms-folder', children: [] };
+			menu = { id: 4, name: '应用', icon: 'ms-folder', children: [] };
 			this.menuApps.push(menu);
-
-			app = { id: 16, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
+			app = { id: 41, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 13, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
+			app = { id: 42, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 14, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580 };
+			app = { id: 43, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 15, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
+			app = { id: 44, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 32, name: '下载', icon: 'ms-download', component: 'Download' };
+			app = { id: 45, name: '下载', icon: 'ms-download', component: 'Download' };
+			// this.deskApps.push(app);
+			menu.children.push(app);
+
+			menu = { id: 5, name: '通讯', icon: 'ms-contacts', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 51, name: '联系人', icon: 'ms-contacts', component: 'Contacts', width: 800, height: 560 };
+			// this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 52, name: '短信', icon: 'ms-sms', component: 'SMS', width: 800, height: 560 };
+			// this.deskApps.push(app);
+			menu.children.push(app);
+
+			menu = { id: 6, name: '游戏', icon: 'ms-sports_esports', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 61, name: '扫雷', icon: 'ms-flag', component: 'Minesweeper', width: 640, height: 760, resizable: false };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 62, name: '2048', icon: 'ms-grid_on', component: 'Game2048', width: 380, height: 660, resizable: false };
 			this.deskApps.push(app);
 			menu.children.push(app);
 
-			menu = { id: 4, name: '通讯', icon: 'ms-contacts', children: [] };
+			menu = { id: 7, name: '系统工具', icon: 'ms-settings', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 41, name: '联系人', icon: 'ms-contacts', component: 'Contacts', width: 800, height: 560 };
+			app = { id: 71, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 42, name: '短信', icon: 'ms-sms', component: 'SMS', width: 800, height: 560 };
-			this.deskApps.push(app);
-			menu.children.push(app);
-
-			menu = { id: 3, name: '系统工具', icon: 'ms-settings', children: [] };
-			this.menuApps.push(menu);
-			app = { id: 31, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 };
-			this.deskApps.push(app);
-			menu.children.push(app);
-			app = { id: 33, name: '消息', icon: 'ms-mail', component: 'Message' };
+			app = { id: 72, name: '消息', icon: 'ms-mail', component: 'Message' };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 34, name: '设备', icon: 'ms-devices', component: 'Device', width: 680, height: 460 };
+			app = { id: 73, name: '设备', icon: 'ms-devices', component: 'Device', width: 680, height: 460 };
 			this.deskApps.push(app);
 			menu.children.push(app);
 		},
