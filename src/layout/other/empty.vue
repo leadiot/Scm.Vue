@@ -1,25 +1,15 @@
 <template>
 	<div class="empty-layout">
-		<router-view v-slot="{ Component }">
-			<keep-alive :include="keepLiveRoute">
-				<component :is="Component" :key="$route.fullPath" v-if="routeShow" />
-			</keep-alive>
-		</router-view>
+		<el-empty description="页面组件加载失败" :image-size="200">
+			<el-button type="primary" @click="$router.back()">返回上一页</el-button>
+			<el-button @click="$router.push('/console')">返回首页</el-button>
+		</el-empty>
 	</div>
 </template>
 
 <script>
-import { useKeepAliveStore } from '@/stores/keepAlive';
-
 export default {
 	name: 'EmptyLayout',
-	setup() {
-		const keepAliveStore = useKeepAliveStore();
-		return {
-			keepLiveRoute: keepAliveStore.keepLiveRoute,
-			routeShow: keepAliveStore.routeShow,
-		};
-	},
 };
 </script>
 
@@ -27,6 +17,9 @@ export default {
 .empty-layout {
 	width: 100%;
 	height: 100vh;
-	overflow: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f5f7fa;
 }
 </style>
