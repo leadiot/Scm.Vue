@@ -1,7 +1,5 @@
 cd dist/
 
-rmdir /s /q lib
-
 rmdir /s /q material-icons
 
 rmdir /s /q material-symbols

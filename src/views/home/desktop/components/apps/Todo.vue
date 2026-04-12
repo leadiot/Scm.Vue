@@ -158,7 +158,7 @@ export default {
 				this.gtd_list = res.data;
 			}
 
-			this.gtd_list = res.data || {};
+			this.gtd_list = res.data || [];
 			for (let todo of this.gtd_list) {
 				todo.checked = todo.handle === 3;
 			}
