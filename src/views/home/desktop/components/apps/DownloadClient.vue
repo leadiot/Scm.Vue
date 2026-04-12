@@ -63,7 +63,7 @@ export default {
 		return {
 			platforms: this.$CONFIG.DOWNLOAD_LIST,
 			features: [
-				'多平台支持，体验更便捷',
+				'多平台支持，离线访问',
 				'本地文件快速同步',
 				'推送通知实时提醒',
 				'多设备数据无缝同步',
