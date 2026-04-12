@@ -61,6 +61,7 @@ import ProfileApp from './apps/Profile.vue';
 import DeviceApp from './apps/Device.vue';
 import MinesweeperApp from './apps/Minesweeper.vue';
 import Game2048App from './apps/Game2048.vue';
+import DownloadClientApp from './apps/DownloadClient.vue';
 
 export default {
 	name: 'Window',
@@ -134,6 +135,7 @@ export default {
 				Device: DeviceApp,
 				Minesweeper: MinesweeperApp,
 				Game2048: Game2048App,
+				DownloadClient: DownloadClientApp,
 			};
 			return components[componentName] || Files;
 		},

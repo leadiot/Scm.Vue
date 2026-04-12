@@ -176,9 +176,9 @@
 				<sc-icon name="ms-terminal" :size="16" />
 				<span>打开终端</span>
 			</div>
-			<div class="context-menu-item" @click="openApp({ name: '文件', icon: 'ms-folder', component: 'Files' })">
+			<div class="context-menu-item" @click="openApp({ name: '云空间', icon: 'ms-folder', component: 'Files' })">
 				<sc-icon name="ms-folder" :size="16" />
-				<span>打开文件</span>
+				<span>打开云空间</span>
 			</div>
 		</div>
 	</div>
@@ -664,6 +664,9 @@ export default {
 			// this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 73, name: '设备', icon: 'ms-devices', component: 'Device', width: 680, height: 460 };
+			this.deskApps.push(app);
+			menu.children.push(app);
+			app = { id: 74, name: '下载客户端', icon: 'ms-cloud_download', component: 'DownloadClient', width: 680, height: 620, resizable: false };
 			this.deskApps.push(app);
 			menu.children.push(app);
 		},

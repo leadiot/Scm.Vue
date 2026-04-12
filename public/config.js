@@ -12,6 +12,8 @@ const APP_CONFIG = {
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
 
+	HOME: '/desktop',
+
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
 	DEF_LOGIN_MODE: [10, 30],
 	/** 默认登录用户，便于开发时减少输入，可以修改或置空 */
@@ -69,12 +71,12 @@ const APP_CONFIG = {
 	],
 
 	DOWNLOAD_LIST: [
-		{ id: 'window', client: 20, platform: 'desktop', method: 'file', visible: true, name: 'Windows', desc: '适用于Windows 10及以上版本', url: '/download/app_v1.0.0.zip' },
-		{ id: 'macos', client: 30, platform: 'desktop', method: 'appstore', visible: true, name: 'MacOS', desc: '适用于macOS 10.15及以上版本', url: '/download/app_v1.0.0.zip' },
-		{ id: 'linux', client: 40, platform: 'desktop', method: 'qrcode', visible: true, name: 'Linux', desc: '适用于大多数Linux发行版', url: '/download/app_v1.0.0.zip' },
-		{ id: 'android', client: 50, name: 'Android', desc: '适用于Android 5.0及以上版本', url: '/download/app_v1.0.0.zip' },
-		{ id: 'ios', client: 60, name: 'iOS', desc: '适用于iOS 11及以上版本', url: '/download/app_v1.0.0.zip' },
-		{ id: 'harmony', client: 70, name: '鸿蒙', desc: '适用于鸿蒙系统', url: '/download/app_v1.0.0.zip' },
+		{ id: 'window', client: 20, platform: 'desktop', method: 'file', available: true, visible: true, name: 'Windows', badge: '推荐', version: '1.0.0', desc: '适用于Windows 10及以上版本', url: '/download/app_v1.0.0.zip', size: '100MB' },
+		{ id: 'macos', client: 30, platform: 'desktop', method: 'appstore', available: false, visible: true, name: 'MacOS', badge: '推荐', version: '1.0.0', desc: '适用于macOS 10.15及以上版本', url: '/download/app_v1.0.0.zip', size: '100MB' },
+		{ id: 'linux', client: 40, platform: 'desktop', method: 'qrcode', available: false, visible: true, name: 'Linux', badge: '推荐', version: '1.0.0', desc: '适用于大多数Linux发行版', url: '/download/app_v1.0.0.zip', size: '100MB' },
+		{ id: 'android', client: 50, platform: 'mobile', method: 'file', available: true, visible: true, name: 'Android', desc: '适用于Android 5.0及以上版本', url: '/download/app_v1.0.0.zip' },
+		{ id: 'ios', client: 60, platform: 'mobile', method: 'appstore', available: false, visible: true, name: 'iOS', desc: '适用于iOS 11及以上版本', url: '/download/app_v1.0.0.zip' },
+		{ id: 'harmony', client: 70, platform: 'mobile', method: 'file', available: false, visible: true, name: '鸿蒙', desc: '适用于鸿蒙系统', url: '/download/app_v1.0.0.zip' },
 		{ id: 'chrome', client: 11, name: 'Google Chrome', desc: '适用于Google Chrome 80及以上版本', url: '/download/app_v1.0.0.zip' },
 		{ id: 'edge', client: 12, name: 'Microsoft Edge', desc: '适用于Microsoft Edge 80及以上版本', url: '/download/app_v1.0.0.zip' },
 		{ id: 'firefox', client: 13, name: 'Mozilla Firefox', desc: '适用于Mozilla Firefox 78及以上版本', url: '/download/app_v1.0.0.zip' },
