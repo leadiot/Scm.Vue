@@ -36,7 +36,6 @@ export default {
 	created() {
 		var theme = this.$TOOL.data.get("USER_THEME") || {};
 		this.dashboard = theme.home || '2';
-		console.log('dashboard:' + this.dashboard);
 	},
 	mounted() {
 
