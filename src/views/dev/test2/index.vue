@@ -67,7 +67,7 @@ export default {
             cols: [12],
             currentIndex: [0, 0],
             cameraList: [],
-            cover: '/img/play.png',
+            cover: '/images/play.png',
         };
     },
     mounted() {

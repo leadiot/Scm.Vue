@@ -1,7 +1,7 @@
 <template>
 	<el-container>
 		<el-main class="nopadding">
-			<el-empty description="Building..." image="/img/building.svg">
+			<el-empty description="Building..." image="/images/building.svg">
 				<h4>页面建设中……</h4>
 				<p>您访问的页面还在建设中，请稍后尝试。</p>
 			</el-empty>

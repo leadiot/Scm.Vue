@@ -1,7 +1,7 @@
 <template>
 	<el-container>
 		<el-main class="nopadding">
-			<el-empty description="No Audit!!!" image="/img/noaudit.svg">
+			<el-empty description="No Audit!!!" image="/images/noaudit.svg">
 				<h4>您无权访问此页面!</h4>
 				<p>请与您的管理员确认，您是有访问此页面的权限。</p>
 			</el-empty>

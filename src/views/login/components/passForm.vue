@@ -42,7 +42,7 @@ export default {
 	emits: ['complete'],
 	data() {
 		return {
-			codeUrl: "img/loading.gif",
+			codeUrl: "/images/loading.gif",
 			form: {
 				type: this.$CONFIG.DEF_LOGIN_TYPE,
 				mode: 10,

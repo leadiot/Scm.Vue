@@ -60,7 +60,7 @@ npm run preview
 ```
 Scm.Vue/
 ├── public/                 # 静态资源
-│   ├── img/               # 图片资源
+│   ├── images/               # 图片资源
 │   ├── lib/               # 第三方库
 │   └── index.html         # HTML 模板
 ├── src/

@@ -62,7 +62,7 @@ npm run preview
 ```
 Scm.Vue/
 ├── public/                 # Static assets
-│   ├── img/               # Images
+│   ├── images/               # Images
 │   ├── lib/               # Third-party libraries
 │   └── index.html         # HTML template
 ├── src/
