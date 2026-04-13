@@ -627,7 +627,7 @@ export default {
 			app = { id: 42, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 43, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580 };
+			app = { id: 43, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580, centered: true };
 			this.deskApps.push(app);
 			menu.children.push(app);
 			app = { id: 44, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
@@ -674,6 +674,7 @@ export default {
 			this.showStartMenu = false;
 			this.hideContextMenu();
 			const windowId = ++this.windowIdCounter;
+			const centered = app.centered !== false;
 			this.windows.push({
 				id: windowId,
 				title: app.name,
@@ -684,6 +685,7 @@ export default {
 				maximized: false,
 				focused: true,
 				resizable: app.resizable,
+				centered: centered,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
 				width: app.width || 800,

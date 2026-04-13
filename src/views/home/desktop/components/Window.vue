@@ -42,26 +42,65 @@
 </template>
 
 <script>
+import { defineAsyncComponent, h } from 'vue';
 import scIcon from '@/components/scIcon/index.vue';
-import Files from './apps/Files.vue';
-import BrowserApp from './apps/Browser.vue';
-import CalculatorApp from './apps/Calculator.vue';
-import CalendarApp from './apps/Calendar.vue';
-import MessageApp from './apps/Message.vue';
-import VideoApp from './apps/Video.vue';
-import AudioApp from './apps/Audio.vue';
-import TerminalApp from './apps/Terminal.vue';
-import ImageApp from './apps/Image.vue';
-import DownloadApp from './apps/Download.vue';
-import TodoApp from './apps/Todo.vue';
-import NotepadApp from './apps/Notepad.vue';
-import ContactsApp from './apps/Contacts.vue';
-import SMSApp from './apps/SMS.vue';
-import ProfileApp from './apps/Profile.vue';
-import DeviceApp from './apps/Device.vue';
-import MinesweeperApp from './apps/Minesweeper.vue';
-import Game2048App from './apps/Game2048.vue';
-import DownloadClientApp from './apps/DownloadClient.vue';
+
+const LoadingComponent = {
+	name: 'LoadingComponent',
+	render() {
+		return h('div', {
+			style: {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				height: '100%',
+				color: '#999',
+				fontSize: '14px',
+			}
+		}, '加载中...');
+	}
+};
+
+const ErrorComponent = {
+	name: 'ErrorComponent',
+	render() {
+		return h('div', {
+			style: {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				height: '100%',
+				color: '#f56c6c',
+				fontSize: '14px',
+			}
+		}, '组件加载失败');
+	}
+};
+
+const componentLoaders = {
+	Files: () => import('./apps/Files.vue'),
+	Browser: () => import('./apps/Browser.vue'),
+	Calculator: () => import('./apps/Calculator.vue'),
+	Calendar: () => import('./apps/Calendar.vue'),
+	Message: () => import('./apps/Message.vue'),
+	Video: () => import('./apps/Video.vue'),
+	Audio: () => import('./apps/Audio.vue'),
+	Terminal: () => import('./apps/Terminal.vue'),
+	Image: () => import('./apps/Image.vue'),
+	Download: () => import('./apps/Download.vue'),
+	Todo: () => import('./apps/Todo.vue'),
+	Notepad: () => import('./apps/Notepad.vue'),
+	Text: () => import('./apps/Notepad.vue'),
+	Contacts: () => import('./apps/Contacts.vue'),
+	SMS: () => import('./apps/SMS.vue'),
+	Profile: () => import('./apps/Profile.vue'),
+	Device: () => import('./apps/Device.vue'),
+	Minesweeper: () => import('./apps/Minesweeper.vue'),
+	Game2048: () => import('./apps/Game2048.vue'),
+	DownloadClient: () => import('./apps/DownloadClient.vue'),
+};
+
+const componentCache = new Map();
 
 export default {
 	name: 'Window',
@@ -89,6 +128,19 @@ export default {
 		isMobile() {
 			return window.innerWidth < 768;
 		},
+		centeredPosition() {
+			if (this.isMobile || this.window.maximized) {
+				return { x: 0, y: 0 };
+			}
+			const windowWidth = this.window.width || 800;
+			const windowHeight = this.window.height || 600;
+			const screenWidth = window.innerWidth;
+			const screenHeight = window.innerHeight - 48;
+			return {
+				x: Math.max(0, (screenWidth - windowWidth) / 2),
+				y: Math.max(0, (screenHeight - windowHeight) / 2),
+			};
+		},
 		windowStyle() {
 			const baseStyle = {
 				'--win-bg': this.theme.bg || '#f3f3f3',
@@ -104,7 +156,6 @@ export default {
 					top: '0',
 					left: '0',
 					width: '100%',
-					// height: 'calc(100% - 56px)',
 					height: '100%',
 					borderRadius: '0',
 				};
@@ -119,10 +170,14 @@ export default {
 					height: '100%',
 				};
 			}
+
+			const x = this.window.centered ? this.centeredPosition.x : this.window.x;
+			const y = this.window.centered ? this.centeredPosition.y : this.window.y;
+
 			return {
 				...baseStyle,
-				top: `${this.window.y}px`,
-				left: `${this.window.x}px`,
+				top: `${y}px`,
+				left: `${x}px`,
 				width: `${this.window.width}px`,
 				height: `${this.window.height}px`,
 			};
@@ -130,29 +185,22 @@ export default {
 	},
 	methods: {
 		getComponent(componentName) {
-			const components = {
-				Files,
-				Browser: BrowserApp,
-				Calculator: CalculatorApp,
-				Calendar: CalendarApp,
-				Message: MessageApp,
-				Video: VideoApp,
-				Audio: AudioApp,
-				Terminal: TerminalApp,
-				Image: ImageApp,
-				Download: DownloadApp,
-				Todo: TodoApp,
-				Notepad: NotepadApp,
-				Text: NotepadApp,
-				Contacts: ContactsApp,
-				SMS: SMSApp,
-				Profile: ProfileApp,
-				Device: DeviceApp,
-				Minesweeper: MinesweeperApp,
-				Game2048: Game2048App,
-				DownloadClient: DownloadClientApp,
-			};
-			return components[componentName] || Files;
+			if (componentCache.has(componentName)) {
+				return componentCache.get(componentName);
+			}
+
+			const loader = componentLoaders[componentName] || componentLoaders.Files;
+
+			const asyncComponent = defineAsyncComponent({
+				loader,
+				loadingComponent: LoadingComponent,
+				errorComponent: ErrorComponent,
+				delay: 200,
+				timeout: 10000,
+			});
+
+			componentCache.set(componentName, asyncComponent);
+			return asyncComponent;
 		},
 		onSetWallpaper(url) {
 			this.$emit('set-wallpaper', url);
@@ -166,6 +214,12 @@ export default {
 		startDrag(e) {
 			if (this.window.maximized || this.isMobile) return;
 			if (e.target.closest('.window-controls')) return;
+
+			if (this.window.centered) {
+				this.window.centered = false;
+				this.window.x = this.centeredPosition.x;
+				this.window.y = this.centeredPosition.y;
+			}
 
 			this.isDragging = true;
 			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
