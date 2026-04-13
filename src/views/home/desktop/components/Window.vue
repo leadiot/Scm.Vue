@@ -1,7 +1,7 @@
 <template>
-	<div v-if="!window.minimized" class="window" :class="{ maximized: window.maximized, focused: window.focused }"
-		:style="windowStyle" @mousedown="handleFocus">
-		<div class="window-header" @mousedown="startDrag">
+	<div v-if="!window.minimized" class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }"
+		:style="windowStyle" @mousedown="handleFocus" @touchstart="handleFocus">
+		<div class="window-header" @mousedown="startDrag" @touchstart="startDrag">
 			<div class="window-title">
 				<sc-icon :name="window.icon" :size="16" />
 				<span>{{ window.title }}</span>
@@ -12,7 +12,7 @@
 						<rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" />
 					</svg>
 				</button>
-				<button v-if="window.resizable !== false" class="control-btn maximize"
+				<button v-if="window.resizable !== false && !isMobile" class="control-btn maximize"
 					@click.stop="$emit('maximize', window.id)">
 					<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
 						<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
@@ -36,7 +36,7 @@
 				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" />
 		</div>
 
-		<div v-if="!window.maximized && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize">
+		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize">
 		</div>
 	</div>
 </template>
@@ -86,6 +86,9 @@ export default {
 		};
 	},
 	computed: {
+		isMobile() {
+			return window.innerWidth < 768;
+		},
 		windowStyle() {
 			const baseStyle = {
 				'--win-bg': this.theme.bg || '#f3f3f3',
@@ -94,6 +97,18 @@ export default {
 				'--win-title-color-inactive': this.theme.titleColorInactive || '#666666',
 				'--win-border': this.theme.border || 'rgba(0, 0, 0, 0.1)',
 			};
+
+			if (this.isMobile) {
+				return {
+					...baseStyle,
+					top: '0',
+					left: '0',
+					width: '100%',
+					// height: 'calc(100% - 56px)',
+					height: '100%',
+					borderRadius: '0',
+				};
+			}
 
 			if (this.window.maximized) {
 				return {
@@ -149,21 +164,32 @@ export default {
 			this.$emit('focus', this.window.id);
 		},
 		startDrag(e) {
-			if (this.window.maximized) return;
+			if (this.window.maximized || this.isMobile) return;
 			if (e.target.closest('.window-controls')) return;
 
 			this.isDragging = true;
-			this.dragStartX = e.clientX - this.window.x;
-			this.dragStartY = e.clientY - this.window.y;
+			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+			this.dragStartX = clientX - this.window.x;
+			this.dragStartY = clientY - this.window.y;
 
-			document.addEventListener('mousemove', this.handleDrag);
-			document.addEventListener('mouseup', this.stopDrag);
+			if (e.touches) {
+				document.addEventListener('touchmove', this.handleDrag, { passive: false });
+				document.addEventListener('touchend', this.stopDrag);
+			} else {
+				document.addEventListener('mousemove', this.handleDrag);
+				document.addEventListener('mouseup', this.stopDrag);
+			}
 		},
 		handleDrag(e) {
 			if (!this.isDragging) return;
+			e.preventDefault();
 
-			this.window.x = e.clientX - this.dragStartX;
-			this.window.y = e.clientY - this.dragStartY;
+			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+			this.window.x = clientX - this.dragStartX;
+			this.window.y = clientY - this.dragStartY;
 
 			const maxX = window.innerWidth - this.window.width;
 			const maxY = window.innerHeight - this.window.height - 48;
@@ -175,25 +201,38 @@ export default {
 			this.isDragging = false;
 			document.removeEventListener('mousemove', this.handleDrag);
 			document.removeEventListener('mouseup', this.stopDrag);
+			document.removeEventListener('touchmove', this.handleDrag);
+			document.removeEventListener('touchend', this.stopDrag);
 		},
 		startResize(e) {
-			if (this.window.maximized) return;
+			if (this.window.maximized || this.isMobile) return;
 			if (this.window.resizable === false) return;
 
 			this.isResizing = true;
-			this.resizeStartX = e.clientX;
-			this.resizeStartY = e.clientY;
+			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+			this.resizeStartX = clientX;
+			this.resizeStartY = clientY;
 			this.resizeStartWidth = this.window.width;
 			this.resizeStartHeight = this.window.height;
 
-			document.addEventListener('mousemove', this.handleResize);
-			document.addEventListener('mouseup', this.stopResize);
+			if (e.touches) {
+				document.addEventListener('touchmove', this.handleResize, { passive: false });
+				document.addEventListener('touchend', this.stopResize);
+			} else {
+				document.addEventListener('mousemove', this.handleResize);
+				document.addEventListener('mouseup', this.stopResize);
+			}
 		},
 		handleResize(e) {
 			if (!this.isResizing) return;
+			e.preventDefault();
 
-			const deltaX = e.clientX - this.resizeStartX;
-			const deltaY = e.clientY - this.resizeStartY;
+			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+			const deltaX = clientX - this.resizeStartX;
+			const deltaY = clientY - this.resizeStartY;
 
 			this.window.width = Math.max(300, this.resizeStartWidth + deltaX);
 			this.window.height = Math.max(300, this.resizeStartHeight + deltaY);
@@ -202,6 +241,8 @@ export default {
 			this.isResizing = false;
 			document.removeEventListener('mousemove', this.handleResize);
 			document.removeEventListener('mouseup', this.stopResize);
+			document.removeEventListener('touchmove', this.handleResize);
+			document.removeEventListener('touchend', this.stopResize);
 		},
 	},
 };
@@ -341,5 +382,39 @@ export default {
 	height: 8px;
 	background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
 	border-radius: 0 0 6px 0;
+}
+
+.window.is-mobile {
+	--win-title-height: 44px;
+}
+
+.window.is-mobile .window-header {
+	cursor: default;
+}
+
+.window.is-mobile .window-title {
+	font-size: 14px;
+}
+
+.window.is-mobile .control-btn {
+	width: 48px;
+}
+
+@media screen and (max-width: 768px) {
+	.window {
+		--win-title-height: 44px;
+	}
+
+	.window-header {
+		padding: 0 4px 0 16px;
+	}
+
+	.window-title {
+		font-size: 14px;
+	}
+
+	.control-btn {
+		width: 48px;
+	}
 }
 </style>

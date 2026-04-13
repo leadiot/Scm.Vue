@@ -1361,4 +1361,157 @@ export default {
 	background-color: rgba(255, 255, 255, 0.1);
 	margin: 4px 0;
 }
+
+@media screen and (max-width: 1024px) {
+	.desktop-icons {
+		grid-template-columns: repeat(auto-fill, 90px);
+		grid-template-rows: repeat(auto-fill, 90px);
+	}
+
+	.icon-image {
+		width: 56px;
+		height: 56px;
+	}
+
+	.icon-text {
+		font-size: 11px;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.desktop-icons {
+		left: 10px;
+		top: 10px;
+		right: 10px;
+		bottom: 66px;
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(auto-fill, 85px);
+		gap: 8px;
+	}
+
+	.desktop-icon {
+		padding: 8px;
+	}
+
+	.icon-image {
+		width: 48px;
+		height: 48px;
+	}
+
+	.icon-text {
+		font-size: 11px;
+		margin-top: 4px;
+	}
+
+	.windows-container {
+		bottom: 56px;
+	}
+
+	.taskbar {
+		height: 56px;
+		padding: 0 8px;
+	}
+
+	.taskbar-start {
+		padding: 8px 12px;
+	}
+
+	.taskbar-start span {
+		display: none;
+	}
+
+	.taskbar-apps {
+		margin-left: 8px;
+		gap: 4px;
+	}
+
+	.taskbar-app {
+		min-width: auto;
+		padding: 8px;
+		max-width: 50px;
+		justify-content: center;
+	}
+
+	.taskbar-app span {
+		display: none;
+	}
+
+	.taskbar-tray {
+		padding: 0 8px;
+	}
+
+	.time {
+		font-size: 11px;
+	}
+
+	.start-menu {
+		bottom: 66px;
+		left: 0;
+		right: 0;
+		width: 100%;
+		border-radius: 16px 16px 0 0;
+		max-height: 70vh;
+	}
+
+	.start-menu-header {
+		padding: 16px;
+	}
+
+	.start-menu-apps {
+		max-height: 45vh;
+		overflow-y: auto;
+	}
+
+	.start-menu-app {
+		padding: 14px 12px;
+	}
+
+	.submenu {
+		position: fixed;
+		bottom: 66px;
+		left: 0;
+		right: 0;
+		width: 100%;
+		border-radius: 16px 16px 0 0;
+		max-height: 50vh;
+		overflow-y: auto;
+	}
+
+	.submenu-item {
+		padding: 14px 16px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.desktop-icons {
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(auto-fill, 80px);
+		gap: 6px;
+	}
+
+	.desktop-icon {
+		padding: 6px;
+	}
+
+	.icon-image {
+		width: 44px;
+		height: 44px;
+	}
+
+	.icon-text {
+		font-size: 10px;
+	}
+
+	.taskbar-app {
+		max-width: 44px;
+	}
+
+	.start-menu {
+		max-height: 75vh;
+	}
+
+	.start-menu-apps {
+		max-height: 50vh;
+	}
+}
 </style>
