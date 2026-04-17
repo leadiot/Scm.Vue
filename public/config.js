@@ -12,7 +12,7 @@ const APP_CONFIG = {
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
 
-	HOME: '/desktop',
+	HOME: '/console',
 
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
 	DEF_LOGIN_MODE: [10, 30],

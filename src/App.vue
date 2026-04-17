@@ -29,17 +29,11 @@ export default {
 		const { locale, messages } = useI18n()
 		const elLocale = computed(() => messages.value[locale.value].el)
 		const route = useRoute()
-		const globalStore = useGlobalStore()
-		const layoutComponent = shallowRef(layouts.none)
 
-		watch(
-			[() => route.meta?.layout, () => globalStore.layout],
-			([routeLayout, storeLayout]) => {
-				const layoutType = routeLayout || storeLayout || 'none'
-				layoutComponent.value = layouts[layoutType] || layouts.none
-			},
-			{ immediate: true }
-		)
+		const layoutComponent = computed(() => {
+			const layoutType = route.meta?.layout || 'none';
+			return layouts[layoutType] || layouts.none;
+		});
 
 		return { elLocale, layoutComponent }
 	},
