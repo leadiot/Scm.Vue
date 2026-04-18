@@ -327,7 +327,7 @@ scm.save_cfg = async function (cfgs) {
 		});
 	}
 
-	await http.post(`${config.API_URL}/scmsysconfig/config`, list);
+	await http.post(`${config.API_URL}/scmsysconfig`, list);
 }
 
 /**

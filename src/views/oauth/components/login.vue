@@ -140,7 +140,7 @@ export default {
             this.$message.success("Login Success 登录成功");
         },
         async loadCfg() {
-            var cfgRes = await this.$API.scmsysconfig.list.get({ 'types': 10 });
+            var cfgRes = await this.$API.scmsysconfig.list.get({ 'client': 10 });
             cfgRes.data.forEach((item) => {
                 if ("app_theme" == item.key) {
                     if (item.value == "true") {

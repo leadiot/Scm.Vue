@@ -95,7 +95,7 @@ export default {
 	},
 	methods: {
 		async init() {
-			var cfgRes = await this.$API.scmsysconfig.list.get(10);
+			var cfgRes = await this.$API.scmsysconfig.list.get({ 'types': 10 });
 			cfgRes.data.forEach((item) => {
 				if ("app_lang" == item.key) {
 					this.lang = item.value;
@@ -106,7 +106,7 @@ export default {
 					return;
 				}
 				if ("app_color" == item.key) {
-					this.colorPrimary = item.val;
+					this.colorPrimary = item.value;
 					return;
 				}
 			});
