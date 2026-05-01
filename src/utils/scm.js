@@ -206,9 +206,9 @@ scm.option_one = function (arr) {
 
 /**
  * 下拉列表准备
- * @param {*} list
- * @param {*} res
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} res 数据响应
+ * @param {*} all 是否追加【所有】选项
  * @returns
  */
 scm.prepare = function (list, res, all) {
@@ -297,7 +297,7 @@ scm.read_cfg = async function (key, def, useCatch) {
 		return val;
 	}
 
-	var res = await http.get(`${config.API_URL}/scmsysconfig/config/` + key);
+	var res = await http.get(`${config.API_URL}/scmsysconfig/` + key);
 	if (!res || res.code != 200) {
 		return def;
 	}
@@ -332,8 +332,8 @@ scm.save_cfg = async function (cfgs) {
 
 /**
  * 获取数据状态列表
- * @param {*} list
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} all 是否追加【所有】选项
  */
 scm.list_status = async function (list, all) {
 	scm.list_dic(list, "status", all, true);
@@ -341,8 +341,8 @@ scm.list_status = async function (list, all) {
 
 /**
  * 获取性别列表
- * @param {*} list
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} all 是否追加【所有】选项
  */
 scm.list_sex = async function (list, all) {
 	scm.list_dic(list, "sex", all, true);
@@ -367,9 +367,9 @@ scm.get_dic_names = function (list, key, def) {
 
 /**
  * 获取分类列表
- * @param {*} list
- * @param {*} param
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} param 请求参数
+ * @param {*} all 是否追加【所有】选项
  */
 scm.list_cat = async function (list, param, all) {
 	var res = await http.get(`${config.API_URL}/scmrescat/option`, param);
@@ -378,9 +378,9 @@ scm.list_cat = async function (list, param, all) {
 
 /**
  * 获取标签列表
- * @param {*} list
- * @param {*} param
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} param 请求参数
+ * @param {*} all 是否追加【所有】选项
  */
 scm.list_tag = async function (list, app, all) {
 	var res = await http.get(`${config.API_URL}/scmrestag/option/` + app);
@@ -389,10 +389,10 @@ scm.list_tag = async function (list, app, all) {
 
 /**
  * 获取下拉选项
- * @param {*} list
- * @param {*} api
- * @param {*} param
- * @param {*} all
+ * @param {*} list 输入列表
+ * @param {*} api API接口
+ * @param {*} param 请求参数
+ * @param {*} all 是否追加【所有】选项
  */
 scm.list_option = async function (list, api, param, all) {
 	if (!api) {
@@ -428,7 +428,7 @@ scm.get_option_names = function (options, key, def) {
  * @param {*} all
  */
 scm.list_app = async function (list, types, all) {
-	var res = await http.get(`${config.API_URL}/scmdevapp/option/` + types);
+	var res = await http.get(`${config.API_URL}/scmdevapp/option`, { types: types });
 	scm.prepare(list, res, all);
 };
 
