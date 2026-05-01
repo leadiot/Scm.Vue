@@ -1,6 +1,8 @@
 <template>
-	<div v-if="!window.minimized" class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }"
-		:style="windowStyle" @mousedown="handleFocus" @touchstart="handleFocus">
+	<div v-if="!window.minimized" class="window"
+		:class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }"
+		:style="windowStyle" @mousedown="handleFocus" @touchstart="handleFocus"
+		@contextmenu.prevent.stop="handleContextMenu">
 		<div class="window-header" @mousedown="startDrag" @touchstart="startDrag">
 			<div class="window-title">
 				<sc-icon :name="window.icon" :size="16" />
@@ -32,11 +34,12 @@
 		</div>
 
 		<div class="window-content">
-			<component :is="getComponent(window.component)" v-bind="window.props || {}"
-				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" />
+			<component :is="getComponent(window.component)" v-bind="window.props || {}" @set-wallpaper="onSetWallpaper"
+				@profile-updated="onProfileUpdated" />
 		</div>
 
-		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize">
+		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle"
+			@mousedown.stop="startResize">
 		</div>
 	</div>
 </template>
@@ -297,6 +300,9 @@ export default {
 			document.removeEventListener('mouseup', this.stopResize);
 			document.removeEventListener('touchmove', this.handleResize);
 			document.removeEventListener('touchend', this.stopResize);
+		},
+		handleContextMenu(e) {
+			e.preventDefault();
 		},
 	},
 };

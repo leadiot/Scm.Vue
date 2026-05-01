@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container app-light minesweeper-app" @contextmenu.prevent.stop>
+    <div class="app-container app-light minesweeper-app">
         <div class="app-toolbar">
             <span class="app-header-title">扫雷</span>
             <div class="header-spacer"></div>

@@ -2,13 +2,18 @@
 	<div class="app-container app-light">
 		<div class="app-toolbar">
 			<span class="app-header-title">下载管理</span>
+			<div class="header-spacer"></div>
 			<div class="header-actions">
-				<el-button text class="app-toolbar-btn" @click="clearCompleted">
-					<sc-icon name="ms-delete_sweep" :size="18" />
+				<el-button type="primary" size="small" class="app-toolbar-btn" @click="showAddDialog = true">
+					<sc-icon name="ms-add" :size="16" />
+					<span class="btn-text">新建下载</span>
+				</el-button>
+				<el-button text size="small" class="app-toolbar-btn" @click="clearCompleted">
+					<sc-icon name="ms-delete_sweep" :size="16" />
 					<span class="btn-text">清除已完成</span>
 				</el-button>
-				<el-button text class="app-toolbar-btn" @click="pauseAll">
-					<sc-icon name="ms-pause" :size="18" />
+				<el-button text size="small" class="app-toolbar-btn" @click="pauseAll">
+					<sc-icon name="ms-pause" :size="16" />
 					<span class="btn-text">全部暂停</span>
 				</el-button>
 			</div>
@@ -17,6 +22,7 @@
 		<div v-if="downloads.length === 0" class="app-empty">
 			<sc-icon name="ms-download" :size="64" />
 			<p>暂无下载任务</p>
+			<span class="hint">点击上方"新建下载"添加任务</span>
 		</div>
 
 		<div v-else class="download-list">
@@ -38,30 +44,30 @@
 						<span class="download-speed" v-if="download.status === 'downloading'">
 							{{ download.speed }}
 						</span>
-						<span class="download-status" :class="download.status">
-							{{ getStatusText(download.status) }}
+						<span class="download-status" :class="download.handle">
+							{{ getStatusText(download.handle) }}
 						</span>
 					</div>
 				</div>
 				<div class="download-actions">
-					<el-button v-if="download.status === 'downloading'" text class="action-btn"
+					<el-button v-if="download.handle === 3" text size="small" class="action-btn"
 						@click="pauseDownload(download.id)">
-						<sc-icon name="ms-pause" :size="18" />
+						<sc-icon name="ms-pause" :size="16" />
 					</el-button>
-					<el-button v-if="download.status === 'paused'" text class="action-btn"
+					<el-button v-if="download.handle === 2" text size="small" class="action-btn"
 						@click="resumeDownload(download.id)">
-						<sc-icon name="ms-play_arrow" :size="18" />
+						<sc-icon name="ms-play_arrow" :size="16" />
 					</el-button>
-					<el-button v-if="download.status === 'completed'" text class="action-btn"
+					<el-button v-if="download.handle === 1" text size="small" class="action-btn"
 						@click="openFile(download.id)">
-						<sc-icon name="ms-folder_open" :size="18" />
+						<sc-icon name="ms-folder_open" :size="16" />
 					</el-button>
-					<el-button v-if="download.status === 'error'" text class="action-btn"
+					<el-button v-if="download.handle === 4" text size="small" class="action-btn"
 						@click="retryDownload(download.id)">
-						<sc-icon name="ms-refresh" :size="18" />
+						<sc-icon name="ms-refresh" :size="16" />
 					</el-button>
-					<el-button text class="action-btn remove" @click="removeDownload(download.id)">
-						<sc-icon name="ms-close" :size="18" />
+					<el-button text size="small" class="action-btn remove" @click="removeDownload(download.id)">
+						<sc-icon name="ms-close" :size="16" />
 					</el-button>
 				</div>
 			</div>
@@ -69,10 +75,37 @@
 
 		<div class="app-footer">
 			<div class="footer-stats">
-				<span>下载中: {{ downloadingCount }}</span>
-				<span>已完成: {{ completedCount }}</span>
+				<span class="stat-item">
+					<sc-icon name="ms-download" :size="14" />
+					<span>下载中: {{ downloadingCount }}</span>
+				</span>
+				<span class="stat-divider"></span>
+				<span class="stat-item">
+					<sc-icon name="ms-check_circle" :size="14" />
+					<span>已完成: {{ completedCount }}</span>
+				</span>
+				<span class="stat-divider"></span>
+				<span class="stat-item">
+					<sc-icon name="ms-alert-circle" :size="14" />
+					<span>失败: {{ errorCount }}</span>
+				</span>
 			</div>
 		</div>
+
+		<el-dialog v-model="showAddDialog" title="新建下载" width="480px" :modal-append-to-body="false" draggable>
+			<el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="80px">
+				<el-form-item label="下载链接" prop="url">
+					<el-input v-model="addForm.url" placeholder="请输入下载链接" clearable />
+				</el-form-item>
+				<el-form-item label="保存名称" prop="name">
+					<el-input v-model="addForm.name" placeholder="自动检测文件名" />
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<el-button @click="showAddDialog = false">取消</el-button>
+				<el-button type="primary" @click="addDownload">确认添加</el-button>
+			</template>
+		</el-dialog>
 	</div>
 </template>
 
@@ -87,9 +120,24 @@ export default {
 	data() {
 		return {
 			downloads: [],
+			showAddDialog: false,
+			addForm: {
+				url: '',
+				name: '',
+			},
+			addFormRules: {
+				url: [
+					{ required: true, message: '请输入下载链接', trigger: 'blur' },
+					{ type: 'url', message: '请输入有效的URL', trigger: 'blur' },
+				],
+			},
+			handle_list: [],
+			result_list: [],
 		};
 	},
 	mounted() {
+		this.$SCM.list_dic(this.handle_list, 'handle', false);
+		this.$SCM.list_dic(this.result_list, 'result', false);
 		this.loadDownloads();
 	},
 	computed: {
@@ -98,6 +146,9 @@ export default {
 		},
 		completedCount() {
 			return this.downloads.filter(d => d.status === 'completed').length;
+		},
+		errorCount() {
+			return this.downloads.filter(d => d.status === 'error').length;
 		},
 	},
 	methods: {
@@ -131,31 +182,39 @@ export default {
 			if (status === 'error') return 'exception';
 			return '';
 		},
-		getStatusText(status) {
+		getStatusText(handle) {
 			const statusMap = {
-				downloading: '下载中',
-				paused: '已暂停',
-				completed: '已完成',
-				error: '下载失败',
-				waiting: '等待中',
+				3: '下载中',
+				2: '已暂停',
+				1: '已完成',
+				4: '下载失败',
+				5: '等待中',
 			};
-			return statusMap[status] || status;
+			return statusMap[handle] || handle;
 		},
 		async loadDownloads() {
-			var res = await this.$API.nasdownload.list.get();
-			if (res.code == 200) {
-				this.downloads = (res.data || []).map(item => this.mapDownloadItem(item));
+			try {
+				var res = await this.$API.nasdownload.list.get();
+				if (res.code == 200) {
+					this.downloads = (res.data || []).map(item => this.mapDownloadItem(item));
+				}
+			} catch (error) {
+				console.error('加载下载列表失败:', error);
 			}
 		},
 		mapDownloadItem(item) {
 			return {
 				id: item.id,
-				name: item.name || item.fileName || '未知文件',
+				url: item.url,
+				name: item.file_name || '未知文件',
 				size: this.formatSize(item.size),
 				progress: item.progress || 0,
 				status: this.mapStatus(item.status),
 				speed: item.speed ? this.formatSpeed(item.speed) : '',
-				url: item.url,
+				handleId: item.handle,
+				resultId: item.result,
+				handle_name: this.$SCM.get_dic_names(this.handle_list, item.handle, '未知'),
+				result_name: this.$SCM.get_dic_names(this.result_list, item.result, '未知'),
 			};
 		},
 		mapStatus(status) {
@@ -180,27 +239,39 @@ export default {
 			return this.$TOOL.fileSizeFormat(speed) + '/s';
 		},
 		async pauseDownload(id) {
-			var res = await this.$API.nasdownload.pause.get(id);
-			if (res.code == 200) {
-				await this.loadDownloads();
-			} else {
-				this.$message.warning(res.message || '暂停失败');
+			try {
+				var res = await this.$API.nasdownload.pause.get(id);
+				if (res.code == 200) {
+					await this.loadDownloads();
+				} else {
+					this.$message.warning(res.message || '暂停失败');
+				}
+			} catch (error) {
+				this.$message.error('暂停失败');
 			}
 		},
 		async resumeDownload(id) {
-			var res = await this.$API.nasdownload.resume.get(id);
-			if (res.code == 200) {
-				await this.loadDownloads();
-			} else {
-				this.$message.warning(res.message || '恢复失败');
+			try {
+				var res = await this.$API.nasdownload.resume.get(id);
+				if (res.code == 200) {
+					await this.loadDownloads();
+				} else {
+					this.$message.warning(res.message || '恢复失败');
+				}
+			} catch (error) {
+				this.$message.error('恢复失败');
 			}
 		},
 		async removeDownload(id) {
-			var res = await this.$API.nasdownload.delete.delete(id);
-			if (res.code == 200) {
-				await this.loadDownloads();
-			} else {
-				this.$message.warning(res.message || '删除失败');
+			try {
+				var res = await this.$API.nasdownload.delete.delete(id);
+				if (res.code == 200) {
+					await this.loadDownloads();
+				} else {
+					this.$message.warning(res.message || '删除失败');
+				}
+			} catch (error) {
+				this.$message.error('删除失败');
 			}
 		},
 		openFile(id) {
@@ -212,11 +283,15 @@ export default {
 			}
 		},
 		async retryDownload(id) {
-			var res = await this.$API.nasdownload.resume.get(id);
-			if (res.code == 200) {
-				await this.loadDownloads();
-			} else {
-				this.$message.warning(res.message || '重试失败');
+			try {
+				var res = await this.$API.nasdownload.resume.get(id);
+				if (res.code == 200) {
+					await this.loadDownloads();
+				} else {
+					this.$message.warning(res.message || '重试失败');
+				}
+			} catch (error) {
+				this.$message.error('重试失败');
 			}
 		},
 		async clearCompleted() {
@@ -233,6 +308,29 @@ export default {
 			}
 			await this.loadDownloads();
 		},
+		async addDownload() {
+			if (!this.$refs.addFormRef) return;
+			this.$refs.addFormRef.validate(async (valid) => {
+				if (valid) {
+					try {
+						var res = await this.$API.nasdownload.add.post({
+							url: this.addForm.url,
+							name: this.addForm.name || undefined,
+						});
+						if (res.code == 200) {
+							this.$message.success('添加成功');
+							this.showAddDialog = false;
+							this.addForm = { url: '', name: '' };
+							await this.loadDownloads();
+						} else {
+							this.$message.warning(res.message || '添加失败');
+						}
+					} catch (error) {
+						this.$message.error('添加失败');
+					}
+				}
+			});
+		},
 	},
 };
 </script>
@@ -240,6 +338,10 @@ export default {
 <style src="./common.css"></style>
 
 <style scoped>
+.header-spacer {
+	flex: 1;
+}
+
 .header-actions {
 	display: flex;
 	gap: 8px;
@@ -261,34 +363,35 @@ export default {
 	align-items: center;
 	gap: 12px;
 	padding: 12px;
-	background-color: #f9f9f9;
+	background-color: var(--color-bg-secondary);
 	border-radius: 8px;
 	margin-bottom: 8px;
 	transition: background-color 0.2s;
 }
 
 .download-item:hover {
-	background-color: #f0f0f0;
+	background-color: var(--color-bg-hover);
 }
 
 .download-item.completed {
-	border-left: 3px solid #67c23a;
+	border-left: 3px solid var(--color-success);
 }
 
 .download-item.error {
-	border-left: 3px solid #f56c6c;
+	border-left: 3px solid var(--color-danger);
 }
 
 .download-icon {
 	width: 48px;
 	height: 48px;
-	background-color: #f0f0f0;
+	background-color: var(--color-bg);
 	border-radius: 8px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #409eff;
+	color: var(--color-primary);
 	flex-shrink: 0;
+	border: 1px solid var(--color-border-light);
 }
 
 .download-info {
@@ -309,12 +412,12 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	color: #333;
+	color: var(--color-text);
 }
 
 .download-size {
 	font-size: 12px;
-	color: #999;
+	color: var(--color-text-tertiary);
 	flex-shrink: 0;
 	margin-left: 12px;
 }
@@ -331,20 +434,28 @@ export default {
 
 .download-speed {
 	font-size: 12px;
-	color: #409eff;
+	color: var(--color-primary);
 }
 
 .download-status {
 	font-size: 12px;
-	color: #999;
+	color: var(--color-text-tertiary);
 }
 
 .download-status.completed {
-	color: #67c23a;
+	color: var(--color-success);
 }
 
 .download-status.error {
-	color: #f56c6c;
+	color: var(--color-danger);
+}
+
+.download-status.downloading {
+	color: var(--color-primary);
+}
+
+.download-status.paused {
+	color: var(--color-warning);
 }
 
 .download-actions {
@@ -353,29 +464,55 @@ export default {
 	flex-shrink: 0;
 }
 
-.download-actions .app-action-btn {
-	opacity: 1;
+.action-btn {
+	padding: 6px;
+	color: var(--color-text-secondary);
+}
+
+.action-btn:hover {
+	color: var(--color-primary);
+}
+
+.action-btn.remove:hover {
+	color: var(--color-danger);
 }
 
 .app-footer {
 	padding: 12px 16px;
-	background-color: #f9f9f9;
-	border-top: 1px solid #e5e5e5;
+	background-color: var(--color-bg-secondary);
+	border-top: 1px solid var(--color-border-light);
 }
 
 .footer-stats {
 	display: flex;
-	gap: 20px;
+	align-items: center;
+	gap: 16px;
 	font-size: 12px;
-	color: #999;
+	color: var(--color-text-tertiary);
+}
+
+.stat-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.stat-divider {
+	width: 1px;
+	height: 16px;
+	background-color: var(--color-border-dark);
 }
 
 :deep(.el-progress-bar__outer) {
-	background-color: #e5e5e5;
+	background-color: var(--color-border-light);
 }
 
 :deep(.el-progress__text) {
-	color: #999;
+	color: var(--color-text-tertiary);
 	font-size: 12px !important;
+}
+
+:deep(.el-dialog__body) {
+	padding: 20px;
 }
 </style>
