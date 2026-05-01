@@ -4,17 +4,21 @@
 			<span class="app-header-title">下载管理</span>
 			<div class="header-spacer"></div>
 			<div class="header-actions">
-				<el-button type="primary" size="small" class="app-toolbar-btn" @click="showAddDialog = true">
-					<sc-icon name="ms-add" :size="16" />
-					<span class="btn-text">新建下载</span>
+				<el-button text size="small" class="action-btn" @click="loadDownloads" tooltip="刷新下载列表">
+					<sc-icon name="ms-refresh" :size="16" />
+					<span class="btn-text">刷新</span>
 				</el-button>
-				<el-button text size="small" class="app-toolbar-btn" @click="clearCompleted">
+				<el-button text size="small" @click="clearCompleted" tooltip="清除已完成下载">
 					<sc-icon name="ms-delete_sweep" :size="16" />
 					<span class="btn-text">清除已完成</span>
 				</el-button>
-				<el-button text size="small" class="app-toolbar-btn" @click="pauseAll">
+				<el-button text size="small" @click="pauseAll" tooltip="全部暂停下载">
 					<sc-icon name="ms-pause" :size="16" />
 					<span class="btn-text">全部暂停</span>
+				</el-button>
+				<el-button type="primary" size="small" @click="showAddDialog = true" tooltip="新建下载">
+					<sc-icon name="ms-add" :size="16" />
+					<span class="btn-text">新建下载</span>
 				</el-button>
 			</div>
 		</div>
@@ -27,7 +31,7 @@
 
 		<div v-else class="download-list">
 			<div v-for="download in downloads" :key="download.id" class="download-item"
-				:class="{ completed: download.status === 'completed', error: download.status === 'error' }">
+				:class="{ completed: download.result === 2, error: download.result === 1 }">
 				<div class="download-icon">
 					<sc-icon :name="getFileIcon(download.name)" :size="32" />
 				</div>
@@ -37,34 +41,34 @@
 						<span class="download-size">{{ download.size }}</span>
 					</div>
 					<div class="download-progress">
-						<el-progress :percentage="download.progress" :status="getProgressStatus(download.status)"
+						<el-progress :percentage="download.progress" :status="getProgressStatus(download.result)"
 							:stroke-width="4" />
 					</div>
 					<div class="info-bottom">
-						<span class="download-speed" v-if="download.status === 'downloading'">
+						<span class="download-speed" v-if="download.handle === 3">
 							{{ download.speed }}
 						</span>
-						<span class="download-status" :class="download.handle">
-							{{ getStatusText(download.handle) }}
+						<span class="download-status" :class="getDownloadStatus(download.handle, download.result)">
+							{{ download.handle_name }}
 						</span>
 					</div>
 				</div>
 				<div class="download-actions">
-					<el-button v-if="download.handle === 3" text size="small" class="action-btn"
-						@click="pauseDownload(download.id)">
-						<sc-icon name="ms-pause" :size="16" />
-					</el-button>
 					<el-button v-if="download.handle === 2" text size="small" class="action-btn"
 						@click="resumeDownload(download.id)">
 						<sc-icon name="ms-play_arrow" :size="16" />
 					</el-button>
-					<el-button v-if="download.handle === 1" text size="small" class="action-btn"
-						@click="openFile(download.id)">
-						<sc-icon name="ms-folder_open" :size="16" />
+					<el-button v-if="download.handle === 3" text size="small" class="action-btn"
+						@click="pauseDownload(download.id)">
+						<sc-icon name="ms-pause" :size="16" />
 					</el-button>
-					<el-button v-if="download.handle === 4" text size="small" class="action-btn"
+					<el-button v-if="download.result === 1" text size="small" class="action-btn"
 						@click="retryDownload(download.id)">
 						<sc-icon name="ms-refresh" :size="16" />
+					</el-button>
+					<el-button v-if="download.result === 2" text size="small" class="action-btn"
+						@click="openFile(download.id)" tooltip="打开文件">
+						<sc-icon name="ms-folder_open" :size="16" />
 					</el-button>
 					<el-button text size="small" class="action-btn remove" @click="removeDownload(download.id)">
 						<sc-icon name="ms-close" :size="16" />
@@ -86,7 +90,7 @@
 				</span>
 				<span class="stat-divider"></span>
 				<span class="stat-item">
-					<sc-icon name="ms-alert-circle" :size="14" />
+					<sc-icon name="ms-error" :size="14" />
 					<span>失败: {{ errorCount }}</span>
 				</span>
 			</div>
@@ -142,13 +146,13 @@ export default {
 	},
 	computed: {
 		downloadingCount() {
-			return this.downloads.filter(d => d.status === 'downloading').length;
+			return this.downloads.filter(d => d.handle === 3).length;
 		},
 		completedCount() {
-			return this.downloads.filter(d => d.status === 'completed').length;
+			return this.downloads.filter(d => d.result === 2).length;
 		},
 		errorCount() {
-			return this.downloads.filter(d => d.status === 'error').length;
+			return this.downloads.filter(d => d.result === 1).length;
 		},
 	},
 	methods: {
@@ -177,20 +181,10 @@ export default {
 			};
 			return iconMap[ext] || 'ms-insert_drive_file';
 		},
-		getProgressStatus(status) {
-			if (status === 'completed') return 'success';
-			if (status === 'error') return 'exception';
+		getProgressStatus(result) {
+			if (result === 2) return 'success';
+			if (result === 1) return 'exception';
 			return '';
-		},
-		getStatusText(handle) {
-			const statusMap = {
-				3: '下载中',
-				2: '已暂停',
-				1: '已完成',
-				4: '下载失败',
-				5: '等待中',
-			};
-			return statusMap[handle] || handle;
 		},
 		async loadDownloads() {
 			try {
@@ -209,26 +203,20 @@ export default {
 				name: item.file_name || '未知文件',
 				size: this.formatSize(item.size),
 				progress: item.progress || 0,
-				status: this.mapStatus(item.status),
 				speed: item.speed ? this.formatSpeed(item.speed) : '',
-				handleId: item.handle,
-				resultId: item.result,
+				handle: item.handle,
+				result: item.result,
 				handle_name: this.$SCM.get_dic_names(this.handle_list, item.handle, '未知'),
 				result_name: this.$SCM.get_dic_names(this.result_list, item.result, '未知'),
 			};
 		},
-		mapStatus(status) {
-			if (typeof status === 'string') {
-				return status;
-			}
-			const statusMap = {
-				1: 'downloading',
-				2: 'paused',
-				3: 'completed',
-				4: 'error',
-				5: 'waiting',
-			};
-			return statusMap[status] || 'waiting';
+		getDownloadStatus(handle, result) {
+			if (handle === 1) return '';
+			if (handle === 2) return 'downloading';
+			if (handle === 3) return 'paused';
+			if (result === 1) return 'error';
+			if (result === 2) return 'completed';
+			return '';
 		},
 		formatSize(size) {
 			if (!size) return '';
@@ -264,7 +252,7 @@ export default {
 		},
 		async removeDownload(id) {
 			try {
-				var res = await this.$API.nasdownload.delete.delete(id);
+				var res = await this.$API.nasdownload.status.post({ ids: [id] });
 				if (res.code == 200) {
 					await this.loadDownloads();
 				} else {
@@ -295,16 +283,22 @@ export default {
 			}
 		},
 		async clearCompleted() {
-			const completed = this.downloads.filter(d => d.status === 'completed');
-			for (const item of completed) {
-				await this.$API.nasdownload.delete.delete(item.id);
+			var ids = [];
+			for (const item of this.downloads) {
+				if (item.result === 2) {
+					ids.push(item.id);
+				}
+			}
+			if (ids.length > 0) {
+				await this.$API.nasdownload.status.post({ ids });
 			}
 			await this.loadDownloads();
 		},
 		async pauseAll() {
-			const downloading = this.downloads.filter(d => d.status === 'downloading');
-			for (const item of downloading) {
-				await this.$API.nasdownload.pause.get(item.id);
+			for (const item of this.downloads) {
+				if (item.handle === 3) {
+					await this.$API.nasdownload.pause.get(item.id);
+				}
 			}
 			await this.loadDownloads();
 		},
@@ -442,20 +436,20 @@ export default {
 	color: var(--color-text-tertiary);
 }
 
-.download-status.completed {
-	color: var(--color-success);
-}
-
-.download-status.error {
-	color: var(--color-danger);
+.download-status.paused {
+	color: var(--color-warning);
 }
 
 .download-status.downloading {
 	color: var(--color-primary);
 }
 
-.download-status.paused {
-	color: var(--color-warning);
+.download-status.completed {
+	color: var(--color-success);
+}
+
+.download-status.error {
+	color: var(--color-danger);
 }
 
 .download-actions {

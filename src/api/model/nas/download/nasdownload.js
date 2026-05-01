@@ -56,12 +56,5 @@ export default {
 		delete: async function (data) {
 			return await http.delete(this.url, data);
 		}
-	},
-	all: {
-		url: `${config.API_URL}/nasdownload/all`,
-		name: "全部",
-		get: async function (params) {
-			return await http.get(this.url + params);
-		}
-	},
+	}
 }
