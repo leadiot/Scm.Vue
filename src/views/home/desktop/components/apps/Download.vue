@@ -86,14 +86,11 @@ export default {
 	},
 	data() {
 		return {
-			downloads: [
-				{ id: 1, name: '项目文件.zip', size: '125 MB', progress: 100, status: 'completed', speed: '' },
-				{ id: 2, name: '安装包.exe', size: '256 MB', progress: 75, status: 'downloading', speed: '2.5 MB/s' },
-				{ id: 3, name: '文档.pdf', size: '5.2 MB', progress: 45, status: 'downloading', speed: '1.2 MB/s' },
-				{ id: 4, name: '视频.mp4', size: '1.2 GB', progress: 20, status: 'paused', speed: '' },
-				{ id: 5, name: '音乐.mp3', size: '8.5 MB', progress: 0, status: 'error', speed: '' },
-			],
+			downloads: [],
 		};
+	},
+	mounted() {
+		this.loadDownloads();
 	},
 	computed: {
 		downloadingCount() {
@@ -144,47 +141,97 @@ export default {
 			};
 			return statusMap[status] || status;
 		},
-		pauseDownload(id) {
-			const download = this.downloads.find(d => d.id === id);
-			if (download) {
-				download.status = 'paused';
-				download.speed = '';
+		async loadDownloads() {
+			var res = await this.$API.nasdownload.list.get();
+			if (res.code == 200) {
+				this.downloads = (res.data || []).map(item => this.mapDownloadItem(item));
 			}
 		},
-		resumeDownload(id) {
-			const download = this.downloads.find(d => d.id === id);
-			if (download) {
-				download.status = 'downloading';
-				download.speed = '1.5 MB/s';
+		mapDownloadItem(item) {
+			return {
+				id: item.id,
+				name: item.name || item.fileName || '未知文件',
+				size: this.formatSize(item.size),
+				progress: item.progress || 0,
+				status: this.mapStatus(item.status),
+				speed: item.speed ? this.formatSpeed(item.speed) : '',
+				url: item.url,
+			};
+		},
+		mapStatus(status) {
+			if (typeof status === 'string') {
+				return status;
+			}
+			const statusMap = {
+				1: 'downloading',
+				2: 'paused',
+				3: 'completed',
+				4: 'error',
+				5: 'waiting',
+			};
+			return statusMap[status] || 'waiting';
+		},
+		formatSize(size) {
+			if (!size) return '';
+			return this.$TOOL.fileSizeFormat(size);
+		},
+		formatSpeed(speed) {
+			if (!speed) return '';
+			return this.$TOOL.fileSizeFormat(speed) + '/s';
+		},
+		async pauseDownload(id) {
+			var res = await this.$API.nasdownload.pause.get(id);
+			if (res.code == 200) {
+				await this.loadDownloads();
+			} else {
+				this.$message.warning(res.message || '暂停失败');
 			}
 		},
-		removeDownload(id) {
-			const index = this.downloads.findIndex(d => d.id === id);
-			if (index > -1) {
-				this.downloads.splice(index, 1);
+		async resumeDownload(id) {
+			var res = await this.$API.nasdownload.resume.get(id);
+			if (res.code == 200) {
+				await this.loadDownloads();
+			} else {
+				this.$message.warning(res.message || '恢复失败');
+			}
+		},
+		async removeDownload(id) {
+			var res = await this.$API.nasdownload.delete.delete(id);
+			if (res.code == 200) {
+				await this.loadDownloads();
+			} else {
+				this.$message.warning(res.message || '删除失败');
 			}
 		},
 		openFile(id) {
-			this.$message.success('打开文件所在位置');
-		},
-		retryDownload(id) {
 			const download = this.downloads.find(d => d.id === id);
-			if (download) {
-				download.status = 'downloading';
-				download.progress = 0;
-				download.speed = '1.0 MB/s';
+			if (download && download.url) {
+				window.open(download.url, '_blank');
+			} else {
+				this.$message.success('打开文件所在位置');
 			}
 		},
-		clearCompleted() {
-			this.downloads = this.downloads.filter(d => d.status !== 'completed');
+		async retryDownload(id) {
+			var res = await this.$API.nasdownload.resume.get(id);
+			if (res.code == 200) {
+				await this.loadDownloads();
+			} else {
+				this.$message.warning(res.message || '重试失败');
+			}
 		},
-		pauseAll() {
-			this.downloads.forEach(d => {
-				if (d.status === 'downloading') {
-					d.status = 'paused';
-					d.speed = '';
-				}
-			});
+		async clearCompleted() {
+			const completed = this.downloads.filter(d => d.status === 'completed');
+			for (const item of completed) {
+				await this.$API.nasdownload.delete.delete(item.id);
+			}
+			await this.loadDownloads();
+		},
+		async pauseAll() {
+			const downloading = this.downloads.filter(d => d.status === 'downloading');
+			for (const item of downloading) {
+				await this.$API.nasdownload.pause.get(item.id);
+			}
+			await this.loadDownloads();
 		},
 	},
 };
