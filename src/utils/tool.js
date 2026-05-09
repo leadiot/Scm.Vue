@@ -488,7 +488,7 @@ tool.fileSizeFormat = function (limit) {
 	}
 
 	var num = Number(limit);
-	if (!isNaN(num)) {
+	if (isNaN(num)) {
 		return "";
 	}
 

@@ -54,8 +54,8 @@
 					</div>
 				</div>
 				<div class="download-actions">
-					<el-button v-if="download.handle === 2" text size="small" class="action-btn"
-						@click="resumeDownload(download.id)">
+					<el-button v-if="download.handle === 1 || download.handle === 2" text size="small"
+						class="action-btn" @click="resumeDownload(download.id)">
 						<sc-icon name="ms-play_arrow" :size="16" />
 					</el-button>
 					<el-button v-if="download.handle === 3" text size="small" class="action-btn"
@@ -137,12 +137,17 @@ export default {
 			},
 			handle_list: [],
 			result_list: [],
+			pollingTimer: null,
+			pollingInterval: 1000,
 		};
 	},
 	mounted() {
 		this.$SCM.list_dic(this.handle_list, 'handle', false);
 		this.$SCM.list_dic(this.result_list, 'result', false);
 		this.loadDownloads();
+	},
+	beforeUnmount() {
+		this.stopPolling();
 	},
 	computed: {
 		downloadingCount() {
@@ -191,6 +196,7 @@ export default {
 				var res = await this.$API.nasdownload.list.get();
 				if (res.code == 200) {
 					this.downloads = (res.data || []).map(item => this.mapDownloadItem(item));
+					this.startPolling();
 				}
 			} catch (error) {
 				console.error('加载下载列表失败:', error);
@@ -201,7 +207,7 @@ export default {
 				id: item.id,
 				url: item.url,
 				name: item.file_name || '未知文件',
-				size: this.formatSize(item.size),
+				size: this.formatSize(item.total_size),
 				progress: item.progress || 0,
 				speed: item.speed ? this.formatSpeed(item.speed) : '',
 				handle: item.handle,
@@ -209,6 +215,73 @@ export default {
 				handle_name: this.$SCM.get_dic_names(this.handle_list, item.handle, '未知'),
 				result_name: this.$SCM.get_dic_names(this.result_list, item.result, '未知'),
 			};
+		},
+		startPolling() {
+			if (this.pollingTimer) {
+				return;
+			}
+			this.pollingTimer = setInterval(() => {
+				this.pollDownloadProgress();
+			}, this.pollingInterval);
+		},
+		stopPolling() {
+			if (this.pollingTimer) {
+				clearInterval(this.pollingTimer);
+				this.pollingTimer = null;
+			}
+		},
+		async pollDownloadProgress() {
+			console.log('轮询下载进度');
+			if (!this.downloads || this.downloads.length === 0) {
+				this.stopPolling();
+				return;
+			}
+			const downloadingIds = this.downloads
+				.filter(d => d.handle === 3)
+				.map(d => d.id);
+			console.log('当前下载列表:downloadingIds.length', downloadingIds.length);
+			if (downloadingIds.length === 0) {
+				this.stopPolling();
+				return;
+			}
+			try {
+				for (const id of downloadingIds) {
+					await this.fetchDownloadStatus(id);
+				}
+			} catch (error) {
+				console.error('轮询下载进度失败:', error);
+			}
+		},
+		async fetchDownloadStatus(id) {
+			try {
+				var res = await this.$API.nasdownload.model.get(id);
+				if (res.code == 200) {
+					const status = res.data || {};
+					if (status && status.id) {
+						this.updateDownloadItem(status);
+					}
+					else {
+						this.$message.warning(res.message || '加载下载状态失败');
+					}
+				}
+			} catch (error) {
+				console.error('加载下载状态失败:', error);
+				return {};
+			}
+		},
+		updateDownloadItem(status) {
+			const index = this.downloads.findIndex(d => d.id === status.id);
+			if (index !== -1) {
+				this.downloads[index] = {
+					...this.downloads[index],
+					progress: status.progress || this.downloads[index].progress,
+					speed: status.speed ? this.formatSpeed(status.speed) : this.downloads[index].speed,
+					size: status.total_size ? this.formatSize(status.total_size) : this.downloads[index].size,
+					handle: status.handle !== undefined ? status.handle : this.downloads[index].handle,
+					handle_name: status.handle_name || this.downloads[index].handle_name,
+					result: status.result !== undefined ? status.result : this.downloads[index].result,
+				};
+			}
 		},
 		getDownloadStatus(handle, result) {
 			if (handle === 1) return '';
@@ -219,6 +292,7 @@ export default {
 			return '';
 		},
 		formatSize(size) {
+			console.log('formatSize', size);
 			if (!size) return '';
 			return this.$TOOL.fileSizeFormat(size);
 		},

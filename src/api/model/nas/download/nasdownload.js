@@ -12,7 +12,14 @@ export default {
 		url: `${config.API_URL}/nasdownload/list`,
 		name: "列表",
 		get: async function () {
-			return await http.get(this.url );
+			return await http.get(this.url);
+		}
+	},
+	model: {
+		url: `${config.API_URL}/nasdownload/`,
+		name: "模型",
+		get: async function (params) {
+			return await http.get(this.url + params);
 		}
 	},
 	add: {
