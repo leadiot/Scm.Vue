@@ -59,13 +59,13 @@ const routes = [
 		component: () => import("@/views/home/desktop"),
 		meta: { title: "云桌面", layout: "desktop" },
 	},
-	// {
-	// 	id: '1008',
-	// 	name: 'monitor',
-	// 	path: "/monitor",
-	// 	component: () => import("@/views/home/monitor"),
-	// 	meta: { title: "大屏幕", layout: "monitor" },
-	// },
+	{
+		id: '1008',
+		name: 'monitor',
+		path: "/monitor",
+		component: () => import("@/views/home/monitor"),
+		meta: { title: "大屏幕", layout: "monitor" },
+	},
 	// {
 	// 	id: '1009',
 	// 	name: 'workflow_design',
