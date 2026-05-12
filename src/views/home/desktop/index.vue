@@ -599,78 +599,92 @@ export default {
 			//this.$message.success('桌面已刷新');
 		},
 		listApp() {
-			var app = { id: 1, name: '云空间', icon: 'ms-cloud', component: 'Files', width: 900, height: 600 };
+			var app = { id: 11, name: '云空间', icon: 'ms-computer', component: 'Files', width: 900, height: 600 };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
 
-			app = { id: 2, name: '浏览器', icon: 'ms-language', component: 'Browser' };
+			app = { id: 12, name: '浏览器', icon: 'ms-language', type: 'app', component: 'Browser' };
 			this.deskApps.push(app);
 			this.menuApps.push(app);
 
-			var menu = { id: 3, name: '多媒体', icon: 'ms-videocam', children: [] };
+			var menu = { id: 3, name: '环境', icon: 'ms-grid_view', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 31, name: '图像', icon: 'ms-photo_library', component: 'Image' };
+			app = { id: 12, name: '工作台', icon: 'ms-dashboard', type: 'url', url: '/console' };
+			menu.children.push(app);
+			app = { id: 13, name: '大屏幕', icon: 'ms-monitor', type: 'url', url: '/monitor' };
+			menu.children.push(app);
+
+			menu = { id: 3, name: '多媒体', icon: 'ms-videocam', children: [] };
+			this.menuApps.push(menu);
+			app = { id: 31, name: '图像', icon: 'ms-photo_library', type: 'app', component: 'Image' };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 32, name: '音频', icon: 'ms-music_note', component: 'Audio' };
+			app = { id: 32, name: '音频', icon: 'ms-music_note', type: 'app', component: 'Audio' };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 33, name: '视频', icon: 'ms-videocam', component: 'Video' };
+			app = { id: 33, name: '视频', icon: 'ms-videocam', type: 'app', component: 'Video' };
 			this.deskApps.push(app);
 			menu.children.push(app);
 
 			menu = { id: 4, name: '应用', icon: 'ms-folder', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 41, name: '计算器', icon: 'ms-calculate', component: 'Calculator', width: 400, height: 580, resizable: false };
+			app = { id: 41, name: '计算器', icon: 'ms-calculate', type: 'app', component: 'Calculator', width: 400, height: 580, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 42, name: '记事', icon: 'ms-description', component: 'Notepad', width: 700, height: 500 };
+			app = { id: 42, name: '记事', icon: 'ms-description', type: 'app', component: 'Notepad', width: 700, height: 500 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 43, name: '待办', icon: 'ms-assignment', component: 'Todo', width: 360, height: 580, centered: true };
+			app = { id: 43, name: '待办', icon: 'ms-assignment', type: 'app', component: 'Todo', width: 360, height: 580, centered: true };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 44, name: '日历', icon: 'ms-calendar_month', component: 'Calendar', width: 320, height: 460, resizable: false };
+			app = { id: 44, name: '日历', icon: 'ms-calendar_month', type: 'app', component: 'Calendar', width: 320, height: 460, resizable: false };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 45, name: '下载', icon: 'ms-download', component: 'Download' };
+			app = { id: 45, name: '下载', icon: 'ms-download', type: 'app', component: 'Download' };
 			// this.deskApps.push(app);
 			menu.children.push(app);
 
 			menu = { id: 5, name: '通讯', icon: 'ms-contacts', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 51, name: '联系人', icon: 'ms-contacts', component: 'Contacts', width: 800, height: 560 };
+			app = { id: 51, name: '联系人', icon: 'ms-contacts', type: 'app', component: 'Contacts', width: 800, height: 560 };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 52, name: '短信', icon: 'ms-sms', component: 'SMS', width: 800, height: 560 };
+			app = { id: 52, name: '短信', icon: 'ms-sms', type: 'app', component: 'SMS', width: 800, height: 560 };
 			// this.deskApps.push(app);
 			menu.children.push(app);
 
 			menu = { id: 6, name: '游戏', icon: 'ms-sports_esports', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 61, name: '扫雷', icon: 'ms-flag', component: 'Minesweeper', width: 640, height: 760, resizable: false };
+			app = { id: 61, name: '扫雷', icon: 'ms-flag', type: 'app', component: 'Minesweeper', width: 640, height: 760, resizable: false };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 62, name: '2048', icon: 'ms-grid_on', component: 'Game2048', width: 380, height: 660, resizable: false };
+			app = { id: 62, name: '2048', icon: 'ms-grid_on', type: 'app', component: 'Game2048', width: 380, height: 660, resizable: false };
 			this.deskApps.push(app);
 			menu.children.push(app);
 
 			menu = { id: 7, name: '系统工具', icon: 'ms-settings', children: [] };
 			this.menuApps.push(menu);
-			app = { id: 71, name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 };
+			app = { id: 71, name: '终端', icon: 'ms-terminal', type: 'app', component: 'Terminal', width: 800, height: 560 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 72, name: '消息', icon: 'ms-mail', component: 'Message' };
+			app = { id: 72, name: '消息', icon: 'ms-mail', type: 'app', component: 'Message' };
 			// this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 73, name: '设备', icon: 'ms-devices', component: 'Device', width: 680, height: 460 };
+			app = { id: 73, name: '设备', icon: 'ms-devices', type: 'app', component: 'Device', width: 680, height: 460 };
 			this.deskApps.push(app);
 			menu.children.push(app);
-			app = { id: 74, name: '下载客户端', icon: 'ms-cloud_download', component: 'DownloadClient', width: 680, height: 620, resizable: false };
+			app = { id: 74, name: '下载客户端', icon: 'ms-cloud_download', type: 'app', component: 'DownloadClient', width: 680, height: 620, resizable: false };
 			this.deskApps.push(app);
 			menu.children.push(app);
 		},
 		openApp(app) {
+			if (app.type === 'url') {
+				this.$router.push({
+					path: app.url
+				});
+				return;
+			}
+
 			this.showStartMenu = false;
 			this.hideContextMenu();
 			const windowId = ++this.windowIdCounter;
