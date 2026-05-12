@@ -1,6 +1,6 @@
 <!-- 大屏幕布局 -->
 <template>
-	<div class="display-layout">
+	<div class="monitor-layout">
 		<router-view v-slot="{ Component }">
 			<keep-alive :include="keepLiveRoute">
 				<component :is="Component" :key="$route.fullPath" v-if="routeShow" />
@@ -13,7 +13,7 @@
 import { useKeepAliveStore } from '@/stores/keepAlive';
 
 export default {
-	name: 'DisplayLayout',
+	name: 'MonitorLayout',
 	setup() {
 		const keepAliveStore = useKeepAliveStore();
 		return {
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style scoped>
-.display-layout {
+.monitor-layout {
 	width: 100%;
 	height: 100vh;
 	overflow: hidden;

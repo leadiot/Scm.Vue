@@ -531,5 +531,5 @@ export default {
 </script>
 
 <style>
-@import 'common.css';
+@import '../common.css';
 </style>
