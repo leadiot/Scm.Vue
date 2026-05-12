@@ -172,7 +172,7 @@ import scIcon from '@/components/scIcon/index.vue';
 import * as echarts from 'echarts';
 
 export default {
-	name: 'BigScreen',
+	name: 'MonitorDemo',
 	components: { scIcon },
 	data() {
 		return {
