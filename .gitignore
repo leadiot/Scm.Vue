@@ -2,10 +2,16 @@
 # 此文件由项目作者创建，您可以根据需要进行增删调整。
 ################################################################################
 
+# IDE相关文件
+.git
+.gitcode
+.gitee
+.github
+.qoder
+.vs
+.vscode
+
 # Vue 项目文件
 dist/
 node_modules/
 webpack/
-
-.vs/
-.vscode/
