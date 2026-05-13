@@ -126,6 +126,8 @@ Scm.Vue/
 
 [MIT License](LICENSE)
 
-## Community
+**QQ Group**
 
-![QQ](https://img.shields.io/badge/QQ-415872667-green?logo=tencent-qq)
+[![QQ Group](https://img.shields.io/badge/QQ%20Group-415872667-12B7F5.svg?logo=tencentqq)](https://qm.qq.com)
+
+<img src="qqq.jpg" width="200"/>
