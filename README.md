@@ -38,9 +38,6 @@ npm install
 ```bash
 # 启动开发服务器
 npm run dev
-
-# 或
-npm run serve
 ```
 
 访问 http://localhost:2800 查看项目。
@@ -147,6 +144,6 @@ Scm.Vue/
 
 **QQ 交流群**
 
-[![QQ Group](https://img.shields.io/badge/QQ%20群-415872667-12B7F5.svg?logo=tencentqq)](https://qm.qq.com)
+[![QQ Group](https://img.shields.io/badge/QQ%20群-415872667-12B7F5.svg?logo=tencentqq)](https://qm.qq.com/cgi-bin/qm/qr?k=415872667)
 
-<img src="qqq.jpg" width="200"/>
+<img src="qqq.jpg" width="300"/>
