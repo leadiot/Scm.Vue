@@ -236,7 +236,7 @@ export default {
 			await this.$SCM.list_cfg();
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 
-			this.$router.replace({ path: this.home || this.$CONFIG.HOME });
+			this.$router.replace({ path: this.home || '/console' });
 			this.$message.success("Login Success 登录成功");
 		}
 	},
