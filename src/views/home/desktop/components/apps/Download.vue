@@ -58,15 +58,15 @@
 						class="action-btn" @click="resumeDownload(download.id)">
 						<sc-icon name="ms-play_arrow" :size="16" />
 					</el-button>
-					<el-button v-if="download.handle === 3" text size="small" class="action-btn"
+					<el-button else-if="download.handle === 3" text size="small" class="action-btn"
 						@click="pauseDownload(download.id)">
 						<sc-icon name="ms-pause" :size="16" />
 					</el-button>
-					<el-button v-if="download.result === 1" text size="small" class="action-btn"
+					<el-button else-if="download.result === 1" text size="small" class="action-btn"
 						@click="retryDownload(download.id)">
 						<sc-icon name="ms-refresh" :size="16" />
 					</el-button>
-					<el-button v-if="download.result === 2" text size="small" class="action-btn"
+					<el-button else-if="download.result === 2" text size="small" class="action-btn"
 						@click="openFile(download.id)" tooltip="打开文件">
 						<sc-icon name="ms-folder_open" :size="16" />
 					</el-button>
