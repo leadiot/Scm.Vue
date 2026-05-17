@@ -7,21 +7,15 @@
 <script>
 import colorTool from "@/utils/color";
 import { useI18n } from "vue-i18n";
-import { computed, shallowRef, watch } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { useGlobalStore } from "@/stores/global";
 
 import LayoutNone from "@/layout/none/index.vue";
 import LayoutConsole from "@/layout/console/index.vue";
 import LayoutDesktop from "@/layout/desktop/index.vue";
 import LayoutMonitor from "@/layout/monitor/index.vue";
 
-const layouts = {
-	none: LayoutNone,
-	console: LayoutConsole,
-	desktop: LayoutDesktop,
-	monitor: LayoutMonitor,
-};
+const layouts = [LayoutNone, LayoutConsole, LayoutDesktop, LayoutMonitor];
 
 export default {
 	name: "App",
@@ -31,8 +25,8 @@ export default {
 		const route = useRoute()
 
 		const layoutComponent = computed(() => {
-			const layoutType = route.meta?.layout || 'none';
-			return layouts[layoutType] || layouts.none;
+			const layoutType = route.meta?.layout || 0;
+			return layouts[layoutType] || layouts[0];
 		});
 
 		return { elLocale, layoutComponent }

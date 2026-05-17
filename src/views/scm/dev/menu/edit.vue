@@ -83,6 +83,65 @@
 							启用缓存后，在进行页签切换时，页面不会刷新
 						</div>
 					</el-form-item>
+					<el-form-item label="应用类型" prop="layout">
+						<el-radio-group v-model="form.layout">
+							<el-radio-button :value="1">工作台</el-radio-button>
+							<el-radio-button :value="2">云桌面</el-radio-button>
+							<el-radio-button :value="3">大屏幕</el-radio-button>
+						</el-radio-group>
+					</el-form-item>
+					<el-form-item label="窗口宽度" v-if="form.layout == 2">
+						<el-input v-model="form.width" clearable placeholder="0">
+							<template #append>px</template>
+						</el-input>
+						<div class="el-form-item-msg">
+							窗口默认显示的宽度，单位px，为0表示不限制
+						</div>
+					</el-form-item>
+					<el-form-item label="窗口高度" v-if="form.layout == 2">
+						<el-input v-model="form.height" clearable placeholder="0">
+							<template #append>px</template>
+						</el-input>
+						<div class="el-form-item-msg">
+							窗口默认显示的高度，单位px，为0表示不限制
+						</div>
+					</el-form-item>
+					<el-form-item label="调整大小" v-if="form.layout == 2">
+						<el-radio-group v-model="form.resizable">
+							<el-radio :value="true">是</el-radio>
+							<el-radio :value="false">否</el-radio>
+						</el-radio-group>
+						<div class="el-form-item-msg">
+							是否可以调整窗口大小，默认是
+						</div>
+					</el-form-item>
+					<el-form-item label="窗口居中" v-if="form.layout == 2">
+						<el-radio-group v-model="form.center">
+							<el-radio :value="true">是</el-radio>
+							<el-radio :value="false">否</el-radio>
+						</el-radio-group>
+						<div class="el-form-item-msg">
+							是否窗口居中显示，默认是
+						</div>
+					</el-form-item>
+					<el-form-item label="显示在桌面" v-if="form.layout == 2">
+						<el-radio-group v-model="form.showInDesktop">
+							<el-radio :value="true">是</el-radio>
+							<el-radio :value="false">否</el-radio>
+						</el-radio-group>
+						<div class="el-form-item-msg">
+							是否显示在桌面，默认是
+						</div>
+					</el-form-item>
+					<el-form-item label="显示在任务栏" v-if="form.layout == 2">
+						<el-radio-group v-model="form.showInTaskbar">
+							<el-radio :value="true">是</el-radio>
+							<el-radio :value="false">否</el-radio>
+						</el-radio-group>
+						<div class="el-form-item-msg">
+							是否显示在任务栏，默认是
+						</div>
+					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" :loading="loading" @click="save">
 							保 存
@@ -185,6 +244,13 @@ export default {
 				visible: true,
 				fullpage: false,
 				keepAlive: true,
+				layout: 1,
+				width: 0,
+				height: 0,
+				resizable: true,
+				center: false,
+				showInDesktop: true,
+				showInTaskbar: true,
 				api: [],
 			}
 		},
@@ -198,7 +264,7 @@ export default {
 		//保存
 		async save() {
 			this.loading = true;
-			var res = await this.$API.scmadmmenu.update.put(this.form);
+			var res = await this.$API.scmdevmenu.update.put(this.form);
 			this.loading = false;
 			if (res.code == 200) {
 				this.$emit("complete");
@@ -212,7 +278,7 @@ export default {
 		},
 		//表单注入数据
 		async setData(data) {
-			const res = await this.$API.scmadmmenu.model.get(data.id);
+			const res = await this.$API.scmdevmenu.model.get(data.id);
 			if (res.data) {
 				if (!res.data.icon) {
 					res.data.icon = "";

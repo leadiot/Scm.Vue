@@ -63,7 +63,7 @@ export default {
 		//加载树数据
 		async getMenu() {
 			this.menuloading = true;
-			var res = await this.$API.scmadmmenu.list.get();
+			var res = await this.$API.scmdevmenu.list.get();
 			this.menuloading = false;
 			let _tree = [];
 			res.data.some((m) => {
@@ -92,7 +92,7 @@ export default {
 		//树拖拽
 		async nodeDrop(dragNode, dropNode, dropType) {
 			this.menuloading = true;
-			var res = await this.$API.scmadmmenu.dragging.put({
+			var res = await this.$API.scmdevmenu.dragging.put({
 				dragNode: dragNode.data,
 				dropNode: dropNode.data,
 				sortType: dropType,
@@ -109,20 +109,22 @@ export default {
 		async add(node, data) {
 			var newMenuName = "未命名" + newMenuIndex++;
 			var newMenuData = {
-				pid: data ? data.id : "0",
+				pid: data ? data.id : this.$SCM.SYS_ID,
 				lang: 'zh-cn',
 				client: 10,
 				name: newMenuName,
-				label: newMenuName
+				label: newMenuName,
+				layout: 1,
+				resizable: true
 			};
 			this.menuloading = true;
-			var res = await this.$API.scmadmmenu.temp.post(newMenuData);
+			var res = await this.$API.scmdevmenu.temp.post(newMenuData);
 			this.menuloading = false;
 			newMenuData.id = res.data.id;
 
 			this.$refs.menu.append(newMenuData, node);
 			this.$refs.menu.setCurrentKey(newMenuData.id);
-			var pid = node ? node.data.id : "0";
+			var pid = node ? node.data.id : this.$SCM.SYS_ID;
 			this.$refs.edit.setData(newMenuData, pid);
 		},
 		//删除菜单
@@ -150,7 +152,7 @@ export default {
 			var reqData = {
 				ids: CheckedNodes.map((item) => item.id),
 			};
-			var res = await this.$API.scmadmmenu.delete.delete(
+			var res = await this.$API.scmdevmenu.delete.delete(
 				reqData.ids.join(",")
 			);
 			this.menuloading = false;
