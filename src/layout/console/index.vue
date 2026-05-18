@@ -255,7 +255,7 @@ export default {
 	created() {
 		this.onLayoutResize();
 		window.addEventListener('resize', this.onLayoutResize);
-		var menu = this.$router.getMenu();
+		var menu = this.$router.getMenu(1);
 		this.menu = this.filterUrl(menu);
 		this.showThis();
 	},

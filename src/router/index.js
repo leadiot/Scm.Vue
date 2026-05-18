@@ -116,16 +116,21 @@ router.onError((error) => {
 	});
 });
 
-router.getMenu = () => {
-	var apiMenu = tool.session.get("MENU") || [];
+router.getMenu = (layout) => {
 	let userInfo = tool.session.get("USER_INFO");
 	let userMenu = treeFilter(userRoutes, (node) => {
 		return node.meta.role
-			? node.meta.role.filter((item) => userInfo.role.indexOf(item) > -1)
-				.length > 0
+			? node.meta.role.filter((item) => userInfo.role.indexOf(item) > -1).length > 0
 			: true;
 	});
-	var menu = [...userMenu, ...apiMenu];
+	var menu = [...userMenu];
+	
+	var apiMenu = tool.session.get("MENU") || [];
+	apiMenu.forEach(element => {
+		if (element.meta.layout == layout) {
+			menu.push(element);
+		}
+	});
 	return menu;
 };
 

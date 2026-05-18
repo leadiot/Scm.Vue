@@ -606,7 +606,8 @@ scm.recursive_menu2 = function (menuList, pid) {
 		var item = {
 			id: menu.id,
 			path: menu.uri,
-			name: menu.codec,
+			code: menu.codec,
+			name: menu.namec,
 			component: menu.view,
 			meta: {
 				id: menu.id,
@@ -616,8 +617,14 @@ scm.recursive_menu2 = function (menuList, pid) {
 				hidden: !menu.visible,
 				fullpage: !!menu.fullpage,
 				keepAlive: menu.keepAlive,
-				layout: menu.layout,
 				affix: menu.codec == "console",
+				layout: menu.layout,
+				width: menu.width,
+				height: menu.height,
+				center: menu.center,
+				resizable: menu.resizable,
+				showInDesktop: menu.showInDesktop,
+				showInTaskbar: menu.showInTaskbar,
 			},
 			children: children,
 		};
