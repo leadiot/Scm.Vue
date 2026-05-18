@@ -605,9 +605,9 @@ scm.recursive_menu2 = function (menuList, pid) {
 
 		var item = {
 			id: menu.id,
-			path: menu.uri,
 			code: menu.codec,
 			name: menu.namec,
+			path: menu.uri,
 			component: menu.view,
 			meta: {
 				id: menu.id,

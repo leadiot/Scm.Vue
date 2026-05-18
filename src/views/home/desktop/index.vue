@@ -643,9 +643,10 @@ export default {
 			return menu || [];
 		},
 		openApp(app) {
-			if (app.type === 'url') {
+			console.log(app.meta);
+			if (app.meta.type === 'link') {
 				this.$router.push({
-					path: app.url
+					path: app.path
 				});
 				return;
 			}
