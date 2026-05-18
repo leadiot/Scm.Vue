@@ -53,7 +53,7 @@
 
 				<div class="panel-card">
 					<div class="card-header">
-						<sc-icon name="ms-users" :size="20" />
+						<sc-icon name="ms-groups" :size="20" />
 						<span class="card-title">用户分布</span>
 					</div>
 					<div class="card-content">
@@ -139,7 +139,7 @@
 
 				<div class="panel-card">
 					<div class="card-header">
-						<sc-icon name="ms-award" :size="20" />
+						<sc-icon name="ms-location_city" :size="20" />
 						<span class="card-title">Top 5 城市</span>
 					</div>
 					<div class="card-content">
@@ -226,6 +226,7 @@ export default {
 			trendChartInstance: null,
 			timer: null,
 			resizeHandler: null,
+			simulateTimer: null,
 		};
 	},
 	mounted() {
@@ -243,6 +244,10 @@ export default {
 		if (this.timer) {
 			clearInterval(this.timer);
 			this.timer = null;
+		}
+		if (this.simulateTimer) {
+			clearInterval(this.simulateTimer);
+			this.simulateTimer = null;
 		}
 		if (this.resizeHandler) {
 			window.removeEventListener('resize', this.resizeHandler);
@@ -478,16 +483,12 @@ export default {
 				],
 			};
 			this.trendChartInstance.setOption(option);
-
-			window.addEventListener('resize', () => {
-				this.trendChartInstance?.resize();
-			});
 		},
 		updateData() {
 			this.dataDelay = Math.floor(Math.random() * 50) + 100;
 		},
 		simulateDataUpdate() {
-			setInterval(() => {
+			this.simulateTimer = setInterval(() => {
 				this.activeUsers = Math.floor(this.activeUsers * (0.995 + Math.random() * 0.01));
 				this.orders += Math.floor(Math.random() * 5);
 				this.revenue += Math.floor(Math.random() * 500);
@@ -516,13 +517,17 @@ export default {
 			if (this.resizeHandler) {
 				window.removeEventListener('resize', this.resizeHandler);
 			}
+			let resizeTimeout = null;
 			this.resizeHandler = () => {
-				if (this.mapChartInstance && !this.mapChartInstance.isDisposed()) {
-					this.mapChartInstance.resize();
-				}
-				if (this.trendChartInstance && !this.trendChartInstance.isDisposed()) {
-					this.trendChartInstance.resize();
-				}
+				if (resizeTimeout) clearTimeout(resizeTimeout);
+				resizeTimeout = setTimeout(() => {
+					if (this.mapChartInstance && !this.mapChartInstance.isDisposed()) {
+						this.mapChartInstance.resize();
+					}
+					if (this.trendChartInstance && !this.trendChartInstance.isDisposed()) {
+						this.trendChartInstance.resize();
+					}
+				}, 200);
 			};
 			window.addEventListener('resize', this.resizeHandler);
 		},

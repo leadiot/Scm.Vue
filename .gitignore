@@ -9,7 +9,6 @@
 .github/
 .qoder/
 .vs/
-.vscode/
 
 # Vue 项目文件
 dist/

@@ -15,6 +15,22 @@
 	--text-muted: #666;
 	--grid-line: rgba(64, 158, 255, 0.03);
 	--shadow-glow: 0 0 20px rgba(64, 158, 255, 0.5);
+
+	/* 响应式尺寸变量 */
+	--header-height: clamp(44px, 5vh, 60px);
+	--footer-height: clamp(32px, 4vh, 40px);
+	--body-padding: clamp(8px, 1.5vw, 20px);
+	--body-gap: clamp(8px, 1.5vw, 20px);
+	--side-panel-width: clamp(220px, 20vw, 320px);
+	--card-radius: clamp(8px, 0.8vw, 12px);
+	--card-header-padding: clamp(8px, 1vw, 12px) clamp(10px, 1.2vw, 16px);
+	--card-content-padding: clamp(10px, 1.2vw, 16px);
+	--stat-value-size: clamp(20px, 2vw, 28px);
+	--title-size: clamp(16px, 1.6vw, 22px);
+	--time-size: clamp(16px, 1.8vw, 24px);
+	--map-stat-num-size: clamp(20px, 2vw, 28px);
+	--chart-height: clamp(120px, 18vh, 180px);
+	--map-min-height: clamp(200px, 40vh, 400px);
 }
 
 .monitor {
@@ -25,6 +41,8 @@
 	flex-direction: column;
 	overflow: hidden;
 	position: relative;
+	min-width: 320px;
+	min-height: 480px;
 }
 
 .monitor::before {
@@ -42,15 +60,16 @@
 }
 
 .screen-header {
-	height: 60px;
+	height: var(--header-height);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0 30px;
+	padding: 0 var(--body-padding);
 	background: rgba(0, 0, 0, 0.3);
 	border-bottom: 1px solid var(--card-border);
 	position: relative;
 	z-index: 10;
+	flex-shrink: 0;
 }
 
 .header-left {
@@ -59,12 +78,12 @@
 	align-items: center;
 
 	.date {
-		font-size: 12px;
+		font-size: clamp(10px, 1vw, 12px);
 		color: var(--text-secondary);
 	}
 
 	.time {
-		font-size: 24px;
+		font-size: var(--time-size);
 		font-weight: 600;
 		color: var(--text-primary);
 		letter-spacing: 2px;
@@ -74,22 +93,24 @@
 .header-center {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: clamp(6px, 0.8vw, 12px);
 
 	.title {
-		font-size: 22px;
+		font-size: var(--title-size);
 		font-weight: 600;
 		color: var(--text-primary);
 		letter-spacing: 2px;
+		white-space: nowrap;
 	}
 }
 
 .header-right {
 	.status {
-		padding: 6px 16px;
+		padding: 4px clamp(8px, 1vw, 16px);
 		border-radius: 20px;
-		font-size: 12px;
+		font-size: clamp(10px, 0.9vw, 12px);
 		font-weight: 500;
+		white-space: nowrap;
 
 		&.online {
 			background: rgba(103, 194, 58, 0.2);
@@ -105,17 +126,22 @@
 .screen-body {
 	flex: 1;
 	display: flex;
-	padding: 20px;
-	gap: 20px;
+	padding: var(--body-padding);
+	gap: var(--body-gap);
 	position: relative;
 	z-index: 10;
+	min-height: 0;
+	overflow: auto;
 }
 
 .side-panel {
-	width: 320px;
+	width: var(--side-panel-width);
+	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: clamp(8px, 1vw, 16px);
+	min-height: 0;
+	overflow-y: auto;
 }
 
 .center-panel {
@@ -127,16 +153,17 @@
 .panel-card {
 	background: var(--card-bg);
 	border: 1px solid var(--card-border);
-	border-radius: 12px;
+	border-radius: var(--card-radius);
 	overflow: hidden;
 	backdrop-filter: blur(10px);
+	flex-shrink: 0;
 }
 
 .card-header {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 12px 16px;
+	gap: clamp(4px, 0.5vw, 8px);
+	padding: var(--card-header-padding);
 	background: var(--card-header-bg);
 	border-bottom: 1px solid var(--card-border);
 
@@ -145,21 +172,22 @@
 	}
 
 	.card-title {
-		font-size: 14px;
+		font-size: clamp(12px, 1vw, 14px);
 		font-weight: 500;
 		color: var(--text-primary);
+		white-space: nowrap;
 	}
 }
 
 .card-content {
-	padding: 16px;
+	padding: var(--card-content-padding);
 }
 
 .stat-item {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 12px 0;
+	padding: clamp(6px, 0.8vw, 12px) 0;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
 	&:last-child {
@@ -167,37 +195,37 @@
 	}
 
 	.stat-value {
-		font-size: 28px;
+		font-size: var(--stat-value-size);
 		font-weight: 700;
 		color: var(--primary-color);
-		margin-bottom: 4px;
+		margin-bottom: 2px;
 		text-shadow: var(--shadow-glow);
 	}
 
 	.stat-label {
-		font-size: 12px;
+		font-size: clamp(10px, 0.9vw, 12px);
 		color: var(--text-secondary);
 	}
 }
 
 .chart-container {
-	height: 180px;
+	height: var(--chart-height);
 }
 
 .distribution-list {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: clamp(6px, 0.8vw, 12px);
 }
 
 .distribution-item {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: clamp(4px, 0.5vw, 8px);
 
 	.dist-name {
-		width: 40px;
-		font-size: 12px;
+		width: clamp(30px, 3vw, 40px);
+		font-size: clamp(10px, 0.9vw, 12px);
 		color: var(--text-secondary);
 	}
 
@@ -217,8 +245,8 @@
 	}
 
 	.dist-percent {
-		width: 36px;
-		font-size: 12px;
+		width: clamp(28px, 3vw, 36px);
+		font-size: clamp(10px, 0.9vw, 12px);
 		color: var(--primary-color);
 		text-align: right;
 	}
@@ -227,16 +255,16 @@
 .alarm-list {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: clamp(6px, 0.6vw, 10px);
 }
 
 .alarm-item {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 10px;
+	gap: clamp(6px, 0.6vw, 10px);
+	padding: clamp(6px, 0.6vw, 10px);
 	background: rgba(255, 255, 255, 0.03);
-	border-radius: 8px;
+	border-radius: clamp(4px, 0.5vw, 8px);
 
 	&.error {
 		border-left: 3px solid var(--error-color);
@@ -260,14 +288,18 @@
 
 	.alarm-content {
 		flex: 1;
+		min-width: 0;
 
 		.alarm-title {
-			font-size: 13px;
+			font-size: clamp(11px, 0.9vw, 13px);
 			margin-bottom: 2px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.alarm-time {
-			font-size: 11px;
+			font-size: clamp(9px, 0.8vw, 11px);
 			opacity: 0.7;
 		}
 	}
@@ -276,33 +308,41 @@
 .order-list {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: clamp(6px, 0.6vw, 10px);
 }
 
 .order-item {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 10px;
+	padding: clamp(6px, 0.6vw, 10px);
 	background: rgba(255, 255, 255, 0.03);
-	border-radius: 8px;
+	border-radius: clamp(4px, 0.5vw, 8px);
 
 	.order-info {
+		min-width: 0;
+		flex: 1;
+
 		.order-id {
-			font-size: 12px;
+			font-size: clamp(10px, 0.8vw, 12px);
 			color: var(--text-primary);
 			margin-bottom: 2px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.order-location {
-			font-size: 11px;
+			font-size: clamp(9px, 0.8vw, 11px);
 			color: var(--text-secondary);
 		}
 	}
 
 	.order-amount {
-		font-size: 14px;
+		font-size: clamp(12px, 1vw, 14px);
 		font-weight: 600;
+		white-space: nowrap;
+		margin-left: 8px;
 
 		&.success {
 			color: var(--success-color);
@@ -317,23 +357,23 @@
 .ranking-list {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: clamp(6px, 0.8vw, 12px);
 }
 
 .ranking-item {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: clamp(6px, 0.8vw, 12px);
 
 	.rank-num {
-		width: 24px;
-		height: 24px;
+		width: clamp(18px, 1.6vw, 24px);
+		height: clamp(18px, 1.6vw, 24px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		background: rgba(255, 255, 255, 0.1);
 		border-radius: 50%;
-		font-size: 12px;
+		font-size: clamp(10px, 0.8vw, 12px);
 		color: var(--text-secondary);
 
 		&.top {
@@ -344,12 +384,12 @@
 
 	.rank-name {
 		flex: 1;
-		font-size: 13px;
+		font-size: clamp(11px, 0.9vw, 13px);
 		color: var(--text-primary);
 	}
 
 	.rank-value {
-		font-size: 13px;
+		font-size: clamp(11px, 0.9vw, 13px);
 		font-weight: 600;
 		color: var(--primary-color);
 	}
@@ -361,7 +401,7 @@
 	flex-direction: column;
 	background: var(--card-bg);
 	border: 1px solid var(--card-border);
-	border-radius: 12px;
+	border-radius: var(--card-radius);
 	overflow: hidden;
 	backdrop-filter: blur(10px);
 	min-height: 0;
@@ -370,21 +410,23 @@
 .map-card .card-header {
 	display: flex;
 	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 4px;
 
 	.map-legend {
 		display: flex;
-		gap: 16px;
+		gap: clamp(8px, 1vw, 16px);
 
 		.legend-item {
 			display: flex;
 			align-items: center;
-			gap: 6px;
-			font-size: 11px;
+			gap: 4px;
+			font-size: clamp(9px, 0.8vw, 11px);
 			color: var(--text-secondary);
 
 			.legend-dot {
-				width: 10px;
-				height: 10px;
+				width: clamp(6px, 0.6vw, 10px);
+				height: clamp(6px, 0.6vw, 10px);
 				border-radius: 50%;
 
 				&.high {
@@ -405,14 +447,14 @@
 
 .map-container {
 	flex: 1;
-	min-height: 400px;
+	min-height: var(--map-min-height);
 }
 
 .map-stats {
 	display: flex;
 	justify-content: center;
-	gap: 60px;
-	padding: 16px;
+	gap: clamp(20px, 4vw, 60px);
+	padding: clamp(8px, 1vw, 16px);
 	background: rgba(0, 0, 0, 0.2);
 	border-top: 1px solid var(--card-border);
 
@@ -422,22 +464,22 @@
 		align-items: center;
 
 		.stat-num {
-			font-size: 28px;
+			font-size: var(--map-stat-num-size);
 			font-weight: 700;
 			color: var(--primary-color);
 			text-shadow: var(--shadow-glow);
 		}
 
 		.stat-desc {
-			font-size: 12px;
+			font-size: clamp(10px, 0.9vw, 12px);
 			color: var(--text-secondary);
-			margin-top: 4px;
+			margin-top: 2px;
 		}
 	}
 }
 
 .screen-footer {
-	height: 40px;
+	height: var(--footer-height);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -445,20 +487,23 @@
 	border-top: 1px solid var(--card-border);
 	position: relative;
 	z-index: 10;
+	flex-shrink: 0;
 }
 
 .footer-info {
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	font-size: 12px;
+	gap: clamp(6px, 1vw, 16px);
+	font-size: clamp(10px, 0.9vw, 12px);
 	color: var(--text-muted);
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .screen-button {
-	padding: 6px 16px;
+	padding: 4px clamp(8px, 1vw, 16px);
 	border-radius: 4px;
-	font-size: 14px;
+	font-size: clamp(12px, 1vw, 14px);
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.2s;
@@ -487,10 +532,10 @@
 .screen-input {
 	background: rgba(255, 255, 255, 0.05);
 	border: 1px solid var(--card-border);
-	border-radius: 8px;
-	padding: 10px 14px;
+	border-radius: clamp(4px, 0.5vw, 8px);
+	padding: clamp(6px, 0.6vw, 10px) clamp(8px, 1vw, 14px);
 	color: var(--text-primary);
-	font-size: 14px;
+	font-size: clamp(12px, 1vw, 14px);
 	outline: none;
 	transition: border-color 0.2s;
 
@@ -500,5 +545,104 @@
 
 	&::placeholder {
 		color: var(--text-secondary);
+	}
+}
+
+/* ========== 媒体查询 - 响应式断点 ========== */
+
+/* 中等屏幕: 侧边栏缩小 */
+@media screen and (max-width: 1400px) {
+	:root {
+		--side-panel-width: clamp(200px, 22vw, 280px);
+	}
+}
+
+/* 小屏: 侧边栏进一步缩小, 地图最小高度降低 */
+@media screen and (max-width: 1200px) {
+	:root {
+		--side-panel-width: clamp(180px, 24vw, 240px);
+		--map-min-height: clamp(180px, 35vh, 300px);
+		--chart-height: clamp(100px, 15vh, 150px);
+	}
+}
+
+/* 平板竖屏: 切换为上下布局 */
+@media screen and (max-width: 900px) {
+	.screen-body {
+		flex-direction: column;
+		overflow-y: auto;
+	}
+
+	.side-panel {
+		width: 100% !important;
+		flex-direction: row;
+		flex-wrap: wrap;
+		overflow-y: visible;
+	}
+
+	.left-panel,
+	.right-panel {
+		width: 100% !important;
+	}
+
+	.left-panel .panel-card,
+	.right-panel .panel-card {
+		flex: 1 1 calc(50% - 8px);
+		min-width: 200px;
+	}
+
+	.center-panel {
+		width: 100%;
+		min-height: 400px;
+	}
+
+	.map-container {
+		min-height: 250px;
+	}
+}
+
+/* 手机: 单列布局 */
+@media screen and (max-width: 600px) {
+	.screen-header {
+		padding: 0 8px;
+	}
+
+	.header-center .title {
+		font-size: 14px;
+		letter-spacing: 1px;
+	}
+
+	.header-left .time {
+		font-size: 14px;
+	}
+
+	.screen-body {
+		padding: 8px;
+		gap: 8px;
+	}
+
+	.side-panel {
+		flex-direction: column;
+	}
+
+	.left-panel .panel-card,
+	.right-panel .panel-card {
+		flex: 1 1 100%;
+		min-width: 0;
+	}
+
+	.map-stats {
+		gap: 16px;
+	}
+
+	.map-card .card-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+
+	.footer-info {
+		gap: 4px;
+		font-size: 10px;
 	}
 }
