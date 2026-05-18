@@ -34,8 +34,8 @@
 		</div>
 
 		<div class="window-content">
-			<component :is="getComponent(window.component)" v-bind="window.props || {}" @set-wallpaper="onSetWallpaper"
-				@profile-updated="onProfileUpdated" />
+			<component :is="getComponent(window.code, window.component)" v-bind="window.props || {}"
+				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" />
 		</div>
 
 		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle"
@@ -78,29 +78,6 @@ const ErrorComponent = {
 			}
 		}, '组件加载失败');
 	}
-};
-
-const componentLoaders = {
-	Files: () => import('./apps/Files.vue'),
-	Browser: () => import('./apps/Browser.vue'),
-	Calculator: () => import('./apps/Calculator.vue'),
-	Calendar: () => import('./apps/Calendar.vue'),
-	Message: () => import('./apps/Message.vue'),
-	Video: () => import('./apps/Video.vue'),
-	Audio: () => import('./apps/Audio.vue'),
-	Terminal: () => import('./apps/Terminal.vue'),
-	Image: () => import('./apps/Image.vue'),
-	Download: () => import('./apps/Download.vue'),
-	Todo: () => import('./apps/Todo.vue'),
-	Notepad: () => import('./apps/Notepad.vue'),
-	Text: () => import('./apps/Notepad.vue'),
-	Contacts: () => import('./apps/Contacts.vue'),
-	SMS: () => import('./apps/SMS.vue'),
-	Profile: () => import('./apps/Profile.vue'),
-	Device: () => import('./apps/Device.vue'),
-	Minesweeper: () => import('./apps/Minesweeper.vue'),
-	Game2048: () => import('./apps/Game2048.vue'),
-	DownloadClient: () => import('./apps/DownloadClient.vue'),
 };
 
 const componentCache = new Map();
@@ -187,12 +164,16 @@ export default {
 		},
 	},
 	methods: {
-		getComponent(componentName) {
-			if (componentCache.has(componentName)) {
-				return componentCache.get(componentName);
+		getComponent(code, component) {
+			if (!component) {
+				return null;
 			}
 
-			const loader = componentLoaders[componentName] || componentLoaders.Files;
+			if (componentCache.has(code)) {
+				return componentCache.get(code);
+			}
+
+			const loader = () => import(`./apps/${component}.vue`);
 
 			const asyncComponent = defineAsyncComponent({
 				loader,
@@ -202,7 +183,7 @@ export default {
 				timeout: 10000,
 			});
 
-			componentCache.set(componentName, asyncComponent);
+			componentCache.set(code, asyncComponent);
 			return asyncComponent;
 		},
 		onSetWallpaper(url) {
