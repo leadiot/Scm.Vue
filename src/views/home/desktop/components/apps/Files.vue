@@ -123,8 +123,8 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.update_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? '目录' : '文件') }}</div>
-							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.kind === 30 ? '目录' : '文件') }}</div>
+							<div class="col-size">{{ item.kind === 30 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
 				</div>
@@ -147,15 +147,15 @@
 
 		<!-- 右键菜单 -->
 		<div v-if="contextMenu.visible" class="context-menu" :style="contextMenu.style" @click.self="hideContextMenu">
-			<div class="context-item" @click="openDocFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+			<div class="context-item" @click="openDocFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
 				<sc-icon name="ms-open_in_new" :size="16" />
 				<span>打开</span>
 			</div>
-			<div class="context-item" @click="downloadFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+			<div class="context-item" @click="downloadFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
 				<sc-icon name="ms-download" :size="16" />
 				<span>下载</span>
 			</div>
-			<div class="context-item" @click="previewFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+			<div class="context-item" @click="previewFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
 				<sc-icon name="ms-eye" :size="16" />
 				<span>预览</span>
 			</div>
@@ -324,7 +324,7 @@ export default {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
 		},
 		getFileIcon(item) {
-			if (item.type === 10) {
+			if (item.kind === 30) {
 				return 'ms-folder';
 			}
 
@@ -376,7 +376,7 @@ export default {
 		},
 		handleItemDblClick(item) {
 			this.hideContextMenu();
-			if (item.type === 10) {
+			if (item.kind === 30) {
 				this.openDir(item);
 			} else {
 				this.openDoc(item);
@@ -430,7 +430,17 @@ export default {
 				return;
 			}
 
-			this.fileList = res.data || [];
+			this.fileList = this.transformFileList(res.data || []);
+		},
+		transformFileList(data) {
+			return data.map(item => ({
+				...item,
+				id: item.name,
+				type: item.kind === 30 ? 10 : 0,
+				size: parseInt(item.length) || 0,
+				typeLabel: item.kind === 30 ? '目录' : '文件',
+				lastModified: item.lastWriteTime
+			}));
 		},
 		async openDir(item) {
 			this.currentPath.push(item);
@@ -577,6 +587,10 @@ export default {
 		async handleUpload(param) {
 			const data = new FormData();
 			data.append('file', param.file);
+			data.append('filesize', param.file.size);
+			data.append('filetime', param.file.lastModified);
+			data.append('type', '1');
+			data.append('file', param.file);
 			data.append('path', this.currentFolder?.path || '/');
 
 			let config = {
@@ -720,7 +734,7 @@ export default {
 			).then(async () => {
 				try {
 					for (const item of itemsToDelete) {
-						if (item.type === 10) {
+						if (item.kind === 30) {
 							await this.$API.scmsysfile.delFolder.delete(item.path);
 						} else {
 							await this.$API.scmsysfile.delFile.delete(item.uri);
@@ -746,7 +760,7 @@ export default {
 			).then(async () => {
 				try {
 					var res;
-					if (item.type === 10) {
+					if (item.kind === 30) {
 						res = await this.$API.scmsysfile.delFolder.delete(item.path);
 					} else {
 						res = await this.$API.scmsysfile.delFile.delete(item.uri);
@@ -763,7 +777,7 @@ export default {
 			}).catch(() => { });
 		},
 		async previewFile(item) {
-			if (!item || item.type === 10) {
+			if (!item || item.kind === 30) {
 				return;
 			}
 
