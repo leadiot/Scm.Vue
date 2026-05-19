@@ -654,7 +654,6 @@ export default {
 			this.showStartMenu = false;
 			this.hideContextMenu();
 			const windowId = ++this.windowIdCounter;
-			const centered = app.centered !== false;
 			this.windows.push({
 				id: windowId,
 				code: app.code,
@@ -665,12 +664,12 @@ export default {
 				minimized: false,
 				maximized: false,
 				focused: true,
-				resizable: app.resizable,
-				centered: centered,
+				resizable: app.meta.resizable,
+				centered: app.meta.center !== false,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
-				width: app.width || 800,
-				height: app.height || 600,
+				width: app.meta.width || 800,
+				height: app.meta.height || 600,
 			});
 			this.focusWindow(windowId);
 		},
