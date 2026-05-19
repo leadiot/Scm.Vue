@@ -154,7 +154,7 @@ function filterAsyncRouter(routerMap) {
 	routerMap.forEach((item) => {
 		item.meta = item.meta || {};
 		//处理外部链接特殊路由
-		if (item.meta.type == "iframe") {
+		if (item.meta.type == "iframe" || item.meta.type == "link") {
 			item.meta.url = item.path;
 			item.path = `/i/${item.name}`;
 		}

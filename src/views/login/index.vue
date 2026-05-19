@@ -216,7 +216,7 @@ export default {
 		},
 		async complete() {
 			//获取菜单
-			var menuRes = await this.$API.operator.authority.get();
+			var menuRes = await this.$API.operator.authority.get({ layout: 1 });
 			if (menuRes.code != 200) {
 				this.$message.warning(menuRes.message);
 				return false;
