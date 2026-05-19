@@ -31,42 +31,41 @@
 						<sc-icon :name="v.icon" :size="18" />
 					</button>
 				</div>
+				<div class="action-buttons">
+					<button class="toolbar-btn" title="新建文件夹" @click="createFolder">
+						<sc-icon name="ms-create_new_folder" :size="18" />
+					</button>
+					<button class="toolbar-btn" title="上传文件" @click="openUploadDialog">
+						<sc-icon name="ms-upload" :size="18" />
+					</button>
+					<button class="toolbar-btn" title="下载" :disabled="selectedItems.length !== 1" @click="downloadFile">
+						<sc-icon name="ms-download" :size="18" />
+					</button>
+					<button class="toolbar-btn" title="删除" :disabled="selectedItems.length === 0"
+						@click="deleteSelected">
+						<sc-icon name="ms-delete" :size="18" />
+					</button>
+				</div>
 			</div>
 		</div>
 
 		<div class="app-content">
 			<div class="sidebar">
 				<div class="sidebar-section">
-					<div class="sidebar-title">云空间</div>
-					<div v-for="item in stores" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon :name="item.icon" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">快速访问</div>
-					<div v-for="item in libs" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openLib(item)">
-						<sc-icon :name="item.icon" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">我的目录</div>
-					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-folder" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">我的设备</div>
-					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-device" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
+					<el-tree ref="folderTree" class="folder-tree" node-key="id" :data="folderTreeData"
+						:props="treeProps" :highlight-current="true" :expand-on-click-node="false"
+						@node-click="handleFolderTreeClick" @node-contextmenu.prevent="showFolderContextMenu">
+						<template #default="{ node, data }">
+							<span class="tree-node">
+								<sc-icon :name="data.type === 10 ? 'ms-folder' : 'ms-folder_open'" :size="16" />
+								<span class="tree-label">{{ node.label }}</span>
+								<span class="tree-actions" v-if="data.type === 10">
+									<sc-icon name="ms-delete" :size="14"
+										@click.stop="deleteFolderFromTree(node, data)" />
+								</span>
+							</span>
+						</template>
+					</el-tree>
 				</div>
 			</div>
 
@@ -74,7 +73,7 @@
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
 					<div v-for="item in fileList" :key="item.id" class="tile-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
-						@dblclick="handleItemDblClick(item)">
+						@dblclick="handleItemDblClick(item)" @contextmenu.prevent="showContextMenu($event, item)">
 						<div class="tile-icon">
 							<sc-icon :name="getFileIcon(item)" :size="48" />
 						</div>
@@ -85,7 +84,7 @@
 				<div v-else-if="viewMode === 'list'" class="view-list">
 					<div v-for="item in fileList" :key="item.id" class="list-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
-						@dblclick="handleItemDblClick(item)">
+						@dblclick="handleItemDblClick(item)" @contextmenu.prevent="showContextMenu($event, item)">
 						<sc-icon :name="getFileIcon(item)" :size="20" />
 						<span class="list-name">{{ item.name }}</span>
 					</div>
@@ -117,7 +116,8 @@
 					<div class="details-body">
 						<div v-for="item in fileList" :key="item.id" class="details-row"
 							:class="{ selected: selectedItems.includes(item.id) }"
-							@click="handleItemClick($event, item)" @dblclick="handleItemDblClick(item)">
+							@click="handleItemClick($event, item)" @dblclick="handleItemDblClick(item)"
+							@contextmenu.prevent="showContextMenu($event, item)">
 							<div class="col-name">
 								<sc-icon :name="getFileIcon(item)" :size="18" />
 								<span>{{ item.name }}</span>
@@ -132,6 +132,10 @@
 				<div v-if="fileList.length === 0" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
 					<p>此文件夹为空</p>
+					<button class="upload-btn" @click="openUploadDialog">
+						<sc-icon name="ms-upload" :size="24" />
+						<span>上传文件</span>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -139,6 +143,93 @@
 		<div class="app-statusbar">
 			<span>{{ fileList.length }} 个项目</span>
 			<span v-if="selectedItems.length > 0">· 已选中 {{ selectedItems.length }} 个项目</span>
+		</div>
+
+		<!-- 右键菜单 -->
+		<div v-if="contextMenu.visible" class="context-menu" :style="contextMenu.style" @click.self="hideContextMenu">
+			<div class="context-item" @click="openDocFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+				<sc-icon name="ms-open_in_new" :size="16" />
+				<span>打开</span>
+			</div>
+			<div class="context-item" @click="downloadFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+				<sc-icon name="ms-download" :size="16" />
+				<span>下载</span>
+			</div>
+			<div class="context-item" @click="previewFromMenu" v-if="contextMenu.item && contextMenu.item.type !== 10">
+				<sc-icon name="ms-eye" :size="16" />
+				<span>预览</span>
+			</div>
+			<div class="context-divider" v-if="contextMenu.item"></div>
+			<div class="context-item" @click="deleteFromMenu" v-if="contextMenu.item">
+				<sc-icon name="ms-delete" :size="16" />
+				<span>删除</span>
+			</div>
+		</div>
+
+		<!-- 上传对话框 -->
+		<el-dialog v-model="uploadDialogVisible" title="上传文件" width="500px" @close="uploadDialogVisible = false">
+			<el-upload ref="uploadRef" class="upload-demo" drag :auto-upload="false" :http-request="handleUpload">
+				<sc-icon name="ms-cloud_upload" :size="48" />
+				<div class="upload-text">
+					<p>将文件拖到此处上传</p>
+					<p class="upload-hint">支持拖拽或点击上传，单个文件不超过100MB</p>
+				</div>
+			</el-upload>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="uploadDialogVisible = false">取消</el-button>
+				<el-button type="primary" @click="submitUpload">开始上传</el-button>
+			</div>
+		</el-dialog>
+
+		<!-- 新建文件夹对话框 -->
+		<el-dialog v-model="newFolderDialogVisible" title="新建文件夹" width="400px" @close="newFolderDialogVisible = false">
+			<el-form :model="newFolderForm" ref="newFolderFormRef" label-width="80px">
+				<el-form-item label="文件夹名称" prop="name">
+					<el-input v-model="newFolderForm.name" placeholder="请输入文件夹名称" />
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="newFolderDialogVisible = false">取消</el-button>
+				<el-button type="primary" @click="createNewFolder">确定</el-button>
+			</div>
+		</el-dialog>
+
+		<!-- 目录树右键菜单 -->
+		<div v-if="folderContextMenu.visible" class="context-menu" :style="folderContextMenu.style"
+			@click="hideFolderContextMenu">
+			<div class="context-item" @click.stop="openFolder(folderContextMenu.item)">
+				<sc-icon name="ms-folder_open" :size="16" />
+				<span>打开</span>
+			</div>
+			<div class="context-divider"></div>
+			<div class="context-item" @click.stop="createFolderInTree">
+				<sc-icon name="ms-create_new_folder" :size="16" />
+				<span>新建文件夹</span>
+			</div>
+			<div class="context-divider"></div>
+			<div class="context-item"
+				@click.stop="deleteFolderFromTree(folderContextMenu.node, folderContextMenu.item)">
+				<sc-icon name="ms-delete" :size="16" />
+				<span>删除</span>
+			</div>
+		</div>
+
+		<!-- 图片预览 -->
+		<el-image-viewer v-if="imageViewerVisible" :url-list="previewImages" @close="imageViewerVisible = false" />
+
+		<!-- 文本预览 -->
+		<div v-if="textViewerVisible" class="text-viewer-mask" @click="textViewerVisible = false">
+			<div class="text-viewer" @click.stop>
+				<div class="text-viewer-header">
+					<span class="text-viewer-title">{{ currentPreviewFile?.name }}</span>
+					<button class="text-viewer-close" @click="textViewerVisible = false">
+						<sc-icon name="ms-close" :size="18" />
+					</button>
+				</div>
+				<div class="text-viewer-content">
+					<pre>{{ previewText }}</pre>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -171,23 +262,31 @@ export default {
 				{ value: 'list', label: '列表', icon: 'ms-list' },
 				{ value: 'details', label: '详细信息', icon: 'ms-table_rows' },
 			],
-			stores: [
-				{ id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
-			],
-			libs: [
-				// { id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
-				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder', kind: 30 },
-				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder', kind: 41 },
-				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
-				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
-				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
-				{ id: 'archives', name: '归档', icon: 'ms-archive', type: 'folder', kind: 60 },
-			],
-			deviceList: [],
 			folderList: [],
-			fileList: [],
+			contextMenu: {
+				visible: false,
+				item: null,
+				style: { left: '0px', top: '0px' },
+			},
+			folderContextMenu: {
+				visible: false,
+				item: null,
+				node: null,
+				style: { left: '0px', top: '0px' },
+			},
+			treeProps: {
+				label: 'name',
+				children: 'children',
+			},
+			folderTreeData: [],
+			uploadDialogVisible: false,
+			newFolderDialogVisible: false,
+			newFolderForm: { name: '', parentId: null },
+			imageViewerVisible: false,
+			previewImages: [],
+			textViewerVisible: false,
+			currentPreviewFile: null,
+			previewText: '',
 		};
 	},
 	computed: {
@@ -200,15 +299,33 @@ export default {
 	},
 	mounted() {
 		this.loadCfg();
-		this.listFolder();
+		this.loadFolderTree();
 	},
 	methods: {
-		async listFolder() {
+		async loadFolderTree() {
 			var res = await this.$API.nascfgfolder.list.get("");
 			if (res.code == 0) {
 				this.folderList = res.data || [];
+				this.buildFolderTree(this.folderList);
 			}
-			this.folderList = res.data || [];
+		},
+		buildFolderTree(folders) {
+			const map = new Map();
+			const roots = [];
+
+			folders.forEach(folder => {
+				map.set(folder.id, { ...folder, children: [] });
+			});
+
+			map.forEach((folder, id) => {
+				if (folder.parent_id && map.has(folder.parent_id)) {
+					map.get(folder.parent_id).children.push(folder);
+				} else {
+					roots.push(folder);
+				}
+			});
+
+			this.folderTreeData = roots;
 		},
 		async loadCfg() {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
@@ -244,6 +361,7 @@ export default {
 			await this.$SCM.save_cfg(cfgs);
 		},
 		handleItemClick(event, item) {
+			this.hideContextMenu();
 			if (event.ctrlKey || event.metaKey) {
 				const index = this.selectedItems.indexOf(item.id);
 				if (index > -1) {
@@ -252,7 +370,7 @@ export default {
 					this.selectedItems.push(item.id);
 				}
 			} else if (event.shiftKey && this.selectedItems.length > 0) {
-				const items = this.filteredItems;
+				const items = this.fileList;
 				const lastSelected = this.selectedItems[this.selectedItems.length - 1];
 				const lastIndex = items.findIndex(i => i.id === lastSelected);
 				const currentIndex = items.findIndex(i => i.id === item.id);
@@ -264,32 +382,40 @@ export default {
 			}
 		},
 		handleItemDblClick(item) {
+			this.hideContextMenu();
 			if (item.type === 10) {
 				this.openDir(item);
 			} else {
 				this.openDoc(item);
 			}
 		},
-		async openLib(item) {
-			this.currentPath = [];
-			this.currentPath.push(item);
-			this.currentFolder = item;
-			this.selectedItems = [];
-			this.history = this.history.slice(0, this.historyIndex + 1);
-			this.history.push({ folder: item, path: [...this.currentPath] });
-			this.historyIndex = this.history.length - 1;
-
-			this.param.opt = '2';
-			// this.param.dir_id = '0';
-			// this.param.folder_id = '0';
-			this.param.kind = item.kind;
-			var res = await this.$API.nasresfile.list.get(this.param);
-			if (res.code != 200) {
-				this.fileList = [];
-				return;
-			}
-
-			this.fileList = res.data || [];
+		showContextMenu(event, item) {
+			this.contextMenu.item = item;
+			this.contextMenu.style = {
+				left: event.clientX + 'px',
+				top: event.clientY + 'px',
+			};
+			this.contextMenu.visible = true;
+		},
+		hideContextMenu() {
+			this.contextMenu.visible = false;
+			this.contextMenu.item = null;
+		},
+		openDocFromMenu() {
+			this.hideContextMenu();
+			this.openDoc(this.contextMenu.item);
+		},
+		downloadFromMenu() {
+			this.hideContextMenu();
+			this.downloadFile(this.contextMenu.item);
+		},
+		previewFromMenu() {
+			this.hideContextMenu();
+			this.previewFile(this.contextMenu.item);
+		},
+		deleteFromMenu() {
+			this.hideContextMenu();
+			this.deleteFile(this.contextMenu.item);
 		},
 		async openFolder(folder) {
 			this.currentPath = [];
@@ -300,10 +426,12 @@ export default {
 			this.history.push({ folder: folder, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
+			if (this.$refs.folderTree) {
+				this.$refs.folderTree.setCurrentKey(folder.id);
+			}
+
 			this.param.opt = '1';
-			this.param.dir_id = folder.res_id;
-			// this.param.folder_id = '0';
-			// this.param.kind = item.kind;
+			this.param.dir_id = folder.res_id || folder.id;
 			var res = await this.$API.nasresfile.list.get(this.param);
 			if (res.code != 200) {
 				this.fileList = [];
@@ -329,19 +457,9 @@ export default {
 
 			this.fileList = res.data || [];
 		},
-		/**
-		 * 打开文档
-		 * @param item 文档项
-		 */
 		openDocWithWeb(item) {
 			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
 			window.open(fileUrl, '_blank');
-		},
-		/**
-		 * 打开文档
-		 * @param item 文档项	
-		 */
-		openDocWithApp(item) {
 		},
 		openDoc(item) {
 			if (!this.openNasFileWithApp) {
@@ -352,14 +470,11 @@ export default {
 			var kind = '';
 			if (item.kind == 30) {
 				kind = 'text';
-			}
-			else if (item.kind == 41) {
+			} else if (item.kind == 41) {
 				kind = 'image';
-			}
-			else if (item.kind == 42) {
+			} else if (item.kind == 42) {
 				kind = 'audio';
-			}
-			else if (item.kind == 43) {
+			} else if (item.kind == 43) {
 				kind = 'video';
 			} else {
 				this.openDocWithWeb(item);
@@ -463,6 +578,222 @@ export default {
 			} else {
 				this.sortField = field;
 				this.sortOrder = 'asc';
+			}
+		},
+		openUploadDialog() {
+			this.uploadDialogVisible = true;
+		},
+		async handleUpload(param) {
+			const data = new FormData();
+			data.append('file', param.file);
+			data.append('filesize', param.file.size);
+			data.append('filetime', param.file.lastModified);
+			data.append('dir_id', this.currentFolder?.id || '0');
+			data.append('kind', this.currentFolder?.kind || '0');
+
+			let config = {
+				headers: { 'Content-Type': 'multipart/form-data' },
+				timeout: 60000,
+			};
+
+			try {
+				var res = await this.$API.nasresfile.upload.post(data, config);
+				if (res.code == 200) {
+					this.$message.success('上传成功');
+					await this.loadCurrentFolder();
+					param.onSuccess();
+				} else {
+					this.$message.error(res.message || '上传失败');
+					param.onError();
+				}
+			} catch (error) {
+				this.$message.error('上传失败');
+				param.onError();
+			}
+		},
+		submitUpload() {
+			this.$refs.uploadRef.submit();
+		},
+		createFolder() {
+			this.newFolderForm = { name: '' };
+			this.newFolderDialogVisible = true;
+		},
+		async createNewFolder() {
+			if (!this.newFolderForm.name.trim()) {
+				this.$message.warning('请输入文件夹名称');
+				return;
+			}
+
+			try {
+				var res = await this.$API.nasresfile.add.post({
+					name: this.newFolderForm.name,
+					dir_id: this.currentFolder?.id || '0',
+					type: 10,
+				});
+
+				if (res.code == 200) {
+					this.$message.success('创建成功');
+					this.newFolderDialogVisible = false;
+					await this.loadCurrentFolder();
+				} else {
+					this.$message.error(res.message || '创建失败');
+				}
+			} catch (error) {
+				this.$message.error('创建失败');
+			}
+		},
+		createFolderInTree() {
+			this.newFolderForm = { name: '', parentId: null };
+			this.newFolderDialogVisible = true;
+		},
+		handleFolderTreeClick(data) {
+			this.openFolder(data);
+			this.$refs.folderTree.setCurrentKey(data.id);
+		},
+		showFolderContextMenu(event, node, data) {
+			this.folderContextMenu.item = data;
+			this.folderContextMenu.node = node;
+			this.folderContextMenu.style = {
+				left: event.clientX + 'px',
+				top: event.clientY + 'px',
+			};
+			this.folderContextMenu.visible = true;
+		},
+		hideFolderContextMenu() {
+			this.folderContextMenu.visible = false;
+			this.folderContextMenu.item = null;
+			this.folderContextMenu.node = null;
+		},
+		async deleteFolderFromTree(node, data) {
+			this.$confirm(
+				`确定删除文件夹 "${data.name}" 及其所有子目录和文件吗？`,
+				'提示',
+				{
+					type: 'warning',
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}
+			).then(async () => {
+				try {
+					var res = await this.$API.nascfgfolder.del.delete({ id: data.id });
+					if (res.code == 200) {
+						this.$message.success('删除成功');
+						await this.loadFolderTree();
+					} else {
+						this.$message.error(res.message || '删除失败');
+					}
+				} catch (error) {
+					this.$message.error('删除失败');
+				}
+			}).catch(() => { });
+		},
+		async downloadFile(item) {
+			const fileItem = item || this.fileList.find(f => f.id === this.selectedItems[0]);
+			if (!fileItem || fileItem.type === 10) {
+				this.$message.warning('请选择一个文件');
+				return;
+			}
+
+			const url = this.$SCM.getApiUrl('/Nas/Vs/' + fileItem.id);
+			try {
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error('下载失败');
+				}
+				const blob = await response.blob();
+				const downloadUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = downloadUrl;
+				link.download = fileItem.name;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				window.URL.revokeObjectURL(downloadUrl);
+			} catch (error) {
+				this.$message.error('下载失败');
+			}
+		},
+		async deleteSelected() {
+			if (this.selectedItems.length === 0) {
+				this.$message.warning('请选择要删除的项目');
+				return;
+			}
+
+			const itemsToDelete = this.fileList.filter(f => this.selectedItems.includes(f.id));
+			const names = itemsToDelete.map(f => f.name).join(', ');
+
+			this.$confirm(
+				`确定删除选中的项目：${names}？`,
+				'提示',
+				{
+					type: 'warning',
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}
+			).then(async () => {
+				try {
+					for (const item of itemsToDelete) {
+						if (item.type === 10) {
+							await this.$API.nasresfile.del.delete({ id: item.id });
+						} else {
+							await this.$API.nasresfile.del.delete({ id: item.id });
+						}
+					}
+					this.$message.success('删除成功');
+					this.selectedItems = [];
+					await this.loadCurrentFolder();
+				} catch (error) {
+					this.$message.error('删除失败');
+				}
+			}).catch(() => { });
+		},
+		async deleteFile(item) {
+			this.$confirm(
+				`确定删除 "${item.name}"？`,
+				'提示',
+				{
+					type: 'warning',
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}
+			).then(async () => {
+				try {
+					var res = await this.$API.nasresfile.del.delete({ id: item.id });
+					if (res.code == 200) {
+						this.$message.success('删除成功');
+						await this.loadCurrentFolder();
+					} else {
+						this.$message.error(res.message || '删除失败');
+					}
+				} catch (error) {
+					this.$message.error('删除失败');
+				}
+			}).catch(() => { });
+		},
+		async previewFile(item) {
+			if (!item || item.type === 10) {
+				return;
+			}
+
+			const ext = item.name.split('.').pop().toLowerCase();
+			const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+			const textExts = ['txt', 'md', 'json', 'xml', 'js', 'css', 'html'];
+
+			if (imageExts.includes(ext)) {
+				this.previewImages = [this.$SCM.getApiUrl('/Nas/Vs/' + item.id)];
+				this.imageViewerVisible = true;
+			} else if (textExts.includes(ext)) {
+				this.currentPreviewFile = item;
+				const url = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
+				try {
+					const response = await fetch(url);
+					this.previewText = await response.text();
+					this.textViewerVisible = true;
+				} catch (error) {
+					this.$message.error('预览失败');
+				}
+			} else {
+				this.openDocWithWeb(item);
 			}
 		},
 	},
@@ -599,6 +930,14 @@ export default {
 	color: #409eff;
 }
 
+.action-buttons {
+	display: flex;
+	gap: 2px;
+	margin-left: 8px;
+	padding-left: 8px;
+	border-left: 1px solid #ddd;
+}
+
 .app-content {
 	flex: 1;
 	display: flex;
@@ -617,31 +956,87 @@ export default {
 	margin-bottom: 8px;
 }
 
-.sidebar-title {
-	padding: 8px 16px 4px;
-	font-size: 12px;
-	font-weight: 600;
-	color: #999;
-}
-
-.sidebar-item {
+.sidebar-header {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 24px;
+	justify-content: space-between;
+	padding: 8px 16px 4px;
+}
+
+.sidebar-add-btn {
+	width: 22px;
+	height: 22px;
+	border: none;
+	background: transparent;
 	cursor: pointer;
-	font-size: 13px;
-	color: #333;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #666;
+	border-radius: 4px;
 	transition: background-color 0.15s;
 }
 
-.sidebar-item:hover {
+.sidebar-add-btn:hover {
+	background-color: #e0e0e0;
+	color: #333;
+}
+
+.folder-tree {
+	padding: 4px 0;
+}
+
+.folder-tree :deep(.el-tree-node) {
+	height: auto;
+}
+
+.folder-tree :deep(.el-tree-node__content) {
+	height: 28px;
+	padding: 0 8px;
+}
+
+.folder-tree :deep(.el-tree-node__content:hover) {
 	background-color: #f0f0f0;
 }
 
-.sidebar-item.active {
+.folder-tree :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
 	background-color: rgba(64, 158, 255, 0.15);
-	color: #409eff;
+}
+
+.tree-node {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+}
+
+.tree-label {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.tree-actions {
+	visibility: hidden;
+	display: flex;
+	gap: 4px;
+	color: #999;
+}
+
+.folder-tree :deep(.el-tree-node__content:hover) .tree-actions {
+	visibility: visible;
+}
+
+.tree-actions sc-icon {
+	cursor: pointer;
+	padding: 2px;
+	border-radius: 3px;
+}
+
+.tree-actions sc-icon:hover {
+	background-color: #e0e0e0;
+	color: #ff4d4f;
 }
 
 .main-content {
@@ -828,6 +1223,24 @@ export default {
 	font-size: 14px;
 }
 
+.upload-btn {
+	margin-top: 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	border: 1px solid #409eff;
+	border-radius: 4px;
+	background-color: #fff;
+	color: #409eff;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.upload-btn:hover {
+	background-color: rgba(64, 158, 255, 0.1);
+}
+
 .app-statusbar {
 	display: flex;
 	align-items: center;
@@ -836,5 +1249,124 @@ export default {
 	border-top: 1px solid #e5e5e5;
 	font-size: 12px;
 	color: #666;
+}
+
+.context-menu {
+	position: fixed;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 4px;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	min-width: 140px;
+}
+
+.context-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #333;
+	transition: background-color 0.15s;
+}
+
+.context-item:hover {
+	background-color: #f5f5f5;
+}
+
+.context-divider {
+	height: 1px;
+	background-color: #e5e5e5;
+	margin: 4px 0;
+}
+
+.upload-demo {
+	margin: 16px 0;
+}
+
+.upload-text {
+	text-align: center;
+}
+
+.upload-hint {
+	font-size: 12px;
+	color: #999;
+	margin-top: 8px;
+}
+
+.text-viewer-mask {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.text-viewer {
+	width: 80%;
+	max-width: 800px;
+	max-height: 80%;
+	background-color: #fff;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.text-viewer-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid #e5e5e5;
+	background-color: #f9f9f9;
+}
+
+.text-viewer-title {
+	font-size: 14px;
+	font-weight: 500;
+	color: #333;
+}
+
+.text-viewer-close {
+	width: 28px;
+	height: 28px;
+	border: none;
+	background: transparent;
+	border-radius: 4px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #666;
+	transition: background-color 0.15s;
+}
+
+.text-viewer-close:hover {
+	background-color: #e0e0e0;
+}
+
+.text-viewer-content {
+	padding: 16px;
+	max-height: calc(80vh - 60px);
+	overflow: auto;
+}
+
+.text-viewer-content pre {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #333;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.dialog-footer {
+	text-align: right;
 }
 </style>
