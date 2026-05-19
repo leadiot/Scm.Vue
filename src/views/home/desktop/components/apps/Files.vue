@@ -244,9 +244,7 @@ export default {
 	data() {
 		return {
 			param: {
-				opt: '1',
-				dir_id: '0',
-				folder_id: '0',
+				path: '/',
 				key: '',
 			},
 			viewMode: 'details',
@@ -263,6 +261,7 @@ export default {
 				{ value: 'details', label: '详细信息', icon: 'ms-table_rows' },
 			],
 			folderList: [],
+			fileList: [],
 			contextMenu: {
 				visible: false,
 				item: null,
@@ -303,29 +302,23 @@ export default {
 	},
 	methods: {
 		async loadFolderTree() {
-			var res = await this.$API.nascfgfolder.list.get("");
-			if (res.code == 0) {
+			var res = await this.$API.scmsysfile.list.get({ path: '/' });
+			if (res.code == 200) {
 				this.folderList = res.data || [];
 				this.buildFolderTree(this.folderList);
 			}
 		},
 		buildFolderTree(folders) {
-			const map = new Map();
-			const roots = [];
+			const transformNode = (node) => {
+				return {
+					id: node.uri,
+					name: node.name,
+					path: node.uri,
+					children: node.children ? node.children.map(child => transformNode(child)) : []
+				};
+			};
 
-			folders.forEach(folder => {
-				map.set(folder.id, { ...folder, children: [] });
-			});
-
-			map.forEach((folder, id) => {
-				if (folder.parent_id && map.has(folder.parent_id)) {
-					map.get(folder.parent_id).children.push(folder);
-				} else {
-					roots.push(folder);
-				}
-			});
-
-			this.folderTreeData = roots;
+			this.folderTreeData = folders.map(folder => transformNode(folder));
 		},
 		async loadCfg() {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
@@ -430,9 +423,8 @@ export default {
 				this.$refs.folderTree.setCurrentKey(folder.id);
 			}
 
-			this.param.opt = '1';
-			this.param.dir_id = folder.res_id || folder.id;
-			var res = await this.$API.nasresfile.list.get(this.param);
+			this.param.path = folder.path || '/';
+			var res = await this.$API.scmsysfile.files.get(this.param);
 			if (res.code != 200) {
 				this.fileList = [];
 				return;
@@ -448,8 +440,8 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.param.dir_id = item.id;
-			var res = await this.$API.nasresfile.list.get(this.param);
+			this.param.path = item.path || '/';
+			var res = await this.$API.scmsysfile.files.get(this.param);
 			if (res.code != 200) {
 				this.fileList = [];
 				return;
@@ -458,7 +450,7 @@ export default {
 			this.fileList = res.data || [];
 		},
 		openDocWithWeb(item) {
-			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
+			const fileUrl = this.$SCM.getApiUrl('/scm/sys/file/view?file=' + encodeURIComponent(item.uri));
 			window.open(fileUrl, '_blank');
 		},
 		openDoc(item) {
@@ -562,9 +554,8 @@ export default {
 		},
 		async loadCurrentFolder() {
 			if (this.currentFolder) {
-				this.param.dir_id = this.currentFolder.id;
-				this.param.folder_id = '0';
-				var res = await this.$API.nasresfile.list.get(this.param);
+				this.param.path = this.currentFolder.path || '/';
+				var res = await this.$API.scmsysfile.files.get(this.param);
 				if (res.code == 200) {
 					this.fileList = res.data || [];
 				} else {
@@ -586,10 +577,7 @@ export default {
 		async handleUpload(param) {
 			const data = new FormData();
 			data.append('file', param.file);
-			data.append('filesize', param.file.size);
-			data.append('filetime', param.file.lastModified);
-			data.append('dir_id', this.currentFolder?.id || '0');
-			data.append('kind', this.currentFolder?.kind || '0');
+			data.append('path', this.currentFolder?.path || '/');
 
 			let config = {
 				headers: { 'Content-Type': 'multipart/form-data' },
@@ -597,7 +585,7 @@ export default {
 			};
 
 			try {
-				var res = await this.$API.nasresfile.upload.post(data, config);
+				var res = await this.$API.scmsysfile.upload.post(data, config);
 				if (res.code == 200) {
 					this.$message.success('上传成功');
 					await this.loadCurrentFolder();
@@ -625,10 +613,9 @@ export default {
 			}
 
 			try {
-				var res = await this.$API.nasresfile.add.post({
+				var res = await this.$API.scmsysfile.add.post({
 					name: this.newFolderForm.name,
-					dir_id: this.currentFolder?.id || '0',
-					type: 10,
+					path: this.currentFolder?.path || '/',
 				});
 
 				if (res.code == 200) {
@@ -675,7 +662,7 @@ export default {
 				}
 			).then(async () => {
 				try {
-					var res = await this.$API.nascfgfolder.del.delete({ id: data.id });
+					var res = await this.$API.scmsysfile.delFolder.delete(data.path);
 					if (res.code == 200) {
 						this.$message.success('删除成功');
 						await this.loadFolderTree();
@@ -694,7 +681,7 @@ export default {
 				return;
 			}
 
-			const url = this.$SCM.getApiUrl('/Nas/Vs/' + fileItem.id);
+			const url = this.$SCM.getApiUrl('/scm/sys/file/view?file=' + encodeURIComponent(fileItem.uri));
 			try {
 				const response = await fetch(url);
 				if (!response.ok) {
@@ -734,9 +721,9 @@ export default {
 				try {
 					for (const item of itemsToDelete) {
 						if (item.type === 10) {
-							await this.$API.nasresfile.del.delete({ id: item.id });
+							await this.$API.scmsysfile.delFolder.delete(item.path);
 						} else {
-							await this.$API.nasresfile.del.delete({ id: item.id });
+							await this.$API.scmsysfile.delFile.delete(item.uri);
 						}
 					}
 					this.$message.success('删除成功');
@@ -758,7 +745,12 @@ export default {
 				}
 			).then(async () => {
 				try {
-					var res = await this.$API.nasresfile.del.delete({ id: item.id });
+					var res;
+					if (item.type === 10) {
+						res = await this.$API.scmsysfile.delFolder.delete(item.path);
+					} else {
+						res = await this.$API.scmsysfile.delFile.delete(item.uri);
+					}
 					if (res.code == 200) {
 						this.$message.success('删除成功');
 						await this.loadCurrentFolder();
