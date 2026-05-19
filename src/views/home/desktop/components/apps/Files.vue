@@ -82,8 +82,8 @@
 				</div>
 
 				<div v-else-if="viewMode === 'list'" class="view-list">
-					<div v-for="item in fileList" :key="item.id" class="list-item"
-						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+					<div v-for="item in fileList" :key="item.name" class="list-item"
+						:class="{ selected: selectedItems.includes(item.name) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)" @contextmenu.prevent="showContextMenu($event, item)">
 						<sc-icon :name="getFileIcon(item)" :size="20" />
 						<span class="list-name">{{ item.name }}</span>
@@ -459,41 +459,18 @@ export default {
 
 			this.fileList = res.data || [];
 		},
-		openDocWithWeb(item) {
-			const fileUrl = this.$SCM.getApiUrl('/scm/sys/file/view?file=' + encodeURIComponent(item.uri));
-			window.open(fileUrl, '_blank');
+		openDocWithWeb(url) {
+			window.open(url, '_blank');
 		},
 		openDoc(item) {
-			if (!this.openNasFileWithApp) {
-				this.openDocWithWeb(item);
+			var url = this.$SCM.getDataUrl(item.uri);
+			if (item.kind === 41) {
+				this.previewImages = [url];
+				this.imageViewerVisible = true;
 				return;
 			}
 
-			var kind = '';
-			if (item.kind == 30) {
-				kind = 'text';
-			} else if (item.kind == 41) {
-				kind = 'image';
-			} else if (item.kind == 42) {
-				kind = 'audio';
-			} else if (item.kind == 43) {
-				kind = 'video';
-			} else {
-				this.openDocWithWeb(item);
-				return;
-			}
-
-			const files = this.fileList.filter(f => {
-				return f.kind === item.kind;
-			}).map(f => ({
-				id: f.id,
-				name: f.name,
-				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.id),
-				size: f.size || 0,
-			}));
-
-			const index = files.findIndex(f => f.id === item.id);
-			this.openNasFileWithApp(kind, files, index);
+			this.openDocWithWeb(url);
 		},
 		clearSelection() {
 			this.selectedItems = [];

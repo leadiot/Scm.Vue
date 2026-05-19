@@ -66,6 +66,13 @@ scm.getUrl = function (url) {
 	return config.SERVER_URL + url;
 };
 
+scm.getDataUrl = function (url) {
+	if (!url) {
+		return "";
+	}
+	return config.SERVER_URL + '/data' + url;
+};
+
 scm.getApiUrl = function (url) {
 	if (!url) {
 		return "";
