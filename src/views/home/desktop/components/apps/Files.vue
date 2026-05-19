@@ -123,7 +123,7 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.update_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.kind === 30 ? '目录' : '文件') }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.kind === 10 ? '目录' : '文件') }}</div>
 							<div class="col-size">{{ item.kind === 30 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
@@ -147,16 +147,16 @@
 
 		<!-- 右键菜单 -->
 		<div v-if="contextMenu.visible" class="context-menu" :style="contextMenu.style" @click.self="hideContextMenu">
-			<div class="context-item" @click="openDocFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
+			<div class="context-item" @click="openDocFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 10">
 				<sc-icon name="ms-open_in_new" :size="16" />
 				<span>打开</span>
 			</div>
-			<div class="context-item" @click="downloadFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
+			<div class="context-item" @click="downloadFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 10">
 				<sc-icon name="ms-download" :size="16" />
 				<span>下载</span>
 			</div>
-			<div class="context-item" @click="previewFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 30">
-				<sc-icon name="ms-eye" :size="16" />
+			<div class="context-item" @click="previewFromMenu" v-if="contextMenu.item && contextMenu.item.kind !== 10">
+				<sc-icon name="ms-remove_red_eye" :size="16" />
 				<span>预览</span>
 			</div>
 			<div class="context-divider" v-if="contextMenu.item"></div>
@@ -236,6 +236,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import tool from '@/utils/tool.js';
 
 export default {
 	name: 'Files',
@@ -324,7 +325,7 @@ export default {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
 		},
 		getFileIcon(item) {
-			if (item.kind === 30) {
+			if (item.kind === 10) {
 				return 'ms-folder';
 			}
 
@@ -376,7 +377,7 @@ export default {
 		},
 		handleItemDblClick(item) {
 			this.hideContextMenu();
-			if (item.kind === 30) {
+			if (item.kind === 10) {
 				this.openDir(item);
 			} else {
 				this.openDoc(item);
@@ -395,20 +396,24 @@ export default {
 			this.contextMenu.item = null;
 		},
 		openDocFromMenu() {
+			const item = this.contextMenu.item;
 			this.hideContextMenu();
-			this.openDoc(this.contextMenu.item);
+			this.openDoc(item);
 		},
 		downloadFromMenu() {
+			const item = this.contextMenu.item;
 			this.hideContextMenu();
-			this.downloadFile(this.contextMenu.item);
+			this.downloadFile(item);
 		},
 		previewFromMenu() {
+			const item = this.contextMenu.item;
 			this.hideContextMenu();
-			this.previewFile(this.contextMenu.item);
+			this.previewFile(item);
 		},
 		deleteFromMenu() {
+			const item = this.contextMenu.item;
 			this.hideContextMenu();
-			this.deleteFile(this.contextMenu.item);
+			this.deleteFile(item);
 		},
 		async openFolder(folder) {
 			this.currentPath = [];
@@ -436,9 +441,9 @@ export default {
 			return data.map(item => ({
 				...item,
 				id: item.name,
-				type: item.kind === 30 ? 10 : 0,
+				type: item.kind === 10 ? 10 : 0,
 				size: parseInt(item.length) || 0,
-				typeLabel: item.kind === 30 ? '目录' : '文件',
+				typeLabel: item.kind === 10 ? '目录' : '文件',
 				lastModified: item.lastWriteTime
 			}));
 		},
@@ -672,21 +677,9 @@ export default {
 				return;
 			}
 
-			const url = this.$SCM.getApiUrl('/scm/sys/file/view?file=' + encodeURIComponent(fileItem.uri));
+			const url = this.$SCM.getDataUrl(fileItem.uri);
 			try {
-				const response = await fetch(url);
-				if (!response.ok) {
-					throw new Error('下载失败');
-				}
-				const blob = await response.blob();
-				const downloadUrl = window.URL.createObjectURL(blob);
-				const link = document.createElement('a');
-				link.href = downloadUrl;
-				link.download = fileItem.name;
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-				window.URL.revokeObjectURL(downloadUrl);
+				await tool.downloadFile(url, fileItem.name);
 			} catch (error) {
 				this.$message.error('下载失败');
 			}
@@ -754,22 +747,22 @@ export default {
 			}).catch(() => { });
 		},
 		async previewFile(item) {
-			if (!item || item.kind === 30) {
+			if (!item) {
 				return;
 			}
 
+			var uri = this.$SCM.getDataUrl(item.uri);
 			const ext = item.name.split('.').pop().toLowerCase();
 			const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
 			const textExts = ['txt', 'md', 'json', 'xml', 'js', 'css', 'html'];
 
 			if (imageExts.includes(ext)) {
-				this.previewImages = [this.$SCM.getApiUrl('/Nas/Vs/' + item.id)];
+				this.previewImages = [uri];
 				this.imageViewerVisible = true;
 			} else if (textExts.includes(ext)) {
 				this.currentPreviewFile = item;
-				const url = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
 				try {
-					const response = await fetch(url);
+					const response = await fetch(uri);
 					this.previewText = await response.text();
 					this.textViewerVisible = true;
 				} catch (error) {

@@ -659,4 +659,29 @@ tool.showTitle = function (data) {
 	setInterval(notify, 300);
 };
 
+tool.downloadFile = async function (url, fileName) {
+	if (!url || !fileName) {
+		return;
+	}
+
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = fileName;
+	a.click();
+
+	// const response = await fetch(url);
+	// if (!response.ok) {
+	// 	throw new Error('下载失败');
+	// }
+	// const blob = await response.blob();
+	// const downloadUrl = window.URL.createObjectURL(blob);
+	// const link = document.createElement('a');
+	// link.href = downloadUrl;
+	// link.download = fileName;
+	// document.body.appendChild(link);
+	// link.click();
+	// document.body.removeChild(link);
+	// window.URL.revokeObjectURL(downloadUrl);
+};
+
 export default tool;

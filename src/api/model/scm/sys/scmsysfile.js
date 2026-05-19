@@ -29,6 +29,27 @@ export default {
 			return await http.post(this.url, data, config);
 		},
 	},
+	addFile: {
+		url: `${config.API_URL}/scmsysfile/file`,
+		name: "添加文件",
+		post: async function (params) {
+			return await http.post(this.url + "?path=" + params);
+		},
+	},
+	addFolder: {
+		url: `${config.API_URL}/scmsysfile/folder`,
+		name: "添加目录",
+		post: async function (params) {
+			return await http.post(this.url + "?path=" + params);
+		},
+	},
+	delFile: {
+		url: `${config.API_URL}/scmsysfile/file`,
+		name: "删除文件",
+		delete: async function (params) {
+			return await http.delete(this.url + "?path=" + params);
+		},
+	},
 	delFile: {
 		url: `${config.API_URL}/scmsysfile/file`,
 		name: "删除文件",
