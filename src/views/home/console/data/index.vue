@@ -1,24 +1,24 @@
 <template>
     <el-main>
-        <el-row :gutter="15">
+        <el-row :gutter="16" style="margin-bottom: 24px">
             <el-col :lg="6">
                 <myCard :title="summary0.title" :tooltip="summary0.tooltip" :number="summary0.value"
-                    :rate="summary0.rate">
+                    :rate="summary0.rate" :index="0">
                 </myCard>
             </el-col>
             <el-col :lg="6">
                 <myCard :title="summary1.title" :tooltip="summary1.tooltip" :number="summary1.value"
-                    :rate="summary1.rate">
+                    :rate="summary1.rate" :index="1">
                 </myCard>
             </el-col>
             <el-col :lg="6">
                 <myCard :title="summary2.title" :tooltip="summary2.tooltip" :number="summary2.value"
-                    :rate="summary2.rate">
+                    :rate="summary2.rate" :index="2">
                 </myCard>
             </el-col>
             <el-col :lg="6">
                 <myCard :title="summary3.title" :tooltip="summary3.tooltip" :number="summary3.value"
-                    :rate="summary3.rate">
+                    :rate="summary3.rate" :index="3">
                 </myCard>
             </el-col>
         </el-row>

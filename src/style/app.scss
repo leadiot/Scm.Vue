@@ -289,3 +289,128 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
 .shadow-base { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
 .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
 .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+
+/* Element Plus 卡片样式优化 */
+.el-card {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: all var(--transition-base);
+}
+
+.el-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.el-card__header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-gray-200);
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+.el-card__body {
+    padding: 20px;
+}
+
+/* Element Plus 按钮样式优化 */
+.el-button {
+    border-radius: var(--radius-base);
+    font-weight: 500;
+    transition: all var(--transition-base);
+}
+
+.el-button--primary {
+    // background: var(--gradient-primary);
+    border: none;
+}
+
+.el-button--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.el-button--success {
+    // background: var(--gradient-success);
+    border: none;
+}
+
+.el-button--success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+}
+
+.el-button--warning {
+    // background: var(--gradient-warning);
+    border: none;
+    color: white;
+}
+
+.el-button--warning:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+    color: white;
+}
+
+/* Element Plus 表格样式优化 */
+.el-table {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.el-table th.el-table__cell {
+    background-color: var(--color-gray-50);
+    font-weight: 600;
+    color: var(--color-gray-700);
+}
+
+.el-table tr:hover > td {
+    background-color: var(--color-gray-50) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+    background-color: var(--color-gray-50);
+}
+
+/* Element Plus 标签页样式优化 */
+.el-tabs__item {
+    font-weight: 500;
+    transition: all var(--transition-base);
+}
+
+.el-tabs__item.is-active {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.el-tabs__active-bar {
+    background: var(--gradient-primary);
+    height: 3px;
+}
+
+/* Element Plus 输入框样式优化 */
+.el-input__wrapper {
+    border-radius: var(--radius-base);
+    transition: all var(--transition-base);
+}
+
+.el-input__wrapper:hover {
+    box-shadow: 0 0 0 1px var(--color-primary) inset;
+}
+
+.el-input__wrapper.is-focus {
+    box-shadow: 0 0 0 1px var(--color-primary) inset;
+}
+
+/* 空间间距优化 */
+.el-main {
+    padding: 20px;
+}
+
+.el-row {
+    margin-bottom: 16px;
+}
+
+.el-row:last-child {
+    margin-bottom: 0;
+}
