@@ -135,3 +135,80 @@
         transform: scale(2);
     }
 }
+
+/* ========== 新增动画 ========== */
+
+/* 旋转动画 */
+@keyframes rotateAlong360 {
+    100% { transform: rotate(360deg); }
+}
+@keyframes rotateAgainst360 {
+    100% { transform: rotate(-360deg); }
+}
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 淡入淡出动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* 滑动动画 */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* 缩放动画 */
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 弹跳动画 */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 动画工具类 */
+.animate-fadeIn { animation: fadeIn var(--transition-base) ease-out; }
+.animate-slideInUp { animation: slideInUp var(--transition-base) ease-out; }
+.animate-slideInDown { animation: slideInDown var(--transition-base) ease-out; }
+.animate-slideInLeft { animation: slideInLeft var(--transition-base) ease-out; }
+.animate-slideInRight { animation: slideInRight var(--transition-base) ease-out; }
+.animate-scaleIn { animation: scaleIn var(--transition-base) ease-out; }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-bounce { animation: bounce 1s ease-in-out infinite; }
+
+/* 过渡工具类 */
+.transition-all { transition: all var(--transition-base); }
+.transition-opacity { transition: opacity var(--transition-base); }
+.transition-transform { transition: transform var(--transition-base); }
+.transition-colors { transition: color var(--transition-base), background-color var(--transition-base), border-color var(--transition-base); }
+.transition-shadow { transition: box-shadow var(--transition-base); }
