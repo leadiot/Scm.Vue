@@ -14,9 +14,33 @@
 				<div class="el-form-item-msg">{{ $t('user.language_msg') }}</div>
 			</el-form-item>
 			<el-divider></el-divider>
-			<el-form-item label="主题颜色">
-				<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
-			</el-form-item>
+		
+		<el-form-item label="主题选择">
+			<el-select v-model="colorPrimary" placeholder="请选择主题">
+				<el-option 
+					v-for="(theme, index) in themeList" 
+					:key="index"
+					:label="theme.name"
+					:value="theme.color"
+				>
+					<span style="display: inline-flex; align-items: center; gap: 8px;">
+						<span 
+							:style="{ 
+								width: '20px', 
+								height: '20px', 
+								borderRadius: '4px', 
+								background: theme.gradient 
+							}"
+						></span>
+						{{ theme.name }}
+					</span>
+				</el-option>
+			</el-select>
+		</el-form-item>
+		
+		<el-form-item label="自定义颜色">
+			<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
+		</el-form-item>
 			<el-divider></el-divider>
 			<el-form-item label="首页布局">
 				<el-select v-model="home" placeholder="请选择" @change="handleChangeHome">
@@ -63,8 +87,17 @@ export default {
 			dark: this.$TOOL.data.get('APP_THEME') == 'dark',
 			home: this.$CONFIG.HOME,
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
+			themeList: this.$CONFIG.PREDEFINE_THEMES || [
+				{ name: '经典蓝', color: '#409eff', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+				{ name: '中国红', color: '#c41e3a', gradient: 'linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)' },
+				{ name: '翡翠绿', color: '#52c41a', gradient: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)' },
+			],
 			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF'
 		}
+	},
+	mounted() {
+		this.init();
+		this.applyColor(this.colorPrimary)
 	},
 	watch: {
 		consoleLayout(val) {
@@ -90,18 +123,8 @@ export default {
 			this.$TOOL.data.set("APP_LANG", val);
 		},
 		colorPrimary(val) {
-			document.documentElement.style.setProperty('--el-color-primary', val);
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, colorTool.lighten(val, i / 10));
-			}
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, colorTool.darken(val, i / 10));
-			}
-			this.$TOOL.data.set("APP_COLOR", val);
+			this.applyColor(val);
 		}
-	},
-	mounted() {
-		this.init();
 	},
 	methods: {
 		async init() {
@@ -111,6 +134,16 @@ export default {
 			var cfgs = [{ key: "app_home", value: this.home }];
 			await this.$SCM.save_cfg(cfgs);
 		},
+		applyColor(val) {
+			document.documentElement.style.setProperty('--el-color-primary', val);
+			for (let i = 1; i <= 9; i++) {
+				document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, colorTool.lighten(val, i / 10));
+			}
+			for (let i = 1; i <= 9; i++) {
+				document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, colorTool.darken(val, i / 10));
+			}
+			this.$TOOL.data.set("APP_COLOR", val);
+		}
 	},
 }
 </script>

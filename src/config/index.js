@@ -120,8 +120,32 @@ const DEFAULT_CONFIG = {
 	// 是否开启用户注册
 	USER_REGISTER_ENABLED: false,
 
+	// 系统预定义主题
+	PREDEFINE_THEMES: [
+		{ name: "经典蓝", color: "#409eff", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+		{ name: "中国蓝", color: "#0066cc", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)" },
+		{ name: "科技蓝", color: "#00bfff", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)" },
+		{ name: "中国红", color: "#c41e3a", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)" },
+		{ name: "中国紫", color: "#722ed1", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)" },
+		{ name: "翡翠绿", color: "#52c41a", gradient: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)" },
+		{ name: "日落橙", color: "#fa8c16", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)" },
+		{ name: "樱花粉", color: "#eb2f96", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)" },
+		{ name: "深空灰", color: "#595959", gradient: "linear-gradient(135deg, #595959 0%, #434343 100%)" },
+		{ name: "暗夜黑", color: "#1f1f1f", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)" },
+	],
+
 	// 系统预定义颜色列表，可以根据需要修改
 	PREDEFINE_COLORS: [
+		"#409eff",
+		"#0066cc",
+		"#00bfff",
+		"#c41e3a",
+		"#722ed1",
+		"#52c41a",
+		"#fa8c16",
+		"#eb2f96",
+		"#595959",
+		"#1f1f1f",
 		"#ffffff",
 		"#cccccc",
 		"#999999",
@@ -138,7 +162,6 @@ const DEFAULT_CONFIG = {
 		"#00ced1",
 		"#009688",
 		"#1e90ff",
-		"#409eff",
 		"#536dfe",
 		"#0000ff",
 		"#c71585",
