@@ -9,7 +9,7 @@
 			<el-form-item label="组织名称" prop="namec">
 				<el-input v-model="formData.namec" placeholder="请输入组织名称" clearable></el-input>
 			</el-form-item>
-			<el-form-item label="组织编码">
+			<el-form-item label="组织编码" prop="codec">
 				<el-input v-model="formData.codec" placeholder="请输入组织编码" clearable></el-input>
 			</el-form-item>
 			<el-form-item label="排序" prop="od" required>
@@ -39,6 +39,9 @@ export default {
 				// pid: [
 				// 	{ required: true, trigger: "change", pattern: this.$SCM.REGEX_ID, message: "请选择所属组织", },
 				// ],
+				codec: [
+					{ required: true, trigger: "blur", message: "请输入组织编码", },
+				],
 				namec: [
 					{ required: true, trigger: "blur", message: "请输入组织名称", },
 				],
@@ -55,14 +58,15 @@ export default {
 		def_data() {
 			return {
 				id: this.$SCM.DEF_ID,
-				pid: undefined,
+				pid: '0',
+				codec: "",
 				namec: "",
 				od: 1,
 			}
 		},
 		async initTree() {
 			const t = await this.$API.scmurorganize.list.get();
-			let _tree = [{ id: "1", value: "0", label: "（默认）", parentId: "0" }];
+			let _tree = [{ id: this.$SCM.SYS_ID, value: "0", label: "（默认）", parentId: "0" }];
 			t.data.some((m) => {
 				_tree.push({
 					id: m.id,

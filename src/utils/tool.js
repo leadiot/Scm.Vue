@@ -430,6 +430,31 @@ tool.changeTree = function (data, pid) {
 	return data.filter((item) => item.parentId == pid);
 };
 
+tool.changeTree2 = function (data, pid) {
+	if (!pid) {
+		pid = '0';
+	}
+	if (data.length > 0) {
+		data.forEach((item) => {
+			const pid = item.pid;
+			if (pid) {
+				data.forEach((ele) => {
+					if (ele.id === pid) {
+						let childArray = ele.children;
+						if (!childArray) {
+							childArray = [];
+						}
+
+						childArray.push(item);
+						ele.children = childArray;
+					}
+				});
+			}
+		});
+	}
+	return data.filter((item) => item.pid == pid);
+};
+
 tool.uuid = function (length = 32) {
 	const num = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	let str = "";

@@ -2,8 +2,8 @@
 	<sc-dialog v-model="visible" show-fullscreen :title="titleMap[mode]" width="700px" @close="close">
 		<el-form ref="formRef" label-width="100px" :model="formData" :rules="rules">
 			<el-form-item label="上级群组" prop="pid">
-				<el-tree-select v-model="formData.pid" placeholder="请选择上级群组" :data="pid_list" collapse-tags check-strictly
-					default-expand-all />
+				<el-tree-select v-model="formData.pid" placeholder="请选择上级群组" :data="pid_list" collapse-tags
+					check-strictly default-expand-all />
 			</el-form-item>
 			<el-form-item label="群组编码" prop="codec">
 				<el-input v-model="formData.codec" clearable :maxlength="30" placeholder="请输入群组编码" show-word-limit />
@@ -38,6 +38,12 @@ export default {
 			rules: {
 				pid: [
 					{ required: true, trigger: "change", message: "请选择所属群组", },
+				],
+				codec: [
+					{ required: true, trigger: "blur", message: "请输入群组编码", },
+				],
+				namec: [
+					{ required: true, trigger: "blur", message: "请输入群组名称", },
 				],
 				namec: [
 					{ required: true, trigger: "blur", message: "请输入群组名称", },
