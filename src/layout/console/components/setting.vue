@@ -1,8 +1,5 @@
 <template>
 	<el-form ref="form" label-width="80px">
-		<el-form-item :label="$t('user.nightmode')">
-			<el-switch v-model="dark"></el-switch>
-		</el-form-item>
 		<el-form-item :label="$t('user.language')">
 			<el-select v-model="lang">
 				<el-option label="简体中文" value="zh-cn"></el-option>
@@ -10,6 +7,9 @@
 			</el-select>
 		</el-form-item>
 		<el-divider></el-divider>
+		<el-form-item :label="$t('user.nightmode')">
+			<el-switch v-model="dark"></el-switch>
+		</el-form-item>
 		<el-form-item label="主题选择">
 			<el-select v-model="currentThemeName" @change="onThemeChange" placeholder="请选择主题" style="width: 100%;">
 				<el-option-group label="预设主题">
@@ -42,12 +42,6 @@
 				<el-button v-if="currentTheme && currentTheme.isCustom" type="danger" size="small"
 					@click="deleteCurrentTheme">删除当前主题</el-button>
 			</div>
-		</el-form-item>
-		<el-form-item label="主色调">
-			<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
-		</el-form-item>
-		<el-form-item label="辅色调">
-			<el-color-picker v-model="colorSecondary" :predefine="colorList"></el-color-picker>
 		</el-form-item>
 		<el-divider></el-divider>
 		<el-form-item label="框架布局">
