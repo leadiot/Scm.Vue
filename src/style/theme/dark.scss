@@ -121,7 +121,18 @@
 	.scmui-header-menu .el-menu .el-sub-menu__title {height:59px;line-height: 59px;}
 	.scmui-side-split {background: $--background;}
 	.scmui-side-split li {color: $--text-color;}
-	.scmui-side-split li.active {color: #fff;}
+	.scmui-side-split li.active {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+	}
+	.scmui-side-split li.active::before {
+		background: $--color;
+	}
+	.scmui-side-split li.active i {
+		color: #fff;
+	}
 	.scmui-side {background: $--card-background;border-color: $--border-color;}
 	.scmui-side-top {border-color: $--border-color;}
 	.scmui-side-top h2 {color: $--text-color;}

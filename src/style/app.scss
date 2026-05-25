@@ -87,9 +87,24 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
     color: var(--el-color-primary);
 }
 .scmui-side-split li.active {
-    background: var(--color-secondary);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(var(--el-color-primary-rgb), 0.4);
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--el-color-primary);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    border: 1px solid rgba(var(--el-color-primary-rgb), 0.3);
+}
+.scmui-side-split li.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 3px;
+    background: var(--el-color-primary);
+    border-radius: 0 3px 3px 0;
+}
+.scmui-side-split li.active i {
+    color: var(--el-color-primary);
 }
 .scmui-side-split-scroll::-webkit-scrollbar-thumb {background-color: rgba(255, 255, 255, 0.4);border-radius:5px;}
 .scmui-side-split-scroll::-webkit-scrollbar-thumb:hover {background-color: rgba(255, 255, 255, 0.5);}

@@ -73,7 +73,16 @@
 .el-link {font-size: 13px;}
 .sc-dialog-p10 .el-dialog__body{padding:10px 20px !important;}
 
-.scmui-side-split li.active {background-color: var(--color-secondary);}
+.scmui-side-split li.active {
+	background-color: rgba(255, 255, 255, 0.95);
+	color: var(--el-color-primary);
+	border: 1px solid rgba(var(--el-color-primary-rgb), 0.3);
+}
+html.dark .scmui-side-split li.active {
+	background-color: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+}
 .scmui-tags li:hover {background-color: var(--el-color-primary-light-9);}
 .scmui-tags li.active {background-color: var(--el-color-primary)!important;}
 .contextmenu li:hover {background-color: var(--el-color-primary-light-9)!important;color: var(--el-color-primary-light-2)!important;}
