@@ -48,7 +48,7 @@ const routes = [
 	// 	id: '1006',
 	// 	name: 'console',
 	// 	path: "/console",
-	// 	component: () => import("@/views/home/index"),
+	// 	component: () => import("@/views/home/console"),
 	// 	meta: { title: "控制台", layout: "console" },
 	// 	children: [],
 	// },
