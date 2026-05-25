@@ -18,19 +18,9 @@
 	--el-color-primary-dark-7: #132f4c;
 	--el-color-primary-dark-8: #0c1f32;
 	--el-color-primary-dark-9: #060f19;
-	--el-bg-color-overlay: #fff;
-	--el-drawer-bg-color: #fff;
 }
 
 .el-menu {border: none!important;}
-
-// Element Plus drawer/dialog Light 模式背景
-.el-drawer {
-	--el-drawer-bg-color: #fff;
-}
-.el-dialog {
-	--el-dialog-bg-color: #fff;
-}
 .el-menu .el-menu-item a {color: inherit;text-decoration: none;display: block;width:100%;height:100%;position: absolute;top:0px;left:0px;}
 .el-form-item-msg {font-size: 12px;color: #999;clear: both;width: 100%;}
 .el-container {height: 100%;}
@@ -54,6 +44,7 @@
 .el-progress__text i {font-size: 14.4px!important;}
 .el-step.is-horizontal .el-step__line {height:1px;}
 .el-step__title {font-size: 14px;}
+.drawerBG {background: #f6f8f9;}
 .el-button+.el-dropdown {margin-left: 10px;}
 .el-button-group+.el-dropdown {margin-left: 10px;}
 .el-tag+.el-tag {margin-left: 10px;}
@@ -82,56 +73,9 @@
 .el-link {font-size: 13px;}
 .sc-dialog-p10 .el-dialog__body{padding:10px 20px !important;}
 
-/* Element Plus Dropdown/Popper 背景修复 - 确保不透明 */
-.el-dropdown__popper,
-.el-dropdown__popper.el-popper,
-.el-dropdown-menu,
-.el-popper.is-light {
-	background: #fff !important;
-}
-.el-dropdown-menu__item--divided:before,
-.el-popper.is-light .el-popper__arrow::before {
-	background: #fff !important;
-}
-
-html.dark .el-dropdown__popper,
-html.dark .el-dropdown__popper.el-popper,
-html.dark .el-dropdown-menu,
-html.dark .el-popper.is-light {
-	background: #1f1f1f !important;
-}
-html.dark .el-dropdown-menu__item--divided:before,
-html.dark .el-popper.is-light .el-popper__arrow::before {
-	background: #1f1f1f !important;
-}
-
-.scmui-side-split li.active {
-	background-color: rgba(255, 255, 255, 0.95);
-	color: var(--el-color-primary);
-	border: 1px solid rgba(var(--el-color-primary-rgb), 0.3);
-}
-html.dark .scmui-side-split li.active {
-	background-color: rgba(255, 255, 255, 0.12);
-	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.15);
-}
+.scmui-side-split li.active {background-color: var(--el-color-primary);}
 .scmui-tags li:hover {background-color: var(--el-color-primary-light-9);}
 .scmui-tags li.active {background-color: var(--el-color-primary)!important;}
 .contextmenu li:hover {background-color: var(--el-color-primary-light-9)!important;color: var(--el-color-primary-light-2)!important;}
 .data-box .item-background {background-color: var(--el-color-primary)!important;}
 .layout-setting,.diy-grid-setting {background-color: var(--el-color-primary)!important;}
-
-/* Element Plus 输入框/文本域边框修复 */
-.el-input__wrapper {box-shadow: 0 0 0 1px #dcdfe6 inset !important;}
-.el-input__wrapper:hover {box-shadow: 0 0 0 1px #c0c4cc inset !important;}
-.el-input__wrapper.is-focus,
-.el-input__wrapper:focus-within {box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;}
-.el-textarea__inner {border: 1px solid #dcdfe6 !important;}
-.el-textarea__inner:hover {border-color: #c0c4cc !important;}
-.el-textarea__inner:focus {border-color: var(--el-color-primary) !important;}
-
-/* Dark 模式输入框边框 */
-html.dark .el-input__wrapper {box-shadow: 0 0 0 1px #4c4d4f inset !important;}
-html.dark .el-input__wrapper:hover {box-shadow: 0 0 0 1px #6c6e75 inset !important;}
-html.dark .el-textarea__inner {border-color: #4c4d4f !important;}
-html.dark .el-textarea__inner:hover {border-color: #6c6e75 !important;}

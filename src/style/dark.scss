@@ -25,7 +25,8 @@ html.dark {
 	.scmui-side-top h2 {color: var(--el-text-color-primary);}
 	.scmui-topbar, .scmui-tags {background: var(--el-bg-color-overlay);border-color: var(--el-border-color-light);}
 	.scmui-main {background: var(--el-bg-color);}
-		.scmui-header-menu .el-menu {--el-menu-bg-color:var(--el-bg-color-overlay) !important;--el-menu-hover-bg-color: #171819 !important;}
+	.drawerBG {background: var(--el-bg-color);}
+	.scmui-header-menu .el-menu {--el-menu-bg-color:var(--el-bg-color-overlay) !important;--el-menu-hover-bg-color: #171819 !important;}
 
 	//组件
 	.el-header, .el-main.nopadding, .el-footer {background: var(--el-bg-color-overlay);border-color: var(--el-border-color-light);}
@@ -34,17 +35,10 @@ html.dark {
 	.el-table .el-table__body-wrapper {background: var(--el-bg-color);}
 	.el-table th.is-sortable:hover {background: #111;}
 
-	// Element Plus drawer/dialog 背景修复（支持 append-to-body）
-	.el-drawer {
-		--el-drawer-bg-color: #2b2b2b;
-	}
-	.el-dialog {
-		--el-dialog-bg-color: #2b2b2b;
-	}
-
 	// cur
 	.sc-file-select__item,.user-else-info,.select-img .bg-gray
 	,.tabs-pages .is-active .custom-tabs-label,.footer-btn{background: #2f2f2f;}
 	.select-img{border: 1px solid #666363;}
 	.footer-btn{border-top: 1px solid #555657;}
+
 }
