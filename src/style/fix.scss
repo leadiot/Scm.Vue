@@ -46,7 +46,6 @@
 .el-progress__text i {font-size: 14.4px!important;}
 .el-step.is-horizontal .el-step__line {height:1px;}
 .el-step__title {font-size: 14px;}
-.drawerBG {background: #f6f8f9;}
 .el-button+.el-dropdown {margin-left: 10px;}
 .el-button-group+.el-dropdown {margin-left: 10px;}
 .el-tag+.el-tag {margin-left: 10px;}
@@ -74,10 +73,6 @@
 .el-sub-menu .el-sub-menu__icon-arrow {font-size: 13px;}
 .el-link {font-size: 13px;}
 .sc-dialog-p10 .el-dialog__body{padding:10px 20px !important;}
-
-/* Element Plus Drawer 背景修复 */
-.el-drawer {background-color: #fff !important;}
-html.dark .el-drawer {background-color: #1f1f1f !important;}
 
 /* Element Plus Dropdown/Popper 背景修复 - 确保不透明 */
 .el-dropdown__popper,

@@ -85,7 +85,7 @@
 	.el-dialog {
 		--el-dialog-bg-color: #2b2b2b;
 	}
-	.el-drawer {
+		.el-drawer {
 		--el-drawer-bg-color: #2b2b2b;
 	}
 	.el-table {
@@ -144,8 +144,7 @@
 	.scmui-tags li::after {display: none;}
 	.scmui-tags li:hover {background: $--background-translucent;}
 	.scmui-tags li.active {background: $--color;}
-	.drawerBG {background: $--background;}
-
+	
 	.el-card {background: $--card-background;border-color: $--card-background;color: $--text-color;}
 	.el-card__header {color: $--text-color;}
 

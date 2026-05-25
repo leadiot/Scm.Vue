@@ -17,37 +17,6 @@
 			<el-badge :hidden="msgList.length == 0" :value="msgList.length" class="badge" type="danger">
 				<sc-icon name="sc-message-2-line" />
 			</el-badge>
-			<el-drawer title="新消息" v-model="msgVisible" :size="400" append-to-body destroy-on-close>
-				<el-container>
-					<el-main class="nopadding">
-						<el-scrollbar>
-							<ul class="msg-list">
-								<li v-for="item in msgList" v-bind:key="item.id">
-									<a :href="item.link" target="_blank">
-										<div class="msg-list__icon">
-											<el-badge is-dot type="danger">
-												<el-avatar :size="40" :src="item.avatar"></el-avatar>
-											</el-badge>
-										</div>
-										<div class="msg-list__main">
-											<h2>{{ item.title }}</h2>
-											<p>{{ item.remark }}</p>
-										</div>
-										<div class="msg-list__time">
-											<p>{{ getTime(item.create_time) }}</p>
-										</div>
-									</a>
-								</li>
-								<el-empty v-if="msgList.length == 0" description="暂无新消息" :image-size="100"></el-empty>
-							</ul>
-						</el-scrollbar>
-					</el-main>
-					<el-footer>
-						<el-button type="primary" @click="goMessage">消息中心</el-button>
-						<el-button @click="markRead">全部设为已读</el-button>
-					</el-footer>
-				</el-container>
-			</el-drawer>
 		</div>
 		<el-divider direction="vertical"></el-divider>
 		<el-dropdown class="user panel-item" trigger="click" @command="handleUser">
@@ -67,12 +36,44 @@
 		</el-dropdown>
 	</div>
 
-	<el-dialog v-model="searchVisible" :width="700" title="搜索" class="drawerBG" center destroy-on-close>
+	<el-dialog v-model="searchVisible" :width="700" title="搜索" center append-to-body destroy-on-close>
 		<search @success="searchVisible = false"></search>
 	</el-dialog>
 
-	<el-drawer v-model="tasksVisible" :size="450" title="任务中心" class="drawerBG" destroy-on-close>
+	<el-drawer v-model="tasksVisible" :size="450" title="任务中心" append-to-body destroy-on-close>
 		<tasks></tasks>
+	</el-drawer>
+
+	<el-drawer title="新消息" v-model="msgVisible" :size="400" append-to-body destroy-on-close>
+		<el-container>
+			<el-main class="nopadding">
+				<el-scrollbar>
+					<ul class="msg-list">
+						<li v-for="item in msgList" v-bind:key="item.id">
+							<a :href="item.link" target="_blank">
+								<div class="msg-list__icon">
+									<el-badge is-dot type="danger">
+										<el-avatar :size="40" :src="item.avatar"></el-avatar>
+									</el-badge>
+								</div>
+								<div class="msg-list__main">
+									<h2>{{ item.title }}</h2>
+									<p>{{ item.remark }}</p>
+								</div>
+								<div class="msg-list__time">
+									<p>{{ getTime(item.create_time) }}</p>
+								</div>
+							</a>
+						</li>
+						<el-empty v-if="msgList.length == 0" description="暂无新消息" :image-size="100"></el-empty>
+					</ul>
+				</el-scrollbar>
+			</el-main>
+			<el-footer>
+				<el-button type="primary" @click="goMessage">消息中心</el-button>
+				<el-button @click="markRead">全部设为已读</el-button>
+			</el-footer>
+		</el-container>
 	</el-drawer>
 </template>
 
