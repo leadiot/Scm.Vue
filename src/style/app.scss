@@ -273,9 +273,9 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
 	--color-gray-800: #1F2937;
 	--color-gray-900: #111827;
 	/* 渐变 - 使用主题色动态生成 */
-	--gradient-primary: linear-gradient(135deg, var(--el-color-primary-light-6, #667eea) 0%, var(--el-color-primary, #764ba2) 100%);
-	--gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-	--gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	--gradient-primary: linear-gradient(135deg, var(--el-color-primary-light-3) 0%, var(--el-color-primary) 100%);
+	--gradient-success: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+	--gradient-warning: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
 	--font-size-xs: 12px;
 	--font-size-sm: 14px;
 	--font-size-base: 16px;

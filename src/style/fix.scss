@@ -73,6 +73,58 @@
 .el-link {font-size: 13px;}
 .sc-dialog-p10 .el-dialog__body{padding:10px 20px !important;}
 
+/* Element Plus Dropdown/Popper 背景修复 - 确保不透明 */
+.el-dropdown__popper,
+.el-dropdown__popper.el-popper,
+.el-dropdown-menu,
+.el-popper.is-light {
+	background: #fff !important;
+}
+.el-dropdown-menu__item--divided:before,
+.el-popper.is-light .el-popper__arrow::before {
+	background: #fff !important;
+}
+
+html.dark .el-dropdown__popper,
+html.dark .el-dropdown__popper.el-popper,
+html.dark .el-dropdown-menu,
+html.dark .el-popper.is-light {
+	background: #1f1f1f !important;
+}
+html.dark .el-dropdown-menu__item--divided:before,
+html.dark .el-popper.is-light .el-popper__arrow::before {
+	background: #1f1f1f !important;
+}
+
+/* Element Plus 按钮渐变优化 - 确保文字清晰可见 */
+.el-button--primary {
+	background: linear-gradient(135deg, var(--el-color-primary-light-3) 0%, var(--el-color-primary) 100%) !important;
+	color: #fff !important;
+	border: none !important;
+}
+.el-button--primary:hover,
+.el-button--primary:focus {
+	color: #fff !important;
+}
+.el-button--success {
+	background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+	color: #fff !important;
+	border: none !important;
+}
+.el-button--success:hover,
+.el-button--success:focus {
+	color: #fff !important;
+}
+.el-button--warning {
+	background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+	color: #fff !important;
+	border: none !important;
+}
+.el-button--warning:hover,
+.el-button--warning:focus {
+	color: #fff !important;
+}
+
 .scmui-side-split li.active {
 	background-color: rgba(255, 255, 255, 0.95);
 	color: var(--el-color-primary);
