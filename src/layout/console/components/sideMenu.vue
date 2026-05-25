@@ -132,7 +132,7 @@ export default {
 	z-index: 10;
 	width: 50px;
 	height: 50px;
-	background: #409EFF;
+	background: var(--color-primary);
 	box-shadow: 0 2px 12px 0 rgba(64, 158, 255, 1);
 	border-radius: 50%;
 	display: flex;
@@ -141,12 +141,12 @@ export default {
 }
 
 .mobile-nav-button i {
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 	font-size: 20px;
 }
 
 .mobile-nav {
-	background: #212d3d;
+	background: var(--color-surface, #212d3d);
 }
 
 .mobile-nav .el-header {
@@ -163,7 +163,7 @@ export default {
 	align-items: center;
 	font-weight: bold;
 	font-size: 20px;
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 }
 
 .mobile-nav .logo-bar img {
@@ -172,6 +172,6 @@ export default {
 }
 
 .mobile-nav .el-submenu__title:hover {
-	background: #fff !important;
+	background: var(--color-surface) !important;
 }
 </style>

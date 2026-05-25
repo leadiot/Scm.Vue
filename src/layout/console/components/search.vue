@@ -207,7 +207,7 @@ export default {
 .sc-search-no-result {
 	text-align: center;
 	margin: 40px 0;
-	color: #999;
+	color: var(--el-text-color-secondary);
 }
 
 .sc-search-history {
@@ -224,7 +224,7 @@ export default {
 
 .sc-search-result .active {
 	background: var(--el-color-primary);
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 	border-color: var(--el-color-primary);
 }
 
@@ -249,7 +249,7 @@ export default {
 
 .sc-search-result li:hover {
 	background: var(--el-color-primary);
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 	border-color: var(--el-color-primary);
 }
 

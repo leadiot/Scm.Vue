@@ -341,7 +341,7 @@ export default {
 	cursor: pointer;
 	line-height: 30px;
 	padding: 0 17px;
-	color: #606266;
+	color: var(--el-text-color-regular);
 }
 
 .contextmenu li i {
@@ -350,13 +350,13 @@ export default {
 }
 
 .contextmenu li:hover {
-	background-color: #ecf5ff;
-	color: #66b1ff;
+	background-color: var(--el-color-primary-light-9);
+	color: var(--el-color-primary-light-3);
 }
 
 .contextmenu li.disabled {
 	cursor: not-allowed;
-	color: #bbb;
+	color: var(--el-text-color-placeholder);
 	background: transparent;
 }
 

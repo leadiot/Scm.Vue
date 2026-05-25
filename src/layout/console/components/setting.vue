@@ -20,7 +20,7 @@
 								:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
 							</div>
 							<span>{{ theme.name }}</span>
-							<span v-if="theme.description" style="color: #909399; font-size: 12px;">({{ theme.description
+							<span v-if="theme.description" class="theme-desc">({{ theme.description
 							}})</span>
 						</div>
 					</el-option>
@@ -236,3 +236,10 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+.theme-desc {
+	color: var(--color-secondary);
+	font-size: 12px;
+}
+</style>

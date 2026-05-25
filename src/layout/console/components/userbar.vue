@@ -282,7 +282,7 @@ export default {
 }
 
 .msg-list li a:hover {
-	background: #ecf5ff;
+	background: var(--el-color-primary-light-9);
 }
 
 .msg-list__icon {
@@ -297,12 +297,12 @@ export default {
 .msg-list__main h2 {
 	font-size: 15px;
 	font-weight: normal;
-	color: #333;
+	color: var(--el-text-color-primary);
 }
 
 .msg-list__main p {
 	font-size: 12px;
-	color: #999;
+	color: var(--el-text-color-secondary);
 	line-height: 1.8;
 	margin-top: 5px;
 }
@@ -310,19 +310,19 @@ export default {
 .msg-list__time {
 	width: 100px;
 	text-align: right;
-	color: #999;
+	color: var(--el-text-color-secondary);
 }
 
 .dark .msg-list__main h2 {
-	color: #d0d0d0;
+	color: var(--el-text-color-regular);
 }
 
 .dark .msg-list li {
-	border-top: 1px solid #363636;
+	border-top: 1px solid var(--el-border-color);
 }
 
 .dark .msg-list li a:hover {
-	background: #383838;
+	background: var(--el-bg-color-base);
 }
 
 .ver-alert {

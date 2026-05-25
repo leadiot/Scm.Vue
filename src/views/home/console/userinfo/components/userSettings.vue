@@ -33,7 +33,7 @@
 							}"
 						></span>
 						{{ theme.name }}
-						<span v-if="theme.description" style="color: #909399; font-size: 12px;">{{ theme.description }}</span>
+						<span v-if="theme.description" class="theme-desc">{{ theme.description }}</span>
 					</span>
 				</el-option>
 			</el-select>
@@ -128,3 +128,10 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.theme-desc {
+	color: var(--color-secondary);
+	font-size: 12px;
+}
+</style>

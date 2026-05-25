@@ -5,7 +5,7 @@
 				<template #description>
 					<h2>没有正在执行的任务</h2>
 				</template>
-				<p style="font-size: 14px;color: #999;line-height: 1.5;margin: 0 40px;">
+				<p class="task-tip">
 					在处理耗时过久的任务时为了不阻碍正在处理的工作，可在任务中心进行异步执行。
 				</p>
 			</el-empty>
@@ -125,7 +125,7 @@ export default {
 
 .user-bar-tasks-item-body .title p {
 	font-size: 12px;
-	color: #999;
+	color: var(--el-text-color-secondary);
 	margin-top: 5px;
 }
 
@@ -134,5 +134,11 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding-top: 20px;
+}
+.task-tip {
+	font-size: 14px;
+	color: var(--el-text-color-secondary);
+	line-height: 1.5;
+	margin: 0 40px;
 }
 </style>

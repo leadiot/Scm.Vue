@@ -144,7 +144,7 @@
 }
 
 .drawerBG {
-	background: #f6f8f9;
+	background: var(--color-background, #f6f8f9);
 }
 
 .el-button+.el-dropdown {
@@ -187,11 +187,11 @@
 }
 
 .el-table th.is-sortable:hover {
-	background: #eee;
+	background: var(--el-fill-color-light);
 }
 
 .el-table .el-table__body-wrapper {
-	background: #f6f8f9;
+	background: var(--color-background, #f6f8f9);
 }
 
 .el-table .el-button--small {

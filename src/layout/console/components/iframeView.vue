@@ -60,6 +60,6 @@
 </script>
 
 <style scoped>
-	.iframe-pages {width:100%;height:100%;background: #fff;}
+	.iframe-pages {width:100%;height:100%;background: var(--color-surface);}
 	iframe {border:0;width:100%;height:100%;display: block;}
 </style>

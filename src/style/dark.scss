@@ -65,7 +65,7 @@ html.dark {
 
 	.scmui-header-menu .el-menu {
 		--el-menu-bg-color: var(--el-bg-color-overlay) !important;
-		--el-menu-hover-bg-color: #171819 !important;
+		--el-menu-hover-bg-color: rgba(255, 255, 255, 0.08) !important;
 	}
 
 	//组件
@@ -90,7 +90,7 @@ html.dark {
 	}
 
 	.el-table th.is-sortable:hover {
-		background: #111;
+		background: var(--el-fill-color-light);
 	}
 
 	// cur
@@ -99,15 +99,15 @@ html.dark {
 	.select-img .bg-gray,
 	.tabs-pages .is-active .custom-tabs-label,
 	.footer-btn {
-		background: #2f2f2f;
+		background: var(--el-bg-color-overlay);
 	}
 
 	.select-img {
-		border: 1px solid #666363;
+		border: 1px solid var(--el-border-color);
 	}
 
 	.footer-btn {
-		border-top: 1px solid #555657;
+		border-top: 1px solid var(--el-border-color);
 	}
 
 }
