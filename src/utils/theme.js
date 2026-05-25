@@ -15,7 +15,7 @@ import tool from './tool'
 const STORAGE_KEYS = {
 	PRIMARY_COLOR: 'APP_COLOR',
 	SECONDARY_COLOR: 'APP_COLOR_SECONDARY',
-	THEME_MODE: 'APP_THEME',
+	THEME_MODE: 'APP_THEME_MODE',
 	THEME_NAME: 'APP_THEME_NAME',
 	CUSTOM_THEMES: 'APP_CUSTOM_THEMES',
 	CURRENT_THEME: 'APP_CURRENT_THEME'
@@ -178,7 +178,7 @@ export function setPrimaryColor(color) {
 	root.style.setProperty('--color-on-primary', onPrimaryColor)
 	
 	// 保存到本地存储
-	tool.data.set(STORAGE_KEYS.PRIMARY_COLOR, color)
+	tool.session.set(STORAGE_KEYS.PRIMARY_COLOR, color)
 }
 
 /**
@@ -204,7 +204,7 @@ export function setSecondaryColor(color) {
 	}
 	
 	// 保存到本地存储
-	tool.data.set(STORAGE_KEYS.SECONDARY_COLOR, color)
+	tool.session.set(STORAGE_KEYS.SECONDARY_COLOR, color)
 }
 
 /**
@@ -225,15 +225,15 @@ export function setDarkMode(isDark) {
 	if (isDark) {
 		root.classList.add('dark')
 		root.setAttribute('data-theme', 'dark')
-		tool.data.set(STORAGE_KEYS.THEME_MODE, 'dark')
+		tool.session.set(STORAGE_KEYS.THEME_MODE, 'dark')
 	} else {
 		root.classList.remove('dark')
 		root.setAttribute('data-theme', 'light')
-		tool.data.remove(STORAGE_KEYS.THEME_MODE)
+		tool.session.remove(STORAGE_KEYS.THEME_MODE)
 	}
 	
 	// 切换模式后重新计算文字颜色
-	const currentPrimary = tool.data.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
+	const currentPrimary = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
 	const onPrimaryColor = getOnPrimaryColor(currentPrimary, isDark)
 	root.style.setProperty('--color-on-primary', onPrimaryColor)
 }
@@ -250,7 +250,7 @@ export function applyTheme(theme) {
 	if (theme.accent) {
 		setAccentColor(theme.accent)
 	}
-	tool.data.set(STORAGE_KEYS.THEME_NAME, theme.name)
+	tool.session.set(STORAGE_KEYS.THEME_NAME, theme.name)
 }
 
 /**
@@ -258,8 +258,8 @@ export function applyTheme(theme) {
  * @returns {Object} 当前主题配置
  */
 export function getCurrentTheme() {
-	const savedColor = tool.data.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
-	const savedName = tool.data.get(STORAGE_KEYS.THEME_NAME)
+	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
+	const savedName = tool.session.get(STORAGE_KEYS.THEME_NAME)
 	
 	// 查找匹配的预设主题
 	let matchedTheme = PRESET_THEMES.find(t => t.primary === savedColor)
@@ -270,7 +270,7 @@ export function getCurrentTheme() {
 	return matchedTheme || {
 		name: '自定义',
 		primary: savedColor,
-		secondary: tool.data.get(STORAGE_KEYS.SECONDARY_COLOR) || '#909399',
+		secondary: tool.session.get(STORAGE_KEYS.SECONDARY_COLOR) || '#909399',
 		gradient: `linear-gradient(135deg, ${colorTool.lighten(savedColor, 0.3)} 0%, ${savedColor} 100%)`
 	}
 }
@@ -288,9 +288,9 @@ export function isDarkMode() {
  * 初始化主题 - 从本地存储恢复
  */
 export function initTheme() {
-	const savedColor = tool.data.get(STORAGE_KEYS.PRIMARY_COLOR)
-	const savedSecondary = tool.data.get(STORAGE_KEYS.SECONDARY_COLOR)
-	const savedThemeMode = tool.data.get(STORAGE_KEYS.THEME_MODE)
+	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR)
+	const savedSecondary = tool.session.get(STORAGE_KEYS.SECONDARY_COLOR)
+	const savedThemeMode = tool.session.get(STORAGE_KEYS.THEME_MODE)
 	
 	// 恢复主色调
 	if (savedColor) {
@@ -321,7 +321,7 @@ export function getPresetThemes() {
  * @returns {Array}
  */
 export function getCustomThemes() {
-	const customThemes = tool.data.get(STORAGE_KEYS.CUSTOM_THEMES)
+	const customThemes = tool.session.get(STORAGE_KEYS.CUSTOM_THEMES)
 	return customThemes ? JSON.parse(customThemes) : []
 }
 
@@ -342,7 +342,7 @@ export function saveCustomTheme(theme) {
 			// 添加新主题
 			customThemes.push({ ...theme, isCustom: true })
 		}
-		tool.data.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(customThemes))
+		tool.session.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(customThemes))
 		return true
 	} catch (error) {
 		console.error('保存自定义主题失败:', error)
@@ -359,7 +359,7 @@ export function deleteCustomTheme(themeName) {
 	try {
 		const customThemes = getCustomThemes()
 		const filteredThemes = customThemes.filter(t => t.name !== themeName)
-		tool.data.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(filteredThemes))
+		tool.session.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(filteredThemes))
 		return true
 	} catch (error) {
 		console.error('删除自定义主题失败:', error)
