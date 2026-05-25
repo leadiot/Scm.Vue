@@ -56,7 +56,7 @@
 }
 
 .el-header {
-	background: #fff;
+	background: var(--color-surface, #fff);
 	border-bottom: 1px solid var(--el-border-color-light);
 	padding: 13px 15px;
 	display: flex;
@@ -79,7 +79,7 @@
 }
 
 .el-footer {
-	background: #fff;
+	background: var(--color-surface, #fff);
 	border-top: 1px solid var(--el-border-color-light);
 	padding: 13px 15px;
 	height: 51px;
@@ -91,7 +91,7 @@
 
 .el-main.nopadding {
 	padding: 0;
-	background: #fff;
+	background: var(--color-surface, #fff);
 }
 
 .el-drawer__body {

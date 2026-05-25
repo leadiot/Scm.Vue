@@ -151,18 +151,18 @@ function getOnPrimaryColor(primaryColor, isDarkMode) {
  */
 export function setPrimaryColor(color) {
 	const root = document.documentElement
-	
+
 	// 设置主色调
 	root.style.setProperty('--color-primary', color)
 	root.style.setProperty('--el-color-primary', color)
-	
+
 	// 生成 light 系列 (1-9)
 	for (let i = 1; i <= 9; i++) {
 		const lightColor = colorTool.lighten(color, i / 10)
 		root.style.setProperty(`--color-primary-light-${i}`, lightColor)
 		root.style.setProperty(`--el-color-primary-light-${i}`, lightColor)
 	}
-	
+
 	// 生成 dark 系列 (1-5)
 	for (let i = 1; i <= 5; i++) {
 		const darkColor = colorTool.darken(color, i / 10)
@@ -171,12 +171,12 @@ export function setPrimaryColor(color) {
 			root.style.setProperty(`--el-color-primary-dark-${i}`, darkColor)
 		}
 	}
-	
+
 	// 根据主色调明度和当前模式动态设置文字颜色
 	const isDarkMode = root.classList.contains('dark')
 	const onPrimaryColor = getOnPrimaryColor(color, isDarkMode)
 	root.style.setProperty('--color-on-primary', onPrimaryColor)
-	
+
 	// 保存到本地存储
 	tool.session.set(STORAGE_KEYS.PRIMARY_COLOR, color)
 }
@@ -187,22 +187,22 @@ export function setPrimaryColor(color) {
  */
 export function setSecondaryColor(color) {
 	const root = document.documentElement
-	
+
 	// 设置辅色调
 	root.style.setProperty('--color-secondary', color)
-	
+
 	// 生成 light 系列
 	for (let i = 1; i <= 9; i++) {
 		const lightColor = colorTool.lighten(color, i / 10)
 		root.style.setProperty(`--color-secondary-light-${i}`, lightColor)
 	}
-	
+
 	// 生成 dark 系列
 	for (let i = 1; i <= 5; i++) {
 		const darkColor = colorTool.darken(color, i / 10)
 		root.style.setProperty(`--color-secondary-dark-${i}`, darkColor)
 	}
-	
+
 	// 保存到本地存储
 	tool.session.set(STORAGE_KEYS.SECONDARY_COLOR, color)
 }
@@ -221,7 +221,7 @@ export function setAccentColor(color) {
  */
 export function setDarkMode(isDark) {
 	const root = document.documentElement
-	
+
 	if (isDark) {
 		root.classList.add('dark')
 		root.setAttribute('data-theme', 'dark')
@@ -231,7 +231,7 @@ export function setDarkMode(isDark) {
 		root.setAttribute('data-theme', 'light')
 		tool.session.remove(STORAGE_KEYS.THEME_MODE)
 	}
-	
+
 	// 切换模式后重新计算文字颜色
 	const currentPrimary = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
 	const onPrimaryColor = getOnPrimaryColor(currentPrimary, isDark)
@@ -243,13 +243,29 @@ export function setDarkMode(isDark) {
  * @param {Object} theme - 预设主题配置
  */
 export function applyTheme(theme) {
+	const root = document.documentElement
+
+	// 设置主色调
 	setPrimaryColor(theme.primary)
+
+	// 设置辅色调
 	if (theme.secondary) {
 		setSecondaryColor(theme.secondary)
 	}
+
+	// 设置强调色
 	if (theme.accent) {
 		setAccentColor(theme.accent)
 	}
+
+	// 设置背景色和表面色
+	if (theme.background) {
+		root.style.setProperty('--color-background', theme.background)
+	}
+	if (theme.surface) {
+		root.style.setProperty('--color-surface', theme.surface)
+	}
+
 	tool.session.set(STORAGE_KEYS.THEME_NAME, theme.name)
 }
 
@@ -260,13 +276,13 @@ export function applyTheme(theme) {
 export function getCurrentTheme() {
 	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
 	const savedName = tool.session.get(STORAGE_KEYS.THEME_NAME)
-	
+
 	// 查找匹配的预设主题
 	let matchedTheme = PRESET_THEMES.find(t => t.primary === savedColor)
 	if (!matchedTheme && savedName) {
 		matchedTheme = PRESET_THEMES.find(t => t.name === savedName)
 	}
-	
+
 	return matchedTheme || {
 		name: '自定义',
 		primary: savedColor,
@@ -291,17 +307,17 @@ export function initTheme() {
 	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR)
 	const savedSecondary = tool.session.get(STORAGE_KEYS.SECONDARY_COLOR)
 	const savedThemeMode = tool.session.get(STORAGE_KEYS.THEME_MODE)
-	
+
 	// 恢复主色调
 	if (savedColor) {
 		setPrimaryColor(savedColor)
 	}
-	
+
 	// 恢复辅色调
 	if (savedSecondary) {
 		setSecondaryColor(savedSecondary)
 	}
-	
+
 	// 恢复主题模式
 	if (savedThemeMode === 'dark') {
 		setDarkMode(true)
