@@ -132,16 +132,16 @@ const DEFAULT_CONFIG = {
 	// - onSecondary: 辅色调上的文字色
 	// - isCustom: 是否为用户自定义主题
 	PREDEFINE_THEMES: [
-		{ name: "经典蓝", primary: "#409eff", secondary: "#909399", accent: "#722ed1", surface: "#ffffff", background: "#f5f7fa", error: "#f56c6c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", description: "Element Plus 默认主题", isCustom: false },
-		{ name: "中国蓝", primary: "#0066cc", secondary: "#6b7280", accent: "#1e40af", surface: "#ffffff", background: "#f0f5ff", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)", description: "沉稳商务风格", isCustom: false },
-		{ name: "科技蓝", primary: "#00bfff", secondary: "#94a3b8", accent: "#0ea5e9", surface: "#ffffff", background: "#f0f9ff", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)", description: "科技感风格", isCustom: false },
-		{ name: "中国红", primary: "#c41e3a", secondary: "#6b7280", accent: "#b91c1c", surface: "#ffffff", background: "#fef2f2", error: "#991b1b", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)", description: "中国传统红", isCustom: false },
-		{ name: "中国紫", primary: "#722ed1", secondary: "#64748b", accent: "#9333ea", surface: "#ffffff", background: "#f5f3ff", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)", description: "优雅紫色调", isCustom: false },
-		{ name: "翡翠绿", primary: "#52c41a", secondary: "#6b7280", accent: "#059669", surface: "#ffffff", background: "#f0fdf4", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)", description: "自然清新风格", isCustom: false },
-		{ name: "日落橙", primary: "#fa8c16", secondary: "#78716c", accent: "#ea580c", surface: "#ffffff", background: "#fff7ed", error: "#c2410c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)", description: "温暖活力风格", isCustom: false },
-		{ name: "樱花粉", primary: "#eb2f96", secondary: "#a1a1aa", accent: "#db2777", surface: "#ffffff", background: "#fdf2f8", error: "#be185d", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)", description: "柔和粉色系", isCustom: false },
-		{ name: "深空灰", primary: "#595959", secondary: "#71717a", accent: "#3f3f46", surface: "#ffffff", background: "#f9fafb", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #595959 0%, #434343 100%)", description: "专业灰色系", isCustom: false },
-		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", surface: "#ffffff", background: "#f6f8f9", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系", isCustom: false },
+		{ name: "经典蓝", primary: "#409eff", secondary: "#6e9fc7", accent: "#1565c0", surface: "#ffffff", background: "#f0f5ff", error: "#f56c6c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #409eff 0%, #2d6fba 100%)", description: "默认主题", isCustom: false },
+		{ name: "科技蓝", primary: "#00bfff", secondary: "#7cb8d4", accent: "#0277bd", surface: "#ffffff", background: "#e8f4fd", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)", description: "科技感风格", isCustom: false },
+		{ name: "中国蓝", primary: "#0066cc", secondary: "#5a8ab5", accent: "#0d47a1", surface: "#ffffff", background: "#e3f2fd", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)", description: "沉稳商务风格", isCustom: false },
+		{ name: "中国红", primary: "#c41e3a", secondary: "#d4726a", accent: "#b71c1c", surface: "#ffffff", background: "#fce4ec", error: "#991b1b", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)", description: "中国传统红", isCustom: false },
+		{ name: "中国紫", primary: "#722ed1", secondary: "#8b7db8", accent: "#6a1b9a", surface: "#ffffff", background: "#f3e5f5", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)", description: "优雅紫色调", isCustom: false },
+		{ name: "翡翠绿", primary: "#52c41a", secondary: "#6a9e6a", accent: "#2e7d32", surface: "#ffffff", background: "#e8f5e9", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)", description: "自然清新风格", isCustom: false },
+		{ name: "日落橙", primary: "#fa8c16", secondary: "#c4903a", accent: "#e65100", surface: "#ffffff", background: "#fff3e0", error: "#c2410c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)", description: "温暖活力风格", isCustom: false },
+		{ name: "樱花粉", primary: "#eb2f96", secondary: "#d47090", accent: "#c2185b", surface: "#ffffff", background: "#fce4ec", error: "#be185d", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)", description: "柔和粉色系", isCustom: false },
+		{ name: "深空灰", primary: "#6b7280", secondary: "#9ca3af", accent: "#374151", surface: "#ffffff", background: "#f3f4f6", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)", description: "专业灰色系", isCustom: false },
+		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", surface: "#ffffff", background: "#f5f5f5", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系", isCustom: false },
 	],
 
 	// 系统预定义颜色列表，可以根据需要修改
@@ -154,7 +154,7 @@ const DEFAULT_CONFIG = {
 		"#52c41a",
 		"#fa8c16",
 		"#eb2f96",
-		"#595959",
+		"#6b7280",
 		"#1f1f1f",
 		"#ffffff",
 		"#cccccc",

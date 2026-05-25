@@ -94,8 +94,9 @@ export function setPrimaryColor(color, onPrimary) {
 
 	// 根据主色调明度和当前模式动态设置文字颜色
 	if (!onPrimary) {
-		const isDarkMode = root.classList.contains('dark')
-		onPrimary = getOnPrimaryColor(color, isDarkMode)
+		// const isDarkMode = root.classList.contains('dark')
+		// onPrimary = getOnPrimaryColor(color, isDarkMode)
+		onPrimary = '#ffffff';
 	}
 	root.style.setProperty('--color-on-primary', onPrimary)
 

@@ -139,7 +139,7 @@
 			<div v-if="!ismobile" class="scmui-side-split">
 				<div class="scmui-side-split-top">
 					<router-link :to="$CONFIG.CONSOLE_URL">
-						<img class="logo" :title="$CONFIG.APP_NAME" src="/images/logo-r.png">
+						<img class="logo" :title="$CONFIG.APP_NAME" src="/images/logo.png">
 					</router-link>
 				</div>
 				<div class="scmui-side-split-scroll">
