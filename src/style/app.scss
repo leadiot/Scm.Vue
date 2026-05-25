@@ -254,9 +254,9 @@ textarea {
 }
 
 .scmui-side-split li.active {
-	background: var(--color-surface, #909399);
-	color: var(--color-on-secondary, #fff);
-	box-shadow: 0 0 0 2px var(--color-primary, #409eff) inset;
+	background: var(--color-primary, #409eff);
+	color: var(--color-on-primary, #fff);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--color-primary-light-1, #66b1ff) inset;
 	border-radius: 8px;
 	margin: 4px;
 	width: 57px;
@@ -264,11 +264,11 @@ textarea {
 }
 
 .scmui-side-split li.active i {
-	color: var(--color-primary, #409eff);
+	color: var(--color-on-primary, #fff);
 }
 
 .scmui-side-split li.active p {
-	color: var(--color-primary, #409eff);
+	color: var(--color-on-primary, #fff);
 }
 
 .scmui-side-split-scroll::-webkit-scrollbar-thumb {
