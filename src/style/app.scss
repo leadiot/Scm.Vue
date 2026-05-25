@@ -295,12 +295,12 @@ textarea {
 	width: 210px;
 	background: var(--color-surface, #fff);
 	box-shadow: 2px 0 8px 0 rgba(29, 35, 41, .05);
-	border-right: 1px solid #e6e6e6;
+	border-right: 1px solid var(--el-border-color-light);
 	transition: width 0.3s;
 }
 
 .scmui-side-top {
-	border-bottom: 1px solid #ebeef5;
+	border-bottom: 1px solid var(--el-border-color-light);
 	height: 50px;
 	line-height: 50px;
 }
@@ -308,7 +308,7 @@ textarea {
 .scmui-side-top h2 {
 	padding: 0 20px;
 	font-size: 17px;
-	color: #3c4a54;
+	color: var(--el-text-color-primary);
 }
 
 .scmui-side-scroll {
@@ -318,7 +318,7 @@ textarea {
 }
 
 .scmui-side-bottom {
-	border-top: 1px solid #ebeef5;
+	border-top: 1px solid var(--el-border-color-light);
 	height: 51px;
 	cursor: pointer;
 	display: flex;
@@ -383,7 +383,7 @@ textarea {
 
 .scmui-topbar {
 	height: 50px;
-	border-bottom: 1px solid #ebeef5;
+	border-bottom: 1px solid var(--el-border-color-light);
 	background: var(--color-surface, #fff);
 	box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 	display: flex;
@@ -412,7 +412,7 @@ textarea {
 .scmui-tags {
 	height: 35px;
 	background: var(--color-surface, #fff);
-	border-bottom: 1px solid #e6e6e6;
+	border-bottom: 1px solid var(--el-border-color-light);
 }
 
 .scmui-tags ul {
