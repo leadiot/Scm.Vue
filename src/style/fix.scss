@@ -18,6 +18,8 @@
 	--el-color-primary-dark-7: #132f4c;
 	--el-color-primary-dark-8: #0c1f32;
 	--el-color-primary-dark-9: #060f19;
+	--el-bg-color-overlay: #fff;
+	--el-drawer-bg-color: #fff;
 }
 
 .el-menu {border: none!important;}
@@ -72,6 +74,10 @@
 .el-sub-menu .el-sub-menu__icon-arrow {font-size: 13px;}
 .el-link {font-size: 13px;}
 .sc-dialog-p10 .el-dialog__body{padding:10px 20px !important;}
+
+/* Element Plus Drawer 背景修复 */
+.el-drawer {background-color: #fff !important;}
+html.dark .el-drawer {background-color: #1f1f1f !important;}
 
 /* Element Plus Dropdown/Popper 背景修复 - 确保不透明 */
 .el-dropdown__popper,
