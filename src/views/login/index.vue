@@ -146,7 +146,6 @@ export default {
 				{ name: "简体中文", value: "zh-cn", },
 				{ name: "English", value: "en", },
 			],
-			home: this.$CONFIG.HOME,
 		};
 	},
 	watch: {
@@ -234,9 +233,9 @@ export default {
 			this.$TOOL.session.set("PERMISSIONS", []);
 
 			await this.$SCM.list_cfg();
-			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
+			var home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 
-			this.$router.replace({ path: this.home || '/console' });
+			this.$router.replace({ path: home });
 			this.$message.success("Login Success 登录成功");
 		}
 	},
