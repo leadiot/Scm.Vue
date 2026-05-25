@@ -160,6 +160,7 @@ html.dark {
 	--color-surface-elevated: $color-surface-elevated-dark;
 
 	// 文字色 - OnXxx
+	--color-on-primary: $color-on-primary-dark;
 	--color-on-background: $color-on-background-dark;
 	--color-on-surface: $color-on-surface-dark;
 
@@ -260,43 +261,3 @@ html.dark {
 	--el-disabled-border-color: var(--color-disabled-border);
 }
 
-// ============================================
-// Element Plus Dropdown 菜单背景样式
-// ============================================
-
-// Light 模式 - 使用 html 选择器确保全局生效
-html:not(.dark) {
-	.el-dropdown__popper,
-	.el-dropdown__popper.el-popper,
-	.el-dropdown-menu {
-		background: #fff !important;
-	}
-	.el-dropdown-menu__item--divided:before {
-		background: #fff !important;
-	}
-	.el-popper.is-light {
-		background: #fff !important;
-	}
-	.el-popper.is-light .el-popper__arrow::before {
-		background: #fff !important;
-	}
-}
-
-// Dark 模式
-html.dark,
-[data-theme='dark'] {
-	.el-dropdown__popper,
-	.el-dropdown__popper.el-popper,
-	.el-dropdown-menu {
-		background: #1f1f1f !important;
-	}
-	.el-dropdown-menu__item--divided:before {
-		background: #1f1f1f !important;
-	}
-	.el-popper.is-light {
-		background: #1f1f1f !important;
-	}
-	.el-popper.is-light .el-popper__arrow::before {
-		background: #1f1f1f !important;
-	}
-}

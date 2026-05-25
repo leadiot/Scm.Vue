@@ -107,6 +107,43 @@ export const PRESET_THEMES = [
 ]
 
 /**
+ * 计算颜色的相对亮度（0-1）
+ * 用于判断主色调是深色还是浅色
+ */
+function getLuminance(hexColor) {
+	const hex = hexColor.replace('#', '')
+	const r = parseInt(hex.substr(0, 2), 16) / 255
+	const g = parseInt(hex.substr(2, 2), 16) / 255
+	const b = parseInt(hex.substr(4, 2), 16) / 255
+	// 使用 sRGB luminance 公式
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/**
+ * 根据主色调明度计算合适的文字颜色
+ * @param {string} primaryColor - 主色调 HEX 值
+ * @param {boolean} isDarkMode - 是否为深色模式
+ * @returns {string} - 文字颜色 HEX 值
+ */
+function getOnPrimaryColor(primaryColor, isDarkMode) {
+	const luminance = getLuminance(primaryColor)
+	// Dark 模式：始终使用浅色文字
+	if (isDarkMode) {
+		return '#d9ecff'
+	}
+	// Light 模式：根据主色调明度判断
+	// 明度 > 0.5 的主色调（浅色）使用深色文字
+	// 明度 <= 0.5 的主色调（深色）使用浅色文字
+	if (luminance > 0.5) {
+		// 浅色主色调（如默认蓝#409eff），使用主色调深色变体
+		return colorTool.darken(primaryColor, 0.2)
+	} else {
+		// 深色主色调（如暗夜黑#1f1f1f），使用白色
+		return '#ffffff'
+	}
+}
+
+/**
  * 设置主色调及其所有变体
  * @param {string} color - 主色调 HEX 值
  */
@@ -132,6 +169,11 @@ export function setPrimaryColor(color) {
 			root.style.setProperty(`--el-color-primary-dark-${i}`, darkColor)
 		}
 	}
+	
+	// 根据主色调明度和当前模式动态设置文字颜色
+	const isDarkMode = root.classList.contains('dark')
+	const onPrimaryColor = getOnPrimaryColor(color, isDarkMode)
+	root.style.setProperty('--color-on-primary', onPrimaryColor)
 	
 	// 保存到本地存储
 	tool.data.set(STORAGE_KEYS.PRIMARY_COLOR, color)
@@ -187,6 +229,11 @@ export function setDarkMode(isDark) {
 		root.setAttribute('data-theme', 'light')
 		tool.data.remove(STORAGE_KEYS.THEME_MODE)
 	}
+	
+	// 切换模式后重新计算文字颜色
+	const currentPrimary = tool.data.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
+	const onPrimaryColor = getOnPrimaryColor(currentPrimary, isDark)
+	root.style.setProperty('--color-on-primary', onPrimaryColor)
 }
 
 /**

@@ -70,7 +70,7 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
     cursor: pointer;
     width: 65px;
     height: 65px;
-    color: var(--el-color-text-regular);
+    color: var(--color-on-primary);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -377,37 +377,42 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
 }
 
 .el-button--primary {
-    background: var(--gradient-primary);
-    border: none;
-    color: white;
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #fff !important;
 }
 
-.el-button--primary:hover {
+.el-button--primary:hover,
+.el-button--primary:focus {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(var(--el-color-primary-rgb, 102, 126, 234), 0.4);
+    color: #fff !important;
 }
 
 .el-button--success {
-    background: var(--gradient-success);
-    border: none;
-    color: white;
+    background: var(--gradient-success) !important;
+    border: none !important;
+    color: #fff !important;
 }
 
-.el-button--success:hover {
+.el-button--success:hover,
+.el-button--success:focus {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+    color: #fff !important;
 }
 
 .el-button--warning {
-    background: var(--gradient-warning);
-    border: none;
-    color: white;
+    background: var(--gradient-warning) !important;
+    border: none !important;
+    color: #fff !important;
 }
 
-.el-button--warning:hover {
+.el-button--warning:hover,
+.el-button--warning:focus {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
-    color: white;
+    color: #fff !important;
 }
 
 /* Element Plus 表格样式优化 */
@@ -447,17 +452,35 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
 }
 
 /* Element Plus 输入框样式优化 */
+.el-input__wrapper,
+.el-textarea__inner {
+    border-radius: var(--el-border-radius-base, 4px);
+    transition: all 0.2s ease;
+}
+
 .el-input__wrapper {
-    border-radius: var(--radius-base);
-    transition: all var(--transition-base);
+    box-shadow: 0 0 0 1px #dcdfe6 inset !important;
 }
 
 .el-input__wrapper:hover {
-    box-shadow: 0 0 0 1px var(--color-primary) inset;
+    box-shadow: 0 0 0 1px #c0c4cc inset !important;
 }
 
-.el-input__wrapper.is-focus {
-    box-shadow: 0 0 0 1px var(--color-primary) inset;
+.el-input__wrapper.is-focus,
+.el-input__wrapper:focus-within {
+    box-shadow: 0 0 0 1px var(--el-color-primary, #409eff) inset !important;
+}
+
+.el-textarea__inner {
+    border: 1px solid #dcdfe6 !important;
+}
+
+.el-textarea__inner:hover {
+    border-color: #c0c4cc !important;
+}
+
+.el-textarea__inner:focus {
+    border-color: var(--el-color-primary, #409eff) !important;
 }
 
 /* 空间间距优化 */

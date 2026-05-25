@@ -120,7 +120,7 @@
 	.scmui-header {background: $--card-background;border-bottom: 1px solid $--border-color;}
 	.scmui-header-menu .el-menu .el-sub-menu__title {height:59px;line-height: 59px;}
 	.scmui-side-split {background: $--background;}
-	.scmui-side-split li {color: $--text-color;}
+	.scmui-side-split li {color: var(--color-on-primary);}
 	.scmui-side-split li.active {
 		background: rgba(255, 255, 255, 0.12);
 		color: #fff;

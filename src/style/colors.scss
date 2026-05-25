@@ -92,7 +92,7 @@ $color-surface: #ffffff !default;           // 表面/卡片背景色
 $color-surface-elevated: #ffffff !default;  // 提升表面色（悬浮卡片等）
 
 // 文字颜色
-$color-on-primary: #ffffff !default;        // 主色调上的文字色
+$color-on-primary: #337ecc !default;        // 主色调上的文字色（适用于半透明主色背景）
 $color-on-secondary: #ffffff !default;      // 辅色调上的文字色
 $color-on-background: #303133 !default;     // 背景上的文字色（主文字）
 $color-on-surface: #303133 !default;        // 表面上的文字色
@@ -137,6 +137,7 @@ $color-text-primary-dark: #e5eaf3 !default;         // 深色主要文字
 $color-text-regular-dark: #cfd3e0 !default;         // 深色常规文字
 $color-text-secondary-dark: #a3a6ad !default;       // 深色次要文字
 $color-text-placeholder-dark: #8c9099 !default;     // 深色占位符文字
+$color-on-primary-dark: #d9ecff !default;            // 深色主色调上的文字
 $color-text-disabled-dark: #6c6e75 !default;        // 深色禁用文字
 
 $color-border-dark: #4c4d4f !default;               // 深色边框
