@@ -196,6 +196,7 @@
 </template>
 
 <script>
+import themeUtil from "@/utils/theme";
 import SideM from './components/sideMenu.vue';
 import Topbar from './components/topbar.vue';
 import Tags from './components/tags.vue';
@@ -251,6 +252,8 @@ export default {
 		}
 	},
 	created() {
+		themeUtil.initTheme();
+
 		this.onLayoutResize();
 		window.addEventListener('resize', this.onLayoutResize);
 		var menu = this.$router.getMenu(1);

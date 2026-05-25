@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import themeUtil from "@/utils/theme";
 import { useI18n } from "vue-i18n";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
@@ -46,12 +45,7 @@ export default {
 		locale() {
 			return this.elLocale;
 		},
-	},
-	created() {
-		// 使用主题工具类初始化主题（参考 Android Theme 管理）
-		// 从本地存储恢复主色调、辅色调、深色模式等配置
-		themeUtil.initTheme();
-	},
+	}
 };
 </script>
 
