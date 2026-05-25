@@ -69,7 +69,7 @@ function getOnPrimaryColor(primaryColor, isDarkMode) {
  * 设置主色调及其所有变体
  * @param {string} color - 主色调 HEX 值
  */
-export function setPrimaryColor(color) {
+export function setPrimaryColor(color, onPrimary) {
 	const root = document.documentElement
 
 	// 设置主色调
@@ -93,9 +93,11 @@ export function setPrimaryColor(color) {
 	}
 
 	// 根据主色调明度和当前模式动态设置文字颜色
-	const isDarkMode = root.classList.contains('dark')
-	const onPrimaryColor = getOnPrimaryColor(color, isDarkMode)
-	root.style.setProperty('--color-on-primary', onPrimaryColor)
+	if (!onPrimary) {
+		const isDarkMode = root.classList.contains('dark')
+		onPrimary = getOnPrimaryColor(color, isDarkMode)
+	}
+	root.style.setProperty('--color-on-primary', onPrimary)
 
 	// 保存到本地存储
 	tool.session.set(STORAGE_KEYS.PRIMARY_COLOR, color)
@@ -105,7 +107,7 @@ export function setPrimaryColor(color) {
  * 设置辅色调及其变体
  * @param {string} color - 辅色调 HEX 值
  */
-export function setSecondaryColor(color) {
+export function setSecondaryColor(color, onSecondary) {
 	const root = document.documentElement
 
 	// 设置辅色调
@@ -166,11 +168,11 @@ export function applyTheme(theme) {
 	const root = document.documentElement
 
 	// 设置主色调
-	setPrimaryColor(theme.primary)
+	setPrimaryColor(theme.primary, theme.onPrimary)
 
 	// 设置辅色调
 	if (theme.secondary) {
-		setSecondaryColor(theme.secondary)
+		setSecondaryColor(theme.secondary, theme.onSecondary)
 	}
 
 	// 设置强调色

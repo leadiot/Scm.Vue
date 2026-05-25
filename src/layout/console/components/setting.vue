@@ -107,28 +107,24 @@ export default {
 	},
 	data() {
 		return {
-			consoleLayout: this.globalStore.consoleLayout,
-			menuIsCollapse: this.globalStore.menuIsCollapse,
-			layoutTags: this.globalStore.layoutTags,
-			lang: this.$TOOL.data.get('APP_LANG') || this.$CONFIG.LANG,
-			dark: this.$TOOL.data.get('APP_THEME') == 'dark',
-			colorList: this.$CONFIG.PREDEFINE_COLORS,
-			presetThemeList: this.$CONFIG.PREDEFINE_THEMES,
-			customThemeList: themeUtil.getCustomThemes(),
-			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF',
-			colorSecondary: this.$TOOL.data.get('APP_COLOR_SECONDARY') || '#909399',
+			lang: this.$TOOL.session.get('APP_LANG') || this.$CONFIG.LANG,
+			dark: this.$TOOL.session.get('APP_THEME') == 'dark',
 			currentTheme: themeUtil.getCurrentTheme(),
 			currentThemeName: themeUtil.getCurrentTheme().name,
 			createThemeVisible: false,
-			newTheme: this.getDefaultNewTheme()
+			newTheme: this.getDefaultNewTheme(),
+			consoleLayout: this.globalStore.consoleLayout,
+			menuIsCollapse: this.globalStore.menuIsCollapse,
+			layoutTags: this.globalStore.layoutTags,
+			colorList: this.$CONFIG.PREDEFINE_COLORS,
+			presetThemeList: this.$CONFIG.PREDEFINE_THEMES,
+			customThemeList: themeUtil.getCustomThemes(),
 		};
 	},
 	methods: {
 		selectTheme(theme) {
 			this.currentTheme = theme
 			this.currentThemeName = theme.name
-			this.colorPrimary = theme.primary
-			this.colorSecondary = theme.secondary || '#909399'
 			// 应用完整主题
 			themeUtil.applyTheme(theme)
 		},
@@ -142,13 +138,6 @@ export default {
 			if (theme) {
 				this.selectTheme(theme)
 			}
-		},
-		applyPrimaryColor(val) {
-			themeUtil.setPrimaryColor(val)
-			this.currentTheme = themeUtil.getCurrentTheme()
-		},
-		applySecondaryColor(val) {
-			themeUtil.setSecondaryColor(val)
 		},
 		getDefaultNewTheme() {
 			return {
@@ -242,13 +231,7 @@ export default {
 		},
 		lang(val) {
 			this.$i18n.locale = val
-			this.$TOOL.data.set("APP_LANG", val);
-		},
-		colorPrimary(val) {
-			this.applyPrimaryColor(val);
-		},
-		colorSecondary(val) {
-			this.applySecondaryColor(val);
+			this.$TOOL.session.set("APP_LANG", val);
 		}
 	}
 }
