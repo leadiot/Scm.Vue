@@ -491,7 +491,7 @@
 	}
 
 	.el-button--primary {
-		color: #fff;
+		color: var(--color-on-primary, #fff);
 	}
 
 	.el-button--primary:focus,
@@ -503,7 +503,7 @@
 	.el-button--primary:active {
 		background-color: var(--el-color-primary-darken-1, #0d84ff);
 		border-color: var(--el-color-primary-darken-1, #0d84ff);
-		color: #fff;
+		color: var(--color-on-primary, #fff);
 	}
 
 	.el-button--primary.is-plain {

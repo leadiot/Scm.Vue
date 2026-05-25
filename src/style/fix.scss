@@ -168,6 +168,15 @@
 	--el-button-hover-bg-color: var(--color-secondary-light-9, #f4f4f5);
 }
 
+/* 主色调按钮文字色使用color-on-primary */
+.el-button--primary {
+	color: var(--color-on-primary, #fff);
+}
+
+.el-button--primary:active {
+	color: var(--color-on-primary, #fff);
+}
+
 .el-tag {
 	--el-tag-bg-color: var(--color-secondary-light-9, #f4f4f5);
 	--el-tag-border-color: var(--color-secondary-light-5, #c0c4cc);
