@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import colorTool from "@/utils/color";
+import themeUtil from "@/utils/theme";
 import { useI18n } from "vue-i18n";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
@@ -48,22 +48,9 @@ export default {
 		},
 	},
 	created() {
-		const app_color = this.$CONFIG.COLOR || this.$TOOL.data.get("APP_COLOR");
-		if (app_color) {
-			document.documentElement.style.setProperty("--el-color-primary", app_color);
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(
-					`--el-color-primary-light-${i}`,
-					colorTool.lighten(app_color, i / 10)
-				);
-			}
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(
-					`--el-color-primary-dark-${i}`,
-					colorTool.darken(app_color, i / 10)
-				);
-			}
-		}
+		// 使用主题工具类初始化主题（参考 Android Theme 管理）
+		// 从本地存储恢复主色调、辅色调、深色模式等配置
+		themeUtil.initTheme();
 	},
 };
 </script>

@@ -21,7 +21,7 @@
 					v-for="(theme, index) in themeList" 
 					:key="index"
 					:label="theme.name"
-					:value="theme.color"
+					:value="theme.primary"
 				>
 					<span style="display: inline-flex; align-items: center; gap: 8px;">
 						<span 
@@ -33,6 +33,7 @@
 							}"
 						></span>
 						{{ theme.name }}
+						<span v-if="theme.description" style="color: #909399; font-size: 12px;">{{ theme.description }}</span>
 					</span>
 				</el-option>
 			</el-select>
@@ -70,7 +71,7 @@
 </template>
 
 <script>
-import colorTool from '@/utils/color'
+import themeUtil from '@/utils/theme'
 import { useGlobalStore } from "@/stores/global";
 
 export default {
@@ -87,17 +88,13 @@ export default {
 			dark: this.$TOOL.data.get('APP_THEME') == 'dark',
 			home: this.$CONFIG.HOME,
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
-			themeList: this.$CONFIG.PREDEFINE_THEMES || [
-				{ name: '经典蓝', color: '#409eff', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-				{ name: '中国红', color: '#c41e3a', gradient: 'linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)' },
-				{ name: '翡翠绿', color: '#52c41a', gradient: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)' },
-			],
+			themeList: this.$CONFIG.PREDEFINE_THEMES || themeUtil.PRESET_THEMES,
 			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF'
 		}
 	},
 	mounted() {
 		this.init();
-		this.applyColor(this.colorPrimary)
+		themeUtil.initTheme();
 	},
 	watch: {
 		consoleLayout(val) {
@@ -110,20 +107,14 @@ export default {
 			this.globalStore.TOGGLE_layoutTags()
 		},
 		dark(val) {
-			if (val) {
-				document.documentElement.classList.add("dark")
-				this.$TOOL.data.set("APP_THEME", "dark")
-			} else {
-				document.documentElement.classList.remove("dark")
-				this.$TOOL.data.remove("APP_THEME")
-			}
+			themeUtil.setDarkMode(val);
 		},
 		lang(val) {
 			this.$i18n.locale = val
 			this.$TOOL.data.set("APP_LANG", val);
 		},
 		colorPrimary(val) {
-			this.applyColor(val);
+			themeUtil.setPrimaryColor(val);
 		}
 	},
 	methods: {
@@ -133,16 +124,6 @@ export default {
 		async handleChangeHome() {
 			var cfgs = [{ key: "app_home", value: this.home }];
 			await this.$SCM.save_cfg(cfgs);
-		},
-		applyColor(val) {
-			document.documentElement.style.setProperty('--el-color-primary', val);
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, colorTool.lighten(val, i / 10));
-			}
-			for (let i = 1; i <= 9; i++) {
-				document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, colorTool.darken(val, i / 10));
-			}
-			this.$TOOL.data.set("APP_COLOR", val);
 		}
 	},
 }

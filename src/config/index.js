@@ -120,18 +120,19 @@ const DEFAULT_CONFIG = {
 	// 是否开启用户注册
 	USER_REGISTER_ENABLED: false,
 
-	// 系统预定义主题
+	// 系统预定义主题（参考 Android Material Design Theme）
+	// 每个主题包含完整的颜色方案：primary 主色调、secondary 辅色调、accent 强调色
 	PREDEFINE_THEMES: [
-		{ name: "经典蓝", color: "#409eff", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
-		{ name: "中国蓝", color: "#0066cc", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)" },
-		{ name: "科技蓝", color: "#00bfff", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)" },
-		{ name: "中国红", color: "#c41e3a", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)" },
-		{ name: "中国紫", color: "#722ed1", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)" },
-		{ name: "翡翠绿", color: "#52c41a", gradient: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)" },
-		{ name: "日落橙", color: "#fa8c16", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)" },
-		{ name: "樱花粉", color: "#eb2f96", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)" },
-		{ name: "深空灰", color: "#595959", gradient: "linear-gradient(135deg, #595959 0%, #434343 100%)" },
-		{ name: "暗夜黑", color: "#1f1f1f", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)" },
+		{ name: "经典蓝", primary: "#409eff", secondary: "#909399", accent: "#722ed1", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", description: "Element Plus 默认主题" },
+		{ name: "中国蓝", primary: "#0066cc", secondary: "#6b7280", accent: "#1e40af", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)", description: "沉稳商务风格" },
+		{ name: "科技蓝", primary: "#00bfff", secondary: "#94a3b8", accent: "#0ea5e9", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)", description: "科技感风格" },
+		{ name: "中国红", primary: "#c41e3a", secondary: "#6b7280", accent: "#b91c1c", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)", description: "中国传统红" },
+		{ name: "中国紫", primary: "#722ed1", secondary: "#64748b", accent: "#9333ea", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)", description: "优雅紫色调" },
+		{ name: "翡翠绿", primary: "#52c41a", secondary: "#6b7280", accent: "#059669", gradient: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)", description: "自然清新风格" },
+		{ name: "日落橙", primary: "#fa8c16", secondary: "#78716c", accent: "#ea580c", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)", description: "温暖活力风格" },
+		{ name: "樱花粉", primary: "#eb2f96", secondary: "#a1a1aa", accent: "#db2777", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)", description: "柔和粉色系" },
+		{ name: "深空灰", primary: "#595959", secondary: "#71717a", accent: "#3f3f46", gradient: "linear-gradient(135deg, #595959 0%, #434343 100%)", description: "专业灰色系" },
+		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系" },
 	],
 
 	// 系统预定义颜色列表，可以根据需要修改

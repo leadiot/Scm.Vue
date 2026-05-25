@@ -55,8 +55,8 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
 .scmui-side-split {
     width: 65px;
     flex-shrink: 0;
-    background: linear-gradient(180deg, rgba(var(--el-color-primary-rgb), 0.15) 0%, rgba(var(--el-color-primary-rgb), 0.05) 100%);
-    background-color: var(--el-bg-color, #f5f7fa);
+    background: linear-gradient(180deg, rgba(var(--color-primary), 0.15) 0%, rgba(var(--color-primary), 0.05) 100%);
+    background-color: var(--color-primary);
     display: flex;
     flex-flow: column;
     box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
@@ -87,11 +87,10 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
     color: var(--el-color-primary);
 }
 .scmui-side-split li.active {
-    background: var(--el-color-primary);
+    background: var(--color-secondary);
     color: #fff;
     box-shadow: 0 4px 16px rgba(var(--el-color-primary-rgb), 0.4);
 }
-
 .scmui-side-split-scroll::-webkit-scrollbar-thumb {background-color: rgba(255, 255, 255, 0.4);border-radius:5px;}
 .scmui-side-split-scroll::-webkit-scrollbar-thumb:hover {background-color: rgba(255, 255, 255, 0.5);}
 .scmui-side-split-scroll::-webkit-scrollbar-track {background-color: rgba(255, 255, 255, 0);}
