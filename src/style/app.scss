@@ -451,38 +451,6 @@ a,button,input,textarea{-webkit-tap-highlight-color:rgba(0,0,0,0);box-sizing: bo
     height: 3px;
 }
 
-/* Element Plus 输入框样式优化 */
-.el-input__wrapper,
-.el-textarea__inner {
-    border-radius: var(--el-border-radius-base, 4px);
-    transition: all 0.2s ease;
-}
-
-.el-input__wrapper {
-    box-shadow: 0 0 0 1px #dcdfe6 inset !important;
-}
-
-.el-input__wrapper:hover {
-    box-shadow: 0 0 0 1px #c0c4cc inset !important;
-}
-
-.el-input__wrapper.is-focus,
-.el-input__wrapper:focus-within {
-    box-shadow: 0 0 0 1px var(--el-color-primary, #409eff) inset !important;
-}
-
-.el-textarea__inner {
-    border: 1px solid #dcdfe6 !important;
-}
-
-.el-textarea__inner:hover {
-    border-color: #c0c4cc !important;
-}
-
-.el-textarea__inner:focus {
-    border-color: var(--el-color-primary, #409eff) !important;
-}
-
 /* 空间间距优化 */
 .el-main {
     padding: 20px;

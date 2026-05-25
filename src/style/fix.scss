@@ -111,3 +111,18 @@ html.dark .scmui-side-split li.active {
 .contextmenu li:hover {background-color: var(--el-color-primary-light-9)!important;color: var(--el-color-primary-light-2)!important;}
 .data-box .item-background {background-color: var(--el-color-primary)!important;}
 .layout-setting,.diy-grid-setting {background-color: var(--el-color-primary)!important;}
+
+/* Element Plus 输入框/文本域边框修复 */
+.el-input__wrapper {box-shadow: 0 0 0 1px #dcdfe6 inset !important;}
+.el-input__wrapper:hover {box-shadow: 0 0 0 1px #c0c4cc inset !important;}
+.el-input__wrapper.is-focus,
+.el-input__wrapper:focus-within {box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;}
+.el-textarea__inner {border: 1px solid #dcdfe6 !important;}
+.el-textarea__inner:hover {border-color: #c0c4cc !important;}
+.el-textarea__inner:focus {border-color: var(--el-color-primary) !important;}
+
+/* Dark 模式输入框边框 */
+html.dark .el-input__wrapper {box-shadow: 0 0 0 1px #4c4d4f inset !important;}
+html.dark .el-input__wrapper:hover {box-shadow: 0 0 0 1px #6c6e75 inset !important;}
+html.dark .el-textarea__inner {border-color: #4c4d4f !important;}
+html.dark .el-textarea__inner:hover {border-color: #6c6e75 !important;}
