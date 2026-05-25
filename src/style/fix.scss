@@ -159,6 +159,21 @@
 	margin-left: 10px;
 }
 
+/* 辅色调应用到次要按钮和标签 */
+.el-button--default {
+	--el-button-text-color: var(--color-secondary, #909399);
+	--el-button-border-color: var(--color-secondary-light-5, #c0c4cc);
+	--el-button-hover-text-color: var(--color-secondary-dark-1, #6b7280);
+	--el-button-hover-border-color: var(--color-secondary-light-3, #d3d4d6);
+	--el-button-hover-bg-color: var(--color-secondary-light-9, #f4f4f5);
+}
+
+.el-tag {
+	--el-tag-bg-color: var(--color-secondary-light-9, #f4f4f5);
+	--el-tag-border-color: var(--color-secondary-light-5, #c0c4cc);
+	--el-tag-text-color: var(--color-secondary-dark-1, #6b7280);
+}
+
 .el-button-group+.el-button-group {
 	margin-left: 10px;
 }
@@ -253,10 +268,6 @@
 
 .sc-dialog-p10 .el-dialog__body {
 	padding: 10px 20px !important;
-}
-
-.scmui-side-split li.active {
-	background: var(--color-primary, #409eff);
 }
 
 .scmui-tags li:hover {

@@ -141,7 +141,7 @@ const DEFAULT_CONFIG = {
 		{ name: "日落橙", primary: "#fa8c16", secondary: "#78716c", accent: "#ea580c", surface: "#ffffff", background: "#fff7ed", error: "#c2410c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)", description: "温暖活力风格", isCustom: false },
 		{ name: "樱花粉", primary: "#eb2f96", secondary: "#a1a1aa", accent: "#db2777", surface: "#ffffff", background: "#fdf2f8", error: "#be185d", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #eb2f96 0%, #c41d7f 100%)", description: "柔和粉色系", isCustom: false },
 		{ name: "深空灰", primary: "#595959", secondary: "#71717a", accent: "#3f3f46", surface: "#ffffff", background: "#f9fafb", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #595959 0%, #434343 100%)", description: "专业灰色系", isCustom: false },
-		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", surface: "#ffffff", background: "#141414", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系", isCustom: false },
+		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", surface: "#ffffff", background: "#f6f8f9", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系", isCustom: false },
 	],
 
 	// 系统预定义颜色列表，可以根据需要修改
