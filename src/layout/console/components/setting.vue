@@ -12,18 +12,36 @@
 		<el-divider></el-divider>
 		<el-form-item label="主题选择">
 			<el-select v-model="currentThemeName" @change="onThemeChange" placeholder="请选择主题" style="width: 100%;">
-				<el-option v-for="(theme, index) in themeList" :key="index"
-					:label="theme.name + (theme.description ? ' - ' + theme.description : '')" :value="theme.name">
-					<div style="display: flex; align-items: center; gap: 10px;">
-						<div
-							:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
+				<el-option-group label="预设主题">
+					<el-option v-for="(theme, index) in presetThemeList" :key="'preset-' + index"
+						:label="theme.name + (theme.description ? ' - ' + theme.description : '')" :value="theme.name">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<div
+								:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
+							</div>
+							<span>{{ theme.name }}</span>
+							<span v-if="theme.description" style="color: #909399; font-size: 12px;">({{ theme.description
+							}})</span>
 						</div>
-						<span>{{ theme.name }}</span>
-						<span v-if="theme.description" style="color: #909399; font-size: 12px;">({{ theme.description
-						}})</span>
-					</div>
-				</el-option>
+					</el-option>
+				</el-option-group>
+				<el-option-group label="自定义主题">
+					<el-option v-for="(theme, index) in customThemeList" :key="'custom-' + index"
+						:label="theme.name" :value="theme.name">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<div
+								:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
+							</div>
+							<span>{{ theme.name }}</span>
+						</div>
+					</el-option>
+				</el-option-group>
 			</el-select>
+			<div style="margin-top: 10px;">
+				<el-button type="primary" size="small" @click="showCreateThemeDialog">创建自定义主题</el-button>
+				<el-button v-if="currentTheme && currentTheme.isCustom" type="danger" size="small"
+					@click="deleteCurrentTheme">删除当前主题</el-button>
+			</div>
 		</el-form-item>
 		<el-form-item label="主色调">
 			<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
@@ -48,6 +66,40 @@
 		</el-form-item>
 		<el-divider></el-divider>
 	</el-form>
+
+	<!-- 创建自定义主题对话框 -->
+	<el-dialog v-model="createThemeVisible" title="创建自定义主题" width="500px">
+		<el-form :model="newTheme" label-width="100px">
+			<el-form-item label="主题名称" required>
+				<el-input v-model="newTheme.name" placeholder="请输入主题名称"></el-input>
+			</el-form-item>
+			<el-form-item label="主色调" required>
+				<el-color-picker v-model="newTheme.primary" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="辅色调">
+				<el-color-picker v-model="newTheme.secondary" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="强调色">
+				<el-color-picker v-model="newTheme.accent" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="表面色">
+				<el-color-picker v-model="newTheme.surface" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="背景色">
+				<el-color-picker v-model="newTheme.background" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="错误色">
+				<el-color-picker v-model="newTheme.error" :predefine="colorList"></el-color-picker>
+			</el-form-item>
+			<el-form-item label="描述">
+				<el-input v-model="newTheme.description" placeholder="可选描述"></el-input>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<el-button @click="createThemeVisible = false">取消</el-button>
+			<el-button type="primary" @click="createTheme">创建</el-button>
+		</template>
+	</el-dialog>
 </template>
 
 <script>
@@ -67,11 +119,14 @@ export default {
 			lang: this.$TOOL.data.get('APP_LANG') || this.$CONFIG.LANG,
 			dark: this.$TOOL.data.get('APP_THEME') == 'dark',
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
-			themeList: this.$CONFIG.PREDEFINE_THEMES,
+			presetThemeList: this.$CONFIG.PREDEFINE_THEMES,
+			customThemeList: themeUtil.getCustomThemes(),
 			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF',
 			colorSecondary: this.$TOOL.data.get('APP_COLOR_SECONDARY') || '#909399',
 			currentTheme: themeUtil.getCurrentTheme(),
-			currentThemeName: themeUtil.getCurrentTheme().name
+			currentThemeName: themeUtil.getCurrentTheme().name,
+			createThemeVisible: false,
+			newTheme: this.getDefaultNewTheme()
 		};
 	},
 	methods: {
@@ -84,7 +139,12 @@ export default {
 			themeUtil.applyTheme(theme)
 		},
 		onThemeChange(themeName) {
-			const theme = this.themeList.find(t => t.name === themeName)
+			// 先在预设主题中查找
+			let theme = this.presetThemeList.find(t => t.name === themeName)
+			// 再在自定义主题中查找
+			if (!theme) {
+				theme = this.customThemeList.find(t => t.name === themeName)
+			}
 			if (theme) {
 				this.selectTheme(theme)
 			}
@@ -95,16 +155,82 @@ export default {
 		},
 		applySecondaryColor(val) {
 			themeUtil.setSecondaryColor(val)
+		},
+		getDefaultNewTheme() {
+			return {
+				name: '',
+				primary: '#409eff',
+				secondary: '#909399',
+				accent: '#722ed1',
+				surface: '#ffffff',
+				background: '#f5f7fa',
+				error: '#f56c6c',
+				description: ''
+			}
+		},
+		showCreateThemeDialog() {
+			this.newTheme = this.getDefaultNewTheme()
+			this.createThemeVisible = true
+		},
+		createTheme() {
+			if (!this.newTheme.name) {
+				this.$message.warning('请输入主题名称')
+				return
+			}
+			if (!this.newTheme.primary) {
+				this.$message.warning('请选择主色调')
+				return
+			}
+			// 检查名称是否重复
+			const allThemes = [...this.presetThemeList, ...this.customThemeList]
+			if (allThemes.some(t => t.name === this.newTheme.name)) {
+				this.$message.warning('主题名称已存在')
+				return
+			}
+			// 创建并保存主题
+			const theme = themeUtil.createCustomTheme(this.newTheme)
+			const success = themeUtil.saveCustomTheme(theme)
+			if (success) {
+				this.customThemeList = themeUtil.getCustomThemes()
+				this.selectTheme(theme)
+				this.createThemeVisible = false
+				this.$message.success('自定义主题创建成功')
+			} else {
+				this.$message.error('创建失败')
+			}
+		},
+		deleteCurrentTheme() {
+			if (!this.currentTheme || !this.currentTheme.isCustom) {
+				this.$message.warning('只能删除自定义主题')
+				return
+			}
+			this.$confirm('确定要删除当前自定义主题吗？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				const success = themeUtil.deleteCustomTheme(this.currentTheme.name)
+				if (success) {
+					this.customThemeList = themeUtil.getCustomThemes()
+					// 切换到默认主题
+					this.selectTheme(this.presetThemeList[0])
+					this.$message.success('主题删除成功')
+				} else {
+					this.$message.error('删除失败')
+				}
+			}).catch(() => { })
 		}
 	},
 	mounted() {
 		// 初始化主题
 		themeUtil.initTheme()
 		this.currentTheme = themeUtil.getCurrentTheme()
+		// 刷新自定义主题列表
+		this.customThemeList = themeUtil.getCustomThemes()
 		// 调试：确保主题列表已加载
-		if (!this.themeList || this.themeList.length === 0) {
+		if (!this.presetThemeList || this.presetThemeList.length === 0) {
 			console.warn('主题列表为空，使用备用主题')
-			this.themeList = themeUtil.PRESET_THEMES
+			this.presetThemeList = themeUtil.PRESET_THEMES
 		}
 	},
 	watch: {

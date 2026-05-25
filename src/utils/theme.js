@@ -16,7 +16,9 @@ const STORAGE_KEYS = {
 	PRIMARY_COLOR: 'APP_COLOR',
 	SECONDARY_COLOR: 'APP_COLOR_SECONDARY',
 	THEME_MODE: 'APP_THEME',
-	THEME_NAME: 'APP_THEME_NAME'
+	THEME_NAME: 'APP_THEME_NAME',
+	CUSTOM_THEMES: 'APP_CUSTOM_THEMES',
+	CURRENT_THEME: 'APP_CURRENT_THEME'
 }
 
 /**
@@ -315,6 +317,89 @@ export function getPresetThemes() {
 }
 
 /**
+ * 获取自定义主题列表
+ * @returns {Array}
+ */
+export function getCustomThemes() {
+	const customThemes = tool.data.get(STORAGE_KEYS.CUSTOM_THEMES)
+	return customThemes ? JSON.parse(customThemes) : []
+}
+
+/**
+ * 保存自定义主题
+ * @param {Object} theme - 自定义主题配置
+ * @returns {boolean} 是否保存成功
+ */
+export function saveCustomTheme(theme) {
+	try {
+		const customThemes = getCustomThemes()
+		// 检查是否已存在同名主题
+		const existingIndex = customThemes.findIndex(t => t.name === theme.name)
+		if (existingIndex >= 0) {
+			// 更新现有主题
+			customThemes[existingIndex] = { ...theme, isCustom: true }
+		} else {
+			// 添加新主题
+			customThemes.push({ ...theme, isCustom: true })
+		}
+		tool.data.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(customThemes))
+		return true
+	} catch (error) {
+		console.error('保存自定义主题失败:', error)
+		return false
+	}
+}
+
+/**
+ * 删除自定义主题
+ * @param {string} themeName - 主题名称
+ * @returns {boolean} 是否删除成功
+ */
+export function deleteCustomTheme(themeName) {
+	try {
+		const customThemes = getCustomThemes()
+		const filteredThemes = customThemes.filter(t => t.name !== themeName)
+		tool.data.set(STORAGE_KEYS.CUSTOM_THEMES, JSON.stringify(filteredThemes))
+		return true
+	} catch (error) {
+		console.error('删除自定义主题失败:', error)
+		return false
+	}
+}
+
+/**
+ * 获取所有主题（预设 + 自定义）
+ * @returns {Array}
+ */
+export function getAllThemes() {
+	const customThemes = getCustomThemes()
+	return [...PRESET_THEMES, ...customThemes]
+}
+
+/**
+ * 创建自定义主题
+ * @param {Object} themeConfig - 主题配置
+ * @returns {Object} 创建的主题对象
+ */
+export function createCustomTheme(themeConfig) {
+	const theme = {
+		name: themeConfig.name || '自定义主题',
+		primary: themeConfig.primary || '#409eff',
+		secondary: themeConfig.secondary || '#909399',
+		accent: themeConfig.accent || '#722ed1',
+		surface: themeConfig.surface || '#ffffff',
+		background: themeConfig.background || '#f5f7fa',
+		error: themeConfig.error || '#f56c6c',
+		onPrimary: themeConfig.onPrimary || '#ffffff',
+		onSecondary: themeConfig.onSecondary || '#ffffff',
+		gradient: themeConfig.gradient || `linear-gradient(135deg, ${themeConfig.primary || '#409eff'} 0%, ${colorTool.darken(themeConfig.primary || '#409eff', 0.2)} 100%)`,
+		description: themeConfig.description || '用户自定义主题',
+		isCustom: true
+	}
+	return theme
+}
+
+/**
  * 预定义颜色列表
  */
 export const PREDEFINE_COLORS = [
@@ -347,6 +432,11 @@ export default {
 	isDarkMode,
 	initTheme,
 	getPresetThemes,
+	getCustomThemes,
+	saveCustomTheme,
+	deleteCustomTheme,
+	getAllThemes,
+	createCustomTheme,
 	PRESET_THEMES,
 	PREDEFINE_COLORS
 }
