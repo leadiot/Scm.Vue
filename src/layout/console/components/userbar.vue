@@ -18,6 +18,9 @@
 				<sc-icon name="sc-message-2-line" />
 			</el-badge>
 		</div>
+		<div class="panel-item" @click="openSetting" title="主题设置">
+			<sc-icon name="sc-settings-3-line" />
+		</div>
 		<el-divider direction="vertical"></el-divider>
 		<el-dropdown class="user panel-item" trigger="click" @command="handleUser">
 			<div class="user-avatar">
@@ -75,17 +78,23 @@
 			</el-footer>
 		</el-container>
 	</el-drawer>
+
+	<el-drawer v-model="settingVisible" :size="400" title="主题设置" append-to-body destroy-on-close>
+		<setting></setting>
+	</el-drawer>
 </template>
 
 <script>
 import socket from "@/utils/socket"
 import search from "./search.vue";
 import tasks from "./tasks.vue";
+import setting from "./setting.vue";
 
 export default {
 	components: {
 		search,
 		tasks,
+		setting,
 	},
 	data() {
 		return {
@@ -97,6 +106,7 @@ export default {
 			show_avatar: true,
 			searchVisible: false,
 			tasksVisible: false,
+			settingVisible: false,
 			msgQty: 0,
 			msgVisible: false,
 			msgList: [],
@@ -217,6 +227,10 @@ export default {
 		//任务
 		tasks() {
 			this.tasksVisible = true;
+		},
+		//主题设置
+		openSetting() {
+			this.settingVisible = true;
 		},
 	},
 };

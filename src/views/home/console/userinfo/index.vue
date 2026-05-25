@@ -63,11 +63,11 @@ export default {
 							title: "账号信息",
 							component: "account",
 						},
-						{
-							icon: "sc-settings-3-line",
-							title: "个人设置",
-							component: "userSettings",
-						},
+						// {
+						// 	icon: "sc-settings-3-line",
+						// 	title: "个人设置",
+						// 	component: "userSettings",
+						// },
 						{
 							icon: "sc-pass-pending-line",
 							title: "修改密码",

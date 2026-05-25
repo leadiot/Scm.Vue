@@ -1,8 +1,5 @@
 <template>
-	<el-form ref="form" label-width="120px" label-position="left" style="padding:0 20px;">
-		<el-alert title="以下配置可实时预览，开发者可在 config/index.js 中配置默认值，非常不建议在生产环境下开放布局设置" type="error"
-			:closable="false"></el-alert>
-		<el-divider></el-divider>
+	<el-form ref="form" label-width="80px">
 		<el-form-item :label="$t('user.nightmode')">
 			<el-switch v-model="dark"></el-switch>
 		</el-form-item>
@@ -14,34 +11,19 @@
 		</el-form-item>
 		<el-divider></el-divider>
 		<el-form-item label="主题选择">
-			<div style="display: flex; flex-direction: column; gap: 8px;">
-				<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-					<el-tooltip 
-						v-for="(theme, index) in themeList" 
-						:key="index"
-						:content="theme.name + (theme.description ? ' - ' + theme.description : '')"
-						placement="top"
-					>
-						<div 
-							@click="selectTheme(theme)"
-							:style="{ 
-								width: '36px', 
-								height: '36px', 
-								borderRadius: '6px', 
-								background: theme.gradient, 
-								cursor: 'pointer',
-								border: currentTheme.primary === theme.primary ? '2px solid #fff' : '2px solid transparent',
-								boxShadow: currentTheme.primary === theme.primary ? '0 0 0 2px var(--el-color-primary)' : '0 2px 6px rgba(0,0,0,0.15)',
-								transition: 'all 0.2s ease'
-							}"
-						></div>
-					</el-tooltip>
-				</div>
-				<div style="font-size: 12px; color: #909399; margin-top: 4px;">
-					当前主题：<span style="font-weight: 600;">{{ currentTheme.name }}</span>
-					<span v-if="currentTheme.description" style="color: #c0c4cc; margin-left: 4px;">({{ currentTheme.description }})</span>
-				</div>
-			</div>
+			<el-select v-model="currentThemeName" @change="onThemeChange" placeholder="请选择主题" style="width: 100%;">
+				<el-option v-for="(theme, index) in themeList" :key="index"
+					:label="theme.name + (theme.description ? ' - ' + theme.description : '')" :value="theme.name">
+					<div style="display: flex; align-items: center; gap: 10px;">
+						<div
+							:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
+						</div>
+						<span>{{ theme.name }}</span>
+						<span v-if="theme.description" style="color: #909399; font-size: 12px;">({{ theme.description
+						}})</span>
+					</div>
+				</el-option>
+			</el-select>
 		</el-form-item>
 		<el-form-item label="主色调">
 			<el-color-picker v-model="colorPrimary" :predefine="colorList"></el-color-picker>
@@ -88,16 +70,24 @@ export default {
 			themeList: this.$CONFIG.PREDEFINE_THEMES,
 			colorPrimary: this.$TOOL.data.get('APP_COLOR') || this.$CONFIG.COLOR || '#409EFF',
 			colorSecondary: this.$TOOL.data.get('APP_COLOR_SECONDARY') || '#909399',
-			currentTheme: themeUtil.getCurrentTheme()
-		}
+			currentTheme: themeUtil.getCurrentTheme(),
+			currentThemeName: themeUtil.getCurrentTheme().name
+		};
 	},
 	methods: {
 		selectTheme(theme) {
 			this.currentTheme = theme
+			this.currentThemeName = theme.name
 			this.colorPrimary = theme.primary
 			this.colorSecondary = theme.secondary || '#909399'
 			// 应用完整主题
 			themeUtil.applyTheme(theme)
+		},
+		onThemeChange(themeName) {
+			const theme = this.themeList.find(t => t.name === themeName)
+			if (theme) {
+				this.selectTheme(theme)
+			}
 		},
 		applyPrimaryColor(val) {
 			themeUtil.setPrimaryColor(val)

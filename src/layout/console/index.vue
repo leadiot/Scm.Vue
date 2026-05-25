@@ -201,7 +201,6 @@ import Topbar from './components/topbar.vue';
 import Tags from './components/tags.vue';
 import NavMenu from './components/navMenu.vue';
 import userbar from './components/userbar.vue';
-import setting from './components/setting.vue';
 import feedback from './components/feedback.vue';
 import iframeView from './components/iframeView.vue';
 import { useGlobalStore } from "@/stores/global";
@@ -215,7 +214,6 @@ export default {
 		Tags,
 		NavMenu,
 		userbar,
-		setting,
 		feedback,
 		iframeView
 	},
