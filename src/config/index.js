@@ -133,7 +133,6 @@ const DEFAULT_CONFIG = {
 	// - isCustom: 是否为用户自定义主题
 	PREDEFINE_THEMES: [
 		{ name: "经典蓝", primary: "#409eff", secondary: "#6e9fc7", accent: "#1565c0", surface: "#ffffff", background: "#f0f5ff", error: "#f56c6c", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #409eff 0%, #2d6fba 100%)", description: "默认主题", isCustom: false },
-		{ name: "科技蓝", primary: "#00bfff", secondary: "#7cb8d4", accent: "#0277bd", surface: "#ffffff", background: "#e8f4fd", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #00bfff 0%, #1e90ff 100%)", description: "科技感风格", isCustom: false },
 		{ name: "中国蓝", primary: "#0066cc", secondary: "#5a8ab5", accent: "#0d47a1", surface: "#ffffff", background: "#e3f2fd", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #0066cc 0%, #0047ab 100%)", description: "沉稳商务风格", isCustom: false },
 		{ name: "中国红", primary: "#c41e3a", secondary: "#d4726a", accent: "#b71c1c", surface: "#ffffff", background: "#fce4ec", error: "#991b1b", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #c41e3a 0%, #8b0000 100%)", description: "中国传统红", isCustom: false },
 		{ name: "中国紫", primary: "#722ed1", secondary: "#8b7db8", accent: "#6a1b9a", surface: "#ffffff", background: "#f3e5f5", error: "#dc2626", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #722ed1 0%, #531dab 100%)", description: "优雅紫色调", isCustom: false },

@@ -1,6 +1,6 @@
 <template>
     <el-main>
-        <el-row :gutter="16" style="margin-bottom: 24px">
+        <el-row :gutter="16">
             <el-col :lg="6">
                 <myCard :title="summary0.title" :tooltip="summary0.tooltip" :number="summary0.value"
                     :rate="summary0.rate" :index="0">
