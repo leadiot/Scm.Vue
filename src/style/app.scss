@@ -504,20 +504,13 @@ textarea {
 	display: none;
 }
 
-.el-sub-menu i {
-	margin-right: 5px;
-	width: var(--el-menu-icon-width);
-	text-align: center;
-	font-size: 18px;
-	vertical-align: middle
-}
-
+.el-sub-menu i,
 .el-menu-item i {
 	margin-right: 5px;
 	width: var(--el-menu-icon-width);
 	text-align: center;
 	font-size: 18px;
-	vertical-align: middle
+	vertical-align: middle;
 }
 
 /* 右侧内容 */
