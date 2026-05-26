@@ -19,7 +19,7 @@ const routes_404 = {
 	path: "/:pathMatch(.*)*",
 	hidden: true,
 	component: () => import("@/layout/other/404"),
-	meta: { layout: "none" },
+	meta: { layout: 0 },
 };
 let routes_404_r = () => { };
 
@@ -52,7 +52,7 @@ router.beforeEach(async (to, from) => {
 	//登录页直接放行
 	if (to.path === "/login") {
 		//删除路由(替换当前layout路由)
-		router.addRoute(routes[0]);
+		router.addRoute(routes[1]);
 		//删除路由(404)
 		routes_404_r();
 		isGetRouter = false;
@@ -117,6 +117,9 @@ router.onError((error) => {
 });
 
 router.getMenu = (layout) => {
+	if (layout == null) {
+		layout = 1;
+	}
 	let userInfo = tool.session.get("USER_INFO");
 	let userMenu = treeFilter(userRoutes, (node) => {
 		return node.meta.role
@@ -124,7 +127,7 @@ router.getMenu = (layout) => {
 			: true;
 	});
 	var menu = [...userMenu];
-	
+
 	var apiMenu = tool.session.get("MENU") || [];
 	apiMenu.forEach(element => {
 		if (element.meta.layout == layout) {
