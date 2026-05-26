@@ -10,30 +10,28 @@
 		</div>
 		<div class="sc-search-result">
 			<div class="sc-search-no-result" v-if="result.length <= 0">暂无搜索结果</div>
-			<ul v-else>
-				<el-scrollbar max-height="366px">
+			<el-scrollbar max-height="366px" v-else>
+				<ul>
 					<li v-for="(item, index) in result" :key="item.path" @click="to(item)"
 						:class="{ active: index == selected }">
-						<el-icon>
-							<component :is="item.icon || 'el-icon-menu'" />
-						</el-icon>
+						<sc-icon :name="item.icon || 'ms-keyboard_return'" />
 						<span class="title">{{ item.breadcrumb }}</span>
 					</li>
-				</el-scrollbar>
-			</ul>
+				</ul>
+			</el-scrollbar>
 		</div>
 		<el-divider></el-divider>
 		<div style="vertical-align: middle;">
-			<el-button type="default" icon="sc-icon-key-enter" class="sc-search_key" disabled />
+			<sc-icon name="ms-keyboard_return" class="sc-search_key" />
 			<label class="sc-search_label">
 				确认
 			</label>
-			<el-button type="default" icon="sc-icon-key-up" class="sc-search_key" disabled></el-button>
-			<el-button type="default" icon="sc-icon-key-down" class="sc-search_key" disabled></el-button>
+			<sc-icon name="ms-keyboard_arrow_up" class="sc-search_key" />
+			<sc-icon name="ms-keyboard_arrow_down" class="sc-search_key" />
 			<label class="sc-search_label">
 				切换
 			</label>
-			<el-button type="default" icon="sc-icon-key-esc" class="sc-search_key" disabled></el-button>
+			<sc-icon name="sc-key-down" class="sc-search_key" />
 			<label class="sc-search_label">
 				关闭
 			</label>
@@ -53,7 +51,7 @@ export default {
 		}
 	},
 	mounted() {
-		var searchHistory = this.$TOOL.data.get("SEARCH_HISTORY") || []
+		var searchHistory = this.$TOOL.session.get("SEARCH_HISTORY") || []
 		this.history = searchHistory
 		var menuTree = this.$TOOL.session.get("MENU")
 		this.filterMenu(menuTree)
@@ -111,6 +109,7 @@ export default {
 		},
 		filterMenu(map) {
 			map.forEach(item => {
+				console.log(item)
 				if (item.meta.hidden || item.meta.type == "button") {
 					return false
 				}
@@ -127,6 +126,7 @@ export default {
 		menuFilter(queryString) {
 			var res = [];
 			queryString = queryString.toLowerCase();
+			console.log(this.menu)
 			//过滤菜单树
 			var filterMenu = this.menu.filter((item) => {
 				var meta = (item.meta.title || '').toLowerCase();
@@ -147,6 +147,7 @@ export default {
 					return router.find(r => r.path == m.path)
 				}
 			})
+			console.log(filterRouter)
 			//重组对象
 			filterRouter.forEach(item => {
 				if (!item) {
@@ -160,7 +161,7 @@ export default {
 					path: item.meta.type == "link" ? item.path.slice(1) : item.path,
 					icon: item.meta.icon,
 					title: item.meta.title,
-					breadcrumb: item.meta.breadcrumb.map(v => v.meta.title).join(' - ')
+					breadcrumb: item.meta.breadcrumb.map(v => v.title || v.meta?.title || '').join(' - ')
 				})
 			})
 			return res
@@ -192,9 +193,9 @@ export default {
 		historyClose(index) {
 			this.history.splice(index, 1);
 			if (this.history.length <= 0) {
-				this.$TOOL.data.remove("SEARCH_HISTORY")
+				this.$TOOL.session.remove("SEARCH_HISTORY")
 			} else {
-				this.$TOOL.data.set("SEARCH_HISTORY", this.history)
+				this.$TOOL.session.set("SEARCH_HISTORY", this.history)
 			}
 		}
 	}
@@ -202,70 +203,197 @@ export default {
 </script>
 
 <style scoped>
-.sc-search {}
+.sc-search {
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.08),
+		0 2px 8px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	position: relative;
+	overflow: hidden;
+}
+
+.sc-search::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1px;
+}
 
 .sc-search-no-result {
 	text-align: center;
 	margin: 40px 0;
 	color: var(--el-text-color-secondary);
+	font-size: 14px;
 }
 
 .sc-search-history {
-	margin-top: 10px;
+	margin-top: 16px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
 .sc-search-history .el-tag {
 	cursor: pointer;
+	background: rgba(var(--el-color-primary-rgb), 0.08);
+	border-color: rgba(var(--el-color-primary-rgb), 0.15);
+	color: var(--el-text-color-secondary);
+	border-radius: 20px;
+	padding: 4px 12px;
+	transition: all 0.2s ease;
+}
+
+.sc-search-history .el-tag:hover {
+	background: rgba(var(--el-color-primary-rgb), 0.15);
+	border-color: rgba(var(--el-color-primary-rgb), 0.3);
+	transform: translateY(-1px);
 }
 
 .sc-search-result {
-	margin-top: 15px;
+	margin-top: 20px;
+}
+
+.sc-search-result ul {
+	padding: 5px;
+	margin: 5px;
 }
 
 .sc-search-result .active {
-	background: var(--el-color-primary);
+	background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-2) 100%);
 	color: var(--color-on-primary, #fff);
 	border-color: var(--el-color-primary);
+	box-shadow:
+		0 4px 12px rgba(var(--el-color-primary-rgb), 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	transform: translateX(4px);
+}
+
+.sc-search-result .active i,
+.sc-search-result .active .title {
+	color: var(--color-on-primary, #fff);
 }
 
 .sc-search-result li {
 	height: 56px;
-	padding: 0 15px;
-	background: var(--el-bg-color-overlay);
-	border: 1px solid var(--el-border-color-light);
+	padding: 0 16px;
+	background: rgba(255, 255, 255, 0.6);
+	border: 1px solid var(--el-border-color-lighter);
 	list-style: none;
-	border-radius: 4px;
-	margin-bottom: 5px;
+	border-radius: 10px;
+	margin-bottom: 6px;
 	font-size: 14px;
 	display: flex;
 	align-items: center;
 	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	overflow: hidden;
 }
 
-.sc-search-result li i {
-	font-size: 20px;
-	margin-right: 15px;
+.sc-search-result li::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: var(--el-color-primary);
+	opacity: 0;
+	transition: opacity 0.25s ease;
 }
 
 .sc-search-result li:hover {
-	background: var(--el-color-primary);
-	color: var(--color-on-primary, #fff);
-	border-color: var(--el-color-primary);
+	background: rgba(var(--el-color-primary-rgb), 0.08);
+	border-color: rgba(var(--el-color-primary-rgb), 0.3);
+	transform: translateX(4px);
+}
+
+.sc-search-result li:hover::before {
+	opacity: 1;
+}
+
+.sc-search-result li i {
+	font-size: 18px;
+	margin-right: 14px;
+	color: var(--el-color-primary);
+	transition: color 0.25s ease;
+}
+
+.sc-search-result li .title {
+	color: var(--el-text-color-primary);
+	font-weight: 500;
+	transition: color 0.25s ease;
 }
 
 .sc-search_key {
 	padding: 0px;
 	margin: 0px;
-	width: 20px;
+	width: 22px;
 	height: 18px;
-	box-shadow: inset 0 -2px 0 0 #cdcde6, inset 0 0 1px 1px #fff, 0 1px 2px 1px rgba(30, 35, 90, .4);
+	border-radius: 4px;
+	background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%);
+	border: 1px solid var(--el-border-color-lighter);
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	color: var(--el-text-color-secondary);
+	font-size: 11px;
 }
 
 .sc-search_label {
-	margin-right: 8px;
+	margin-right: 12px;
+	font-size: 12px;
+	color: var(--el-text-color-secondary);
 }
 
 .el-divider--horizontal {
-	margin: 12px 0px;
+	margin: 16px 0;
+	background: linear-gradient(90deg, transparent 0%, var(--el-border-color) 50%, transparent 100%);
+}
+
+.el-input__wrapper {
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.8);
+	border: 1px solid var(--el-border-color-lighter);
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	transition: all 0.25s ease;
+}
+
+.el-input__wrapper:hover {
+	border-color: rgba(var(--el-color-primary-rgb), 0.3);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.el-input__wrapper.is-focus {
+	border-color: var(--el-color-primary);
+	box-shadow:
+		0 0 0 3px rgba(var(--el-color-primary-rgb), 0.1),
+		0 4px 16px rgba(var(--el-color-primary-rgb), 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.el-scrollbar__wrap {
+	border-radius: 8px;
+}
+
+.el-scrollbar__bar.is-vertical {
+	width: 5px;
+}
+
+.el-scrollbar__thumb {
+	background: rgba(var(--el-color-primary-rgb), 0.3);
+	border-radius: 3px;
+}
+
+.el-scrollbar__thumb:hover {
+	background: rgba(var(--el-color-primary-rgb), 0.5);
 }
 </style>
