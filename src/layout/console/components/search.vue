@@ -20,21 +20,20 @@
 				</ul>
 			</el-scrollbar>
 		</div>
-		<el-divider></el-divider>
-		<div style="vertical-align: middle;">
-			<sc-icon name="ms-keyboard_return" class="sc-search_key" />
-			<label class="sc-search_label">
-				确认
-			</label>
-			<sc-icon name="ms-keyboard_arrow_up" class="sc-search_key" />
-			<sc-icon name="ms-keyboard_arrow_down" class="sc-search_key" />
-			<label class="sc-search_label">
-				切换
-			</label>
-			<sc-icon name="sc-key-down" class="sc-search_key" />
-			<label class="sc-search_label">
-				关闭
-			</label>
+		<div class="sc-search-key-hint">
+			<div class="sc-search-key-group">
+				<span class="sc-search-key">Enter</span>
+				<span class="sc-search_label">确认</span>
+			</div>
+			<div class="sc-search-key-group">
+				<span class="sc-search-key">↑</span>
+				<span class="sc-search-key">↓</span>
+				<span class="sc-search_label">切换</span>
+			</div>
+			<div class="sc-search-key-group">
+				<span class="sc-search-key">Esc</span>
+				<span class="sc-search_label">关闭</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -109,7 +108,6 @@ export default {
 		},
 		filterMenu(map) {
 			map.forEach(item => {
-				console.log(item)
 				if (item.meta.hidden || item.meta.type == "button") {
 					return false
 				}
@@ -126,7 +124,6 @@ export default {
 		menuFilter(queryString) {
 			var res = [];
 			queryString = queryString.toLowerCase();
-			console.log(this.menu)
 			//过滤菜单树
 			var filterMenu = this.menu.filter((item) => {
 				var meta = (item.meta.title || '').toLowerCase();
@@ -147,7 +144,6 @@ export default {
 					return router.find(r => r.path == m.path)
 				}
 			})
-			console.log(filterRouter)
 			//重组对象
 			filterRouter.forEach(item => {
 				if (!item) {
@@ -204,14 +200,12 @@ export default {
 
 <style scoped>
 .sc-search {
+	background: var(--el-bg-color);
 	border-radius: 16px;
-	padding: 20px;
-	box-shadow:
-		0 8px 32px rgba(0, 0, 0, 0.08),
-		0 2px 8px rgba(0, 0, 0, 0.04),
-		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	padding: 24px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+	border: 1px solid var(--el-border-color-lighter);
 	position: relative;
-	overflow: hidden;
 }
 
 .sc-search::before {
@@ -220,12 +214,14 @@ export default {
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 1px;
+	height: 2px;
+	background: linear-gradient(90deg, transparent 0%, var(--el-color-primary) 50%, transparent 100%);
+	opacity: 0.5;
 }
 
 .sc-search-no-result {
 	text-align: center;
-	margin: 40px 0;
+	padding: 40px 20px;
 	color: var(--el-text-color-secondary);
 	font-size: 14px;
 }
@@ -239,161 +235,170 @@ export default {
 
 .sc-search-history .el-tag {
 	cursor: pointer;
-	background: rgba(var(--el-color-primary-rgb), 0.08);
-	border-color: rgba(var(--el-color-primary-rgb), 0.15);
+	background: rgba(var(--el-color-primary-rgb), 0.06);
+	border-color: rgba(var(--el-color-primary-rgb), 0.12);
 	color: var(--el-text-color-secondary);
-	border-radius: 20px;
+	border-radius: 8px;
 	padding: 4px 12px;
+	font-size: 13px;
 	transition: all 0.2s ease;
 }
 
 .sc-search-history .el-tag:hover {
-	background: rgba(var(--el-color-primary-rgb), 0.15);
-	border-color: rgba(var(--el-color-primary-rgb), 0.3);
-	transform: translateY(-1px);
+	background: rgba(var(--el-color-primary-rgb), 0.12);
+	border-color: rgba(var(--el-color-primary-rgb), 0.25);
 }
 
 .sc-search-result {
-	margin-top: 20px;
+	margin-top: 16px;
 }
 
 .sc-search-result ul {
-	padding: 5px;
-	margin: 5px;
-}
-
-.sc-search-result .active {
-	background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-2) 100%);
-	color: var(--color-on-primary, #fff);
-	border-color: var(--el-color-primary);
-	box-shadow:
-		0 4px 12px rgba(var(--el-color-primary-rgb), 0.3),
-		inset 0 1px 0 rgba(255, 255, 255, 0.2);
-	transform: translateX(4px);
-}
-
-.sc-search-result .active i,
-.sc-search-result .active .title {
-	color: var(--color-on-primary, #fff);
+	padding: 0;
+	margin: 0;
 }
 
 .sc-search-result li {
-	height: 56px;
+	height: 48px;
 	padding: 0 16px;
-	background: rgba(255, 255, 255, 0.6);
-	border: 1px solid var(--el-border-color-lighter);
+	background: var(--el-bg-color-page);
+	border: 1px solid transparent;
 	list-style: none;
-	border-radius: 10px;
-	margin-bottom: 6px;
+	border-radius: 8px;
+	margin-bottom: 4px;
 	font-size: 14px;
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: all 0.2s ease;
 	position: relative;
-	overflow: hidden;
 }
 
 .sc-search-result li::before {
 	content: '';
 	position: absolute;
 	left: 0;
-	top: 0;
-	bottom: 0;
-	width: 3px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 2px;
+	height: 24px;
 	background: var(--el-color-primary);
 	opacity: 0;
-	transition: opacity 0.25s ease;
+	transition: opacity 0.2s ease;
 }
 
 .sc-search-result li:hover {
-	background: rgba(var(--el-color-primary-rgb), 0.08);
-	border-color: rgba(var(--el-color-primary-rgb), 0.3);
-	transform: translateX(4px);
+	background: rgba(var(--el-color-primary-rgb), 0.06);
+	border-color: rgba(var(--el-color-primary-rgb), 0.2);
 }
 
 .sc-search-result li:hover::before {
 	opacity: 1;
 }
 
-.sc-search-result li i {
-	font-size: 18px;
-	margin-right: 14px;
+.sc-search-result .active {
+	background: rgba(var(--el-color-primary-rgb), 0.1);
+	border-color: var(--el-color-primary);
+}
+
+.sc-search-result .active::before {
+	opacity: 1;
+}
+
+.sc-search-result .active .title {
 	color: var(--el-color-primary);
-	transition: color 0.25s ease;
+	font-weight: 500;
+}
+
+.sc-search-result li i {
+	font-size: 16px;
+	margin-right: 12px;
+	color: var(--el-text-color-secondary);
+	flex-shrink: 0;
+}
+
+.sc-search-result .active i {
+	color: var(--el-color-primary);
 }
 
 .sc-search-result li .title {
 	color: var(--el-text-color-primary);
-	font-weight: 500;
-	transition: color 0.25s ease;
+	font-size: 14px;
 }
 
-.sc-search_key {
-	padding: 0px;
-	margin: 0px;
-	width: 22px;
-	height: 18px;
+.sc-search-key-hint {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding-top: 16px;
+	border-top: 1px solid var(--el-border-color-lighter);
+	margin-top: 16px;
+}
+
+.sc-search-key-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sc-search-key {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 6px;
 	border-radius: 4px;
-	background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%);
+	background: var(--el-bg-color-page);
 	border: 1px solid var(--el-border-color-lighter);
-	box-shadow:
-		0 1px 2px rgba(0, 0, 0, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	font-size: 12px;
 	color: var(--el-text-color-secondary);
-	font-size: 11px;
+	font-family: monospace;
 }
 
 .sc-search_label {
-	margin-right: 12px;
 	font-size: 12px;
 	color: var(--el-text-color-secondary);
 }
 
-.el-divider--horizontal {
-	margin: 16px 0;
-	background: linear-gradient(90deg, transparent 0%, var(--el-border-color) 50%, transparent 100%);
-}
-
 .el-input__wrapper {
 	border-radius: 12px;
-	background: rgba(255, 255, 255, 0.8);
+	background: var(--el-bg-color-page);
 	border: 1px solid var(--el-border-color-lighter);
-	box-shadow:
-		0 2px 8px rgba(0, 0, 0, 0.04),
-		inset 0 1px 0 rgba(255, 255, 255, 0.9);
-	transition: all 0.25s ease;
+	transition: all 0.2s ease;
 }
 
 .el-input__wrapper:hover {
 	border-color: rgba(var(--el-color-primary-rgb), 0.3);
-	box-shadow:
-		0 4px 16px rgba(0, 0, 0, 0.06),
-		inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .el-input__wrapper.is-focus {
 	border-color: var(--el-color-primary);
-	box-shadow:
-		0 0 0 3px rgba(var(--el-color-primary-rgb), 0.1),
-		0 4px 16px rgba(var(--el-color-primary-rgb), 0.15),
-		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	box-shadow: 0 0 0 3px rgba(var(--el-color-primary-rgb), 0.08);
 }
 
-.el-scrollbar__wrap {
-	border-radius: 8px;
+.el-input__prefix {
+	color: var(--el-text-color-secondary);
+}
+
+.el-input__clear {
+	color: var(--el-text-color-secondary);
+}
+
+.el-divider--horizontal {
+	display: none;
 }
 
 .el-scrollbar__bar.is-vertical {
-	width: 5px;
+	width: 4px;
 }
 
 .el-scrollbar__thumb {
-	background: rgba(var(--el-color-primary-rgb), 0.3);
-	border-radius: 3px;
+	background: rgba(var(--el-color-primary-rgb), 0.25);
+	border-radius: 2px;
 }
 
 .el-scrollbar__thumb:hover {
-	background: rgba(var(--el-color-primary-rgb), 0.5);
+	background: rgba(var(--el-color-primary-rgb), 0.4);
 }
 </style>
