@@ -136,7 +136,7 @@ textarea {
 /* 头部 - 玻璃拟态效果 */
 .scmui-header {
 	height: 64px;
-	background: linear-gradient(135deg, rgba(var(--el-color-primary-rgb), 0.95) 0%, rgba(var(--el-color-primary-rgb), 0.85) 100%);
+	background: var(--color-primary);
 	backdrop-filter: blur(20px);
 	-webkit-backdrop-filter: blur(20px);
 	color: var(--color-on-primary, #fff);
@@ -203,7 +203,7 @@ textarea {
 	transform: translateX(-50%) scaleX(0);
 	width: 20px;
 	height: 3px;
-	background: linear-gradient(90deg, var(--el-color-primary-light-4), var(--el-color-primary));
+	background: var(--color-on-primary);
 	border-radius: 2px;
 	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -261,7 +261,7 @@ textarea {
 }
 
 .scmui-side-split-top {
-	height: 64px;
+	height: 56px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -433,7 +433,7 @@ textarea {
 
 .scmui-side-top {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-	height: 64px;
+	height: 56px;
 	display: flex;
 	align-items: center;
 	padding: 0 20px;

@@ -54,9 +54,16 @@ export default {
 		this.history = searchHistory
 		var menuTree = this.$TOOL.session.get("MENU")
 		this.filterMenu(menuTree)
-		this.$refs.input.focus()
+		this.requestFocus()
 	},
 	methods: {
+		requestFocus() {
+			this.$nextTick(() => {
+				if (this.$refs.input) {
+					this.$refs.input.focus()
+				}
+			})
+		},
 		inputChange(value) {
 			if (value) {
 				this.result = this.menuFilter(value)

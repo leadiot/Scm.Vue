@@ -106,15 +106,16 @@
 					<img class="logo" src="/images/logo.png">
 					<span>{{ $CONFIG.APP_NAME }}</span>
 				</div>
-			</div>
-			<div class="scmui-header-right">
 				<div v-if="!ismobile" class="scmui-header-menu">
-					<el-menu mode="horizontal" :default-active="active" router background-color="#222b45"
-						text-color="#fff" active-text-color="var(--el-color-primary)">
+					<el-menu mode="horizontal" ellipsis :default-active="active" router
+						background-color="var(--color-primary)" text-color="var(--color-on-primary)"
+						active-text-color="var(--color-on-primary)">
 						<NavMenu :navMenus="menu"></NavMenu>
 					</el-menu>
 				</div>
 				<Side-m v-if="ismobile"></Side-m>
+			</div>
+			<div class="scmui-header-right">
 				<userbar></userbar>
 			</div>
 		</header>
