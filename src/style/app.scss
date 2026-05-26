@@ -139,7 +139,7 @@ textarea {
 	background: linear-gradient(135deg, rgba(var(--el-color-primary-rgb), 0.95) 0%, rgba(var(--el-color-primary-rgb), 0.85) 100%);
 	backdrop-filter: blur(20px);
 	-webkit-backdrop-filter: blur(20px);
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 	display: flex;
 	justify-content: space-between;
 	box-shadow: 0 4px 20px rgba(var(--el-color-primary-rgb), 0.3);
@@ -351,24 +351,54 @@ textarea {
 }
 
 .scmui-side-split li.active {
-	background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-2) 100%);
+	background: linear-gradient(135deg, var(--el-color-primary) 0%, rgba(var(--el-color-primary-rgb), 0.85) 100%);
 	color: var(--color-on-primary, #fff);
-	box-shadow: 0 8px 24px rgba(var(--el-color-primary-rgb), 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-	transform: translateY(-2px);
+	box-shadow: 
+		0 0 0 1px rgba(255, 255, 255, 0.15),
+		0 0 20px rgba(var(--el-color-primary-rgb), 0.4),
+		0 8px 32px rgba(var(--el-color-primary-rgb), 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	border-radius: 12px 0 0 12px;
+	position: relative;
+	overflow: hidden;
 }
 
 .scmui-side-split li.active::before {
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
 	opacity: 1;
+	border-radius: 12px 0 0 12px;
+}
+
+.scmui-side-split li.active::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: 4px;
+	height: 60%;
+	transform: translateY(-50%);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
+	border-radius: 2px 0 0 2px;
 }
 
 .scmui-side-split li.active i {
-	color: #fff;
-	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+	color: var(--color-on-primary, #fff);
+	filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+	position: relative;
+	z-index: 1;
 }
 
 .scmui-side-split li.active p {
-	color: #fff;
+	color: rgba(255, 255, 255, 0.95);
+	position: relative;
+	z-index: 1;
+	font-weight: 600;
 }
 
 .scmui-side-split-scroll::-webkit-scrollbar {
@@ -597,7 +627,7 @@ textarea {
 
 .scmui-tags li.active i:hover {
 	background: rgba(255, 255, 255, 0.2);
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 }
 
 .scmui-tags li.sortable-ghost {
@@ -648,7 +678,7 @@ textarea {
 .main-maximize-exit i {
 	font-size: 16px;
 	margin-top: 26px;
-	color: #fff;
+	color: var(--color-on-primary, #fff);
 }
 
 .main-maximize-exit:hover {
