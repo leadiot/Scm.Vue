@@ -114,7 +114,7 @@ export default {
 				if (item.meta.type == 'iframe') {
 					item.path = `/i/${item.name}`
 				}
-				if (item.children && item.children.length > 0 && !item.component) {
+				if (item.children && item.children.length > 0) {
 					this.filterMenu(item.children)
 				} else {
 					this.menu.push(item)
