@@ -351,12 +351,12 @@ textarea {
 }
 
 .scmui-side-split li.active {
-	background: linear-gradient(135deg, var(--el-color-primary) 0%, rgba(var(--el-color-primary-rgb), 0.85) 100%);
+	background: linear-gradient(135deg, var(--color-primary) 0%, rgba(var(--color-secondary), 0.85) 100%);
 	color: var(--color-on-primary, #fff);
-	box-shadow: 
+	box-shadow:
 		0 0 0 1px rgba(255, 255, 255, 0.15),
-		0 0 20px rgba(var(--el-color-primary-rgb), 0.4),
-		0 8px 32px rgba(var(--el-color-primary-rgb), 0.3),
+		0 0 20px rgba(var(--color-secondary), 0.4),
+		0 8px 32px rgba(var(--color-secondary), 0.3),
 		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 	border-radius: 12px 0 0 12px;
 	position: relative;
@@ -370,21 +370,19 @@ textarea {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
+	background-size:
+		100% 100%,
+		4px 60%;
+	background-position:
+		center center,
+		left center;
+	background-repeat:
+		no-repeat;
 	opacity: 1;
 	border-radius: 12px 0 0 12px;
-}
-
-.scmui-side-split li.active::after {
-	content: '';
-	position: absolute;
-	top: 50%;
-	right: 0;
-	width: 4px;
-	height: 60%;
-	transform: translateY(-50%);
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
-	border-radius: 2px 0 0 2px;
 }
 
 .scmui-side-split li.active i {
