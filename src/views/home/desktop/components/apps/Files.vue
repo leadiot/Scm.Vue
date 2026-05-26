@@ -24,7 +24,7 @@
 			</div>
 			<div class="toolbar-right">
 				<el-input v-model="param.key" placeholder="搜索..." prefix-icon="el-icon-search" size="small"
-					class="search-input" />
+					class="search-input" clearable />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
 						:class="{ active: viewMode === v.value }" :title="v.label" @click="changeViewMode(v.value)">
@@ -71,7 +71,7 @@
 
 			<div class="main-content" ref="contentRef" @click.self="clearSelection">
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
-					<div v-for="item in fileList" :key="item.id" class="tile-item"
+					<div v-for="item in filteredFileList" :key="item.id" class="tile-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)" @contextmenu.prevent="showContextMenu($event, item)">
 						<div class="tile-icon">
@@ -82,7 +82,7 @@
 				</div>
 
 				<div v-else-if="viewMode === 'list'" class="view-list">
-					<div v-for="item in fileList" :key="item.name" class="list-item"
+					<div v-for="item in filteredFileList" :key="item.name" class="list-item"
 						:class="{ selected: selectedItems.includes(item.name) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)" @contextmenu.prevent="showContextMenu($event, item)">
 						<sc-icon :name="getFileIcon(item)" :size="20" />
@@ -114,7 +114,7 @@
 						</div>
 					</div>
 					<div class="details-body">
-						<div v-for="item in fileList" :key="item.id" class="details-row"
+						<div v-for="item in filteredFileList" :key="item.id" class="details-row"
 							:class="{ selected: selectedItems.includes(item.id) }"
 							@click="handleItemClick($event, item)" @dblclick="handleItemDblClick(item)"
 							@contextmenu.prevent="showContextMenu($event, item)">
@@ -129,10 +129,11 @@
 					</div>
 				</div>
 
-				<div v-if="fileList.length === 0" class="empty-state">
-					<sc-icon name="ms-folder_open" :size="64" />
-					<p>此文件夹为空</p>
-					<button class="upload-btn" @click="openUploadDialog">
+				<div v-if="filteredFileList.length === 0" class="empty-state">
+					<sc-icon :name="param.key ? 'ms-search_off' : 'ms-folder_open'" :size="64" />
+					<p v-if="param.key">未找到匹配 "{{ param.key }}" 的文件</p>
+					<p v-else>此文件夹为空</p>
+					<button v-if="!param.key" class="upload-btn" @click="openUploadDialog">
 						<sc-icon name="ms-upload" :size="24" />
 						<span>上传文件</span>
 					</button>
@@ -141,7 +142,8 @@
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ fileList.length }} 个项目</span>
+			<span>{{ filteredFileList.length }} 个项目</span>
+			<span v-if="param.key && filteredFileList.length < fileList.length">· 共 {{ fileList.length }} 个，筛选 {{ filteredFileList.length }} 个</span>
 			<span v-if="selectedItems.length > 0">· 已选中 {{ selectedItems.length }} 个项目</span>
 		</div>
 
@@ -183,7 +185,7 @@
 
 		<!-- 新建文件夹对话框 -->
 		<el-dialog v-model="newFolderDialogVisible" title="新建文件夹" width="400px" @close="newFolderDialogVisible = false">
-			<el-form :model="newFolderForm" ref="newFolderFormRef" label-width="80px">
+			<el-form :model="newFolderForm" ref="newFolderFormRef" label-width="100px">
 				<el-form-item label="文件夹名称" prop="name">
 					<el-input v-model="newFolderForm.name" placeholder="请输入文件夹名称" />
 				</el-form-item>
@@ -296,6 +298,13 @@ export default {
 		canGoForward() {
 			return this.historyIndex < this.history.length - 1;
 		},
+		filteredFileList() {
+			const keyword = this.param.key.trim().toLowerCase();
+			if (!keyword) {
+				return this.fileList;
+			}
+			return this.fileList.filter(item => item.name.toLowerCase().includes(keyword));
+		},
 	},
 	mounted() {
 		this.loadCfg();
@@ -303,23 +312,21 @@ export default {
 	},
 	methods: {
 		async loadFolderTree() {
-			var res = await this.$API.scmsysfile.list.get({ path: '/' });
+			var root = { id: 'root', name: '根目录', path: '/' };
+			console.log('loadFolderTree', root.path);
+			var res = await this.$API.scmsysfile.folders.get({ path: root.path });
 			if (res.code == 200) {
-				this.folderList = res.data || [];
-				this.buildFolderTree(this.folderList);
+				root.children = res.data || [];
 			}
+			this.buildFolderTree(root.children, root.path);
+			this.folderTreeData = [root];
 		},
-		buildFolderTree(folders) {
-			const transformNode = (node) => {
-				return {
-					id: node.uri,
-					name: node.name,
-					path: node.uri,
-					children: node.children ? node.children.map(child => transformNode(child)) : []
-				};
-			};
-
-			this.folderTreeData = folders.map(folder => transformNode(folder));
+		buildFolderTree(folders, path) {
+			return folders.map(folder => {
+				folder.path = path + folder.name;
+				this.buildFolderTree(folder.children, folder.path + '/');
+				return folder;
+			});
 		},
 		async loadCfg() {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
@@ -549,7 +556,8 @@ export default {
 				this.param.path = this.currentFolder.path || '/';
 				var res = await this.$API.scmsysfile.files.get(this.param);
 				if (res.code == 200) {
-					this.fileList = res.data || [];
+					// this.fileList = res.data || [];
+					this.fileList = this.transformFileList(res.data || []);
 				} else {
 					this.fileList = [];
 				}
@@ -564,6 +572,9 @@ export default {
 			}
 		},
 		openUploadDialog() {
+			if (this.$refs.uploadRef) {
+				this.$refs.uploadRef.clearFiles();
+			}
 			this.uploadDialogVisible = true;
 		},
 		async handleUpload(param) {
@@ -609,15 +620,21 @@ export default {
 			}
 
 			try {
-				var res = await this.$API.scmsysfile.add.post({
+				var data = {
 					name: this.newFolderForm.name,
 					path: this.currentFolder?.path || '/',
-				});
+				}
+				var res = await this.$API.scmsysfile.addFolder.post(data);
 
 				if (res.code == 200) {
 					this.$message.success('创建成功');
 					this.newFolderDialogVisible = false;
-					await this.loadCurrentFolder();
+					if (!this.currentFolder.children) {
+						this.currentFolder.children = [];
+					}
+					this.currentFolder.children.push(data);
+					data.path = data.path + '/' + data.name;
+					// await this.loadCurrentFolder();
 				} else {
 					this.$message.error(res.message || '创建失败');
 				}

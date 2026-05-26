@@ -1,16 +1,16 @@
 import config from "@/config";
 import http from "@/utils/request";
 export default {
-	list: {
-		url: `${config.API_URL}/scmsysfile/folders`,
-		name: "列表",
+	files: {
+		url: `${config.API_URL}/scmsysfile/files`,
+		name: "查询文件列表",
 		get: async function (params) {
 			return await http.get(this.url, params);
 		},
 	},
-	files: {
-		url: `${config.API_URL}/scmsysfile/files`,
-		name: "查询文件列表",
+	folders: {
+		url: `${config.API_URL}/scmsysfile/folders`,
+		name: "查询目录列表",
 		get: async function (params) {
 			return await http.get(this.url, params);
 		},
@@ -40,7 +40,7 @@ export default {
 		url: `${config.API_URL}/scmsysfile/folder`,
 		name: "添加目录",
 		post: async function (params) {
-			return await http.post(this.url + "?path=" + params);
+			return await http.post(this.url, params);
 		},
 	},
 	delFile: {
