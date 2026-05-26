@@ -335,7 +335,7 @@ export default {
 .download-header {
     text-align: center;
     padding: 40px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, var(--el-color-primary) 0%, var(--el-color-primary-light-2) 100%);
     color: white;
 }
 
