@@ -227,24 +227,22 @@ export function isDarkMode() {
  * 初始化主题 - 从本地存储恢复
  */
 export function initTheme() {
-	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR)
-	const savedSecondary = tool.session.get(STORAGE_KEYS.SECONDARY_COLOR)
-	const savedThemeMode = tool.session.get(STORAGE_KEYS.THEME_MODE)
-
-	// 恢复主色调
-	if (savedColor) {
-		setPrimaryColor(savedColor)
+	const themeName = tool.session.get(STORAGE_KEYS.THEME_NAME);
+	const theme = getTheme(themeName);
+	if (!theme) {
+		theme = getCurrentTheme()
 	}
+	applyTheme(theme);
 
-	// 恢复辅色调
-	if (savedSecondary) {
-		setSecondaryColor(savedSecondary)
-	}
-
-	// 恢复主题模式
-	if (savedThemeMode === 'dark') {
+	// 主题模式
+	const themeMode = tool.session.get(STORAGE_KEYS.THEME_MODE);
+	if (themeMode === 'dark') {
 		setDarkMode(true)
 	}
+}
+
+export function getTheme(themeName) {
+	return PRESET_THEMES.find(t => t.name === themeName);
 }
 
 /**
