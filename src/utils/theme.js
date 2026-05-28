@@ -228,10 +228,7 @@ export function isDarkMode() {
  */
 export function initTheme() {
 	const themeName = tool.session.get(STORAGE_KEYS.THEME_NAME);
-	const theme = getTheme(themeName);
-	if (!theme) {
-		theme = getCurrentTheme()
-	}
+	const theme = getTheme(themeName) || getCurrentTheme();
 	applyTheme(theme);
 
 	// 主题模式
