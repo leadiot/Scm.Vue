@@ -6,6 +6,8 @@ const APP_CONFIG = {
 	/** 产品描述，可以根据需要修改 */
 	APP_DESC: "这是应用的简单介绍。",
 
+	USER_REGISTER_ENABLED: true,
+
 	/** 服务路径(含端口)，可以根据需要修改 */
 	//SERVER_URL: '',
 
@@ -15,7 +17,7 @@ const APP_CONFIG = {
 	HOME: '/console',
 
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
-	DEF_LOGIN_MODE: [10, 30],
+	DEF_LOGIN_MODE: [10, 22],
 	/** 默认登录用户，便于开发时减少输入，可以修改或置空 */
 	DEF_LOGIN_USER: "admin",
 	/** 默认登录口令，便于开发时减少输入，可以修改或置空 */
