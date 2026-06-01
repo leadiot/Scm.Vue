@@ -1,5 +1,5 @@
 <template>
-    <sc-dialog v-model="visible" show-fullscreen destroy-on-close :title="titleMap[mode]" width="750px" @close="close">
+    <sc-dialog v-model="visible" show-fullscreen destroy-on-close :title="titleMap[mode]" width="680px" @close="close">
         <el-form ref="formRef" label-width="100px" :model="formData" :rules="rules">
             <el-row>
                 <el-col :span="12">
@@ -15,24 +15,28 @@
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="发布日期" prop="time">
-                        <el-date-picker type="date" v-model="formData.time" placeholder="请选择发布日期" clearable>
+                    <el-form-item label="发行日期" prop="release_date">
+                        <el-date-picker type="date" v-model="formData.release_date" placeholder="请选择发行日期" clearable>
                         </el-date-picker>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
+                    <el-form-item label="构建版本" prop="release_code">
+                        <el-input v-model="formData.release_code" placeholder="请输入构建版本" :maxlength="16" show-word-limit
+                            clearable></el-input>
+                    </el-form-item>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="版本" prop="ver">
+                    <el-form-item label="应用版本" prop="ver">
                         <el-input v-model="formData.ver" placeholder="请输入版本" :maxlength="16" show-word-limit
                             clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="构建版本" prop="build">
-                        <el-input v-model="formData.build" placeholder="请输入构建版本" :maxlength="16" show-word-limit
+                    <el-form-item label="数据版本" prop="data_ver">
+                        <el-input v-model="formData.data_ver" placeholder="请输入数据版本" :maxlength="16" show-word-limit
                             clearable></el-input>
                     </el-form-item>
                 </el-col>
@@ -102,10 +106,10 @@ export default {
                     { required: true, trigger: "blur", message: "请输入系统代码", },
                 ],
                 time: [
-                    { required: true, trigger: "blur", message: "请输入发布日期", },
+                    { required: true, trigger: "blur", message: "请输入发行日期", },
                 ],
                 ver: [
-                    { required: true, trigger: "blur", message: "请输入版本", },
+                    { required: true, trigger: "blur", message: "请输入应用版本", },
                 ],
                 build: [
                     { required: true, trigger: "blur", message: "请输入构建版本", },
@@ -126,8 +130,8 @@ export default {
                 id: this.$SCM.DEF_ID,
                 client: this.$SCM.ID_ONE_INT,
                 app_id: this.$SCM.ID_ONE,
-                date: '',
-                build: '',
+                release_date: '',
+                release_code: '',
                 ver: '',
                 ver_min: '',
                 ver_max: '',
@@ -158,8 +162,8 @@ export default {
                 if (valid) {
                     this.isSaveing = true;
                     let res = null;
-                    if (this.formData.time) {
-                        this.formData.date = this.$TOOL.dateFormat(this.formData.time, 'yyyy-MM-dd');
+                    if (this.formData.release_date) {
+                        this.formData.release_date = this.$TOOL.dateFormat(this.formData.release_date, 'yyyy-MM-dd');
                     }
                     if (this.$SCM.is_valid_id(this.formData.id)) {
                         res = await this.$API.scmdevversion.update.put(this.formData);

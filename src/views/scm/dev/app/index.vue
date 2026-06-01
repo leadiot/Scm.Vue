@@ -54,7 +54,7 @@
 							编辑
 						</el-button>
 						<el-divider direction="vertical" />
-						<el-popconfirm title="确定删除吗？" @confirm="table_del(scope.row, scope.$index)">
+						<el-popconfirm title="确定删除吗？" @confirm="delete_item(scope.row, scope.$index)">
 							<template #reference>
 								<el-button text type="primary" size="small">删除</el-button>
 							</template>
