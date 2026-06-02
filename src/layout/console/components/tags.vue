@@ -147,9 +147,9 @@ export default {
 		},
 		//增加tag
 		addViewTags(route) {
-			if (route.name && route.meta.keepAlive && !route.meta.fullpage) {
+			if (route.meta.id && route.meta.keepAlive && !route.meta.fullpage) {
 				this.viewTagsStore.pushViewTags(route);
-				this.keepAliveStore.pushKeepLive(route.name);
+				this.keepAliveStore.pushKeepLive(route.meta.id);
 			}
 		},
 		async addFav() {
@@ -164,7 +164,7 @@ export default {
 				(node) => node.path == nowTag.path
 			);
 
-			var res = await this.$API.scmcfgmenu.save.post({ 'id': menu.id });
+			var res = await this.$API.scmcfgmenu.save.post({ 'id': menu.meta.id });
 			if (!res) {
 				return;
 			}
@@ -186,7 +186,7 @@ export default {
 			);
 			this.viewTagsStore.removeViewTags(tag);
 			this.iframeStore.removeIframeList(tag);
-			this.keepAliveStore.removeKeepLive(tag.name);
+			this.keepAliveStore.removeKeepLive(tag.meta.id);
 			if (autoPushLatestView && this.isActive(tag)) {
 				const leftView = this.tagList[nowTagIndex - 1];
 				if (leftView) {
@@ -230,10 +230,10 @@ export default {
 			this.iframeStore.refreshIframe(nowTag);
 			var _this = this;
 			setTimeout(function () {
-				_this.keepAliveStore.removeKeepLive(nowTag.name);
+				_this.keepAliveStore.removeKeepLive(nowTag.meta.id);
 				_this.keepAliveStore.setRouteShow(false);
 				_this.$nextTick(() => {
-					_this.keepAliveStore.pushKeepLive(nowTag.name);
+					_this.keepAliveStore.pushKeepLive(nowTag.meta.id);
 					_this.keepAliveStore.setRouteShow(true);
 				});
 			}, 0);

@@ -8,7 +8,6 @@ import systemRouter from "./systemRouter";
 import userRoutes from "@/config/route";
 import { beforeEach, afterEach } from "./scrollBehavior";
 import http from "@/utils/request";
-import { useGlobalStore } from "@/stores/global";
 
 //系统路由
 const routes = systemRouter;

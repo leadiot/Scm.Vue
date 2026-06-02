@@ -8,9 +8,9 @@
 					</el-form-item>
 					<el-form-item label="框架布局">
 						<el-select v-model="formData.layout" placeholder="请选择">
-							<el-option label="默认" value="0"></el-option>
-							<el-option label="登录-授权" value="1"></el-option>
-							<el-option label="授权-登录" value="2"></el-option>
+							<el-option label="默认" :value="0"></el-option>
+							<el-option label="登录-授权" :value="1"></el-option>
+							<el-option label="授权-登录" :value="2"></el-option>
 						</el-select>
 					</el-form-item>
 					<el-divider></el-divider>
@@ -45,7 +45,7 @@
 		<el-col :span="12">
 			<el-card shadow="never" header="效果预览">
 				<div class="center"
-					:style="{ 'backgroundColor': formData.back_color, 'backgroundImage': formData.back_image }">
+					:style="{ 'backgroundColor': formData.back_color, 'backgroundImage': formData.back_image, 'color': formData.fore_color }">
 					<el-card :style="{ 'width': formData.width + 'px', 'height': formData.height }">
 						<div style="display: flex;flex-direction: column;align-items: center;">
 							<div style="width: 100%;" v-if="formData.logo_visible">
@@ -66,12 +66,17 @@
 									</template>
 								</el-skeleton>
 							</div>
-							<div style="width: 100%;" v-if="formData.login_visible">
+							<div style="width: 100%;"
+								v-if="formData.login_visible && formData.layout == 0 || formData.layout == 1">
 								<el-divider>用户登录</el-divider>
 								<el-skeleton></el-skeleton>
 							</div>
 							<div style="width: 100%;" v-if="formData.oauth_visible">
 								<el-divider>三方授权</el-divider>
+								<el-skeleton></el-skeleton>
+							</div>
+							<div style="width: 100%;" v-if="formData.login_visible && formData.layout == 2">
+								<el-divider>用户登录</el-divider>
 								<el-skeleton></el-skeleton>
 							</div>
 						</div>
@@ -103,7 +108,7 @@ export default {
 				id: this.$SCM.DEF_ID,
 				width: 320,
 				height: 120,
-				layout: '0',
+				layout: 0,
 				logo_visible: true,
 				title_visible: true,
 				login_title: '用户登录',
