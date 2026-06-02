@@ -84,7 +84,6 @@ export default {
                 }
             }
 
-            console.log(this.template);
             var script = this.template;
             script = script.replaceAll('{key}', this.app.app_key);
             script = script.replaceAll('{style}', this.form.style);
