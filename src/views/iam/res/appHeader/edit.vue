@@ -20,8 +20,8 @@
 			<el-form-item label="排序依据" prop="order_by">
 				<sc-select v-model="formData.order_by" placeholder="请输入排序依据" :data="orderby_list"></sc-select>
 			</el-form-item>
-			<el-form-item label="显示数量" prop="qty">
-				<el-input-number v-model="formData.qty" placeholder="请输入显示数量" :min="1" :max="100" />
+			<el-form-item label="显示数量" prop="max">
+				<el-input-number v-model="formData.max" placeholder="请输入显示数量" :min="1" :max="100" />
 			</el-form-item>
 			<el-form-item label="更多按钮" prop="show_more">
 				<sc-select v-model="formData.show_more" placeholder="请选择更多按钮" :data="showmore_list"></sc-select>
@@ -83,7 +83,7 @@ export default {
 				refresh_token: '',
 				access_expires: '',
 				refresh_expires: '',
-				qty: 5,
+				max: 5,
 				order_by: 1,
 				show_more: 1,
 			}

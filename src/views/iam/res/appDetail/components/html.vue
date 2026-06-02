@@ -46,7 +46,7 @@ export default {
         return {
             form: {
                 title: "登录",
-                state: "",
+                state: "login",
             },
             template: '',
             script: '',

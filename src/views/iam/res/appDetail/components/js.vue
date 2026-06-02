@@ -44,7 +44,7 @@ export default {
         return {
             form: {
                 style: "icon",
-                state: "",
+                state: "login",
             },
             template: '',
             script: '',
