@@ -92,7 +92,7 @@ export default {
             this.script = script;
 
             document.getElementById('oidc').innerHTML = '';
-            oidc.init(this.$CONFIG.OIDC_KEY, "oidc", { "style": this.form.style, "state": this.form.state, "columns": 5 })
+            oidc.init(this.app.app_key, "oidc", { "style": this.form.style, "state": this.form.state, "columns": 5 })
         }
     },
 };
