@@ -6,6 +6,7 @@ const APP_CONFIG = {
 	/** 产品描述，可以根据需要修改 */
 	APP_DESC: "这是应用的简单介绍。",
 
+	/** 用户注册是否开启，可以根据需要修改 */
 	USER_REGISTER_ENABLED: true,
 
 	/** 服务路径(含端口)，可以根据需要修改 */
@@ -14,10 +15,11 @@ const APP_CONFIG = {
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
 
+	/** 默认首页路径，可以根据需要修改 */
 	HOME: '/console',
 
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
-	DEF_LOGIN_MODE: [10, 30],
+	DEF_LOGIN_MODE: [10, 22],
 	/** 默认登录用户，便于开发时减少输入，可以修改或置空 */
 	DEF_LOGIN_USER: "admin",
 	/** 默认登录口令，便于开发时减少输入，可以修改或置空 */
@@ -30,8 +32,7 @@ const APP_CONFIG = {
 	/** OIDC 应用图标，不能修改，否则服务图标显示异常 */
 	OIDC_LOGO: "https://oidc.org.cn/data/logo/",
 	/** OIDC 授权路径，不能修改，否则外部授权页面无法打开 */
-	OIDC_AUTH:
-		"https://oidc.org.cn/oauth/login/{osp}?client_id={key}&state={state}",
+	OIDC_AUTH: "https://oidc.org.cn/oauth/login/{osp}?client_id={key}&state={state}",
 	/** OIDC 绑定路径，不能修改，否则外部授权页面无法打开 */
 	OIDC_BIND: "https://oidc.org.cn/oauth/index?client_id={key}&state={state}",
 
