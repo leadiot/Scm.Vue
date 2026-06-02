@@ -63,6 +63,9 @@ export default {
 
             if (!this.template) {
                 this.template = await this.$SCM.list_cfg('oidc_script_html', '', true);
+                if (!this.template) {
+                    this.template = 'http://www.oidc.org.cn/web/login?client_id={key}&state={state}';
+                }
             }
 
             var url = this.template.toString();

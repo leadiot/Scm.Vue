@@ -1,5 +1,5 @@
 <template>
-	<sc-dialog v-model="visible" show-fullscreen destroy-on-close :title="titleMap[mode]" width="750px" @close="close">
+	<sc-dialog v-model="visible" show-fullscreen destroy-on-close :title="titleMap[mode]" width="450px" @close="close">
 		<el-form ref="formRef" label-width="100px" :model="formData" :rules="rules">
 			<el-form-item label="应用代码" prop="app_code">
 				<el-input v-model="formData.app_code" placeholder="请输入应用代码" :maxlength="32" show-word-limit
@@ -20,8 +20,11 @@
 			<el-form-item label="排序依据" prop="order_by">
 				<sc-select v-model="formData.order_by" placeholder="请输入排序依据" :data="orderby_list"></sc-select>
 			</el-form-item>
-			<el-form-item label="显示更多" prop="show_more">
-				<sc-select v-model="formData.show_more" placeholder="请输入显示更多" :data="showmore_list"></sc-select>
+			<el-form-item label="显示数量" prop="qty">
+				<el-input-number v-model="formData.qty" placeholder="请输入显示数量" :min="1" :max="100" />
+			</el-form-item>
+			<el-form-item label="更多按钮" prop="show_more">
+				<sc-select v-model="formData.show_more" placeholder="请选择更多按钮" :data="showmore_list"></sc-select>
 			</el-form-item>
 		</el-form>
 
@@ -80,7 +83,7 @@ export default {
 				refresh_token: '',
 				access_expires: '',
 				refresh_expires: '',
-				qty: '',
+				qty: 5,
 				order_by: 1,
 				show_more: 1,
 			}

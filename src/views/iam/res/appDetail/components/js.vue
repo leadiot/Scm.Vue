@@ -78,8 +78,13 @@ export default {
 
             if (!this.template) {
                 this.template = await this.$SCM.list_cfg('oidc_script_js', '', true);
+                if (!this.template) {
+                    this.template = `<div id="oidc" name="oidc"></div>\n&lt;script type="text/javascript">\noidc.init("{key}", "oidc", { "style": "{style}", "state": "{state}", "columns": 5 });\n&lt;/script>`;
+                    this.template = this.template.replaceAll('&lt;', '<');
+                }
             }
 
+            console.log(this.template);
             var script = this.template;
             script = script.replaceAll('{key}', this.app.app_key);
             script = script.replaceAll('{style}', this.form.style);
