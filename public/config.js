@@ -15,9 +15,6 @@ const APP_CONFIG = {
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
 
-	/** 默认首页路径，可以根据需要修改 */
-	HOME: '/console',
-
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
 	DEF_LOGIN_MODE: [10, 22],
 	/** 默认登录用户，便于开发时减少输入，可以修改或置空 */
@@ -25,16 +22,16 @@ const APP_CONFIG = {
 	/** 默认登录口令，便于开发时减少输入，可以修改或置空 */
 	DEF_LOGIN_PASS: "123456",
 
+	/** 默认首页路径，可以根据需要修改 */
+	HOME: '/console',
+
 	/** OIDC KEY，可以修改为您的应用KEY */
 	OIDC_KEY: "08dc965832db7248",
-	/** OIDC 服务列表，不能修改，否则三方登录可能无法使用 */
-	OIDC_OSP: "https://oidc.org.cn/oauth/apposp/",
-	/** OIDC 应用图标，不能修改，否则服务图标显示异常 */
-	OIDC_LOGO: "https://oidc.org.cn/data/logo/",
-	/** OIDC 授权路径，不能修改，否则外部授权页面无法打开 */
-	OIDC_AUTH: "https://oidc.org.cn/oauth/login/{osp}?client_id={key}&state={state}",
-	/** OIDC 绑定路径，不能修改，否则外部授权页面无法打开 */
-	OIDC_BIND: "https://oidc.org.cn/oauth/index?client_id={key}&state={state}",
+
+	/** 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">粤ICP备2023030233号</a> */
+	BEIAN_MIIT: "",
+	/** 公安部备案信息，可以使用HTML标签，例如：<a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=粤ICP备2023030233号">粤ICP备2023030233号</a> */
+	BEIAN_MPS: "",
 
 	/** 系统预定义颜色列表，可以根据需要修改 */
 	PREDEFINE_COLORS: [
@@ -59,11 +56,6 @@ const APP_CONFIG = {
 		"#0000ff",
 		"#c71585",
 	],
-
-	/** 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">粤ICP备2023030233号</a> */
-	BEIAN_MIIT: "",
-	/** 公安部备案信息，可以使用HTML标签，例如：<a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=粤ICP备2023030233号">粤ICP备2023030233号</a> */
-	BEIAN_MPS: "",
 
 	PLATFORM_LIST: [
 		{ id: 1, code: 'server', name: '桌面端应用', visible: false },
