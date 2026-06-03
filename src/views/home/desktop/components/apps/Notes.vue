@@ -1,16 +1,16 @@
 <template>
 	<div class="app-container app-light notes-layout">
-		<!-- 左侧笔记列表 -->
+		<!-- 左侧便签列表 -->
 		<div class="notes-sidebar">
 			<div class="sidebar-header">
-				<span class="sidebar-title">笔记列表</span>
+				<span class="sidebar-title">便签列表</span>
 				<el-button text size="small" @click="createNote" type="primary">
 					<sc-icon name="ms-add" :size="18" />
 				</el-button>
 			</div>
 
 			<div class="sidebar-search">
-				<el-input v-model="searchKeyword" placeholder="搜索笔记..." clearable size="small">
+				<el-input v-model="searchKeyword" placeholder="搜索便签..." clearable size="small">
 					<template #prefix>
 						<sc-icon name="ms-search" :size="16" />
 					</template>
@@ -36,7 +36,7 @@
 
 				<div v-if="filteredNotes.length === 0" class="sidebar-empty">
 					<sc-icon name="ms-note" :size="48" />
-					<p>{{ searchKeyword ? '未找到匹配的笔记' : '暂无笔记' }}</p>
+					<p>{{ searchKeyword ? '未找到匹配的便签' : '暂无便签' }}</p>
 				</div>
 			</div>
 		</div>
@@ -155,13 +155,13 @@
 				</div>
 			</template>
 
-			<!-- 未选择笔记时的提示 -->
+			<!-- 未选择便签时的提示 -->
 			<div v-else class="notes-placeholder">
 				<sc-icon name="ms-note" :size="64" />
-				<p>选择或创建一个笔记开始编辑</p>
+				<p>选择或创建一个便签开始编辑</p>
 				<el-button type="primary" @click="createNote">
 					<sc-icon name="ms-add" :size="18" style="margin-right: 4px;" />
-					新建笔记
+					新建便签
 				</el-button>
 			</div>
 		</div>
@@ -377,7 +377,7 @@ export default {
 			// 检查是否有未保存的更改
 			if (this.hasChanges) {
 				try {
-					await this.$confirm('当前笔记有未保存的更改，是否保存？', '提示', {
+					await this.$confirm('当前便签有未保存的更改，是否保存？', '提示', {
 						confirmButtonText: '保存',
 						cancelButtonText: '不保存',
 						distinguishCancelAndClose: true,
@@ -385,14 +385,14 @@ export default {
 					});
 					await this.saveNote();
 				} catch (action) {
-					// 用户选择不保存或关闭，继续打开新笔记
+					// 用户选择不保存或关闭，继续打开新便签
 				}
 			}
 
 			this.currentNoteId = note.id;
 			var res = await this.$API.scmsysnotes.edit.get(note.id);
 			if (res.code != 200) {
-				this.$message.error(res.message || '获取笔记失败');
+				this.$message.error(res.message || '获取便签失败');
 				return;
 			}
 
@@ -411,7 +411,7 @@ export default {
 			// 检查是否有未保存的更改
 			if (this.hasChanges) {
 				try {
-					await this.$confirm('当前笔记有未保存的更改，是否保存？', '提示', {
+					await this.$confirm('当前便签有未保存的更改，是否保存？', '提示', {
 						confirmButtonText: '保存',
 						cancelButtonText: '不保存',
 						distinguishCancelAndClose: true,
@@ -419,12 +419,12 @@ export default {
 					});
 					await this.saveNote();
 				} catch (action) {
-					// 用户选择不保存或关闭，继续创建新笔记
+					// 用户选择不保存或关闭，继续创建新便签
 				}
 			}
 
 			var res = await this.$API.scmsysnotes.add.post({
-				title: '新建笔记',
+				title: '新建便签',
 				content: '',
 				types: 1
 			});
@@ -432,7 +432,7 @@ export default {
 			if (res.code == 200) {
 				const newNote = res.data || {
 					id: this.$SCM.DEF_ID,
-					title: '新建笔记',
+					title: '新建便签',
 					content: '',
 					create_time: Date.now()
 				};
@@ -460,7 +460,7 @@ export default {
 				return false;
 			}
 
-			// 更新列表中的笔记
+			// 更新列表中的便签
 			const index = this.noteList.findIndex(n => n.id === this.currentNote.id);
 			if (index >= 0) {
 				this.noteList[index] = { ...this.noteList[index], ...res.data, title: this.currentNote.title, content: this.currentNote.content };
@@ -472,7 +472,7 @@ export default {
 		},
 		async deleteNote(note) {
 			try {
-				await this.$confirm('确定要删除这个笔记吗？', '提示', {
+				await this.$confirm('确定要删除这个便签吗？', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning',
@@ -485,7 +485,7 @@ export default {
 						this.noteList.splice(index, 1);
 					}
 
-					// 如果删除的是当前打开的笔记，清空编辑区
+					// 如果删除的是当前打开的便签，清空编辑区
 					if (this.currentNoteId === note.id) {
 						this.currentNoteId = null;
 						this.currentNote = null;
@@ -516,7 +516,7 @@ export default {
 	padding: 0;
 }
 
-/* 左侧笔记列表 */
+/* 左侧便签列表 */
 .notes-sidebar {
 	width: 280px;
 	min-width: 280px;
