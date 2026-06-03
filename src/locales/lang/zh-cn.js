@@ -43,7 +43,7 @@ export default {
 	user: {
 		info: "个人信息",
 		settings: "设置",
-		nightmode: "夜间模式",
+		nightmode: "深色模式",
 		nightmode_msg: "适合光线较弱的环境",
 		language: "语言",
 		language_msg: "当前语言为中文",

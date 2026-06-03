@@ -1,451 +1,504 @@
 <template>
-	<div class="app-container app-light">
-		<div class="notepad-toolbar">
-			<div class="toolbar-group">
-				<el-dropdown trigger="click" @command="setFontSize" @visible-change="onDropdownVisible">
-					<el-button text size="small">
-						字号 <sc-icon name="ms-arrow_drop_down" :size="16" />
-					</el-button>
-					<template #dropdown>
-						<el-dropdown-menu>
-							<el-dropdown-item v-for="size in fontSizes" :key="size" :command="size">
-								{{ size }}px
-							</el-dropdown-item>
-						</el-dropdown-menu>
-					</template>
-				</el-dropdown>
+	<div class="notepad-container">
+		<div class="notepad-menu-bar">
+			<el-dropdown v-model="showFileMenu" trigger="click" @visible-change="showFileMenu = false">
+				<span class="menu-item">文件</span>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="new" @click="createNewFile">新建</el-dropdown-item>
+						<el-dropdown-item command="open" @click="openFileDialog">打开...</el-dropdown-item>
+						<el-dropdown-item divided command="save" @click="saveFile">保存</el-dropdown-item>
+						<el-dropdown-item command="saveAs" @click="saveAsFile">另存为...</el-dropdown-item>
+						<el-dropdown-item divided command="exit" @click="closeApp">退出</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+			<el-dropdown v-model="showEditMenu" trigger="click" @visible-change="showEditMenu = false">
+				<span class="menu-item">编辑</span>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="undo" @click="execUndo">撤销</el-dropdown-item>
+						<el-dropdown-item command="redo" @click="execRedo">重做</el-dropdown-item>
+						<el-dropdown-item divided command="cut" @click="execCut">剪切</el-dropdown-item>
+						<el-dropdown-item command="copy" @click="execCopy">复制</el-dropdown-item>
+						<el-dropdown-item command="paste" @click="execPaste">粘贴</el-dropdown-item>
+						<el-dropdown-item divided command="delete" @click="execDelete">删除</el-dropdown-item>
+						<el-dropdown-item divided command="selectAll" @click="execSelectAll">全选</el-dropdown-item>
+						<el-dropdown-item command="timeDate" @click="insertTimeDate">时间/日期</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+			<el-dropdown v-model="showFormatMenu" trigger="click" @visible-change="showFormatMenu = false">
+				<span class="menu-item">格式</span>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="wordWrap" @click="toggleWordWrap">
+							<span :class="{ checked: wordWrap }">✓</span> 自动换行
+						</el-dropdown-item>
+						<el-dropdown-item divided command="font" @click="showFontDialog = true">字体...</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+			<el-dropdown v-model="showViewMenu" trigger="click" @visible-change="showViewMenu = false">
+				<span class="menu-item">查看</span>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="statusBar" @click="toggleStatusBar">
+							<span :class="{ checked: showStatusBar }">✓</span> 状态栏
+						</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+			<el-dropdown v-model="showHelpMenu" trigger="click" @visible-change="showHelpMenu = false">
+				<span class="menu-item">帮助</span>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item command="about" @click="showAbout = true">关于记事本</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+		</div>
+
+		<div class="notepad-editor-wrapper">
+			<div class="line-numbers" :style="lineNumbersStyle">
+				<div v-for="n in lineCount" :key="n" class="line-number">{{ n }}</div>
 			</div>
+			<textarea ref="editorRef" class="notepad-editor" :class="{ 'word-wrap': wordWrap }" v-model="currentContent"
+				@input="onContentChange" @scroll="onScroll" @keydown="onKeyDown" :style="editorStyle"
+				spellcheck="false"></textarea>
+		</div>
 
-			<div class="toolbar-divider"></div>
+		<div v-if="showStatusBar" class="notepad-status-bar">
+			<span class="status-left">行 {{ currentLine }}, 列 {{ currentColumn }}</span>
+			<span class="status-right">记事本</span>
+		</div>
 
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('bold')" title="加粗">
-					<sc-icon name="ms-format_bold" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('italic')" title="斜体">
-					<sc-icon name="ms-format_italic" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('underline')" title="下划线">
-					<sc-icon name="ms-format_underlined" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('strikeThrough')" title="删除线">
-					<sc-icon name="ms-strikethrough_s" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<div @mousedown="saveColorRange">
-					<el-color-picker v-model="textColor" size="small" @change="setTextColor" title="文字颜色" />
+		<el-dialog title="字体" v-model="showFontDialog" draggable width="360px" :show-close="false">
+			<div class="font-dialog">
+				<div class="font-section">
+					<label>字体:</label>
+					<select v-model="fontFamily" class="font-select">
+						<option value="Consolas">Consolas</option>
+						<option value="Courier New">Courier New</option>
+						<option value="Arial">Arial</option>
+						<option value="Times New Roman">Times New Roman</option>
+						<option value="Microsoft YaHei">微软雅黑</option>
+						<option value="SimSun">宋体</option>
+						<option value="KaiTi">楷体</option>
+					</select>
 				</div>
-				<div @mousedown="saveColorRange">
-					<el-color-picker v-model="bgColor" size="small" @change="setBgColor" title="背景颜色" />
+				<div class="font-section">
+					<label>字形:</label>
+					<select v-model="fontStyle" class="font-select">
+						<option value="normal">常规</option>
+						<option value="bold">粗体</option>
+						<option value="italic">斜体</option>
+						<option value="bold italic">粗体 斜体</option>
+					</select>
+				</div>
+				<div class="font-section">
+					<label>大小:</label>
+					<select v-model="fontSize" class="font-select">
+						<option :value="8">8</option>
+						<option :value="9">9</option>
+						<option :value="10">10</option>
+						<option :value="11">11</option>
+						<option :value="12">12</option>
+						<option :value="14">14</option>
+						<option :value="16">16</option>
+						<option :value="18">18</option>
+						<option :value="20">20</option>
+						<option :value="22">22</option>
+						<option :value="24">24</option>
+						<option :value="26">26</option>
+						<option :value="28">28</option>
+						<option :value="36">36</option>
+						<option :value="48">48</option>
+						<option :value="72">72</option>
+					</select>
+				</div>
+				<div class="font-preview">
+					<label>示例:</label>
+					<div class="preview-text" :style="previewStyle">AaBb1234</div>
 				</div>
 			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('justifyLeft')" title="左对齐">
-					<sc-icon name="ms-format_align_left" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('justifyCenter')" title="居中">
-					<sc-icon name="ms-format_align_center" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('justifyRight')" title="右对齐">
-					<sc-icon name="ms-format_align_right" :size="18" />
-				</el-button>
+			<div class="dialog-footer">
+				<el-button @click="showFontDialog = false">取消</el-button>
+				<el-button type="primary" @click="applyFont">确定</el-button>
 			</div>
+		</el-dialog>
 
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('insertUnorderedList')" title="无序列表">
-					<sc-icon name="ms-format_list_bulleted" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('insertOrderedList')" title="有序列表">
-					<sc-icon name="ms-format_list_numbered" :size="18" />
-				</el-button>
+		<el-dialog title="关于记事本" v-model="showAbout" draggable width="300px" :show-close="false">
+			<div class="about-dialog">
+				<div class="about-title">记事本</div>
+				<div class="about-version">版本 1.0.0</div>
+				<div class="about-copyright">© 2024 Scm.Vue 桌面应用</div>
 			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('undo')" title="撤销">
-					<sc-icon name="ms-undo" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('redo')" title="重做">
-					<sc-icon name="ms-redo" :size="18" />
-				</el-button>
+			<div class="dialog-footer">
+				<el-button type="primary" @click="showAbout = false">确定</el-button>
 			</div>
+		</el-dialog>
 
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="clearFormat" title="清除格式">
-					<sc-icon name="ms-format_clear" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-spacer"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="saveNote" type="primary">
-					<sc-icon name="ms-save" :size="18" style="margin-right: 4px;" />
-					保存
-				</el-button>
-			</div>
-		</div>
-
-		<div class="notepad-tabs">
-			<div v-for="note in notes" :key="note.id" class="note-tab" :class="{ active: currentNoteId === note.id }"
-				@click="switchNote(note.id)">
-				<span class="note-tab-title">{{ note.title || '未命名' }}</span>
-				<el-icon class="note-tab-close" @click.stop="closeNote(note.id)">
-					<el-icon-close />
-				</el-icon>
-			</div>
-			<div class="note-tab add-tab" @click="createNote">
-				<sc-icon name="ms-add" :size="16" />
-			</div>
-		</div>
-
-		<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput" @paste="onPaste">
-		</div>
-
-		<div class="notepad-status">
-			<span>字数：{{ wordCount }}</span>
-			<span v-if="currentNote.last_saved">上次保存：{{ currentNote.last_saved }}</span>
-		</div>
+		<input ref="fileInput" type="file" accept=".txt" class="file-input" @change="handleFileSelect" />
 	</div>
 </template>
 
 <script>
-import scIcon from '@/components/scIcon/index.vue';
-
 export default {
 	name: 'Notepad',
-	components: {
-		scIcon,
-	},
 	props: {
 		files: { type: Array, default: () => [] },
 		index: { type: Number, default: 0 }
 	},
 	data() {
 		return {
-			notes: [],
-			currentNoteId: null,
-			bgColor: '#ffff00',
-			textColor: '#333333',
-			fontSizes: [12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72],
-			wordCount: 0,
-			noteIdCounter: 1,
-			savedRange: null,
-			savedColorRange: null,
+			currentContent: '',
+			fileName: '无标题',
+			isModified: false,
+			wordWrap: true,
+			showStatusBar: true,
+			showFileMenu: false,
+			showEditMenu: false,
+			showFormatMenu: false,
+			showViewMenu: false,
+			showHelpMenu: false,
+			showFontDialog: false,
+			showAbout: false,
+			fontFamily: 'Consolas',
+			fontStyle: 'normal',
+			fontSize: 12,
+			currentLine: 1,
+			currentColumn: 1,
+			lineCount: 1,
+			history: [],
+			historyIndex: -1,
 		};
 	},
 	computed: {
-		currentNote() {
-			return this.notes.find(n => n.id === this.currentNoteId) || {};
+		editorStyle() {
+			return {
+				fontFamily: this.fontFamily,
+				fontSize: this.fontSize + 'pt',
+				fontStyle: this.fontStyle.includes('italic') ? 'italic' : 'normal',
+				fontWeight: this.fontStyle.includes('bold') ? 'bold' : 'normal',
+			};
+		},
+		lineNumbersStyle() {
+			return {
+				fontFamily: this.fontFamily,
+				fontSize: this.fontSize + 'pt',
+			};
+		},
+		previewStyle() {
+			return {
+				fontFamily: this.fontFamily,
+				fontSize: this.fontSize + 'pt',
+				fontStyle: this.fontStyle.includes('italic') ? 'italic' : 'normal',
+				fontWeight: this.fontStyle.includes('bold') ? 'bold' : 'normal',
+			};
 		},
 	},
 	methods: {
-		def_data() {
-			return {
-				id: this.$SCM.DEF_ID,
-				ver: 0,
-				types: 1,
-				title: '',
-				url: '',
-				content: '',
-				cat_id: '0',
-				last_content: '',
-				last_saved: '',
+		onContentChange() {
+			this.isModified = true;
+			this.updateLineInfo();
+			this.saveToHistory();
+			this.saveToStorage();
+		},
+		updateLineInfo() {
+			const textarea = this.$refs.editorRef;
+			if (!textarea) return;
+
+			const text = textarea.value.substring(0, textarea.selectionStart);
+			const lines = text.split('\n');
+			this.currentLine = lines.length;
+			this.currentColumn = (lines[lines.length - 1]?.length || 0) + 1;
+			this.lineCount = this.currentContent.split('\n').length;
+		},
+		onScroll() {
+			const textarea = this.$refs.editorRef;
+			const lineNumbers = this.$el.querySelector('.line-numbers');
+			if (textarea && lineNumbers) {
+				lineNumbers.scrollTop = textarea.scrollTop;
 			}
 		},
-		execCommand(command, value = null) {
-			document.execCommand(command, false, value);
-			this.$refs.editorRef?.focus();
-		},
-		onDropdownVisible(visible) {
-			if (visible) {
-				const selection = window.getSelection();
-				if (selection.rangeCount > 0) {
-					this.savedRange = selection.getRangeAt(0).cloneRange();
+		onKeyDown(e) {
+			if (e.ctrlKey || e.metaKey) {
+				switch (e.key.toLowerCase()) {
+					case 's':
+						e.preventDefault();
+						this.saveFile();
+						break;
+					case 'n':
+						e.preventDefault();
+						this.createNewFile();
+						break;
+					case 'o':
+						e.preventDefault();
+						this.openFileDialog();
+						break;
+					case 'z':
+						if (e.shiftKey) {
+							e.preventDefault();
+							this.execRedo();
+						} else {
+							e.preventDefault();
+							this.execUndo();
+						}
+						break;
+					case 'a':
+						e.preventDefault();
+						this.execSelectAll();
+						break;
+					case 'x':
+						e.preventDefault();
+						this.execCut();
+						break;
+					case 'c':
+						e.preventDefault();
+						this.execCopy();
+						break;
+					case 'v':
+						e.preventDefault();
+						this.execPaste();
+						break;
 				}
 			}
 		},
-		setFontSize(size) {
-			if (!this.savedRange || this.savedRange.collapsed) {
-				this.$message.warning('请先选择要修改字号的文字');
-				return;
-			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedRange);
-
-			const span = document.createElement('span');
-			span.style.fontSize = size + 'px';
-			span.appendChild(this.savedRange.extractContents());
-			this.savedRange.insertNode(span);
-
-			this.savedRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
-		},
-		saveColorRange() {
-			const selection = window.getSelection();
-			if (selection.rangeCount > 0) {
-				this.savedColorRange = selection.getRangeAt(0).cloneRange();
+		saveToHistory() {
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push(this.currentContent);
+			this.historyIndex++;
+			if (this.history.length > 50) {
+				this.history.shift();
+				this.historyIndex--;
 			}
 		},
-		setTextColor(color) {
-			if (!this.savedColorRange || this.savedColorRange.collapsed) {
-				this.$message.warning('请先选择要修改颜色的文字');
-				return;
+		execUndo() {
+			if (this.historyIndex > 0) {
+				this.historyIndex--;
+				this.currentContent = this.history[this.historyIndex];
+				this.isModified = true;
+				this.$nextTick(() => this.updateLineInfo());
 			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedColorRange);
-
-			document.execCommand('foreColor', false, color);
-
-			this.savedColorRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
 		},
-		setBgColor(color) {
-			if (!this.savedColorRange || this.savedColorRange.collapsed) {
-				this.$message.warning('请先选择要修改背景色的文字');
-				return;
+		execRedo() {
+			if (this.historyIndex < this.history.length - 1) {
+				this.historyIndex++;
+				this.currentContent = this.history[this.historyIndex];
+				this.isModified = true;
+				this.$nextTick(() => this.updateLineInfo());
 			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedColorRange);
-
-			document.execCommand('hiliteColor', false, color);
-
-			this.savedColorRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
 		},
-		clearFormat() {
-			document.execCommand('removeFormat', false, null);
+		execCut() {
+			document.execCommand('cut');
 		},
-		onEditorInput() {
-			if (this.currentNote && this.$refs.editorRef) {
-				this.currentNote.content = this.$refs.editorRef.innerHTML;
-				this.currentNote.title = this.getTitle(this.currentNote.content);
-				this.wordCount = this.$refs.editorRef.innerText.length;
+		execCopy() {
+			document.execCommand('copy');
+		},
+		execPaste() {
+			document.execCommand('paste');
+		},
+		execDelete() {
+			const textarea = this.$refs.editorRef;
+			if (textarea) {
+				const start = textarea.selectionStart;
+				const end = textarea.selectionEnd;
+				if (start !== end) {
+					this.currentContent = this.currentContent.substring(0, start) + this.currentContent.substring(end);
+					this.isModified = true;
+				}
+			}
+		},
+		execSelectAll() {
+			const textarea = this.$refs.editorRef;
+			if (textarea) {
+				textarea.select();
+			}
+		},
+		insertTimeDate() {
+			const now = new Date();
+			const dateStr = now.toLocaleString('zh-CN', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+				hour12: false
+			});
+			const textarea = this.$refs.editorRef;
+			if (textarea) {
+				const start = textarea.selectionStart;
+				const end = textarea.selectionEnd;
+				this.currentContent = this.currentContent.substring(0, start) + dateStr + this.currentContent.substring(end);
+				this.isModified = true;
+				this.$nextTick(() => {
+					textarea.setSelectionRange(start + dateStr.length, start + dateStr.length);
+					textarea.focus();
+				});
+			}
+		},
+		toggleWordWrap() {
+			this.wordWrap = !this.wordWrap;
+		},
+		toggleStatusBar() {
+			this.showStatusBar = !this.showStatusBar;
+		},
+		createNewFile() {
+			if (this.isModified) {
+				this.$confirm('是否保存更改？', '提示', {
+					confirmButtonText: '保存',
+					cancelButtonText: '不保存',
+					type: 'warning',
+					distinguishCancelAndClose: true
+				}).then(() => {
+					this.saveFile().then(() => this.resetNewFile());
+				}).catch((action) => {
+					if (action === 'cancel') {
+						this.resetNewFile();
+					}
+				});
+			} else {
+				this.resetNewFile();
+			}
+		},
+		resetNewFile() {
+			this.currentContent = '';
+			this.fileName = '无标题';
+			this.isModified = false;
+			this.history = [];
+			this.historyIndex = -1;
+			this.saveToStorage();
+		},
+		openFileDialog() {
+			if (this.isModified) {
+				this.$confirm('是否保存更改？', '提示', {
+					confirmButtonText: '保存',
+					cancelButtonText: '不保存',
+					type: 'warning',
+					distinguishCancelAndClose: true
+				}).then(() => {
+					this.saveFile().then(() => this.$refs.fileInput.click());
+				}).catch((action) => {
+					if (action === 'cancel') {
+						this.$refs.fileInput.click();
+					}
+				});
+			} else {
+				this.$refs.fileInput.click();
+			}
+		},
+		handleFileSelect(e) {
+			const file = e.target.files[0];
+			if (file) {
+				this.readFile(file);
+			}
+			e.target.value = '';
+		},
+		readFile(file) {
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				this.currentContent = e.target.result;
+				this.fileName = file.name;
+				this.isModified = false;
+				this.history = [this.currentContent];
+				this.historyIndex = 0;
+				this.updateLineInfo();
+				this.saveToStorage();
+			};
+			reader.readAsText(file, 'UTF-8');
+		},
+		async saveFile() {
+			if (!this.isModified) return;
+
+			if (this.fileName === '无标题') {
+				await this.saveAsFile();
+			} else {
+				this.isModified = false;
+				this.$message.success('保存成功');
 				this.saveToStorage();
 			}
 		},
-		onPaste(e) {
-			e.preventDefault();
-			const text = e.clipboardData.getData('text/plain');
-			document.execCommand('insertText', false, text);
-		},
-		getTitle(html) {
-			const div = document.createElement('div');
-			div.innerHTML = html;
-
-			let firstLine = '';
-			let currentNode = div.firstChild;
-
-			while (currentNode) {
-				if (currentNode.nodeType === 3) {//Node.TEXT_NODE
-					const text = currentNode.textContent;
-					const newlineIndex = text.indexOf('\n');
-					if (newlineIndex >= 0) {
-						firstLine += text.substring(0, newlineIndex);
-						break;
-					}
-					firstLine += text;
-				} else if (currentNode.nodeType === 1) {//Node.ELEMENT_NODE
-					const tagName = currentNode.tagName.toLowerCase();
-					if (tagName === 'br') {
-						break;
-					}
-					if (['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'].includes(tagName)) {
-						if (firstLine) {
-							break;
-						}
-					}
-					const childText = currentNode.textContent || '';
-					const newlineIndex = childText.indexOf('\n');
-					if (newlineIndex >= 0) {
-						firstLine += childText.substring(0, newlineIndex);
-						break;
-					}
-					firstLine += childText;
-				}
-				currentNode = currentNode.nextSibling;
-			}
-
-			firstLine = firstLine.trim().substring(0, 20);
-			return firstLine || '未命名';
-		},
-		createNote() {
-			const note = this.def_data();
-			note.id = '' + this.noteIdCounter++;
-			this.notes.push(note);
-			this.switchNote(note.id);
-			this.saveToStorage();
-		},
-		switchNote(id) {
-			this.currentNoteId = id;
-			this.$nextTick(() => {
-				if (this.$refs.editorRef) {
-					if (this.currentNote) {
-						this.$refs.editorRef.innerHTML = this.currentNote.content || '';
-						this.wordCount = this.$refs.editorRef.innerText.length;
-					} else {
-						this.$refs.editorRef.innerHTML = '';
-						this.wordCount = 0;
-					}
-				}
+		saveAsFile() {
+			return new Promise((resolve) => {
+				const blob = new Blob([this.currentContent], { type: 'text/plain;charset=utf-8' });
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = this.fileName === '无标题' ? '新建文本文档.txt' : this.fileName;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				URL.revokeObjectURL(url);
+				this.fileName = link.download;
+				this.isModified = false;
+				this.$message.success('保存成功');
+				this.saveToStorage();
+				resolve();
 			});
 		},
-		closeNote(id) {
-			const index = this.notes.findIndex(n => n.id === id);
-			if (index < 0) {
-				return;
-			}
-
-			var node = this.notes[index];
-			if (node.content === node.last_content) {
-				this.closeNoteByIndex(index, id);
-				this.saveToStorage();
-				return;
-			}
-
-			this.$confirm('笔记尚未保存，是否确认关闭？', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning',
-			}).then(async () => {
-				this.closeNoteByIndex(index, id);
-				this.saveToStorage();
-			}).catch(() => { });
-		},
-		closeNoteByIndex(index, noteId) {
-			this.notes.splice(index, 1);
-			if (this.currentNoteId === noteId) {
-				this.currentNoteId = this.notes.length > 0 ? this.notes[0].id : null;
-				this.switchNote(this.currentNoteId);
+		closeApp() {
+			if (this.isModified) {
+				this.$confirm('是否保存更改？', '提示', {
+					confirmButtonText: '保存',
+					cancelButtonText: '不保存',
+					type: 'warning',
+					distinguishCancelAndClose: true
+				}).then(() => {
+					this.saveFile();
+				}).catch(() => { });
 			}
 		},
-		async saveNote() {
-			var note = this.currentNote;
-			if (!note) {
-				return false;
-			}
-
-			var data = {
-				id: note.id,
-				types: note.types,
-				url: note.url,
-				title: note.title,
-				content: note.content,
-				cat_id: note.cat_id,
-				ver: note.ver,
-			};
-			var res = await this.$API.scmsysnote.save.post(data);
-			if (res.code != 200) {
-				this.$message.warning(res.message);
-				return false;
-			}
-			data = res.data || {};
-			note.id = data.id || note.id;
-			note.last_content = note.content;
-			note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
-			this.$message.success('保存成功');
+		applyFont() {
+			this.showFontDialog = false;
 			this.saveToStorage();
 		},
-		/**
-		 * 保存笔记到本地存储
-		 */
 		saveToStorage() {
-			localStorage.setItem('desktop_notepad', JSON.stringify({
-				notes: this.notes,
-				noteIdCounter: this.noteIdCounter,
+			localStorage.setItem('notepad_state', JSON.stringify({
+				content: this.currentContent,
+				fileName: this.fileName,
+				wordWrap: this.wordWrap,
+				showStatusBar: this.showStatusBar,
+				fontFamily: this.fontFamily,
+				fontStyle: this.fontStyle,
+				fontSize: this.fontSize,
 			}));
 		},
-		/**
-		 * 从本地存储加载笔记
-		 * @param {Array} files - 包含文件信息的数组
-		 */
 		loadFromStorage() {
-			const saved = localStorage.getItem('desktop_notepad');
+			const saved = localStorage.getItem('notepad_state');
 			if (saved) {
-				const data = JSON.parse(saved);
-				this.notes = data.notes || [];
-				this.noteIdCounter = data.noteIdCounter || 1;
-				if (this.notes.length > 0) {
-					this.currentNoteId = this.notes[0].id;
+				try {
+					const data = JSON.parse(saved);
+					this.currentContent = data.content || '';
+					this.fileName = data.fileName || '无标题';
+					this.wordWrap = data.wordWrap !== undefined ? data.wordWrap : true;
+					this.showStatusBar = data.showStatusBar !== undefined ? data.showStatusBar : true;
+					this.fontFamily = data.fontFamily || 'Consolas';
+					this.fontStyle = data.fontStyle || 'normal';
+					this.fontSize = data.fontSize || 12;
+				} catch (e) {
+					console.error('加载记事本状态失败:', e);
 				}
 			}
-		},
-		async loadInitialFiles() {
-			if (this.files && this.files.length > 0) {
-				// for (const file of this.files) {
-				// 	await this.openFile(file);
-				// }
-				// const targetIndex = Math.min(this.index, this.notes.length - 1);
-				// if (this.notes.length > 0 && targetIndex >= 0) {
-				// 	this.switchNote(this.notes[targetIndex].id);
-				// }
-				var index = Math.min(this.index, this.files.length - 1);
-				await this.openFile(this.files[index]);
-				this.switchNote(this.notes[0].id);
-			}
-		},
-		async openFile(file) {
-			try {
-				let content = '';
-				if (file.url) {
-					const response = await fetch(file.url);
-					if (response.ok) {
-						content = await response.text();
-					}
-				} else if (file.content) {
-					content = file.content;
-				}
-
-				const note = this.def_data();
-				note.title = file.name || '未命名';
-				note.content = this.escapeHtml(content);
-				note.url = file.url || '';
-				this.notes.push(note);
-			} catch (error) {
-				console.error('加载文件失败:', error);
-				this.$message.error(`无法打开文件: ${file.name}`);
-			}
-		},
-		escapeHtml(text) {
-			return text
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;')
-				.replace(/'/g, '&#039;')
-				.replace(/\n/g, '<br>');
 		},
 	},
 	mounted() {
+		this.loadFromStorage();
+		this.history = [this.currentContent];
+		this.historyIndex = 0;
+		this.updateLineInfo();
+
 		if (this.files && this.files.length > 0) {
-			this.loadInitialFiles();
-		} else {
-			this.loadFromStorage();
-			if (this.notes.length === 0) {
-				this.createNote();
-			} else {
-				this.switchNote(this.currentNoteId);
+			const index = Math.min(this.index, this.files.length - 1);
+			const file = this.files[index];
+			if (file.content) {
+				this.currentContent = file.content;
+				this.fileName = file.name || '无标题';
+				this.isModified = false;
+				this.history = [this.currentContent];
+				this.historyIndex = 0;
+				this.updateLineInfo();
 			}
 		}
 	},
@@ -455,124 +508,200 @@ export default {
 <style src="./common.css"></style>
 
 <style scoped>
-.notepad-toolbar {
+.notepad-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background-color: #ffffff;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.notepad-menu-bar {
 	display: flex;
 	align-items: center;
-	padding: 8px 12px;
-	background-color: #f5f5f5;
-	border-bottom: 1px solid #e0e0e0;
-	flex-wrap: wrap;
-	gap: 4px;
-}
-
-.toolbar-group {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-}
-
-.toolbar-divider {
-	width: 1px;
-	height: 20px;
-	background-color: #ddd;
-	margin: 0 8px;
-}
-
-.toolbar-spacer {
-	flex: 1;
-}
-
-.notepad-tabs {
-	display: flex;
-	align-items: center;
-	padding: 0 10px;
+	padding: 2px 4px;
 	background-color: #f0f0f0;
-	border-bottom: 1px solid #e0e0e0;
-	min-height: 36px;
-	overflow-x: auto;
+	border-bottom: 1px solid #cccccc;
+	gap: 1px;
 }
 
-.note-tab {
-	display: flex;
-	align-items: center;
-	padding: 6px 12px;
-	background-color: #e8e8e8;
-	border-radius: 4px 4px 0 0;
+.menu-item {
+	padding: 4px 10px;
+	font-size: 12px;
+	color: #333333;
 	cursor: pointer;
-	font-size: 13px;
-	color: #666;
-	margin-right: 2px;
-	white-space: nowrap;
-	max-width: 150px;
+	border-radius: 2px;
+	transition: background-color 0.1s;
+	position: relative;
 }
 
-.note-tab:hover {
-	background-color: #ddd;
-}
-
-.note-tab.active {
-	background-color: #fff;
-	color: #333;
-}
-
-.note-tab-title {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.note-tab-close {
-	margin-left: 8px;
-	opacity: 0;
-	transition: opacity 0.2s;
-}
-
-.note-tab:hover .note-tab-close {
-	opacity: 1;
-}
-
-.addTab {
-	padding: 6px 10px;
-	background-color: transparent;
-}
-
-.addTab:hover {
+.menu-item:hover {
 	background-color: #e0e0e0;
+}
+
+.notepad-editor-wrapper {
+	flex: 1;
+	display: flex;
+	overflow: hidden;
+	position: relative;
 }
 
 .notepad-editor {
 	flex: 1;
-	padding: 20px;
-	overflow-y: auto;
+	width: 100%;
+	height: 100%;
+	padding: 4px;
+	border: none;
 	outline: none;
-	font-size: 14px;
-	line-height: 1.8;
-	color: #333;
-	background-color: #fff;
+	resize: none;
+	line-height: 1.5;
+	tab-size: 4;
+	background-color: #ffffff;
+	color: #000000;
+	overflow: auto;
+	white-space: nowrap;
+	overflow-x: auto;
 }
 
-.notepad-editor:empty::before {
-	content: '开始输入内容...';
-	color: #bbb;
+.notepad-editor.word-wrap {
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	word-break: break-all;
+	overflow-x: hidden;
 }
 
-.notepad-status {
+.line-numbers {
+	width: 40px;
+	padding: 4px 2px;
+	background-color: #f5f5f5;
+	border-right: 1px solid #cccccc;
+	text-align: right;
+	overflow: hidden;
+	user-select: none;
+	color: #888888;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.line-number {
+	height: 1.5em;
+}
+
+.notepad-status-bar {
 	display: flex;
 	justify-content: space-between;
-	padding: 6px 12px;
-	background-color: #f5f5f5;
-	border-top: 1px solid #e0e0e0;
+	padding: 4px 10px;
+	background-color: #f0f0f0;
+	border-top: 1px solid #cccccc;
+	font-size: 11px;
+	color: #666666;
+}
+
+.status-left {
+	font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.font-dialog {
+	padding: 10px;
+}
+
+.font-section {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+	gap: 10px;
+}
+
+.font-section label {
+	width: 50px;
 	font-size: 12px;
-	color: #999;
 }
 
-:deep(.el-color-picker) {
-	vertical-align: middle;
+.font-select {
+	flex: 1;
+	padding: 4px;
+	font-size: 12px;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	background-color: #ffffff;
 }
 
-:deep(.el-color-picker__trigger) {
-	width: 24px !important;
-	height: 24px !important;
-	padding: 2px;
+.font-preview {
+	margin-top: 15px;
+	padding-top: 15px;
+	border-top: 1px solid #eeeeee;
+}
+
+.font-preview label {
+	display: block;
+	font-size: 12px;
+	margin-bottom: 8px;
+}
+
+.preview-text {
+	font-size: 16px;
+	color: #333333;
+}
+
+.dialog-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	padding: 15px;
+	border-top: 1px solid #eeeeee;
+}
+
+.about-dialog {
+	text-align: center;
+	padding: 20px;
+}
+
+.about-title {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.about-version {
+	font-size: 12px;
+	color: #666666;
+	margin-bottom: 5px;
+}
+
+.about-copyright {
+	font-size: 11px;
+	color: #888888;
+}
+
+.file-input {
+	display: none;
+}
+
+.checked {
+	color: #0078d7;
+}
+
+:deep(.el-dropdown-menu) {
+	min-width: 120px;
+	padding: 2px 0;
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.el-dropdown-menu__item) {
+	font-size: 12px;
+	padding: 4px 20px;
+	color: #333333;
+}
+
+:deep(.el-dropdown-menu__item:hover) {
+	background-color: #e0e0e0;
+}
+
+:deep(.el-dropdown-menu__item--divided) {
+	border-top: 1px solid #eeeeee;
+	margin-top: 2px;
+	padding-top: 6px;
 }
 </style>
