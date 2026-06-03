@@ -94,7 +94,7 @@ export default {
 	},
 	mounted() {
 		this.init();
-		themeUtil.initTheme();
+		// themeUtil.initTheme();
 	},
 	watch: {
 		consoleLayout(val) {

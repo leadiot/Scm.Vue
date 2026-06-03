@@ -26,8 +26,8 @@
 					</el-option>
 				</el-option-group>
 				<el-option-group label="自定义主题">
-					<el-option v-for="(theme, index) in customThemeList" :key="'custom-' + index"
-						:label="theme.name" :value="theme.name">
+					<el-option v-for="(theme, index) in customThemeList" :key="'custom-' + index" :label="theme.name"
+						:value="theme.name">
 						<div style="display: flex; align-items: center; gap: 10px;">
 							<div
 								:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
@@ -108,7 +108,7 @@ export default {
 	data() {
 		return {
 			lang: this.$TOOL.session.get('APP_LANG') || this.$CONFIG.LANG,
-			dark: this.$TOOL.session.get('APP_THEME') == 'dark',
+			dark: this.$TOOL.session.get('APP_MODE') == 'dark',
 			currentTheme: themeUtil.getCurrentTheme(),
 			currentThemeName: themeUtil.getCurrentTheme().name,
 			createThemeVisible: false,
@@ -122,12 +122,20 @@ export default {
 		};
 	},
 	methods: {
+		/**
+		 * 切换主题
+		 * @param {Object} theme - 要应用的主题
+		 */
 		selectTheme(theme) {
 			this.currentTheme = theme
 			this.currentThemeName = theme.name
 			// 应用完整主题
 			themeUtil.applyTheme(theme)
 		},
+		/**
+		 * 切换主题事件
+		 * @param {string} themeName - 要应用的主题名称
+		 */
 		onThemeChange(themeName) {
 			// 先在预设主题中查找
 			let theme = this.presetThemeList.find(t => t.name === themeName)
@@ -202,11 +210,19 @@ export default {
 					this.$message.error('删除失败')
 				}
 			}).catch(() => { })
+		},
+		changeTheme() {
+			this.selectTheme(this.currentTheme)
+			this.$SCM.save_cfg([{ key: 'APP_THEME', value: this.currentTheme.name }]);
+		},
+		changeMode() {
+			themeUtil.setDarkMode(!this.dark);
+			this.$SCM.save_cfg([{ key: 'APP_MODE', value: this.dark ? 'dark' : 'light' }]);
 		}
 	},
 	mounted() {
 		// 初始化主题
-		themeUtil.initTheme()
+		// themeUtil.initTheme()
 		this.currentTheme = themeUtil.getCurrentTheme()
 		// 刷新自定义主题列表
 		this.customThemeList = themeUtil.getCustomThemes()
