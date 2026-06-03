@@ -71,7 +71,7 @@ export default {
     methods: {
         async search() {
             this.param.types = this.types;
-            var res = await this.$API.scmsysnote.list.get(this.param);
+            var res = await this.$API.scmsysnotes.list.get(this.param);
             if (!res || res.code != 200) {
                 return;
             }
