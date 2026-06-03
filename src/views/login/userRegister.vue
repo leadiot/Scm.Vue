@@ -34,13 +34,6 @@
 			<el-form-item label="电子邮件" prop="email">
 				<el-input v-model="formData.email" placeholder="请输入电子邮件"></el-input>
 			</el-form-item>
-			<el-form-item label="开通服务" prop="open">
-				<el-checkbox-group v-model="formData.open">
-					<el-checkbox label="1">订单管理系统</el-checkbox>
-					<el-checkbox label="2">仓储管理系统</el-checkbox>
-					<el-checkbox label="3">园区管理系统</el-checkbox>
-				</el-checkbox-group>
-			</el-form-item>
 		</el-form>
 		<div v-if="stepActive == 2">
 			<el-result icon="success" title="注册成功">
@@ -112,9 +105,9 @@ export default {
 					}
 				],
 				email: [{ required: true, message: '请输入电子邮件' }],
-				open: [
-					{ required: true, message: '请选择开通类别' }
-				]
+				// open: [
+				// 	{ required: true, message: '请选择开通类别' }
+				// ]
 			},
 			signInName: 'user@unit',
 			userRegister: this.$CONFIG.USER_REGISTER_ENABLED
@@ -137,7 +130,7 @@ export default {
 				user_name: '',
 				email: '',
 				phone: '',
-				open: []
+				open: [0]
 			}
 		},
 		pre() {
