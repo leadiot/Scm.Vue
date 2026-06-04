@@ -104,7 +104,7 @@ export default {
             }
         },
         async search() {
-            var res = await this.$API.scmsysnote.list.get(this.param);
+            var res = await this.$API.scmsysnotes.list.get(this.param);
             if (!res || res.code != 200) {
                 return;
             }
@@ -175,7 +175,7 @@ export default {
             this.loading = true;
 
             // 读取远程数据
-            var res = await this.$API.scmsysnote.model.get(itemId);
+            var res = await this.$API.scmsysnotes.model.get(itemId);
             if (!res || res.code != 200) {
                 this.loading = false;
                 return;
@@ -240,7 +240,7 @@ export default {
             }
 
             this.saving = true;
-            var res = await this.$API.scmsysnote.save.post(this.formData);
+            var res = await this.$API.scmsysnotes.save.post(this.formData);
             if (!res || res.code != 200) {
                 this.$message.error(res.message);
                 this.saving = false;

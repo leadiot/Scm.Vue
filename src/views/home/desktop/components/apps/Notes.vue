@@ -1,122 +1,169 @@
 <template>
-	<div class="app-container app-light">
-		<div class="notepad-toolbar">
-			<div class="toolbar-group">
-				<el-dropdown trigger="click" @command="setFontSize" @visible-change="onDropdownVisible">
-					<el-button text size="small">
-						字号 <sc-icon name="ms-arrow_drop_down" :size="16" />
-					</el-button>
-					<template #dropdown>
-						<el-dropdown-menu>
-							<el-dropdown-item v-for="size in fontSizes" :key="size" :command="size">
-								{{ size }}px
-							</el-dropdown-item>
-						</el-dropdown-menu>
+	<div class="app-container app-light notes-layout">
+		<!-- 左侧便签列表 -->
+		<div class="notes-sidebar">
+			<div class="sidebar-header">
+				<span class="sidebar-title">便签列表</span>
+				<el-button text size="small" @click="createNote" type="primary">
+					<sc-icon name="ms-add" :size="18" />
+				</el-button>
+			</div>
+
+			<div class="sidebar-search">
+				<el-input v-model="searchKeyword" placeholder="搜索便签..." clearable size="small">
+					<template #prefix>
+						<sc-icon name="ms-search" :size="16" />
 					</template>
-				</el-dropdown>
+				</el-input>
 			</div>
 
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('bold')" title="加粗">
-					<sc-icon name="ms-format_bold" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('italic')" title="斜体">
-					<sc-icon name="ms-format_italic" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('underline')" title="下划线">
-					<sc-icon name="ms-format_underlined" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('strikeThrough')" title="删除线">
-					<sc-icon name="ms-strikethrough_s" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<div @mousedown="saveColorRange">
-					<el-color-picker v-model="textColor" size="small" @change="setTextColor" title="文字颜色" />
+			<div class="sidebar-list">
+				<div v-for="note in filteredNotes" :key="note.id" class="note-item"
+					:class="{ active: currentNoteId === note.id }" @click="openNote(note)">
+					<div class="note-item-content">
+						<div class="note-item-title">{{ note.title || '未命名' }}</div>
+						<div class="note-item-preview">{{ getPreview(note.content) }}</div>
+						<div class="note-item-meta">
+							<span>{{ formatDate(note.update_time || note.create_time) }}</span>
+						</div>
+					</div>
+					<div class="note-item-actions">
+						<el-button text size="small" @click.stop="deleteNote(note)" type="danger">
+							<sc-icon name="ms-delete" :size="14" />
+						</el-button>
+					</div>
 				</div>
-				<div @mousedown="saveColorRange">
-					<el-color-picker v-model="bgColor" size="small" @change="setBgColor" title="背景颜色" />
+
+				<div v-if="filteredNotes.length === 0" class="sidebar-empty">
+					<sc-icon name="ms-note" :size="48" />
+					<p>{{ searchKeyword ? '未找到匹配的便签' : '暂无便签' }}</p>
 				</div>
 			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('justifyLeft')" title="左对齐">
-					<sc-icon name="ms-format_align_left" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('justifyCenter')" title="居中">
-					<sc-icon name="ms-format_align_center" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('justifyRight')" title="右对齐">
-					<sc-icon name="ms-format_align_right" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('insertUnorderedList')" title="无序列表">
-					<sc-icon name="ms-format_list_bulleted" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('insertOrderedList')" title="有序列表">
-					<sc-icon name="ms-format_list_numbered" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="execCommand('undo')" title="撤销">
-					<sc-icon name="ms-undo" :size="18" />
-				</el-button>
-				<el-button text size="small" @click="execCommand('redo')" title="重做">
-					<sc-icon name="ms-redo" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-divider"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="clearFormat" title="清除格式">
-					<sc-icon name="ms-format_clear" :size="18" />
-				</el-button>
-			</div>
-
-			<div class="toolbar-spacer"></div>
-
-			<div class="toolbar-group">
-				<el-button text size="small" @click="saveNote" type="primary">
-					<sc-icon name="ms-save" :size="18" style="margin-right: 4px;" />
-					保存
-				</el-button>
-			</div>
 		</div>
 
-		<div class="notepad-tabs">
-			<div v-for="note in notes" :key="note.id" class="note-tab" :class="{ active: currentNoteId === note.id }"
-				@click="switchNote(note.id)">
-				<span class="note-tab-title">{{ note.title || '未命名' }}</span>
-				<el-icon class="note-tab-close" @click.stop="closeNote(note.id)">
-					<el-icon-close />
-				</el-icon>
-			</div>
-			<div class="note-tab add-tab" @click="createNote">
-				<sc-icon name="ms-add" :size="16" />
-			</div>
-		</div>
+		<!-- 右侧编辑区 -->
+		<div class="notes-main">
+			<template v-if="currentNote">
+				<!-- 工具栏 -->
+				<div class="notepad-toolbar">
+					<div class="toolbar-group">
+						<el-dropdown trigger="click" @command="setFontSize" @visible-change="onDropdownVisible">
+							<el-button text size="small">
+								字号 <sc-icon name="ms-arrow_drop_down" :size="16" />
+							</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item v-for="size in fontSizes" :key="size" :command="size">
+										{{ size }}px
+									</el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</div>
 
-		<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput" @paste="onPaste">
-		</div>
+					<div class="toolbar-divider"></div>
 
-		<div class="notepad-status">
-			<span>字数：{{ wordCount }}</span>
-			<span v-if="currentNote.last_saved">上次保存：{{ currentNote.last_saved }}</span>
+					<div class="toolbar-group">
+						<el-button text size="small" @click="execCommand('bold')" title="加粗">
+							<sc-icon name="ms-format_bold" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('italic')" title="斜体">
+							<sc-icon name="ms-format_italic" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('underline')" title="下划线">
+							<sc-icon name="ms-format_underlined" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('strikeThrough')" title="删除线">
+							<sc-icon name="ms-strikethrough_s" :size="18" />
+						</el-button>
+					</div>
+
+					<div class="toolbar-divider"></div>
+
+					<div class="toolbar-group">
+						<div @mousedown="saveColorRange">
+							<el-color-picker v-model="textColor" size="small" @change="setTextColor" title="文字颜色" />
+						</div>
+						<div @mousedown="saveColorRange">
+							<el-color-picker v-model="bgColor" size="small" @change="setBgColor" title="背景颜色" />
+						</div>
+					</div>
+
+					<div class="toolbar-divider"></div>
+
+					<div class="toolbar-group">
+						<el-button text size="small" @click="execCommand('justifyLeft')" title="左对齐">
+							<sc-icon name="ms-format_align_left" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('justifyCenter')" title="居中">
+							<sc-icon name="ms-format_align_center" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('justifyRight')" title="右对齐">
+							<sc-icon name="ms-format_align_right" :size="18" />
+						</el-button>
+					</div>
+
+					<div class="toolbar-divider"></div>
+
+					<div class="toolbar-group">
+						<el-button text size="small" @click="execCommand('insertUnorderedList')" title="无序列表">
+							<sc-icon name="ms-format_list_bulleted" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('insertOrderedList')" title="有序列表">
+							<sc-icon name="ms-format_list_numbered" :size="18" />
+						</el-button>
+					</div>
+
+					<div class="toolbar-divider"></div>
+
+					<div class="toolbar-group">
+						<el-button text size="small" @click="execCommand('undo')" title="撤销">
+							<sc-icon name="ms-undo" :size="18" />
+						</el-button>
+						<el-button text size="small" @click="execCommand('redo')" title="重做">
+							<sc-icon name="ms-redo" :size="18" />
+						</el-button>
+					</div>
+
+					<div class="toolbar-divider"></div>
+
+					<div class="toolbar-group">
+						<el-button text size="small" @click="clearFormat" title="清除格式">
+							<sc-icon name="ms-format_clear" :size="18" />
+						</el-button>
+					</div>
+
+					<div class="toolbar-spacer"></div>
+
+					<div class="toolbar-group">
+						<el-button text size="small" @click="saveNote" type="primary" :disabled="!hasChanges">
+							<sc-icon name="ms-save" :size="18" style="margin-right: 4px;" />
+							保存
+						</el-button>
+					</div>
+				</div>
+
+				<!-- 编辑区 -->
+				<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput"
+					@paste="onPaste">
+				</div>
+
+				<!-- 状态栏 -->
+				<div class="notepad-status">
+					<span>字数：{{ wordCount }}</span>
+					<span v-if="currentNote.update_time">上次保存：{{ $TOOL.dateTimeFormat(currentNote.update_time) }}</span>
+				</div>
+			</template>
+
+			<!-- 未选择便签时的提示 -->
+			<div v-else class="notes-placeholder">
+				<sc-icon name="ms-note" :size="64" />
+				<p>选择或创建一个便签开始编辑</p>
+				<el-button type="primary" @click="createNote">
+					<sc-icon name="ms-add" :size="18" style="margin-right: 4px;" />
+					新建便签
+				</el-button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -135,36 +182,37 @@ export default {
 	},
 	data() {
 		return {
-			notes: [],
+			noteList: [],
 			currentNoteId: null,
+			currentNote: null,
+			originalContent: '',
 			bgColor: '#ffff00',
 			textColor: '#333333',
 			fontSizes: [12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72],
 			wordCount: 0,
-			noteIdCounter: 1,
 			savedRange: null,
 			savedColorRange: null,
+			searchKeyword: '',
+			loading: false,
 		};
 	},
 	computed: {
-		currentNote() {
-			return this.notes.find(n => n.id === this.currentNoteId) || {};
+		filteredNotes() {
+			if (!this.searchKeyword) {
+				return this.noteList;
+			}
+			const keyword = this.searchKeyword.toLowerCase();
+			return this.noteList.filter(note => {
+				const title = (note.title || '').toLowerCase();
+				const content = this.getPlainText(note.content).toLowerCase();
+				return title.includes(keyword) || content.includes(keyword);
+			});
+		},
+		hasChanges() {
+			return this.currentNote && this.currentNote.content !== this.originalContent;
 		},
 	},
 	methods: {
-		def_data() {
-			return {
-				id: this.$SCM.DEF_ID,
-				ver: 0,
-				types: 1,
-				title: '',
-				url: '',
-				content: '',
-				cat_id: '0',
-				last_content: '',
-				last_saved: '',
-			}
-		},
 		execCommand(command, value = null) {
 			document.execCommand(command, false, value);
 			this.$refs.editorRef?.focus();
@@ -242,7 +290,6 @@ export default {
 				this.currentNote.content = this.$refs.editorRef.innerHTML;
 				this.currentNote.title = this.getTitle(this.currentNote.content);
 				this.wordCount = this.$refs.editorRef.innerText.length;
-				this.saveToStorage();
 			}
 		},
 		onPaste(e) {
@@ -251,6 +298,7 @@ export default {
 			document.execCommand('insertText', false, text);
 		},
 		getTitle(html) {
+			if (!html) return '未命名';
 			const div = document.createElement('div');
 			div.innerHTML = html;
 
@@ -258,7 +306,7 @@ export default {
 			let currentNode = div.firstChild;
 
 			while (currentNode) {
-				if (currentNode.nodeType === 3) {//Node.TEXT_NODE
+				if (currentNode.nodeType === 3) {
 					const text = currentNode.textContent;
 					const newlineIndex = text.indexOf('\n');
 					if (newlineIndex >= 0) {
@@ -266,7 +314,7 @@ export default {
 						break;
 					}
 					firstLine += text;
-				} else if (currentNode.nodeType === 1) {//Node.ELEMENT_NODE
+				} else if (currentNode.nodeType === 1) {
 					const tagName = currentNode.tagName.toLowerCase();
 					if (tagName === 'br') {
 						break;
@@ -290,164 +338,171 @@ export default {
 			firstLine = firstLine.trim().substring(0, 20);
 			return firstLine || '未命名';
 		},
-		createNote() {
-			const note = this.def_data();
-			note.id = '' + this.noteIdCounter++;
-			this.notes.push(note);
-			this.switchNote(note.id);
-			this.saveToStorage();
+		getPreview(html) {
+			if (!html) return '';
+			const text = this.getPlainText(html);
+			return text.substring(0, 50);
 		},
-		switchNote(id) {
-			this.currentNoteId = id;
+		getPlainText(html) {
+			if (!html) return '';
+			const div = document.createElement('div');
+			div.innerHTML = html;
+			return div.textContent || div.innerText || '';
+		},
+		formatDate(date) {
+			if (!date) return '';
+			const d = new Date(Number(date));
+			const now = new Date();
+			const diff = now - d;
+
+			if (diff < 60000) return '刚刚';
+			if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
+			if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
+			if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`;
+
+			return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+		},
+		async loadNoteList() {
+			this.loading = true;
+			try {
+				var res = await this.$API.scmsysnotes.list.get();
+				if (res.code == 200) {
+					this.noteList = res.data || [];
+				}
+			} finally {
+				this.loading = false;
+			}
+		},
+		async openNote(note) {
+			// 检查是否有未保存的更改
+			if (this.hasChanges) {
+				try {
+					await this.$confirm('当前便签有未保存的更改，是否保存？', '提示', {
+						confirmButtonText: '保存',
+						cancelButtonText: '不保存',
+						distinguishCancelAndClose: true,
+						type: 'warning',
+					});
+					await this.saveNote();
+				} catch (action) {
+					// 用户选择不保存或关闭，继续打开新便签
+				}
+			}
+
+			this.currentNoteId = note.id;
+			var res = await this.$API.scmsysnotes.edit.get(note.id);
+			if (res.code != 200) {
+				this.$message.error(res.message || '获取便签失败');
+				return;
+			}
+
+			this.currentNote = res.data;
+			this.originalContent = this.currentNote.content || '';
+
 			this.$nextTick(() => {
 				if (this.$refs.editorRef) {
-					if (this.currentNote) {
-						this.$refs.editorRef.innerHTML = this.currentNote.content || '';
-						this.wordCount = this.$refs.editorRef.innerText.length;
-					} else {
-						this.$refs.editorRef.innerHTML = '';
-						this.wordCount = 0;
-					}
+					this.$refs.editorRef.innerHTML = this.currentNote.content || '';
+					this.wordCount = this.$refs.editorRef.innerText.length;
+					this.$refs.editorRef.focus();
 				}
 			});
 		},
-		closeNote(id) {
-			const index = this.notes.findIndex(n => n.id === id);
-			if (index < 0) {
-				return;
+		async createNote() {
+			// 检查是否有未保存的更改
+			if (this.hasChanges) {
+				try {
+					await this.$confirm('当前便签有未保存的更改，是否保存？', '提示', {
+						confirmButtonText: '保存',
+						cancelButtonText: '不保存',
+						distinguishCancelAndClose: true,
+						type: 'warning',
+					});
+					await this.saveNote();
+				} catch (action) {
+					// 用户选择不保存或关闭，继续创建新便签
+				}
 			}
 
-			var node = this.notes[index];
-			if (node.content === node.last_content) {
-				this.closeNoteByIndex(index, id);
-				this.saveToStorage();
-				return;
-			}
+			var res = await this.$API.scmsysnotes.add.post({
+				title: '新建便签',
+				content: '',
+				types: 1
+			});
 
-			this.$confirm('笔记尚未保存，是否确认关闭？', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning',
-			}).then(async () => {
-				this.closeNoteByIndex(index, id);
-				this.saveToStorage();
-			}).catch(() => { });
-		},
-		closeNoteByIndex(index, noteId) {
-			this.notes.splice(index, 1);
-			if (this.currentNoteId === noteId) {
-				this.currentNoteId = this.notes.length > 0 ? this.notes[0].id : null;
-				this.switchNote(this.currentNoteId);
+			if (res.code == 200) {
+				const newNote = res.data || {
+					id: this.$SCM.DEF_ID,
+					title: '新建便签',
+					content: '',
+					create_time: Date.now()
+				};
+				this.noteList.unshift(newNote);
+				await this.openNote(newNote);
+			} else {
+				this.$message.error(res.message || '创建失败');
 			}
 		},
 		async saveNote() {
-			var note = this.currentNote;
-			if (!note) {
+			if (!this.currentNote) {
 				return false;
 			}
 
 			var data = {
-				id: note.id,
-				types: note.types,
-				url: note.url,
-				title: note.title,
-				content: note.content,
-				cat_id: note.cat_id,
-				ver: note.ver,
+				id: this.currentNote.id,
+				types: this.currentNote.types || 1,
+				title: this.currentNote.title,
+				content: this.currentNote.content,
 			};
-			var res = await this.$API.scmsysnote.save.post(data);
+
+			var res = await this.$API.scmsysnotes.save.post(data);
 			if (res.code != 200) {
 				this.$message.warning(res.message);
 				return false;
 			}
-			data = res.data || {};
-			note.id = data.id || note.id;
-			note.last_content = note.content;
-			note.last_saved = this.$TOOL.dateTimeFormat(data.update_time);
-			this.$message.success('保存成功');
-			this.saveToStorage();
-		},
-		/**
-		 * 保存笔记到本地存储
-		 */
-		saveToStorage() {
-			localStorage.setItem('desktop_notepad', JSON.stringify({
-				notes: this.notes,
-				noteIdCounter: this.noteIdCounter,
-			}));
-		},
-		/**
-		 * 从本地存储加载笔记
-		 * @param {Array} files - 包含文件信息的数组
-		 */
-		loadFromStorage() {
-			const saved = localStorage.getItem('desktop_notepad');
-			if (saved) {
-				const data = JSON.parse(saved);
-				this.notes = data.notes || [];
-				this.noteIdCounter = data.noteIdCounter || 1;
-				if (this.notes.length > 0) {
-					this.currentNoteId = this.notes[0].id;
-				}
-			}
-		},
-		async loadInitialFiles() {
-			if (this.files && this.files.length > 0) {
-				// for (const file of this.files) {
-				// 	await this.openFile(file);
-				// }
-				// const targetIndex = Math.min(this.index, this.notes.length - 1);
-				// if (this.notes.length > 0 && targetIndex >= 0) {
-				// 	this.switchNote(this.notes[targetIndex].id);
-				// }
-				var index = Math.min(this.index, this.files.length - 1);
-				await this.openFile(this.files[index]);
-				this.switchNote(this.notes[0].id);
-			}
-		},
-		async openFile(file) {
-			try {
-				let content = '';
-				if (file.url) {
-					const response = await fetch(file.url);
-					if (response.ok) {
-						content = await response.text();
-					}
-				} else if (file.content) {
-					content = file.content;
-				}
 
-				const note = this.def_data();
-				note.title = file.name || '未命名';
-				note.content = this.escapeHtml(content);
-				note.url = file.url || '';
-				this.notes.push(note);
-			} catch (error) {
-				console.error('加载文件失败:', error);
-				this.$message.error(`无法打开文件: ${file.name}`);
+			// 更新列表中的便签
+			const index = this.noteList.findIndex(n => n.id === this.currentNote.id);
+			if (index >= 0) {
+				this.noteList[index] = { ...this.noteList[index], ...res.data, title: this.currentNote.title, content: this.currentNote.content };
 			}
+
+			this.currentNote = { ...this.currentNote, ...res.data };
+			this.originalContent = this.currentNote.content;
+			this.$message.success('保存成功');
 		},
-		escapeHtml(text) {
-			return text
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;')
-				.replace(/'/g, '&#039;')
-				.replace(/\n/g, '<br>');
+		async deleteNote(note) {
+			try {
+				await this.$confirm('确定要删除这个便签吗？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+				});
+
+				var res = await this.$API.scmsysnotes.delete.delete(note.id);
+				if (res.code == 200) {
+					const index = this.noteList.findIndex(n => n.id === note.id);
+					if (index >= 0) {
+						this.noteList.splice(index, 1);
+					}
+
+					// 如果删除的是当前打开的便签，清空编辑区
+					if (this.currentNoteId === note.id) {
+						this.currentNoteId = null;
+						this.currentNote = null;
+						this.originalContent = '';
+					}
+
+					this.$message.success('删除成功');
+				} else {
+					this.$message.error(res.message || '删除失败');
+				}
+			} catch (action) {
+				// 用户取消删除
+			}
 		},
 	},
 	mounted() {
-		if (this.files && this.files.length > 0) {
-			this.loadInitialFiles();
-		} else {
-			this.loadFromStorage();
-			if (this.notes.length === 0) {
-				this.createNote();
-			} else {
-				this.switchNote(this.currentNoteId);
-			}
-		}
+		this.loadNoteList();
 	},
 };
 </script>
@@ -455,12 +510,147 @@ export default {
 <style src="./common.css"></style>
 
 <style scoped>
+.notes-layout {
+	display: flex;
+	flex-direction: row;
+	padding: 0;
+}
+
+/* 左侧便签列表 */
+.notes-sidebar {
+	width: 280px;
+	min-width: 280px;
+	border-right: 1px solid var(--color-border-light);
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-bg-secondary);
+}
+
+.sidebar-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 15px 15px 10px;
+	border-bottom: 1px solid var(--color-border-light);
+}
+
+.sidebar-title {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-text);
+}
+
+.sidebar-search {
+	padding: 10px 15px;
+	border-bottom: 1px solid var(--color-border-light);
+}
+
+.sidebar-list {
+	flex: 1;
+	overflow-y: auto;
+	padding: 10px 0;
+}
+
+.note-item {
+	display: flex;
+	align-items: flex-start;
+	padding: 10px 15px;
+	cursor: pointer;
+	transition: all 0.2s;
+	border-bottom: 1px solid var(--color-border-lighter);
+}
+
+.note-item:hover {
+	background-color: var(--color-bg-hover);
+}
+
+.note-item.active {
+	background-color: var(--color-primary-light-9);
+	border-left: 3px solid var(--color-primary);
+}
+
+.note-item-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.note-item-title {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-bottom: 4px;
+}
+
+.note-item-preview {
+	font-size: 12px;
+	color: var(--color-text-secondary);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-bottom: 4px;
+}
+
+.note-item-meta {
+	font-size: 11px;
+	color: var(--color-text-hint);
+}
+
+.note-item-actions {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+
+.note-item:hover .note-item-actions {
+	opacity: 1;
+}
+
+.sidebar-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60px 20px;
+	color: var(--color-text-tertiary);
+}
+
+.sidebar-empty p {
+	margin-top: 15px;
+	font-size: 14px;
+}
+
+/* 右侧编辑区 */
+.notes-main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	background-color: var(--color-bg);
+}
+
+.notes-placeholder {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text-tertiary);
+	gap: 20px;
+}
+
+.notes-placeholder p {
+	font-size: 16px;
+}
+
+/* 工具栏 */
 .notepad-toolbar {
 	display: flex;
 	align-items: center;
 	padding: 8px 12px;
-	background-color: #f5f5f5;
-	border-bottom: 1px solid #e0e0e0;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-border-light);
 	flex-wrap: wrap;
 	gap: 4px;
 }
@@ -474,7 +664,7 @@ export default {
 .toolbar-divider {
 	width: 1px;
 	height: 20px;
-	background-color: #ddd;
+	background-color: var(--color-border);
 	margin: 0 8px;
 }
 
@@ -482,64 +672,7 @@ export default {
 	flex: 1;
 }
 
-.notepad-tabs {
-	display: flex;
-	align-items: center;
-	padding: 0 10px;
-	background-color: #f0f0f0;
-	border-bottom: 1px solid #e0e0e0;
-	min-height: 36px;
-	overflow-x: auto;
-}
-
-.note-tab {
-	display: flex;
-	align-items: center;
-	padding: 6px 12px;
-	background-color: #e8e8e8;
-	border-radius: 4px 4px 0 0;
-	cursor: pointer;
-	font-size: 13px;
-	color: #666;
-	margin-right: 2px;
-	white-space: nowrap;
-	max-width: 150px;
-}
-
-.note-tab:hover {
-	background-color: #ddd;
-}
-
-.note-tab.active {
-	background-color: #fff;
-	color: #333;
-}
-
-.note-tab-title {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.note-tab-close {
-	margin-left: 8px;
-	opacity: 0;
-	transition: opacity 0.2s;
-}
-
-.note-tab:hover .note-tab-close {
-	opacity: 1;
-}
-
-.addTab {
-	padding: 6px 10px;
-	background-color: transparent;
-}
-
-.addTab:hover {
-	background-color: #e0e0e0;
-}
-
+/* 编辑区 */
 .notepad-editor {
 	flex: 1;
 	padding: 20px;
@@ -547,23 +680,24 @@ export default {
 	outline: none;
 	font-size: 14px;
 	line-height: 1.8;
-	color: #333;
-	background-color: #fff;
+	color: var(--color-text);
+	background-color: var(--color-bg);
 }
 
 .notepad-editor:empty::before {
 	content: '开始输入内容...';
-	color: #bbb;
+	color: var(--color-text-hint);
 }
 
+/* 状态栏 */
 .notepad-status {
 	display: flex;
 	justify-content: space-between;
 	padding: 6px 12px;
-	background-color: #f5f5f5;
-	border-top: 1px solid #e0e0e0;
+	background-color: var(--color-bg-secondary);
+	border-top: 1px solid var(--color-border-light);
 	font-size: 12px;
-	color: #999;
+	color: var(--color-text-hint);
 }
 
 :deep(.el-color-picker) {

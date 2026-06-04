@@ -72,7 +72,7 @@ export default {
             this.formData = this.def_data();
         },
         async save() {
-            var res = await this.$API.scmsysnote.save.post(this.formData);
+            var res = await this.$API.scmsysnotes.save.post(this.formData);
             if (!res || res.code != 200) {
                 this.$message.error(res.message);
                 return;
