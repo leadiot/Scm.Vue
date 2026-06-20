@@ -8,6 +8,13 @@ export default {
 			return await http.get(this.url, params);
 		},
 	},
+	conversations: {
+		url: `${config.API_URL}/scmsyssms/conversations`,
+		name: "会话",
+		get: async function (params) {
+			return await http.get(this.url, params);
+		},
+	},
 	list: {
 		url: `${config.API_URL}/scmsyssms/list`,
 		name: "列表",

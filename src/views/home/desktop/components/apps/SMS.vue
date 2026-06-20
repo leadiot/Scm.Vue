@@ -8,11 +8,13 @@
 				</el-button>
 			</div>
 			<div class="app-search-box">
-				<el-input v-model="searchQuery" placeholder="搜索短信..." prefix-icon="el-icon-search" size="small" clearable />
+				<el-input v-model="searchQuery" placeholder="搜索短信..." prefix-icon="el-icon-search" size="small"
+					clearable />
 			</div>
 			<div class="app-list">
-				<div v-for="conv in filteredConversations" :key="conv.id" class="app-list-item" :class="{ active: selectedConversation?.id === conv.id }" @click="selectConversation(conv)">
-					<div class="app-avatar" :style="{ backgroundColor: conv.color }">
+				<div v-for="conv in filteredConversations" :key="conv.id" class="app-list-item"
+					:class="{ active: selectedConversation?.id === conv.id }" @click="selectConversation(conv)">
+					<div class="app-avatar" :style="{ backgroundColor: conv.colors }">
 						{{ conv.name.charAt(0) }}
 					</div>
 					<div class="app-info">
@@ -35,7 +37,7 @@
 			<template v-else>
 				<div class="message-header">
 					<div class="header-left">
-						<div class="app-avatar small" :style="{ backgroundColor: selectedConversation.color }">
+						<div class="app-avatar small" :style="{ backgroundColor: selectedConversation.colors }">
 							{{ selectedConversation.name.charAt(0) }}
 						</div>
 						<div class="header-info">
@@ -54,9 +56,10 @@
 				</div>
 
 				<div class="messages" ref="messagesRef">
-					<div v-for="msg in currentMessages" :key="msg.id" class="message" :class="{ sent: msg.sent, received: !msg.sent }">
+					<div v-for="msg in messages" :key="msg.id" class="message"
+						:class="{ sent: msg.type == 2, received: msg.type == 1 }">
 						<div class="message-bubble">
-							<span class="text">{{ msg.text }}</span>
+							<span class="text">{{ msg.body }}</span>
 							<span class="msg-time">{{ msg.time }}</span>
 						</div>
 					</div>
@@ -66,7 +69,8 @@
 					<el-button text class="attach-btn">
 						<sc-icon name="ms-add" :size="20" />
 					</el-button>
-					<el-input v-model="newMessage" placeholder="输入短信内容..." @keyup.enter="sendMessage" class="msg-input" type="textarea" :rows="1" resize="none" />
+					<el-input v-model="newMessage" placeholder="输入短信内容..." @keyup.enter="sendMessage" class="msg-input"
+						type="textarea" :rows="1" resize="none" />
 					<el-button type="primary" @click="sendMessage" circle>
 						<sc-icon name="ms-send" :size="18" />
 					</el-button>
@@ -77,7 +81,7 @@
 		<el-dialog v-model="showNewSMS" title="新建短信" width="450px">
 			<el-form :model="newSMS" label-width="80px">
 				<el-form-item label="收件人">
-					<el-input v-model="newSMS.recipient" placeholder="请输入手机号或选择联系人">
+					<el-input v-model="newSMS.phone" placeholder="请输入手机号或选择联系人">
 						<template #append>
 							<el-button @click="selectFromContacts">
 								<sc-icon name="ms-contacts" :size="16" />
@@ -86,7 +90,8 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item label="内容">
-					<el-input v-model="newSMS.content" type="textarea" :rows="4" placeholder="请输入短信内容" maxlength="500" show-word-limit />
+					<el-input v-model="newSMS.body" type="textarea" :rows="4" placeholder="请输入短信内容" maxlength="500"
+						show-word-limit />
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -97,8 +102,9 @@
 
 		<el-dialog v-model="showContactPicker" title="选择联系人" width="400px">
 			<div class="contact-picker">
-				<div v-for="contact in quickContacts" :key="contact.id" class="picker-item" @click="pickContact(contact)">
-					<div class="avatar small" :style="{ backgroundColor: contact.color }">
+				<div v-for="contact in quickContacts" :key="contact.id" class="picker-item"
+					@click="pickContact(contact)">
+					<div class="avatar small" :style="{ backgroundColor: contact.colors }">
 						{{ contact.name.charAt(0) }}
 					</div>
 					<div class="picker-info">
@@ -127,80 +133,9 @@ export default {
 			showNewSMS: false,
 			showContactPicker: false,
 			newMessage: '',
-			newSMS: {
-				recipient: '',
-				content: '',
-			},
-			conversations: [
-				{
-					id: 1,
-					name: '张三',
-					phone: '138-0000-0001',
-					color: '#409eff',
-					time: '10:30',
-					lastMessage: '好的，明天见！',
-					unread: 2,
-				},
-				{
-					id: 2,
-					name: '李四',
-					phone: '138-0000-0002',
-					color: '#67c23a',
-					time: '昨天',
-					lastMessage: '收到，谢谢',
-					unread: 0,
-				},
-				{
-					id: 3,
-					name: '王五',
-					phone: '138-0000-0003',
-					color: '#e6a23c',
-					time: '周一',
-					lastMessage: '会议时间确定了吗？',
-					unread: 1,
-				},
-				{
-					id: 4,
-					name: '10086',
-					phone: '10086',
-					color: '#909399',
-					time: '周日',
-					lastMessage: '尊敬的客户，您本月流量已使用80%...',
-					unread: 0,
-				},
-				{
-					id: 5,
-					name: '银行通知',
-					phone: '95588',
-					color: '#f56c6c',
-					time: '上周',
-					lastMessage: '您的账户于12月15日消费￥128.00',
-					unread: 0,
-				},
-			],
-			messagesData: {
-				1: [
-					{ id: 1, text: '你好，明天有空吗？', sent: false, time: '10:25' },
-					{ id: 2, text: '有空的，什么事？', sent: true, time: '10:26' },
-					{ id: 3, text: '想约你一起吃饭，聊聊项目的事情', sent: false, time: '10:28' },
-					{ id: 4, text: '可以啊，什么时间？', sent: true, time: '10:29' },
-					{ id: 5, text: '好的，明天见！', sent: false, time: '10:30' },
-				],
-				2: [
-					{ id: 1, text: '项目文档已发送到你邮箱', sent: true, time: '昨天 14:30' },
-					{ id: 2, text: '收到，谢谢', sent: false, time: '昨天 14:35' },
-				],
-				3: [
-					{ id: 1, text: '会议时间确定了吗？', sent: false, time: '周一 09:00' },
-					{ id: 2, text: '还在协调中，稍后通知你', sent: true, time: '周一 09:15' },
-				],
-				4: [
-					{ id: 1, text: '尊敬的客户，您本月流量已使用80%，剩余流量2GB，如需办理流量包请回复1。', sent: false, time: '周日 10:00' },
-				],
-				5: [
-					{ id: 1, text: '您的账户于12月15日消费￥128.00，余额￥3,456.78。', sent: false, time: '上周五 18:30' },
-				],
-			},
+			newSMS: this.def_data(),
+			conversations: [],
+			messages: [],
 			quickContacts: [
 				{ id: 1, name: '张三', phone: '138-0000-0001', color: '#409eff' },
 				{ id: 2, name: '李四', phone: '138-0000-0002', color: '#67c23a' },
@@ -216,18 +151,32 @@ export default {
 				(c) => c.name.includes(this.searchQuery) || c.phone.includes(this.searchQuery) || c.lastMessage.includes(this.searchQuery)
 			);
 		},
-		currentMessages() {
-			if (!this.selectedConversation) return [];
-			return this.messagesData[this.selectedConversation.id] || [];
-		},
+	},
+	mounted() {
+		this.listConversations();
 	},
 	methods: {
+		def_data() {
+			return {
+				phone: '',
+				body: '',
+				date: '',
+				type: 1,
+			}
+		},
+		listConversations() {
+			this.$API.scmsyssms.conversations.get().then((res) => {
+				if (res.code === 200) {
+					this.conversations = res.data || [];
+				}
+			});
+		},
 		selectConversation(conv) {
 			this.selectedConversation = conv;
 			conv.unread = 0;
-			this.$nextTick(() => {
-				if (this.$refs.messagesRef) {
-					this.$refs.messagesRef.scrollTop = this.$refs.messagesRef.scrollHeight;
+			this.$API.scmsyssms.list.get({ id: conv.id }).then((res) => {
+				if (res.code === 200) {
+					this.messages = res.data || [];
 				}
 			});
 		},
@@ -235,18 +184,28 @@ export default {
 			if (!this.newMessage.trim()) return;
 			const time = getCurrentTime();
 			const convId = this.selectedConversation.id;
-			if (!this.messagesData[convId]) {
-				this.messagesData[convId] = [];
+			if (!this.messages) {
+				this.messages = [];
 			}
-			this.messagesData[convId].push({
-				id: Date.now(),
-				text: this.newMessage,
-				sent: true,
-				time,
+
+			var sms = {
+				phone: this.selectedConversation.phone,
+				body: this.newMessage,
+				date: time,
+				type: 1
+			};
+			this.$API.scmsyssms.add.post(sms).then((res) => {
+				if (res.code === 200) {
+					this.$message.success('短信发送成功');
+					this.selectedConversation.lastMessage = this.newMessage;
+					this.selectedConversation.time = time;
+					this.newMessage = '';
+					this.messages.push(res.data || {});
+					this.scrollToBottom();
+				}
 			});
-			this.selectedConversation.lastMessage = this.newMessage;
-			this.selectedConversation.time = time;
-			this.newMessage = '';
+		},
+		scrollToBottom() {
 			this.$nextTick(() => {
 				if (this.$refs.messagesRef) {
 					this.$refs.messagesRef.scrollTop = this.$refs.messagesRef.scrollHeight;
@@ -260,36 +219,24 @@ export default {
 			this.showContactPicker = true;
 		},
 		pickContact(contact) {
-			this.newSMS.recipient = contact.phone;
+			this.newSMS.phone = contact.phone;
+			this.newSMS.name = contact.name;
 			this.showContactPicker = false;
 		},
 		sendNewSMS() {
-			if (!this.newSMS.recipient || !this.newSMS.content) {
-				this.$message.warning('请填写收件人和内容');
+			if (!this.newSMS.phone || !this.newSMS.body) {
+				this.$message.warning('请填写手机号和内容');
 				return;
 			}
-			const time = getCurrentTime();
-			const newConv = {
-				id: Date.now(),
-				name: this.newSMS.recipient,
-				phone: this.newSMS.recipient,
-				color: getRandomColor(),
-				time,
-				lastMessage: this.newSMS.content,
-				unread: 0,
-			};
-			this.conversations.unshift(newConv);
-			this.messagesData[newConv.id] = [
-				{
-					id: Date.now(),
-					text: this.newSMS.content,
-					sent: true,
-					time,
-				},
-			];
-			this.newSMS = { recipient: '', content: '' };
-			this.showNewSMS = false;
-			this.$message.success('短信发送成功');
+			this.newSMS.colors = getRandomColor();
+
+			this.$API.scmsyssms.add.post(this.newSMS).then((res) => {
+				if (res.code === 200) {
+					this.showNewSMS = false;
+					this.$message.success('短信发送成功');
+					this.listConversations();
+				}
+			});
 		},
 	},
 };
