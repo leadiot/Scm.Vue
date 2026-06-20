@@ -3,7 +3,7 @@
         <div class="app-sidebar wide">
             <div class="app-header">
                 <span class="app-header-title">联系人</span>
-                <el-button text class="app-toolbar-btn" @click="showEditDialog = true">
+                <el-button text class="app-toolbar-btn" @click="addContact">
                     <sc-icon name="ms-person_add" :size="20" />
                 </el-button>
             </div>
@@ -144,7 +144,7 @@
             </template>
         </div>
 
-        <el-dialog v-model="showEditDialog" title="编辑联系人" width="600px" draggable>
+        <el-dialog v-model="showEditDialog" :title="dialogTitle" width="600px" draggable>
             <el-form :model="currData">
                 <el-row :gutter="20">
                     <el-col :span="12">
@@ -363,6 +363,9 @@ export default {
                     contacts: groups[letter],
                 }));
         },
+        dialogTitle() {
+            return this.$SCM.is_valid_id(this.currData.id) ? '编辑联系人' : '添加联系人';
+        },
     },
     mounted() {
         this.getContacts();
@@ -446,6 +449,10 @@ export default {
         removeIM(index) {
             this.currData.imAddresses.splice(index, 1);
         },
+        addContact() {
+            this.currData = this.def_data();
+            this.showEditDialog = true;
+        },
         editContact() {
             if (!this.selectedContact) return;
             this.currData = this.selectedContact;
@@ -465,7 +472,7 @@ export default {
                 });
                 return;
             }
-            
+
             this.$API.scmsyscontact.update.put(this.currData).then(res => {
                 this.showEditDialog = false;
                 this.$message.success('保存成功');
@@ -478,12 +485,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning',
             }).then(() => {
-                const index = this.contacts.findIndex((c) => c.id === this.selectedContact.id);
-                if (index > -1) {
-                    this.contacts.splice(index, 1);
-                    this.selectedContact = null;
+                this.$API.scmsyscontact.delete.delete(this.selectedContact.id).then(res => {
+                    this.showEditDialog = false;
                     this.$message.success('删除成功');
-                }
+                    this.getContacts();
+                });
             }).catch(() => { });
         },
     },
