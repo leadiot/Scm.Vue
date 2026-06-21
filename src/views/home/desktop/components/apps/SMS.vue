@@ -102,8 +102,7 @@
 
 		<el-dialog v-model="showContactPicker" title="选择联系人" width="400px">
 			<div class="contact-picker">
-				<div v-for="contact in quickContacts" :key="contact.id" class="picker-item"
-					@click="pickContact(contact)">
+				<div v-for="contact in contacts" :key="contact.id" class="picker-item" @click="pickContact(contact)">
 					<div class="avatar small" :style="{ backgroundColor: contact.colors }">
 						{{ contact.name.charAt(0) }}
 					</div>
@@ -136,12 +135,7 @@ export default {
 			newSMS: this.def_data(),
 			conversations: [],
 			messages: [],
-			quickContacts: [
-				{ id: 1, name: '张三', phone: '138-0000-0001', color: '#409eff' },
-				{ id: 2, name: '李四', phone: '138-0000-0002', color: '#67c23a' },
-				{ id: 3, name: '王五', phone: '138-0000-0003', color: '#e6a23c' },
-				{ id: 4, name: '赵六', phone: '138-0000-0004', color: '#f56c6c' },
-			],
+			contacts: [],
 		};
 	},
 	computed: {
@@ -154,6 +148,7 @@ export default {
 	},
 	mounted() {
 		this.listConversations();
+		this.listContats();
 	},
 	methods: {
 		def_data() {
@@ -168,6 +163,13 @@ export default {
 			this.$API.scmsyssms.conversations.get().then((res) => {
 				if (res.code === 200) {
 					this.conversations = res.data || [];
+				}
+			});
+		},
+		listContats() {
+			this.$API.scmsyscontact.list.get().then((res) => {
+				if (res.code === 200) {
+					this.contacts = res.data || [];
 				}
 			});
 		},
