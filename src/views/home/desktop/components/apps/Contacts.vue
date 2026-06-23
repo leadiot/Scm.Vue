@@ -112,12 +112,12 @@
 
                 <div class="detail-section">
                     <div class="section-title">即时通讯</div>
-                    <div v-for="(im, index) in selectedContact.imAddresses" :key="index" class="info-item">
+                    <div v-for="(im, index) in selectedContact.im_addresses" :key="index" class="info-item">
                         <sc-icon name="ms-message" :size="18" />
                         <span class="label">{{ im.type || '微信' }}:</span>
                         <span>{{ im.address }}</span>
                     </div>
-                    <div v-if="selectedContact.imAddresses.length === 0" class="empty-info">
+                    <div v-if="selectedContact.im_addresses.length === 0" class="empty-info">
                         暂无即时通讯账号
                     </div>
                 </div>
@@ -161,12 +161,12 @@
                 <el-row :gutter="20">
                     <el-col :span="8">
                         <el-form-item label="前缀">
-                            <el-input v-model="currData.namePrefix" placeholder="先生/女士" />
+                            <el-input v-model="currData.name_prefix" placeholder="先生/女士" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="后缀">
-                            <el-input v-model="currData.nameSuffix" placeholder="博士/教授" />
+                            <el-input v-model="currData.name_suffix" placeholder="博士/教授" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -283,7 +283,7 @@
                 </el-button>
 
                 <el-divider content-position="left">即时通讯</el-divider>
-                <div v-for="(im, index) in currData.imAddresses" :key="index" class="form-row">
+                <div v-for="(im, index) in currData.im_addresses" :key="index" class="form-row">
                     <el-row :gutter="10">
                         <el-col :span="6">
                             <el-select v-model="im.type" placeholder="类型" size="small">
@@ -375,11 +375,11 @@ export default {
             return {
                 id: '0',
                 name: '',
-                firstName: '',
-                middleName: '',
-                lastName: '',
-                namePrefix: '',
-                nameSuffix: '',
+                first_name: '',
+                middle_name: '',
+                last_name: '',
+                name_prefix: '',
+                name_suffix: '',
                 nickname: '',
                 company: '',
                 title: '',
@@ -387,12 +387,12 @@ export default {
                 website: '',
                 note: '',
                 birthday: '',
-                photoThumbUri: '',
-                photoUri: '',
+                photo_thumb_uri: '',
+                photo_uri: '',
                 emails: [],
                 phones: [],
                 addresses: [],
-                imAddresses: []
+                im_addresses: []
             }
         },
         getContacts() {
@@ -402,7 +402,7 @@ export default {
                     contact.phones = contact.phones || [];
                     contact.emails = contact.emails || [];
                     contact.addresses = contact.addresses || [];
-                    contact.imAddresses = contact.imAddresses || [];
+                    contact.im_addresses = contact.im_addresses || [];
                     contact.color = contact.color || '#000000';
                 });
             });
@@ -444,10 +444,10 @@ export default {
             this.currData.addresses.splice(index, 1);
         },
         addIM() {
-            this.currData.imAddresses.push({ type: '微信', address: '' });
+            this.currData.im_addresses.push({ type: '微信', address: '' });
         },
         removeIM(index) {
-            this.currData.imAddresses.splice(index, 1);
+            this.currData.im_addresses.splice(index, 1);
         },
         addContact() {
             this.currData = this.def_data();

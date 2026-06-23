@@ -155,7 +155,7 @@ export default {
 			return {
 				phone: '',
 				body: '',
-				date: '',
+				time: '',
 				type: 1,
 			}
 		},
@@ -193,7 +193,7 @@ export default {
 			var sms = {
 				phone: this.selectedConversation.phone,
 				body: this.newMessage,
-				date: time,
+				time: time,
 				type: 1
 			};
 			this.$API.scmsyssms.add.post(sms).then((res) => {
