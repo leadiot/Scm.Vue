@@ -28,7 +28,7 @@
 						<span class="device-model">{{ device.model }}</span>
 					</div>
 				</div>
-				<div class="device-binded" :class="{ binded: device.binded }">
+				<div class="device-binded" :class="{ binded: device.binded === 2 }" @click="unbindDevice(device)">
 					<span class="status-dot"></span>
 					<span class="status-text">{{ device.binded === 2 ? '已绑定' : '未绑定' }}</span>
 				</div>
@@ -197,6 +197,24 @@ export default {
 			}
 			this.editVisible = true;
 		},
+		async unbindDevice(device) {
+			if (device.binded !== 2) {
+				return;
+			}
+			this.$confirm('确定要解绑该设备吗？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning',
+			}).then(async () => {
+				var res = await this.$API.scmurterminal.unbind.post(device.id);
+				if (res.code === 200) {
+					this.$message.success('解绑成功');
+					this.loadDevices();
+				} else {
+					this.$alert(res.message, "提示", { type: "error" });
+				}
+			});
+		},
 		deleteDevice(row) {
 			this.$confirm('确定要删除此设备吗？', '提示', {
 				confirmButtonText: '确定',
@@ -325,6 +343,7 @@ export default {
 .device-binded.binded {
 	background-color: rgba(103, 194, 58, 0.1);
 	color: var(--color-success);
+	cursor: pointer;
 }
 
 .status-dot {

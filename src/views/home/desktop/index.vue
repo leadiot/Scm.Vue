@@ -245,6 +245,28 @@ export default {
 				titleColorInactive: '#666666',
 				border: 'rgba(0, 0, 0, 0.1)'
 			},
+			profileApp: {
+				id: '1',
+				name: '个人信息',
+				component: 'Profile',
+				meta: {
+					icon: 'ms-account_circle',
+					width: 460,
+					height: 680,
+					resizable: false,
+				}
+			},
+			calendarApp: {
+				id: '2',
+				name: '日历',
+				component: 'Calendar',
+				meta: {
+					icon: 'ms-calendar_month',
+					width: 320,
+					height: 460,
+					resizable: false
+				}
+			},
 			themes: [
 				{
 					name: 'default',
@@ -635,6 +657,12 @@ export default {
 						this.deskApps.push(child);
 					}
 					this.addDeskIcon(child);
+					if (child.code == 'app-calendar') {
+						this.calendarApp = child;
+					}
+					if (child.code == 'app-profile') {
+						this.profileApp = child;
+					}
 				});
 			}
 		},
@@ -643,7 +671,6 @@ export default {
 			return menu || [];
 		},
 		openApp(app) {
-			console.log("openApp", app)
 			if (app.meta && app.meta.type === 'link') {
 				this.$router.push({
 					path: app.path
@@ -748,25 +775,11 @@ export default {
 			this.showSettings = true;
 		},
 		openCalendar() {
-			this.openApp({
-				name: '日历',
-				icon: 'ms-calendar_month',
-				component: 'Calendar',
-				width: 320,
-				height: 460,
-				resizable: false
-			});
+			this.openApp(this.calendarApp);
 		},
 		openProfile() {
 			this.hideContextMenu();
-			this.openApp({
-				name: '个人信息',
-				icon: 'ms-account_circle',
-				component: 'Profile',
-				width: 460,
-				height: 680,
-				resizable: false
-			});
+			this.openApp(this.profileApp);
 		},
 		onProfileUpdated(profile) {
 			if (profile.namec) {
