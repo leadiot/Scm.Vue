@@ -1015,11 +1015,9 @@ export default {
 
 .windows-container {
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 48px;
+	inset: 0 0 48px;
 	pointer-events: none;
+	overflow: hidden;
 }
 
 .windows-container .window {
