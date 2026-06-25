@@ -60,6 +60,7 @@ export default {
 				create_time: '',
 				key: ''
 			},
+			folder: null,
 			selection: [],
 			column: [
 				{ label: "id", prop: "id", hide: true },
@@ -98,7 +99,7 @@ export default {
 			this.$refs.search.open(this.param.key);
 		},
 		open_dialog(row) {
-			this.$refs.edit.open(row);
+			this.$refs.edit.open(row, this.param.dir_id);
 		},
 		selectionChange(selection) {
 			this.selection = selection;
@@ -123,6 +124,7 @@ export default {
 			}
 
 			if (row.type == 10) {
+				this.folder = row;
 				this.$refs.breadcrumb.addItem(row);
 				this.param.dir_id = row.id;
 				this.search();
