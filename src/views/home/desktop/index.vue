@@ -247,6 +247,7 @@ export default {
 			},
 			profileApp: {
 				id: '1',
+				code: 'app-profile',
 				name: '个人信息',
 				component: 'Profile',
 				meta: {
@@ -258,6 +259,7 @@ export default {
 			},
 			calendarApp: {
 				id: '2',
+				code: 'app-calendar',
 				name: '日历',
 				component: 'Calendar',
 				meta: {
@@ -265,6 +267,50 @@ export default {
 					width: 320,
 					height: 460,
 					resizable: false
+				}
+			},
+			imageApp: {
+				id: '3',
+				code: 'app-image',
+				name: '图像',
+				component: 'Image',
+				meta: {
+					icon: 'ms-photo_library',
+					width: 900,
+					height: 700
+				}
+			},
+			audioApp: {
+				id: '4',
+				code: 'app-audio',
+				name: '音频',
+				component: 'Audio',
+				meta: {
+					icon: 'ms-music_note',
+					width: 500,
+					height: 600
+				}
+			},
+			videoApp: {
+				id: '5',
+				code: 'app-video',
+				name: '视频',
+				component: 'Video',
+				meta: {
+					icon: 'ms-videocam',
+					width: 900,
+					height: 600
+				}
+			},
+			textApp: {
+				id: '6',
+				code: 'app-text',
+				name: '记事',
+				component: 'Text',
+				meta: {
+					icon: 'ms-article',
+					width: 800,
+					height: 600
 				}
 			},
 			themes: [
@@ -663,6 +709,18 @@ export default {
 					if (child.code == 'app-profile') {
 						this.profileApp = child;
 					}
+					if (child.code == 'app-image') {
+						this.imageApp = child;
+					}
+					if (child.code == 'app-audio') {
+						this.audioApp = child;
+					}
+					if (child.code == 'app-video') {
+						this.videoApp = child;
+					}
+					if (child.code == 'app-text') {
+						this.textApp = child;
+					}
 				});
 			}
 		},
@@ -876,45 +934,18 @@ export default {
 
 			let appConfig = null;
 			if (kind === 'text') {
-				appConfig = {
-					name: '记事',
-					icon: 'ms-article',
-					component: 'Text',
-					width: 800,
-					height: 600,
-					props: { files: files, index: index }
-				};
+				appConfig = this.textApp;
 			} else if (kind === 'image') {
-				appConfig = {
-					name: '图像',
-					icon: 'ms-photo_library',
-					component: 'Image',
-					width: 900,
-					height: 700,
-					props: { files: files, index: index }
-				};
-			} else if (kind === 'video') {
-				appConfig = {
-					name: '视频',
-					icon: 'ms-videocam',
-					component: 'Video',
-					width: 900,
-					height: 600,
-					props: { files: files, index: index }
-				};
+				appConfig = this.imageApp;
 			} else if (kind === 'audio') {
-				appConfig = {
-					name: '音频',
-					icon: 'ms-music_note',
-					component: 'Audio',
-					width: 500,
-					height: 600,
-					props: { files: files, index: index }
-				};
+				appConfig = this.audioApp;
+			} else if (kind === 'video') {
+				appConfig = this.videoApp;
 			} else {
 				this.$message.info(`无法打开此类型文件`);
 				return;
 			}
+			appConfig.props = { files: files, index: index };
 
 			this.openApp(appConfig);
 		},
