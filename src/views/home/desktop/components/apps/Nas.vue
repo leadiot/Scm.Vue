@@ -56,18 +56,18 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的目录</div>
-					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-folder" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
 					<div class="sidebar-title">我的设备</div>
 					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openDevice(item)">
-						<sc-icon name="ms-device" :size="18" />
+						<sc-icon name="ms-devices" :size="18" />
+						<span>{{ item.names }}</span>
+					</div>
+				</div>
+				<div class="sidebar-section">
+					<div class="sidebar-title">我的同步</div>
+					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
+						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
+						<sc-icon name="ms-folder" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
@@ -204,6 +204,7 @@ export default {
 	mounted() {
 		this.loadCfg();
 		this.listFolder();
+		this.listDevice();
 	},
 	methods: {
 		async listDevice() {
