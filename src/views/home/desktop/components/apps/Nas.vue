@@ -11,6 +11,9 @@
 				<button class="toolbar-btn" @click="goUp" :disabled="currentPath.length === 0">
 					<sc-icon name="ms-arrow_upward" :size="18" />
 				</button>
+				<button class="toolbar-btn" @click="refresh">
+					<sc-icon name="ms-refresh" :size="18" />
+				</button>
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
 						<sc-icon name="ms-cloud" :size="16" />
@@ -53,18 +56,18 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的目录</div>
-					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-folder" :size="18" />
-						<span>{{ item.name }}</span>
+					<div class="sidebar-title">我的设备</div>
+					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
+						:class="{ active: currentFolder?.id === item.id }" @click="openDevice(item)">
+						<sc-icon name="ms-devices" :size="18" />
+						<span>{{ item.names }}</span>
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的设备</div>
-					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
+					<div class="sidebar-title">我的同步</div>
+					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-device" :size="18" />
+						<sc-icon name="ms-folder" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
@@ -122,7 +125,7 @@
 								<sc-icon :name="getFileIcon(item)" :size="18" />
 								<span>{{ item.name }}</span>
 							</div>
-							<div class="col-date">{{ item.update_times }}</div>
+							<div class="col-date">{{ item.modify_times }}</div>
 							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? '目录' : '文件') }}</div>
 							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
@@ -153,9 +156,9 @@ export default {
 	data() {
 		return {
 			param: {
-				opt: '1',
+				opt: '1',// 0：不限制, 1: 按目录, 2: 按类别
 				dir_id: '0',
-				folder_id: '0',
+				kind: 0,
 				key: '',
 			},
 			viewMode: 'details',
@@ -201,14 +204,33 @@ export default {
 	mounted() {
 		this.loadCfg();
 		this.listFolder();
+		this.listDevice();
 	},
 	methods: {
+		async listDevice() {
+			var res = await this.$API.scmurterminal.list.get("");
+			if (res.code !== 200) {
+				this.deviceList = [];
+				return;
+			}
+			this.deviceList = res.data || [];
+		},
 		async listFolder() {
 			var res = await this.$API.nascfgfolder.list.get("");
-			if (res.code == 0) {
-				this.folderList = res.data || [];
+			if (res.code !== 200) {
+				this.folderList = [];
+				return;
 			}
 			this.folderList = res.data || [];
+		},
+		async listFile() {
+			var res = await this.$API.nasresfile.list.get(this.param);
+			if (res.code != 200) {
+				this.fileList = [];
+				return;
+			}
+
+			this.fileList = res.data || [];
 		},
 		async loadCfg() {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
@@ -270,6 +292,12 @@ export default {
 				this.openDoc(item);
 			}
 		},
+		saveParam(item, param) {
+			item.param = param;
+			this.param.opt = param.opt;
+			this.param.dir_id = param.dir_id;
+			this.param.kind = param.kind;
+		},
 		async openLib(item) {
 			this.currentPath = [];
 			this.currentPath.push(item);
@@ -279,38 +307,32 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.param.opt = '2';
-			// this.param.dir_id = '0';
-			// this.param.folder_id = '0';
-			this.param.kind = item.kind;
-			var res = await this.$API.nasresfile.list.get(this.param);
-			if (res.code != 200) {
-				this.fileList = [];
-				return;
-			}
-
-			this.fileList = res.data || [];
+			this.saveParam(item, { opt: '2', dir_id: '0', kind: item.kind });
+			this.listFile();
 		},
-		async openFolder(folder) {
+		async openFolder(item) {
 			this.currentPath = [];
-			this.currentPath.push(folder);
-			this.currentFolder = folder;
+			this.currentPath.push(item);
+			this.currentFolder = item;
 			this.selectedItems = [];
 			this.history = this.history.slice(0, this.historyIndex + 1);
-			this.history.push({ folder: folder, path: [...this.currentPath] });
+			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.param.opt = '1';
-			this.param.dir_id = folder.res_id;
-			// this.param.folder_id = '0';
-			// this.param.kind = item.kind;
-			var res = await this.$API.nasresfile.list.get(this.param);
-			if (res.code != 200) {
-				this.fileList = [];
-				return;
-			}
+			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.listFile();
+		},
+		async openDevice(item) {
+			this.currentPath = [];
+			this.currentPath.push(item);
+			this.currentFolder = item;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: item, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
 
-			this.fileList = res.data || [];
+			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.listFile();
 		},
 		async openDir(item) {
 			this.currentPath.push(item);
@@ -320,14 +342,8 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.param.dir_id = item.id;
-			var res = await this.$API.nasresfile.list.get(this.param);
-			if (res.code != 200) {
-				this.fileList = [];
-				return;
-			}
-
-			this.fileList = res.data || [];
+			this.saveParam(item, { opt: '1', dir_id: item.id, kind: 0 });
+			this.listFile();
 		},
 		/**
 		 * 打开文档
@@ -411,12 +427,10 @@ export default {
 
 			if (this.currentPath.length === 0) {
 				this.currentFolder = null;
-				this.param.dir_id = '0';
-				this.param.folder_id = '0';
 				this.history = this.history.slice(0, this.historyIndex + 1);
 				this.history.push({ folder: null, path: [] });
 				this.historyIndex = this.history.length - 1;
-				this.fileList = [];
+				this.loadCurrentFolder();
 			} else {
 				this.currentFolder = this.currentPath[this.currentPath.length - 1];
 				this.history = this.history.slice(0, this.historyIndex + 1);
@@ -429,12 +443,10 @@ export default {
 			this.currentPath = [];
 			this.currentFolder = null;
 			this.selectedItems = [];
-			this.param.dir_id = '0';
-			this.param.folder_id = '0';
 			this.history = this.history.slice(0, this.historyIndex + 1);
 			this.history.push({ folder: null, path: [] });
 			this.historyIndex = this.history.length - 1;
-			this.fileList = [];
+			this.loadCurrentFolder();
 		},
 		async goToPath(index) {
 			this.currentPath = this.currentPath.slice(0, index + 1);
@@ -446,16 +458,15 @@ export default {
 			await this.loadCurrentFolder();
 		},
 		async loadCurrentFolder() {
-			if (this.currentFolder) {
-				this.param.dir_id = this.currentFolder.id;
-				this.param.folder_id = '0';
-				var res = await this.$API.nasresfile.list.get(this.param);
-				if (res.code == 200) {
-					this.fileList = res.data || [];
-				} else {
-					this.fileList = [];
-				}
+			if (!this.currentFolder) {
+				this.fileList = [];
+				return;
 			}
+
+			this.param.opt = this.currentFolder.param.opt;
+			this.param.dir_id = this.currentFolder.param.dir_id;
+			this.param.kind = this.currentFolder.param.kind;
+			this.listFile();
 		},
 		sortBy(field) {
 			if (this.sortField === field) {
@@ -464,6 +475,11 @@ export default {
 				this.sortField = field;
 				this.sortOrder = 'asc';
 			}
+		},
+		async refresh() {
+			await this.listFolder();
+			await this.listDevice();
+			await this.listFile();
 		},
 	},
 };

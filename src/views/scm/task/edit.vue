@@ -162,7 +162,7 @@ export default {
 			this.visible = true;
 		},
 		initTask() {
-			//const time = this.$TOOL.dateFormat(new Date());
+			//const time = this.$TOOL.dateTimeFormat(new Date());
 			return {
 				names: "",
 				group: "",

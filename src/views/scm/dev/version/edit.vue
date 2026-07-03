@@ -163,7 +163,7 @@ export default {
                     this.isSaveing = true;
                     let res = null;
                     if (this.formData.release_date) {
-                        this.formData.release_date = this.$TOOL.dateFormat(this.formData.release_date, 'yyyy-MM-dd');
+                        this.formData.release_date = this.$TOOL.dateTimeFormat(this.formData.release_date, 'yyyy-MM-dd');
                     }
                     if (this.$SCM.is_valid_id(this.formData.id)) {
                         res = await this.$API.scmdevversion.update.put(this.formData);

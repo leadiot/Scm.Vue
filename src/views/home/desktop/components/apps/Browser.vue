@@ -79,7 +79,7 @@ export default {
 			historyIndex: -1,
 			loadTimeout: null,
 			quickLinks: [
-				{ name: '百度', url: 'https://www.baidu.com', icon: '🔍' },
+				{ name: '百度', url: 'https://wap.baidu.com', icon: '🔍' },
 				{ name: '维基百科', url: 'https://zh.wikipedia.org', icon: '📚' },
 				{ name: 'MDN文档', url: 'https://developer.mozilla.org', icon: '�' },
 				{ name: 'W3C', url: 'https://www.w3.org', icon: '🌐' },

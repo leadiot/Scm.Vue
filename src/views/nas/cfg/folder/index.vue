@@ -93,7 +93,7 @@ export default {
 			selection: [],
 			column: [
 				{ label: "id", prop: "id", hide: true },
-				{ prop: 'terminal_id', label: '终端', width: 100, formatter: this.getTerminalName },
+				{ prop: 'terminal_name', label: '终端', width: 140, align: 'left' },
 				{ prop: 'name', label: '名称', width: 140, align: 'left' },
 				{ prop: 'path', label: '路径', minWidth: 200, align: 'left' },
 				{ prop: "row_status", label: "数据状态", width: 80, },

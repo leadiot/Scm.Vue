@@ -48,9 +48,10 @@ export default {
 				ver: '',
 			}
 		},
-		async open(row) {
+		async open(row, dir_id) {
 			if (!row || !row.id) {
 				this.mode = "add";
+				this.formData.dir_id = dir_id;
 			} else {
 				this.mode = "edit";
 				var res = await this.$API.nasressecret.edit.get(row.id);

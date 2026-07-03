@@ -54,8 +54,8 @@ export default {
 	},
 	mounted() {
 		var now = new Date();
-		this.date = this.$TOOL.dateFormat(now, 'yyyy-MM-dd');
-		this.time = this.$TOOL.dateFormat(now, 'HH:mm');
+		this.date = this.$TOOL.dateTimeFormat(now, 'yyyy-MM-dd');
+		this.time = this.$TOOL.dateTimeFormat(now, 'HH:mm');
 	},
 	methods: {
 		fullScreen() {

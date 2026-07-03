@@ -72,7 +72,7 @@ export default {
 			}, 60000)
 		} else {
 			const format = el.getAttribute('format') || undefined
-			el.innerHTML = tool.dateFormat(value, format)
+			el.innerHTML = tool.dateTimeFormat(value, format)
 		}
 	}
 };
