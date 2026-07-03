@@ -251,7 +251,12 @@ tool.objCopy = function (obj) {
 	return JSON.parse(JSON.stringify(obj));
 };
 
-tool.getDate = function (date) {
+/**
+ * 获取当前日期
+ * @param {*} date 日期对象
+ * @returns 日期字符串
+ */
+tool.dateFormat = function (date) {
 	if (!date) {
 		date = new Date();
 	}
@@ -261,7 +266,12 @@ tool.getDate = function (date) {
 	return y + "-" + tool.lpad(m, 2, "0") + "-" + tool.lpad(d, 2, "0");
 };
 
-tool.getTime = function (date) {
+/**
+ * 获取当前时间
+ * @param {*} date 日期对象
+ * @returns 时间字符串
+ */
+tool.timeFormat = function (date) {
 	if (!date) {
 		date = new Date();
 	}
@@ -275,6 +285,60 @@ tool.getTime = function (date) {
 		":" +
 		tool.lpad(s, 2, "0")
 	);
+};
+
+/* 日期格式化
+ * yyyy:年
+ * MM:月
+ * dd:日
+ * hh:12制小时
+ * HH:24制小时
+ * mm:分
+ * ss:秒
+ * q:季度
+ * S:毫秒
+ * E:星期
+ */
+tool.dateTimeFormat = function (time, fmt) {
+	var date = new Date(time);
+	var y = date.getFullYear();
+	var M = date.getMonth() + 1;
+	var d = date.getDate();
+	var h24 = date.getHours();
+	var h12 = h24 % 12;
+	var m = date.getMinutes();
+	var s = date.getSeconds();
+	var q = Math.floor((date.getMonth() + 3) / 3);
+	var S = date.getMilliseconds();
+	var E = date.getDay();
+	var o = {
+		"M+": M, //月份
+		"d+": d, //日
+		"h+": h12,//12制小时
+		"H+": h24, //24制小时
+		"m+": m, //分
+		"s+": s, //秒
+		"q+": q, //季度
+		S: S, //毫秒
+	};
+	const week = ["\u65e5", "\u4e00", "\u4e8c", "\u4e09", "\u56db", "\u4e94", "\u516d"];
+	if (!fmt) {
+		// 默认：yyyy-MM-dd HH:mm:ss
+		return `${tool.lpad(y, 4)}-${tool.lpad(M)}-${tool.lpad(d)} ${tool.lpad(h24)}:${tool.lpad(m)}:${tool.lpad(s)}`;
+	}
+
+	if (/(y+)/.test(fmt)) {
+		fmt = fmt.replace(RegExp.$1, (y + "").substr(4 - RegExp.$1.length));
+	}
+	if (/(E+)/.test(fmt)) {
+		fmt = fmt.replace(RegExp.$1, (RegExp.$1.length > 1 ? RegExp.$1.length > 2 ? "\u661f\u671f" : "\u5468" : "") + week[E]);
+	}
+	for (var k in o) {
+		if (new RegExp("(" + k + ")").test(fmt)) {
+			fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+		}
+	}
+	return fmt;
 };
 
 tool.format = function (str, len, pad) {
@@ -294,102 +358,12 @@ tool.format = function (str, len, pad) {
 	return str;
 };
 
-tool.dateTimeFormat = function (time) {
-	if (!time) {
-		return "";
-	}
-	time = Number(time);
-	if (time < 1) {
-		return "";
-	}
-
-	var date = new Date(time);
-	var year = date.getFullYear();
-	var month = date.getMonth() + 1;
-	var day = date.getDate();
-	var hour = date.getHours();
-	var minute = date.getMinutes();
-	var second = date.getSeconds();
-	return `${tool.lpad(year, 4)}-${tool.lpad(month)}-${tool.lpad(
-		day
-	)} ${tool.lpad(hour)}:${tool.lpad(minute)}:${tool.lpad(second)}`;
-};
-
 tool.lpad = function (val, total = 2, str = "0") {
 	return val.toString().padStart(total, str);
 };
 
 tool.rpad = function (val, total = 2, str = "0") {
 	return val.toString().padEnd(total, str);
-};
-
-/* 日期格式化
- * yyyy:年
- * MM:月
- * dd:日
- * hh:12制小时
- * HH:24制小时
- * mm:分
- * ss:秒
- * q:季度
- * S:毫秒
- * E:星期
- */
-tool.dateFormat = function (time, fmt = "yyyy-MM-dd hh:mm:ss") {
-	var date = new Date(time);
-	var y = date.getFullYear();
-	var M = date.getMonth() + 1;
-	var d = date.getDate();
-	var h24 = date.getHours();
-	var h12 = h24 % 12;
-	var m = date.getMinutes();
-	var s = date.getSeconds();
-	var q = Math.floor((date.getMonth() + 3) / 3);
-	var S = date.getMilliseconds();
-	var E = date.getDay();
-	var o = {
-		"M+": M, //月份
-		"d+": d, //日
-		"h+": h12,
-		"H+": h24, //小时
-		"m+": m, //分
-		"s+": s, //秒
-		"q+": q, //季度
-		S: S, //毫秒
-	};
-	const week = [
-		"\u65e5",
-		"\u4e00",
-		"\u4e8c",
-		"\u4e09",
-		"\u56db",
-		"\u4e94",
-		"\u516d",
-	];
-	if (/(y+)/.test(fmt)) {
-		fmt = fmt.replace(RegExp.$1, (y + "").substr(4 - RegExp.$1.length));
-	}
-	if (/(E+)/.test(fmt)) {
-		fmt = fmt.replace(
-			RegExp.$1,
-			(RegExp.$1.length > 1
-				? RegExp.$1.length > 2
-					? "\u661f\u671f"
-					: "\u5468"
-				: "") + week[E]
-		);
-	}
-	for (var k in o) {
-		if (new RegExp("(" + k + ")").test(fmt)) {
-			fmt = fmt.replace(
-				RegExp.$1,
-				RegExp.$1.length == 1
-					? o[k]
-					: ("00" + o[k]).substr(("" + o[k]).length)
-			);
-		}
-	}
-	return fmt;
 };
 
 /* 千分符 */
@@ -506,7 +480,11 @@ tool.stringToByte = function (str) {
 	return new Int8Array(bytes);
 };
 
-/* 计算文件大小 */
+/**
+ * 文件大小格式化
+ * @param {*} limit 文件大小
+ * @returns 文件大小字符串
+ */
 tool.fileSizeFormat = function (limit) {
 	if (!limit) {
 		return "";
@@ -517,28 +495,13 @@ tool.fileSizeFormat = function (limit) {
 		return "";
 	}
 
-	var size = "";
-	if (num < 0.1 * 1024) {
-		//小于0.1KB，则转化成B
-		size = num.toFixed(2) + "B";
-	} else if (num < 0.1 * 1024 * 1024) {
-		//小于0.1MB，则转化成KB
-		size = (num / 1024).toFixed(2) + "KB";
-	} else if (num < 0.1 * 1024 * 1024 * 1024) {
-		//小于0.1GB，则转化成MB
-		size = (num / (1024 * 1024)).toFixed(2) + "MB";
-	} else {
-		//其他转化成GB
-		size = (num / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+	var units = ["B", "KB", "MB", "GB", "TB", "PB"];
+	var i = 0;
+	while (num > 1024) {
+		num = num >> 10;
+		i++;
 	}
-
-	var index = size.indexOf("."); //获取小数点处的索引
-	var dou = size.substring(index + 1, index + 3); //获取小数点后两位的值
-	if (dou == "00") {
-		//判断后两位是否为00，如果是则删除00
-		return size.substring(0, index) + size.substring(index + 3, index + 5);
-	}
-	return size;
+	return num + units[i];
 };
 
 tool.randomNumber = function (length = 6) {

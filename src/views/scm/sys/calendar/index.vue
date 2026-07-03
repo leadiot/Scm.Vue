@@ -159,7 +159,7 @@ export default {
 	},
 	computed: {
 		day() {
-			return this.$TOOL.dateFormat(this.toDay, "yyyy-MM-dd");
+			return this.$TOOL.dateTimeFormat(this.toDay, "yyyy-MM-dd");
 		},
 		dayItem() {
 			return this.getData(this.day);
@@ -181,8 +181,8 @@ export default {
 			}
 
 			res.data.forEach((m) => {
-				m.beginTime = m.start_time != '0' ? this.$TOOL.dateFormat(Number(m.start_time), "yyyy-MM-dd") : '';
-				m.endTime = m.end_time != '0' ? this.$TOOL.dateFormat(Number(m.end_time), "yyyy-MM-dd") : '';
+				m.beginTime = m.start_time != '0' ? this.$TOOL.dateTimeFormat(Number(m.start_time), "yyyy-MM-dd") : '';
+				m.endTime = m.end_time != '0' ? this.$TOOL.dateTimeFormat(Number(m.end_time), "yyyy-MM-dd") : '';
 			});
 			this.data = this.getGroup(res.data, "beginTime");
 		},
@@ -210,7 +210,7 @@ export default {
 		},
 		selectDate(val) {
 			this.$refs.calendar.selectDate(val);
-			this.param.toDay = this.$TOOL.dateFormat(this.toDay, "yyyy-MM-dd");
+			this.param.toDay = this.$TOOL.dateTimeFormat(this.toDay, "yyyy-MM-dd");
 			this.list_data();
 		},
 		delTask(row) {

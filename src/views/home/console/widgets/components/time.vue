@@ -26,8 +26,8 @@ export default {
 	},
 	methods: {
 		showTime() {
-			this.time = this.$TOOL.dateFormat(new Date(), 'hh:mm:ss')
-			this.day = this.$TOOL.dateFormat(new Date(), 'yyyy年MM月dd日')
+			this.time = this.$TOOL.dateTimeFormat(new Date(), 'hh:mm:ss')
+			this.day = this.$TOOL.dateTimeFormat(new Date(), 'yyyy年MM月dd日')
 		}
 	}
 }
