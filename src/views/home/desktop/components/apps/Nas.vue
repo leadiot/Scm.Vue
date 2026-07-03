@@ -17,7 +17,7 @@
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
 						<sc-icon name="ms-cloud" :size="16" />
-						<span>云空间</span>
+						<span>{{ $t('desktop.cloudSpace') }}</span>
 					</span>
 					<span v-for="(item, index) in currentPath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
@@ -26,7 +26,7 @@
 				</div>
 			</div>
 			<div class="toolbar-right">
-				<el-input v-model="param.key" placeholder="搜索..." prefix-icon="el-icon-search" size="small"
+				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search" size="small"
 					class="search-input" />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
@@ -40,7 +40,7 @@
 		<div class="app-content">
 			<div class="sidebar">
 				<div class="sidebar-section">
-					<div class="sidebar-title">云空间</div>
+					<div class="sidebar-title">{{ $t('desktop.cloudSpace') }}</div>
 					<div v-for="item in stores" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
@@ -48,7 +48,7 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">快速访问</div>
+					<div class="sidebar-title">{{ $t('desktop.quickAccess') }}</div>
 					<div v-for="item in libs" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openLib(item)">
 						<sc-icon :name="item.icon" :size="18" />
@@ -56,7 +56,7 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的设备</div>
+					<div class="sidebar-title">{{ $t('desktop.myDevices') }}</div>
 					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openDevice(item)">
 						<sc-icon name="ms-devices" :size="18" />
@@ -64,7 +64,7 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">我的同步</div>
+					<div class="sidebar-title">{{ $t('desktop.mySync') }}</div>
 					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
 						<sc-icon name="ms-folder" :size="18" />
@@ -97,22 +97,22 @@
 				<div v-else-if="viewMode === 'details'" class="view-details">
 					<div class="details-header">
 						<div class="col-name" @click="sortBy('name')">
-							<span>名称</span>
+							<span>{{ $t('desktop.name') }}</span>
 							<sc-icon v-if="sortField === 'name'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-date" @click="sortBy('modifiedDate')">
-							<span>修改日期</span>
+							<span>{{ $t('desktop.modifiedDate') }}</span>
 							<sc-icon v-if="sortField === 'modifiedDate'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-type" @click="sortBy('type')">
-							<span>类型</span>
+							<span>{{ $t('desktop.type') }}</span>
 							<sc-icon v-if="sortField === 'type'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-size" @click="sortBy('size')">
-							<span>大小</span>
+							<span>{{ $t('desktop.size') }}</span>
 							<sc-icon v-if="sortField === 'size'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
@@ -126,7 +126,7 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.modify_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? '目录' : '文件') }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? $t('desktop.directory') : $t('desktop.file')) }}</div>
 							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
@@ -134,14 +134,14 @@
 
 				<div v-if="fileList.length === 0" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
-					<p>此文件夹为空</p>
+					<p>{{ $t('desktop.folderEmpty') }}</p>
 				</div>
 			</div>
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ fileList.length }} 个项目</span>
-			<span v-if="selectedItems.length > 0">· 已选中 {{ selectedItems.length }} 个项目</span>
+			<span>{{ fileList.length }} {{ $t('desktop.items') }}</span>
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
 		</div>
 	</div>
 </template>

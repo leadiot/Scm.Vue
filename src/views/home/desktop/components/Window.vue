@@ -60,7 +60,7 @@ const LoadingComponent = {
 				color: '#999',
 				fontSize: '14px',
 			}
-		}, '加载中...');
+		}, this.$t ? this.$t('desktop.loading') : '加载中...');
 	}
 };
 
@@ -76,7 +76,7 @@ const ErrorComponent = {
 				color: '#f56c6c',
 				fontSize: '14px',
 			}
-		}, '组件加载失败');
+		}, this.$t ? this.$t('desktop.loadFailed') : '组件加载失败');
 	}
 };
 

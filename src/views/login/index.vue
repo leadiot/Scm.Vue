@@ -145,6 +145,7 @@ export default {
 			lang_list: [
 				{ name: "简体中文", value: "zh-cn", },
 				{ name: "English", value: "en", },
+				{ name: "日本語", value: "ja", },
 			],
 		};
 	},
