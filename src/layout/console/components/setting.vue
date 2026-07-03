@@ -21,8 +21,7 @@
 								:style="{ width: '20px', height: '20px', borderRadius: '4px', background: theme.gradient }">
 							</div>
 							<span>{{ theme.name }}</span>
-							<span v-if="theme.description" class="theme-desc">({{ theme.description
-							}})</span>
+							<span v-if="theme.description" class="theme-desc">({{ theme.description }})</span>
 						</div>
 					</el-option>
 				</el-option-group>

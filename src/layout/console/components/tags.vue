@@ -17,25 +17,25 @@
 		<ul v-if="contextMenuVisible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu"
 			id="contextmenu">
 			<li @click="refreshTab()">
-				<el-icon><el-icon-refresh /></el-icon>刷新
+				<el-icon><el-icon-refresh /></el-icon>{{ $t('console.refresh') }}
 			</li>
 			<hr />
 			<li @click="closeTabs()" :class="contextMenuItem.meta.affix ? 'disabled' : ''">
-				<el-icon><el-icon-close /></el-icon>关闭当前标签
+				<el-icon><el-icon-close /></el-icon>{{ $t('console.closeCurrentTab') }}
 			</li>
 			<li @click="closeOtherTabs()">
-				<el-icon><el-icon-close-bold /></el-icon>关闭其他标签
+				<el-icon><el-icon-close-bold /></el-icon>{{ $t('console.closeOtherTabs') }}
 			</li>
 			<hr />
 			<li @click="addFav()">
-				<el-icon><el-icon-star /></el-icon>收藏
+				<el-icon><el-icon-star /></el-icon>{{ $t('console.favorite') }}
 			</li>
 			<hr />
 			<li @click="maximize()">
-				<el-icon><el-icon-full-screen /></el-icon>最大化
+				<el-icon><el-icon-full-screen /></el-icon>{{ $t('console.maximize') }}
 			</li>
 			<li @click="openWindow()">
-				<el-icon><el-icon-copy-document /></el-icon>在新窗口打开
+				<el-icon><el-icon-copy-document /></el-icon>{{ $t('console.openInNewWindow') }}
 			</li>
 		</ul>
 	</transition>
@@ -85,9 +85,9 @@ export default {
 						this.$msgbox({
 							type: "warning",
 							center: true,
-							title: "提示",
-							message: "当前标签数量过多，可通过鼠标滚轴滚动标签栏。关闭标签数量可减少系统性能消耗。",
-							confirmButtonText: "知道了",
+							title: this.$t('console.tagsTip'),
+							message: this.$t('console.tagsTipMessage'),
+							confirmButtonText: this.$t('console.gotIt'),
 						});
 						this.tipDisplayed = true;
 					}
@@ -173,7 +173,7 @@ export default {
 				return;
 			}
 
-			this.$message.success("已成功添加到收藏！");
+			this.$message.success(this.$t('console.favoriteSuccess'));
 		},
 		//高亮tag
 		isActive(route) {

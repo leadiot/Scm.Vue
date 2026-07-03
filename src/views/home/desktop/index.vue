@@ -529,7 +529,7 @@ export default {
 					previewStyle: { background: 'linear-gradient(to bottom right, #654ea3, #eaafc8)' }
 				},
 				{
-					name: 'chinese-purple',
+					name: 'chinesePurple',
 					backgroundType: 'gradient',
 					gradientColor1: '#5D3F6A',
 					gradientColor2: '#8B4789',
@@ -1309,6 +1309,7 @@ export default {
 	border-radius: 8px;
 	border: 2px solid transparent;
 	transition: all 0.3s;
+	width: 100px;
 }
 
 .theme-item:hover {
