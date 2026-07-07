@@ -305,8 +305,8 @@ export default {
 			textApp: {
 				id: '6',
 				code: 'app-text',
-				name: '记事',
-				component: 'Text',
+				name: '记事本',
+				component: 'Textpad',
 				meta: {
 					icon: 'ms-article',
 					width: 800,

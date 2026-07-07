@@ -1,9 +1,9 @@
 <template>
 	<div v-if="!window.minimized" class="window"
 		:class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }"
-		:style="windowStyle" @mousedown="handleFocus" @touchstart="handleFocus"
+		:style="windowStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus"
 		@contextmenu.prevent.stop="handleContextMenu">
-		<div class="window-header" @mousedown="startDrag" @touchstart="startDrag">
+		<div class="window-header" @mousedown="startDrag" @touchstart.passive="startDrag">
 			<div class="window-title">
 				<sc-icon :name="window.icon" :size="16" />
 				<span>{{ window.title }}</span>

@@ -454,6 +454,21 @@ export default {
 			this.showFontDialog = false;
 			this.saveToStorage();
 		},
+		async loadFileFromUrl(file) {
+			try {
+				const res = await fetch(file.url);
+				const text = await res.text() || '';
+				this.currentContent = text;
+				this.fileName = file.name || '无标题';
+				this.isModified = false;
+				this.history = [this.currentContent];
+				this.historyIndex = 0;
+				this.updateLineInfo();
+			} catch (error) {
+				console.error('加载文件失败:', error);
+				this.$message.error('加载文件失败');
+			}
+		},
 		saveToStorage() {
 			localStorage.setItem('notepad_state', JSON.stringify({
 				content: this.currentContent,
@@ -484,23 +499,19 @@ export default {
 		},
 	},
 	mounted() {
+		// 打开指定文件
+		if (this.files && this.files.length > 0) {
+			const index = Math.min(this.index, this.files.length - 1);
+			const file = this.files[index];
+			this.loadFileFromUrl(file);
+			return;
+		}
+
+		// 加载本地存储
 		this.loadFromStorage();
 		this.history = [this.currentContent];
 		this.historyIndex = 0;
 		this.updateLineInfo();
-
-		if (this.files && this.files.length > 0) {
-			const index = Math.min(this.index, this.files.length - 1);
-			const file = this.files[index];
-			if (file.content) {
-				this.currentContent = file.content;
-				this.fileName = file.name || '无标题';
-				this.isModified = false;
-				this.history = [this.currentContent];
-				this.historyIndex = 0;
-				this.updateLineInfo();
-			}
-		}
 	},
 };
 </script>
