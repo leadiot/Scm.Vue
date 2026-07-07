@@ -190,9 +190,9 @@
 		</section>
 	</template>
 
-	<div class="main-maximize-exit" @click="exitMaximize"><sc-icon title="退出全屏" name="close" /></div>
+	<div class="main-maximize-exit" @click="exitMaximize"><sc-icon :title="$t('console.exitFullscreen')" name="close" /></div>
 
-	<div class="layout-setting" @click="openFeedback"><sc-icon name="sc-feedback-line" title="用户反馈" /></div>
+	<div class="layout-setting" @click="openFeedback"><sc-icon name="sc-feedback-line" :title="$t('console.userFeedback')" /></div>
 	<feedback ref="feedback"></feedback>
 </template>
 

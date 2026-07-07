@@ -14,7 +14,7 @@
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
 						<sc-icon name="ms-cloud" :size="16" />
-						<span>云空间</span>
+						<span>{{ $t('desktop.cloudSpace') }}</span>
 					</span>
 					<span v-for="(item, index) in currentPath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
@@ -23,7 +23,7 @@
 				</div>
 			</div>
 			<div class="toolbar-right">
-				<el-input v-model="param.key" placeholder="搜索..." prefix-icon="el-icon-search" size="small"
+				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search" size="small"
 					class="search-input" clearable />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
@@ -32,16 +32,16 @@
 					</button>
 				</div>
 				<div class="action-buttons">
-					<button class="toolbar-btn" title="新建文件夹" @click="createFolder">
+					<button class="toolbar-btn" :title="$t('desktop.newFolder')" @click="createFolder">
 						<sc-icon name="ms-create_new_folder" :size="18" />
 					</button>
-					<button class="toolbar-btn" title="上传文件" @click="openUploadDialog">
+					<button class="toolbar-btn" :title="$t('desktop.uploadFile')" @click="openUploadDialog">
 						<sc-icon name="ms-upload" :size="18" />
 					</button>
-					<button class="toolbar-btn" title="下载" :disabled="selectedItems.length !== 1" @click="downloadFile">
+					<button class="toolbar-btn" :title="$t('desktop.download')" :disabled="selectedItems.length !== 1" @click="downloadFile">
 						<sc-icon name="ms-download" :size="18" />
 					</button>
-					<button class="toolbar-btn" title="删除" :disabled="selectedItems.length === 0"
+					<button class="toolbar-btn" :title="$t('desktop.delete')" :disabled="selectedItems.length === 0"
 						@click="deleteSelected">
 						<sc-icon name="ms-delete" :size="18" />
 					</button>
@@ -93,22 +93,22 @@
 				<div v-else-if="viewMode === 'details'" class="view-details">
 					<div class="details-header">
 						<div class="col-name" @click="sortBy('name')">
-							<span>名称</span>
+							<span>{{ $t('desktop.name') }}</span>
 							<sc-icon v-if="sortField === 'name'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-date" @click="sortBy('modifiedDate')">
-							<span>修改日期</span>
+							<span>{{ $t('desktop.modifiedDate') }}</span>
 							<sc-icon v-if="sortField === 'modifiedDate'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-type" @click="sortBy('type')">
-							<span>类型</span>
+							<span>{{ $t('desktop.type') }}</span>
 							<sc-icon v-if="sortField === 'type'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
 						<div class="col-size" @click="sortBy('size')">
-							<span>大小</span>
+							<span>{{ $t('desktop.size') }}</span>
 							<sc-icon v-if="sortField === 'size'"
 								:name="sortOrder === 'asc' ? 'ms-arrow_upward' : 'ms-arrow_downward'" :size="14" />
 						</div>
@@ -123,7 +123,7 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.update_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.kind === 10 ? '目录' : '文件') }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.kind === 10 ? $t('desktop.directory') : $t('desktop.file')) }}</div>
 							<div class="col-size">{{ item.kind === 30 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
@@ -131,20 +131,20 @@
 
 				<div v-if="filteredFileList.length === 0" class="empty-state">
 					<sc-icon :name="param.key ? 'ms-search_off' : 'ms-folder_open'" :size="64" />
-					<p v-if="param.key">未找到匹配 "{{ param.key }}" 的文件</p>
-					<p v-else>此文件夹为空</p>
+					<p v-if="param.key">{{ $t('desktop.noMatchFound') }} "{{ param.key }}"</p>
+					<p v-else>{{ $t('desktop.folderEmpty') }}</p>
 					<button v-if="!param.key" class="upload-btn" @click="openUploadDialog">
 						<sc-icon name="ms-upload" :size="24" />
-						<span>上传文件</span>
+						<span>{{ $t('desktop.uploadFile') }}</span>
 					</button>
 				</div>
 			</div>
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ filteredFileList.length }} 个项目</span>
-			<span v-if="param.key && filteredFileList.length < fileList.length">· 共 {{ fileList.length }} 个，筛选 {{ filteredFileList.length }} 个</span>
-			<span v-if="selectedItems.length > 0">· 已选中 {{ selectedItems.length }} 个项目</span>
+			<span>{{ filteredFileList.length }} {{ $t('desktop.items') }}</span>
+			<span v-if="param.key && filteredFileList.length < fileList.length">· {{ $t('desktop.totalFiltered').replace('{0}', fileList.length).replace('{1}', filteredFileList.length) }}</span>
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
 		</div>
 
 		<!-- 右键菜单 -->

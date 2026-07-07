@@ -1,24 +1,24 @@
 <template>
-    <el-drawer title="用户反馈" v-model="visible" :size="400" append-to-body destroy-on-close>
+    <el-drawer :title="$t('console.feedbackTitle')" v-model="visible" :size="400" append-to-body destroy-on-close>
         <el-form ref="formRef" :model="formData" :rules="rules" label-width="80px" style="padding:0 20px;">
-            <el-form-item label="网页地址" prop="url">
+            <el-form-item :label="$t('console.url')" prop="url">
                 <el-input v-model="formData.url" show-word-limit clearable disabled></el-input>
             </el-form-item>
-            <el-form-item label="问题类型" prop="types">
-                <sc-select v-model="formData.types" :data="types_list" placeholder="请选择问题类型" collapse-tags></sc-select>
+            <el-form-item :label="$t('console.issueType')" prop="types">
+                <sc-select v-model="formData.types" :data="types_list" :placeholder="$t('console.issueTypePlaceholder')" collapse-tags></sc-select>
             </el-form-item>
-            <el-form-item label="回馈事项" prop="title">
-                <el-input v-model="formData.title" placeholder="请输入回馈事项" :maxlength="32" show-word-limit
+            <el-form-item :label="$t('console.feedbackItem')" prop="title">
+                <el-input v-model="formData.title" :placeholder="$t('console.feedbackItemPlaceholder')" :maxlength="32" show-word-limit
                     clearable></el-input>
             </el-form-item>
-            <el-form-item label="详细说明" prop="remark">
-                <el-input v-model="formData.remark" type="textarea" placeholder="请输入详细说明" :maxlength="1024" :rows="5"
+            <el-form-item :label="$t('console.detailDescription')" prop="remark">
+                <el-input v-model="formData.remark" type="textarea" :placeholder="$t('console.detailPlaceholder')" :maxlength="1024" :rows="5"
                     show-word-limit clearable></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button @click="close">取 消</el-button>
+                <el-button @click="close">{{ $t('common.cancel') }}</el-button>
                 <el-button :loading="isSaveing" type="primary" @click="save">
-                    确 定
+                    {{ $t('common.confirm') }}
                 </el-button>
             </el-form-item>
         </el-form>
@@ -40,10 +40,10 @@ export default {
             },
             rules: {
                 types: [
-                    { required: true, trigger: "change", type: 'number', min: 1, message: "请选择问题类型" },
+                    { required: true, trigger: "change", type: 'number', min: 1, message: this.$t('console.issueTypePlaceholder') },
                 ],
                 title: [
-                    { required: true, trigger: "blur", message: "请输入回馈事项" },
+                    { required: true, trigger: "blur", message: this.$t('console.feedbackItemPlaceholder') },
                 ],
             },
             types_list: [this.$SCM.OPTION_ONE_INT],
@@ -68,9 +68,9 @@ export default {
                     if (res.code == 200) {
                         this.$emit("complete");
                         this.visible = false;
-                        this.$message.success("您的反馈已提交，我们会尽快跟进处理！");
+                        this.$message.success(this.$t('console.feedbackSuccess'));
                     } else {
-                        this.$alert(res.message, "提示", { type: "error" });
+                        this.$alert(res.message, this.$t('common.info'), { type: "error" });
                     }
                 }
             });

@@ -1,6 +1,6 @@
 <template>
 	<div class="sc-search">
-		<el-input ref="input" v-model="input" placeholder="搜索" size="large" clearable prefix-icon="el-icon-search"
+		<el-input ref="input" v-model="input" :placeholder="$t('console.searchPlaceholder')" size="large" clearable prefix-icon="el-icon-search"
 			:trigger-on-focus="false" @input="inputChange" v-on:keydown="keyAction($event)" />
 		<div class="sc-search-history" v-if="history.length > 0">
 			<el-tag closable effect="dark" type="info" v-for="(item, index) in history" :key="item"
@@ -9,7 +9,7 @@
 			</el-tag>
 		</div>
 		<div class="sc-search-result">
-			<div class="sc-search-no-result" v-if="result.length <= 0">暂无搜索结果</div>
+			<div class="sc-search-no-result" v-if="result.length <= 0">{{ $t('console.noSearchResult') }}</div>
 			<el-scrollbar max-height="366px" v-else>
 				<ul>
 					<li v-for="(item, index) in result" :key="item.path" @click="to(item)"
@@ -23,16 +23,16 @@
 		<div class="sc-search-key-hint">
 			<div class="sc-search-key-group">
 				<span class="sc-search-key">Enter</span>
-				<span class="sc-search_label">确认</span>
+				<span class="sc-search_label">{{ $t('console.keyConfirm') }}</span>
 			</div>
 			<div class="sc-search-key-group">
 				<span class="sc-search-key">↑</span>
 				<span class="sc-search-key">↓</span>
-				<span class="sc-search_label">切换</span>
+				<span class="sc-search_label">{{ $t('console.keySwitch') }}</span>
 			</div>
 			<div class="sc-search-key-group">
 				<span class="sc-search-key">Esc</span>
-				<span class="sc-search_label">关闭</span>
+				<span class="sc-search_label">{{ $t('console.keyClose') }}</span>
 			</div>
 		</div>
 	</div>

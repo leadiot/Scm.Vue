@@ -1,6 +1,6 @@
 <template>
 	<div v-if="navMenus.length <= 0" style="padding:20px;">
-		<el-alert title="无子集菜单" center type="info" :closable="false"></el-alert>
+		<el-alert :title="$t('console.noSubMenu')" center type="info" :closable="false"></el-alert>
 	</div>
 	<template v-for="navMenu in navMenus" v-bind:key="navMenu">
 		<el-menu-item v-if="!hasChildren(navMenu)" :index="navMenu.path">

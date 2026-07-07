@@ -3,10 +3,10 @@
 		<el-main>
 			<el-empty v-if="tasks.length == 0" :image-size="120">
 				<template #description>
-					<h2>没有正在执行的任务</h2>
+					<h2>{{ $t('console.noTasks') }}</h2>
 				</template>
 				<p class="task-tip">
-					在处理耗时过久的任务时为了不阻碍正在处理的工作，可在任务中心进行异步执行。
+					{{ $t('console.taskTip') }}
 				</p>
 			</el-empty>
 			<el-card v-for="task in tasks" :key="task.id" shadow="hover" class="user-bar-tasks-item">
@@ -19,15 +19,15 @@
 						<div class="title">
 							<h2>{{ task.names }}</h2>
 							<p>
-								<span v-time.tip="getTime(task.create_time)"></span> 创建
+								<span v-time.tip="getTime(task.create_time)"></span> {{ $t('console.created') }}
 							</p>
 						</div>
 						<div class="bottom">
 							<div class="state">
-								<el-tag type="default" v-if="task.handle == '10'">初始化</el-tag>
-								<el-tag type="info" v-if="task.handle == '30'">执行中</el-tag>
-								<el-tag type="danger" v-if="task.handle == '40'">异常</el-tag>
-								<el-tag type="success" v-if="task.handle == '50'">完成</el-tag>
+								<el-tag type="default" v-if="task.handle == '10'">{{ $t('console.taskInit') }}</el-tag>
+								<el-tag type="info" v-if="task.handle == '30'">{{ $t('console.taskRunning') }}</el-tag>
+								<el-tag type="danger" v-if="task.handle == '40'">{{ $t('console.taskError') }}</el-tag>
+								<el-tag type="success" v-if="task.handle == '50'">{{ $t('console.taskComplete') }}</el-tag>
 							</div>
 							<div class="handler">
 								<div v-if="task.handle == '40'">

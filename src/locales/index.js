@@ -3,9 +3,11 @@ import tool from "@/utils/tool";
 import { createI18n } from "vue-i18n";
 import el_zh_cn from "element-plus/dist/locale/zh-cn.mjs";
 import el_en from "element-plus/dist/locale/en.mjs";
+import el_ja from "element-plus/dist/locale/ja.mjs";
 
 import zh_cn from "./lang/zh-cn.js";
 import en from "./lang/en.js";
+import ja from "./lang/ja.js";
 
 const messages = {
 	"zh-cn": {
@@ -15,6 +17,10 @@ const messages = {
 	en: {
 		el: el_en,
 		...en,
+	},
+	ja: {
+		el: el_ja,
+		...ja,
 	},
 };
 

@@ -23,7 +23,7 @@
 		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor }">
 			<div class="taskbar-start" @click="toggleStartMenu">
 				<sc-icon name="ms-grid_view" :size="24" />
-				<span>开始</span>
+				<span>{{ $t('desktop.start') }}</span>
 			</div>
 			<div class="taskbar-apps">
 				<div v-for="window in windows" :key="window.id" class="taskbar-app"
@@ -59,11 +59,11 @@
 			<div class="start-menu-footer">
 				<div class="start-menu-action" @click="openSettings">
 					<sc-icon name="ms-settings" />
-					<span>设置</span>
+					<span>{{ $t('desktop.settings') }}</span>
 				</div>
 				<div class="start-menu-action" @click="logout">
 					<sc-icon name="ms-exit_to_app" />
-					<span>退出</span>
+					<span>{{ $t('desktop.exit') }}</span>
 				</div>
 			</div>
 		</div>
@@ -79,78 +79,78 @@
 		</div>
 
 		<!-- 设置窗口 -->
-		<el-dialog v-model="showSettings" title="桌面设置" width="500px" :modal-append-to-body="false" draggable>
+		<el-dialog v-model="showSettings" :title="$t('desktop.desktopSettings')" width="500px" :modal-append-to-body="false" draggable>
 			<el-tabs>
-				<el-tab-pane label="主题设置">
+				<el-tab-pane :label="$t('desktop.themeSettings')">
 					<div class="settings-section">
-						<h4>预设主题</h4>
+						<h4>{{ $t('desktop.presetThemes') }}</h4>
 						<div class="theme-grid">
 							<div v-for="theme in themes" :key="theme.name" class="theme-item"
 								:class="{ active: currentTheme === theme.name }" @click="applyTheme(theme)">
 								<div class="theme-preview" :style="theme.previewStyle">
 									<div class="theme-taskbar" :style="{ backgroundColor: theme.taskbarColor }"></div>
 								</div>
-								<span class="theme-name">{{ theme.label }}</span>
+								<span class="theme-name">{{ $t('desktop.theme' + theme.name.charAt(0).toUpperCase() + theme.name.slice(1)) }}</span>
 							</div>
 						</div>
 					</div>
 				</el-tab-pane>
-				<el-tab-pane label="个性设置">
+				<el-tab-pane :label="$t('desktop.personalSettings')">
 					<div class="settings-section">
-						<h4>图标颜色</h4>
+						<h4>{{ $t('desktop.iconColor') }}</h4>
 						<el-color-picker v-model="iconColor" :predefine="colorList" show-alpha />
 					</div>
 
 					<div class="settings-section">
-						<h4>背景类型</h4>
+						<h4>{{ $t('desktop.backgroundType') }}</h4>
 						<el-radio-group v-model="backgroundType">
-							<el-radio value="color">纯色</el-radio>
-							<el-radio value="gradient">渐变</el-radio>
-							<el-radio value="image">图像</el-radio>
+							<el-radio value="color">{{ $t('desktop.solidColor') }}</el-radio>
+							<el-radio value="gradient">{{ $t('desktop.gradient') }}</el-radio>
+							<el-radio value="image">{{ $t('desktop.image') }}</el-radio>
 						</el-radio-group>
 					</div>
 
 					<div v-if="backgroundType === 'color'" class="settings-section">
-						<h4>预设颜色</h4>
+						<h4>{{ $t('desktop.presetColors') }}</h4>
 						<el-color-picker v-model="backgroundColor" :predefine="colorList" show-alpha />
 					</div>
 
 					<div v-if="backgroundType === 'gradient'" class="settings-section">
-						<h4>渐变颜色</h4>
+						<h4>{{ $t('desktop.gradientColors') }}</h4>
 						<el-color-picker v-model="gradientColor1" :predefine="colorList" show-alpha />
 						<el-color-picker v-model="gradientColor2" :predefine="colorList" show-alpha />
 						<el-select v-model="gradientDirection" style="margin-left: 10px; width: 120px;">
-							<el-option label="从左到右" value="to right" />
-							<el-option label="从上到下" value="to bottom" />
-							<el-option label="对角线" value="to bottom right" />
+							<el-option :label="$t('desktop.leftToRight')" value="to right" />
+							<el-option :label="$t('desktop.topToBottom')" value="to bottom" />
+							<el-option :label="$t('desktop.diagonal')" value="to bottom right" />
 						</el-select>
 					</div>
 
 					<div v-if="backgroundType === 'image'" class="settings-section">
-						<h4>背景图像</h4>
-						<el-input v-model="backgroundImage" placeholder="输入图像URL或选择预设" />
+						<h4>{{ $t('desktop.backgroundImage') }}</h4>
+						<el-input v-model="backgroundImage" :placeholder="$t('desktop.imagePlaceholder')" />
 						<div class="preset-images">
 							<div v-for="(img, index) in presetImages" :key="index" class="preset-image"
 								:style="{ backgroundImage: `url(${img})` }" @click="backgroundImage = img" />
 						</div>
 					</div>
 				</el-tab-pane>
-				<el-tab-pane label="框架布局">
+				<el-tab-pane :label="$t('desktop.frameLayout')">
 					<el-form ref="form">
-						<el-form-item label="首页布局">
-							<el-select v-model="home" placeholder="请选择">
-								<el-option label="自定义" value="/"></el-option>
-								<el-option label="工作台" value="/console"></el-option>
-								<el-option label="云桌面" value="/desktop"></el-option>
-								<el-option label="大屏幕" value="/monitor"></el-option>
+						<el-form-item :label="$t('desktop.homeLayout')">
+							<el-select v-model="home" :placeholder="$t('desktop.custom')">
+								<el-option :label="$t('desktop.custom')" value="/"></el-option>
+								<el-option :label="$t('desktop.console')" value="/console"></el-option>
+								<el-option :label="$t('desktop.cloudDesktop')" value="/desktop"></el-option>
+								<el-option :label="$t('desktop.monitor')" value="/monitor"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
 			</el-tabs>
 			<template #footer>
-				<el-button @click="showSettings = false">取消</el-button>
-				<el-button type="primary" @click="saveSettings">保存</el-button>
+				<el-button @click="showSettings = false">{{ $t('desktop.cancel') }}</el-button>
+				<el-button type="primary" @click="saveSettings">{{ $t('desktop.save') }}</el-button>
 			</template>
 		</el-dialog>
 
@@ -159,26 +159,26 @@
 			:style="{ ...contextMenu.style, backgroundColor: menuColor, color: menuTextColor }">
 			<div class="context-menu-item" @click="refreshDesktop">
 				<sc-icon name="ms-refresh" :size="16" />
-				<span>刷新</span>
+				<span>{{ $t('desktop.refresh') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
 			<div class="context-menu-item" @click="openSettings">
 				<sc-icon name="ms-settings" :size="16" />
-				<span>桌面设置</span>
+				<span>{{ $t('desktop.desktopSettings') }}</span>
 			</div>
 			<div class="context-menu-item" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="16" />
-				<span>个人信息</span>
+				<span>{{ $t('desktop.profile') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
 			<div class="context-menu-item"
-				@click="openApp({ name: '终端', icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
 				<sc-icon name="ms-terminal" :size="16" />
-				<span>打开终端</span>
+				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
-			<div class="context-menu-item" @click="openApp({ name: '云空间', icon: 'ms-folder', component: 'Files' })">
+			<div class="context-menu-item" @click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
 				<sc-icon name="ms-folder" :size="16" />
-				<span>打开云空间</span>
+				<span>{{ $t('desktop.openCloudSpace') }}</span>
 			</div>
 		</div>
 	</div>
@@ -316,7 +316,6 @@ export default {
 			themes: [
 				{
 					name: 'default',
-					label: '默认',
 					backgroundType: 'color',
 					backgroundColor: '#0078d4',
 					taskbarColor: 'rgba(0, 60, 90, 0.75)',
@@ -335,7 +334,6 @@ export default {
 				},
 				{
 					name: 'dark',
-					label: '深色',
 					backgroundType: 'color',
 					backgroundColor: '#0d1117',
 					taskbarColor: 'rgba(13, 17, 23, 0.92)',
@@ -354,7 +352,6 @@ export default {
 				},
 				{
 					name: 'light',
-					label: '浅色',
 					backgroundType: 'color',
 					backgroundColor: '#f5f7fa',
 					taskbarColor: 'rgba(255, 255, 255, 0.85)',
@@ -373,7 +370,6 @@ export default {
 				},
 				{
 					name: 'aurora',
-					label: '极光',
 					backgroundType: 'gradient',
 					gradientColor1: '#00c6ff',
 					gradientColor2: '#0072ff',
@@ -394,7 +390,6 @@ export default {
 				},
 				{
 					name: 'midnight',
-					label: '午夜',
 					backgroundType: 'gradient',
 					gradientColor1: '#0f0c29',
 					gradientColor2: '#302b63',
@@ -415,7 +410,6 @@ export default {
 				},
 				{
 					name: 'ocean',
-					label: '海洋',
 					backgroundType: 'gradient',
 					gradientColor1: '#1e3c72',
 					gradientColor2: '#2a5298',
@@ -436,7 +430,6 @@ export default {
 				},
 				{
 					name: 'forest',
-					label: '森林',
 					backgroundType: 'gradient',
 					gradientColor1: '#134e5e',
 					gradientColor2: '#71b280',
@@ -457,7 +450,6 @@ export default {
 				},
 				{
 					name: 'rose',
-					label: '玫瑰',
 					backgroundType: 'gradient',
 					gradientColor1: '#ee9ca7',
 					gradientColor2: '#ffdde1',
@@ -478,7 +470,6 @@ export default {
 				},
 				{
 					name: 'amber',
-					label: '琥珀',
 					backgroundType: 'gradient',
 					gradientColor1: '#f12711',
 					gradientColor2: '#f5af19',
@@ -499,7 +490,6 @@ export default {
 				},
 				{
 					name: 'mint',
-					label: '薄荷',
 					backgroundType: 'gradient',
 					gradientColor1: '#11998e',
 					gradientColor2: '#38ef7d',
@@ -520,7 +510,6 @@ export default {
 				},
 				{
 					name: 'purple',
-					label: '紫罗兰',
 					backgroundType: 'gradient',
 					gradientColor1: '#654ea3',
 					gradientColor2: '#eaafc8',
@@ -540,8 +529,7 @@ export default {
 					previewStyle: { background: 'linear-gradient(to bottom right, #654ea3, #eaafc8)' }
 				},
 				{
-					name: 'chinese-purple',
-					label: '中国紫',
+					name: 'chinesePurple',
 					backgroundType: 'gradient',
 					gradientColor1: '#5D3F6A',
 					gradientColor2: '#8B4789',
@@ -678,8 +666,8 @@ export default {
 			}
 			if (menuRes.data.length == 0) {
 				this.$alert(
-					"当前用户无任何菜单权限，请联系系统管理员",
-					"无权限访问",
+					this.$t('desktop.noMenuPermission'),
+					this.$t('desktop.noPermission'),
 					{ type: "error", center: true }
 				);
 				return false;
@@ -911,16 +899,16 @@ export default {
 			}
 		},
 		logout() {
-			this.$confirm("确认是否退出当前用户？", "提示", {
+			this.$confirm(this.$t('desktop.logoutConfirm'), this.$t('desktop.tip'), {
 				type: "warning",
-				confirmButtonText: "退出",
+				confirmButtonText: this.$t('desktop.exit'),
 				confirmButtonClass: "el-button--danger",
 			})
 				.then(() => {
 					this.$router.replace({ path: "/login" });
 				})
 				.catch(() => {
-					//取消退出
+					// 取消退出
 				});
 		},
 		/**
@@ -942,7 +930,7 @@ export default {
 			} else if (kind === 'video') {
 				appConfig = this.videoApp;
 			} else {
-				this.$message.info(`无法打开此类型文件`);
+				this.$message.info(this.$t('desktop.cannotOpenFile'));
 				return;
 			}
 			appConfig.props = { files: files, index: index };
@@ -967,7 +955,7 @@ export default {
 			} else if (audioExts.includes(ext)) {
 				kind = 'audio';
 			} else {
-				this.$message.info(`无法打开此类型文件: ${file.name}`);
+				this.$message.info(`${this.$t('desktop.cannotOpenFile')}: ${file.name}`);
 				return;
 			}
 
@@ -1321,6 +1309,7 @@ export default {
 	border-radius: 8px;
 	border: 2px solid transparent;
 	transition: all 0.3s;
+	width: 100px;
 }
 
 .theme-item:hover {

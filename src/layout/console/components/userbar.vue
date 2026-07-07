@@ -1,24 +1,24 @@
 <template>
 	<div class="user-bar">
-		<div title="机构信息">
+		<div :title="$t('console.orgInfo')">
 			<label>{{ unitName }}</label>
 		</div>
 		<el-divider direction="vertical"></el-divider>
-		<div class="panel-item hidden-sm-and-down" @click="search" title="搜索">
+		<div class="panel-item hidden-sm-and-down" @click="search" :title="$t('console.searchTitle')">
 			<sc-icon name="sc-search" />
 		</div>
-		<div class="screen panel-item hidden-sm-and-down" @click="screen" title="全屏显示">
+		<div class="screen panel-item hidden-sm-and-down" @click="screen" :title="$t('console.fullscreen')">
 			<sc-icon name="sc-fullscreen" />
 		</div>
-		<div class="tasks panel-item" @click="tasks" title="任务中心">
+		<div class="tasks panel-item" @click="tasks" :title="$t('console.taskCenter')">
 			<sc-icon name="sc-sorting-vertical" />
 		</div>
-		<div class="msg panel-item" @click="showMsg" title="新消息">
+		<div class="msg panel-item" @click="showMsg" :title="$t('console.newMessage')">
 			<el-badge :hidden="msgList.length == 0" :value="msgList.length" class="badge" type="danger">
 				<sc-icon name="sc-message-2-line" />
 			</el-badge>
 		</div>
-		<div class="panel-item" @click="openSetting" title="主题设置">
+		<div class="panel-item" @click="openSetting" :title="$t('console.themeSettings')">
 			<sc-icon name="sc-settings-3-line" />
 		</div>
 		<el-divider direction="vertical"></el-divider>
@@ -31,23 +31,23 @@
 			</div>
 			<template #dropdown>
 				<el-dropdown-menu>
-					<el-dropdown-item command="uc">帐号信息</el-dropdown-item>
-					<el-dropdown-item command="clearCache">清除缓存</el-dropdown-item>
-					<el-dropdown-item divided command="outLogin">退出登录</el-dropdown-item>
+					<el-dropdown-item command="uc">{{ $t('console.accountInfo') }}</el-dropdown-item>
+					<el-dropdown-item command="clearCache">{{ $t('console.clearCache') }}</el-dropdown-item>
+					<el-dropdown-item divided command="outLogin">{{ $t('console.logout') }}</el-dropdown-item>
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
 	</div>
 
-	<el-dialog v-model="searchVisible" :width="700" title="搜索" center append-to-body destroy-on-close>
+	<el-dialog v-model="searchVisible" :width="700" :title="$t('console.searchTitle')" center append-to-body destroy-on-close>
 		<search @success="searchVisible = false"></search>
 	</el-dialog>
 
-	<el-drawer v-model="tasksVisible" :size="450" title="任务中心" append-to-body destroy-on-close>
+	<el-drawer v-model="tasksVisible" :size="450" :title="$t('console.taskCenter')" append-to-body destroy-on-close>
 		<tasks></tasks>
 	</el-drawer>
 
-	<el-drawer title="新消息" v-model="msgVisible" :size="400" append-to-body destroy-on-close>
+	<el-drawer :title="$t('console.newMessage')" v-model="msgVisible" :size="400" append-to-body destroy-on-close>
 		<el-container>
 			<el-main class="nopadding">
 				<el-scrollbar>
@@ -68,18 +68,18 @@
 								</div>
 							</a>
 						</li>
-						<el-empty v-if="msgList.length == 0" description="暂无新消息" :image-size="100"></el-empty>
+						<el-empty v-if="msgList.length == 0" :description="$t('console.noNewMessage')" :image-size="100"></el-empty>
 					</ul>
 				</el-scrollbar>
 			</el-main>
 			<el-footer>
-				<el-button type="primary" @click="goMessage">消息中心</el-button>
-				<el-button @click="markRead">全部设为已读</el-button>
+				<el-button type="primary" @click="goMessage">{{ $t('console.messageCenter') }}</el-button>
+				<el-button @click="markRead">{{ $t('console.markAllRead') }}</el-button>
 			</el-footer>
 		</el-container>
 	</el-drawer>
 
-	<el-drawer v-model="settingVisible" :size="400" title="主题设置" append-to-body destroy-on-close>
+	<el-drawer v-model="settingVisible" :size="400" :title="$t('console.themeSettings')" append-to-body destroy-on-close>
 		<setting></setting>
 	</el-drawer>
 </template>
@@ -160,8 +160,8 @@ export default {
 			}
 			if (command == "clearCache") {
 				this.$confirm(
-					"清除缓存会将系统初始化，包括登录状态、主题、语言设置等，是否继续？",
-					"提示",
+					this.$t('console.clearCacheConfirm'),
+					this.$t('common.info'),
 					{ type: "info", })
 					.then(() => {
 						const loading = this.$loading();
@@ -177,9 +177,9 @@ export default {
 					});
 			}
 			if (command == "outLogin") {
-				this.$confirm("确认是否退出当前用户？", "提示", {
+				this.$confirm(this.$t('console.logoutConfirm'), this.$t('common.info'), {
 					type: "warning",
-					confirmButtonText: "退出",
+					confirmButtonText: this.$t('console.logoutButton'),
 					confirmButtonClass: "el-button--danger",
 				})
 					.then(() => {
@@ -211,7 +211,7 @@ export default {
 			});
 			const res = await this.$API.scmmsgmessage.read.put(ids);
 			if (res.code == 200) {
-				this.$message.success("操作成功~");
+				this.$message.success(this.$t('console.operationSuccess'));
 				this.msgList = [];
 			} else {
 				this.$message.warning(res.message);
