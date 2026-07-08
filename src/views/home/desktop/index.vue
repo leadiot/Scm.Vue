@@ -736,8 +736,8 @@ export default {
 		setWallpaper(url) {
 			this.backgroundType = 'image';
 			this.backgroundImage = url;
-			this.saveSettings();
-			//this.persistSettings(this.getCurrentConfig());
+			//this.saveSettings();
+			this.persistSettings(this.getCurrentConfig());
 		},
 		toggleWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
