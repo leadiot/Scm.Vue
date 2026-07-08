@@ -279,5 +279,13 @@ export default {
 		passwordHint: "Password must be at least 8 characters with letters and numbers",
 		savePassword: "Save Password",
 		passwordUpdateSuccess: "Your password has been changed successfully. You will be redirected to the login page to sign in with your new password.",
+		// Settings App
+		appearance: "Appearance",
+		layout: "Layout",
+		iconColorDesc: "Customize desktop icon color",
+		homeLayoutDesc: "Choose the interface displayed after system startup",
+		gradientColor1: "Start Color",
+		gradientColor2: "End Color",
+		gradientDirection: "Gradient Direction",
 	},
 };

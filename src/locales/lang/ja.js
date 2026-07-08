@@ -277,5 +277,13 @@ export default {
 		passwordHint: '英数字を含む8文字以上のパスワードを入力してください',
 		savePassword: 'パスワードを保存',
 		passwordUpdateSuccess: 'パスワードが正常に変更されました。新しいパスワードでログインするためにログインページにリダイレクトされます。',
+		// 設定アプリ
+		appearance: '外観',
+		layout: 'レイアウト',
+		iconColorDesc: 'デスクトップアイコンの色をカスタマイズ',
+		homeLayoutDesc: 'システム起動後に表示されるインターフェースを選択',
+		gradientColor1: '開始色',
+		gradientColor2: '終了色',
+		gradientDirection: 'グラデーション方向',
 	},
 }

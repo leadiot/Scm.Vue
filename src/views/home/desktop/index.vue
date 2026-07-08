@@ -16,7 +16,8 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
-				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged" />
+				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
+				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
 		<!-- 任务栏 -->
@@ -78,82 +79,6 @@
 			</div>
 		</div>
 
-		<!-- 设置窗口 -->
-		<el-dialog v-model="showSettings" :title="$t('desktop.desktopSettings')" width="500px" :modal-append-to-body="false" draggable>
-			<el-tabs>
-				<el-tab-pane :label="$t('desktop.themeSettings')">
-					<div class="settings-section">
-						<h4>{{ $t('desktop.presetThemes') }}</h4>
-						<div class="theme-grid">
-							<div v-for="theme in themes" :key="theme.name" class="theme-item"
-								:class="{ active: currentTheme === theme.name }" @click="applyTheme(theme)">
-								<div class="theme-preview" :style="theme.previewStyle">
-									<div class="theme-taskbar" :style="{ backgroundColor: theme.taskbarColor }"></div>
-								</div>
-								<span class="theme-name">{{ $t('desktop.theme' + theme.name.charAt(0).toUpperCase() + theme.name.slice(1)) }}</span>
-							</div>
-						</div>
-					</div>
-				</el-tab-pane>
-				<el-tab-pane :label="$t('desktop.personalSettings')">
-					<div class="settings-section">
-						<h4>{{ $t('desktop.iconColor') }}</h4>
-						<el-color-picker v-model="iconColor" :predefine="colorList" show-alpha />
-					</div>
-
-					<div class="settings-section">
-						<h4>{{ $t('desktop.backgroundType') }}</h4>
-						<el-radio-group v-model="backgroundType">
-							<el-radio value="color">{{ $t('desktop.solidColor') }}</el-radio>
-							<el-radio value="gradient">{{ $t('desktop.gradient') }}</el-radio>
-							<el-radio value="image">{{ $t('desktop.image') }}</el-radio>
-						</el-radio-group>
-					</div>
-
-					<div v-if="backgroundType === 'color'" class="settings-section">
-						<h4>{{ $t('desktop.presetColors') }}</h4>
-						<el-color-picker v-model="backgroundColor" :predefine="colorList" show-alpha />
-					</div>
-
-					<div v-if="backgroundType === 'gradient'" class="settings-section">
-						<h4>{{ $t('desktop.gradientColors') }}</h4>
-						<el-color-picker v-model="gradientColor1" :predefine="colorList" show-alpha />
-						<el-color-picker v-model="gradientColor2" :predefine="colorList" show-alpha />
-						<el-select v-model="gradientDirection" style="margin-left: 10px; width: 120px;">
-							<el-option :label="$t('desktop.leftToRight')" value="to right" />
-							<el-option :label="$t('desktop.topToBottom')" value="to bottom" />
-							<el-option :label="$t('desktop.diagonal')" value="to bottom right" />
-						</el-select>
-					</div>
-
-					<div v-if="backgroundType === 'image'" class="settings-section">
-						<h4>{{ $t('desktop.backgroundImage') }}</h4>
-						<el-input v-model="backgroundImage" :placeholder="$t('desktop.imagePlaceholder')" />
-						<div class="preset-images">
-							<div v-for="(img, index) in presetImages" :key="index" class="preset-image"
-								:style="{ backgroundImage: `url(${img})` }" @click="backgroundImage = img" />
-						</div>
-					</div>
-				</el-tab-pane>
-				<el-tab-pane :label="$t('desktop.frameLayout')">
-					<el-form ref="form">
-						<el-form-item :label="$t('desktop.homeLayout')">
-							<el-select v-model="home" :placeholder="$t('desktop.custom')">
-								<el-option :label="$t('desktop.custom')" value="/"></el-option>
-								<el-option :label="$t('desktop.console')" value="/console"></el-option>
-								<el-option :label="$t('desktop.cloudDesktop')" value="/desktop"></el-option>
-								<el-option :label="$t('desktop.monitor')" value="/monitor"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-form>
-				</el-tab-pane>
-			</el-tabs>
-			<template #footer>
-				<el-button @click="showSettings = false">{{ $t('desktop.cancel') }}</el-button>
-				<el-button type="primary" @click="saveSettings">{{ $t('desktop.save') }}</el-button>
-			</template>
-		</el-dialog>
-
 		<!-- 右键菜单 -->
 		<div v-if="contextMenu.visible" class="context-menu"
 			:style="{ ...contextMenu.style, backgroundColor: menuColor, color: menuTextColor }">
@@ -198,7 +123,6 @@ export default {
 		return {
 			selectedApp: null,
 			showStartMenu: false,
-			showSettings: false,
 			contextMenu: {
 				visible: false,
 				style: {},
@@ -255,6 +179,18 @@ export default {
 					width: 460,
 					height: 680,
 					resizable: false,
+				}
+			},
+			settingsApp: {
+				id: '10',
+				code: 'app-settings',
+				name: '设置',
+				component: 'Settings',
+				meta: {
+					icon: 'ms-settings',
+					width: 900,
+					height: 620,
+					resizable: true,
 				}
 			},
 			calendarApp: {
@@ -697,6 +633,9 @@ export default {
 					if (child.code == 'app-profile') {
 						this.profileApp = child;
 					}
+					if (child.code == 'app-settings') {
+						this.settingsApp = child;
+					}
 					if (child.code == 'app-image') {
 						this.imageApp = child;
 					}
@@ -818,7 +757,13 @@ export default {
 		openSettings() {
 			this.showStartMenu = false;
 			this.hideContextMenu();
-			this.showSettings = true;
+			this.settingsApp.props = {
+				config: this.getCurrentConfig(),
+				themes: this.themes,
+				colorList: this.colorList,
+				presetImages: this.presetImages,
+			};
+			this.openApp(this.settingsApp);
 		},
 		openCalendar() {
 			this.openApp(this.calendarApp);
@@ -840,6 +785,61 @@ export default {
 				this.$router.replace({ path: '/login' });
 			}).catch(() => { });
 		},
+		getCurrentConfig() {
+			return {
+				currentTheme: this.currentTheme,
+				backgroundType: this.backgroundType,
+				backgroundColor: this.backgroundColor,
+				backgroundImage: this.backgroundImage,
+				gradientColor1: this.gradientColor1,
+				gradientColor2: this.gradientColor2,
+				gradientDirection: this.gradientDirection,
+				iconColor: this.iconColor,
+				menuColor: this.menuColor,
+				menuTextColor: this.menuTextColor,
+				taskbarColor: this.taskbarColor,
+				taskbarTextColor: this.taskbarTextColor,
+				windowTheme: this.windowTheme,
+				home: this.home,
+			};
+		},
+		onThemePreview(config) {
+			this.applyConfig(config);
+		},
+		onSaveSettings(config) {
+			this.applyConfig(config);
+			this.persistSettings(config);
+		},
+		applyConfig(config) {
+			this.currentTheme = config.currentTheme;
+			this.backgroundType = config.backgroundType;
+			this.backgroundColor = config.backgroundColor;
+			this.backgroundImage = config.backgroundImage;
+			this.gradientColor1 = config.gradientColor1;
+			this.gradientColor2 = config.gradientColor2;
+			this.gradientDirection = config.gradientDirection;
+			this.iconColor = config.iconColor;
+			this.menuColor = config.menuColor;
+			this.menuTextColor = config.menuTextColor;
+			this.taskbarColor = config.taskbarColor;
+			this.taskbarTextColor = config.taskbarTextColor;
+			this.windowTheme = config.windowTheme || this.windowTheme;
+			this.home = config.home;
+		},
+		async persistSettings(config) {
+			var cfgs = [];
+			cfgs.push({ key: "app_home", value: config.home });
+			cfgs.push({ key: "desktop_theme", value: config.currentTheme });
+			cfgs.push({ key: "desktop_icon_color", value: config.iconColor });
+			cfgs.push({ key: "desktop_menu_color", value: config.menuColor });
+			cfgs.push({ key: "desktop_background_type", value: config.backgroundType });
+			cfgs.push({ key: "desktop_background_color", value: config.backgroundColor });
+			cfgs.push({ key: "desktop_background_image", value: config.backgroundImage });
+			cfgs.push({ key: "desktop_gradient_color1", value: config.gradientColor1 });
+			cfgs.push({ key: "desktop_gradient_color2", value: config.gradientColor2 });
+			cfgs.push({ key: "desktop_gradient_direction", value: config.gradientDirection });
+			await this.$SCM.save_cfg(cfgs);
+		},
 		async loadSettings() {
 			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
@@ -851,21 +851,6 @@ export default {
 			this.gradientColor1 = await this.$SCM.read_cfg("desktop_gradient_color1", this.gradientColor1);
 			this.gradientColor2 = await this.$SCM.read_cfg("desktop_gradient_color2", this.gradientColor2);
 			this.gradientDirection = await this.$SCM.read_cfg("desktop_gradient_direction", this.gradientDirection);
-		},
-		async saveSettings() {
-			var cfgs = [];
-			cfgs.push({ key: "app_home", value: this.home, });
-			cfgs.push({ key: "desktop_theme", value: this.currentTheme.id, });
-			cfgs.push({ key: "desktop_icon_color", value: this.iconColor, });
-			cfgs.push({ key: "desktop_menu_color", value: this.menuColor, });
-			cfgs.push({ key: "desktop_background_type", value: this.backgroundType, });
-			cfgs.push({ key: "desktop_background_color", value: this.backgroundColor, });
-			cfgs.push({ key: "desktop_background_image", value: this.backgroundImage, });
-			cfgs.push({ key: "desktop_gradient_color1", value: this.gradientColor1, });
-			cfgs.push({ key: "desktop_gradient_color2", value: this.gradientColor2, });
-			cfgs.push({ key: "desktop_gradient_direction", value: this.gradientDirection, });
-			await this.$SCM.save_cfg(cfgs);
-			this.showSettings = false;
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
@@ -1232,124 +1217,6 @@ export default {
 
 .start-menu-action:hover {
 	background-color: rgba(255, 255, 255, 0.1);
-}
-
-.settings-section {
-	margin-bottom: 20px;
-}
-
-.settings-section h4 {
-	margin-bottom: 10px;
-	color: #606266;
-}
-
-.preset-colors {
-	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	gap: 10px;
-}
-
-.preset-color {
-	width: 100%;
-	aspect-ratio: 1;
-	border-radius: 8px;
-	cursor: pointer;
-	border: 2px solid transparent;
-	transition: all 0.2s;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-}
-
-.preset-color:hover {
-	transform: scale(1.1);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.preset-color.active {
-	border-color: #409eff;
-	box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
-}
-
-.check-icon {
-	color: #fff;
-	font-size: 14px;
-	font-weight: bold;
-	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.preset-images {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 10px;
-	margin-top: 10px;
-}
-
-.preset-image {
-	width: 100%;
-	height: 80px;
-	background-size: cover;
-	background-position: center;
-	border-radius: 4px;
-	cursor: pointer;
-	border: 2px solid transparent;
-	transition: border-color 0.3s;
-}
-
-.preset-image:hover {
-	border-color: #409eff;
-}
-
-.theme-grid {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 15px;
-	margin-top: 10px;
-}
-
-.theme-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	cursor: pointer;
-	padding: 8px;
-	border-radius: 8px;
-	border: 2px solid transparent;
-	transition: all 0.3s;
-	width: 100px;
-}
-
-.theme-item:hover {
-	background-color: rgba(0, 0, 0, 0.05);
-}
-
-.theme-item.active {
-	border-color: #409eff;
-	background-color: rgba(64, 158, 255, 0.1);
-}
-
-.theme-preview {
-	width: 100%;
-	height: 60px;
-	border-radius: 6px;
-	position: relative;
-	overflow: hidden;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.theme-taskbar {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 12px;
-}
-
-.theme-name {
-	margin-top: 8px;
-	font-size: 12px;
-	color: #606266;
 }
 
 .context-menu {

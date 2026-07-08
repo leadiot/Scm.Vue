@@ -277,5 +277,13 @@ export default {
 		passwordHint: "请输入包含英文、数字的8位以上密码",
 		savePassword: "保存密码",
 		passwordUpdateSuccess: "密码修改成功后，您将被重定向到登录页面，您可以使用新密码重新登录。",
+		// 设置应用
+		appearance: "外观",
+		layout: "布局",
+		iconColorDesc: "自定义桌面图标颜色",
+		homeLayoutDesc: "选择系统启动后显示的界面",
+		gradientColor1: "起始颜色",
+		gradientColor2: "结束颜色",
+		gradientDirection: "渐变方向",
 	},
 };
