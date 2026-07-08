@@ -266,5 +266,16 @@ export default {
 		items: '個のアイテム',
 		totalFiltered: '合計 {0}、フィルター {1}',
 		selectedItems: '{0} 個のアイテムを選択中',
+		// パスワード変更
+		changePassword: 'パスワード変更',
+		currentPassword: '現在のパスワード',
+		currentPasswordPlaceholder: '現在のパスワードを入力してください',
+		newPassword: '新しいパスワード',
+		newPasswordPlaceholder: '新しいパスワードを入力してください',
+		confirmPassword: '新しいパスワード（確認）',
+		confirmPasswordPlaceholder: '新しいパスワードを再入力してください',
+		passwordHint: '英数字を含む8文字以上のパスワードを入力してください',
+		savePassword: 'パスワードを保存',
+		passwordUpdateSuccess: 'パスワードが正常に変更されました。新しいパスワードでログインするためにログインページにリダイレクトされます。',
 	},
 }

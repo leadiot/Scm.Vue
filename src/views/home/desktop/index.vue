@@ -16,7 +16,7 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
-				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" />
+				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged" />
 		</div>
 
 		<!-- 任务栏 -->
@@ -831,6 +831,14 @@ export default {
 			if (profile.namec) {
 				this.user.userName = profile.namec;
 			}
+		},
+		onPasswordChanged() {
+			this.$alert(this.$t('desktop.passwordUpdateSuccess'), this.$t('desktop.tip'), {
+				type: 'success',
+				center: true
+			}).then(() => {
+				this.$router.replace({ path: '/login' });
+			}).catch(() => { });
 		},
 		async loadSettings() {
 			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);

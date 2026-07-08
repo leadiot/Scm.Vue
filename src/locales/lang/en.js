@@ -268,5 +268,16 @@ export default {
 		items: "items",
 		totalFiltered: "Total {0}, filtered {1}",
 		selectedItems: "{0} items selected",
+		// Change Password
+		changePassword: "Change Password",
+		currentPassword: "Current Password",
+		currentPasswordPlaceholder: "Please enter current password",
+		newPassword: "New Password",
+		newPasswordPlaceholder: "Please enter new password",
+		confirmPassword: "Confirm Password",
+		confirmPasswordPlaceholder: "Please re-enter new password",
+		passwordHint: "Password must be at least 8 characters with letters and numbers",
+		savePassword: "Save Password",
+		passwordUpdateSuccess: "Your password has been changed successfully. You will be redirected to the login page to sign in with your new password.",
 	},
 };

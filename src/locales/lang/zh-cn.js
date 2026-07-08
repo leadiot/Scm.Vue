@@ -266,5 +266,16 @@ export default {
 		items: "个项目",
 		totalFiltered: "共 {0} 个，筛选 {1} 个",
 		selectedItems: "已选中 {0} 个项目",
+		// 修改密码
+		changePassword: "修改密码",
+		currentPassword: "当前密码",
+		currentPasswordPlaceholder: "请输入当前密码",
+		newPassword: "新密码",
+		newPasswordPlaceholder: "请输入新密码",
+		confirmPassword: "确认新密码",
+		confirmPasswordPlaceholder: "请再次输入新密码",
+		passwordHint: "请输入包含英文、数字的8位以上密码",
+		savePassword: "保存密码",
+		passwordUpdateSuccess: "密码修改成功后，您将被重定向到登录页面，您可以使用新密码重新登录。",
 	},
 };

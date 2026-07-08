@@ -39,18 +39,41 @@
         </div>
 
         <div class="profile-footer">
-            <el-button type="primary" @click="saveProfile">保存</el-button>
+            <el-button type="primary" @click="saveProfile">{{ $t('desktop.save') }}</el-button>
+            <el-button @click="showPasswordDialog">{{ $t('desktop.changePassword') }}</el-button>
         </div>
+
+        <!-- 修改密码对话框 -->
+        <el-dialog v-model="passwordDialogVisible" :title="$t('desktop.changePassword')" width="420px" :close-on-click-modal="false" append-to-body destroy-on-close>
+            <el-form ref="passFormRef" :model="passForm" :rules="passRules" label-width="100px">
+                <el-form-item :label="$t('desktop.currentPassword')" prop="oldPass">
+                    <el-input v-model="passForm.oldPass" type="password" show-password :placeholder="$t('desktop.currentPasswordPlaceholder')"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('desktop.newPassword')" prop="newPass">
+                    <el-input v-model="passForm.newPass" type="password" show-password :placeholder="$t('desktop.newPasswordPlaceholder')"></el-input>
+                    <div class="el-form-item-msg">{{ $t('desktop.passwordHint') }}</div>
+                </el-form-item>
+                <el-form-item :label="$t('desktop.confirmPassword')" prop="confirm">
+                    <el-input v-model="passForm.confirm" type="password" show-password :placeholder="$t('desktop.confirmPasswordPlaceholder')"></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="passwordDialogVisible = false">{{ $t('desktop.cancel') }}</el-button>
+                <el-button type="primary" @click="savePassword">{{ $t('desktop.savePassword') }}</el-button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import scPasswordStrength from '@/components/scPasswordStrength/index.vue';
 
 export default {
     name: 'Profile',
     components: {
         scIcon,
+        scPasswordStrength,
     },
     data() {
         return {
@@ -73,6 +96,33 @@ export default {
                 ],
             },
             sex_list: [this.$SCM.OPTION_ONE_INT],
+            // 修改密码
+            passwordDialogVisible: false,
+            passForm: {
+                oldPass: '',
+                newPass: '',
+                confirm: '',
+            },
+            passRules: {
+                oldPass: [
+                    { required: true, message: '请输入当前密码' }
+                ],
+                newPass: [
+                    { required: true, message: '请输入新密码' }
+                ],
+                confirm: [
+                    { required: true, message: '请再次输入新密码' },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value !== this.passForm.newPass) {
+                                callback(new Error('两次输入密码不一致'));
+                            } else {
+                                callback();
+                            }
+                        }
+                    }
+                ],
+            },
         };
     },
     mounted() {
@@ -121,6 +171,25 @@ export default {
         },
         handleAvatarChange(file) {
             this.$message.info('头像上传功能开发中');
+        },
+        showPasswordDialog() {
+            this.passForm = { oldPass: '', newPass: '', confirm: '' };
+            this.passwordDialogVisible = true;
+        },
+        savePassword() {
+            this.$refs.passFormRef.validate(async (valid) => {
+                if (valid) {
+                    const oldPass = this.$CRYPTO.SHA(this.passForm.oldPass);
+                    const newPass = this.$CRYPTO.SHA(this.passForm.newPass);
+                    const res = await this.$API.operator.userPass.put({ oldPass, newPass });
+                    if (res.code == 200) {
+                        this.passwordDialogVisible = false;
+                        this.$emit('password-changed');
+                    } else {
+                        this.$alert(res.message, this.$t('desktop.tip'), { type: 'error' });
+                    }
+                }
+            });
         },
     },
 };

@@ -35,7 +35,7 @@
 
 		<div class="window-content">
 			<component :is="getComponent(window.code, window.component)" v-bind="window.props || {}"
-				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" />
+				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged" />
 		</div>
 
 		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle"
@@ -91,7 +91,7 @@ export default {
 		window: { type: Object, required: true },
 		theme: { type: Object, default: () => ({}) },
 	},
-	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated'],
+	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed'],
 	data() {
 		return {
 			isDragging: false,
@@ -191,6 +191,9 @@ export default {
 		},
 		onProfileUpdated(profile) {
 			this.$emit('profile-updated', profile);
+		},
+		onPasswordChanged() {
+			this.$emit('password-changed');
 		},
 		handleFocus() {
 			this.$emit('focus', this.window.id);
