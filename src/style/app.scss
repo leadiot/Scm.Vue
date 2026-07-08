@@ -352,7 +352,7 @@ textarea {
 
 .scmui-side-split li.active {
 	color: var(--color-on-secondary, #fff);
-	background: var(--color-secondary, #fff);
+	background: var(--color-surface, #fff);
 	// box-shadow:
 	// 	0 0 0 1px rgba(255, 255, 255, 0.15),
 	// 	0 0 20px rgba(var(--el-color-primary-rgb), 0.4),
@@ -363,32 +363,15 @@ textarea {
 	overflow: hidden;
 }
 
-.scmui-side-split li.active::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background:
-		linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%),
-		linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
-	background-size: 100% 100%, 4px 60%;
-	background-position: center center, left center;
-	background-repeat: no-repeat;
-	opacity: 1;
-	border-radius: 12px 0 0 12px;
-}
-
 .scmui-side-split li.active i {
-	color: var(--color-on-primary, #fff);
+	color: var(--color-primary, #fff);
 	filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
 	position: relative;
 	z-index: 1;
 }
 
 .scmui-side-split li.active p {
-	color: var(--color-on-primary, #fff);
+	color: var(--color-primary, #fff);
 	position: relative;
 	z-index: 1;
 	font-weight: 600;
