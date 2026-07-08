@@ -169,20 +169,8 @@ export default {
 				titleColorInactive: '#666666',
 				border: 'rgba(0, 0, 0, 0.1)'
 			},
-			profileApp: {
-				id: '1',
-				code: 'app-profile',
-				name: '个人信息',
-				component: 'Profile',
-				meta: {
-					icon: 'ms-account_circle',
-					width: 460,
-					height: 680,
-					resizable: false,
-				}
-			},
 			settingsApp: {
-				id: '10',
+				id: '1',
 				code: 'app-settings',
 				name: '设置',
 				component: 'Settings',
@@ -193,8 +181,20 @@ export default {
 					resizable: true,
 				}
 			},
-			calendarApp: {
+			profileApp: {
 				id: '2',
+				code: 'app-profile',
+				name: '个人信息',
+				component: 'Profile',
+				meta: {
+					icon: 'ms-account_circle',
+					width: 460,
+					height: 680,
+					resizable: false,
+				}
+			},
+			calendarApp: {
+				id: '3',
 				code: 'app-calendar',
 				name: '日历',
 				component: 'Calendar',
@@ -206,7 +206,7 @@ export default {
 				}
 			},
 			imageApp: {
-				id: '3',
+				id: '11',
 				code: 'app-image',
 				name: '图像',
 				component: 'Image',
@@ -217,7 +217,7 @@ export default {
 				}
 			},
 			audioApp: {
-				id: '4',
+				id: '12',
 				code: 'app-audio',
 				name: '音频',
 				component: 'Audio',
@@ -228,7 +228,7 @@ export default {
 				}
 			},
 			videoApp: {
-				id: '5',
+				id: '13',
 				code: 'app-video',
 				name: '视频',
 				component: 'Video',
@@ -239,7 +239,7 @@ export default {
 				}
 			},
 			textApp: {
-				id: '6',
+				id: '14',
 				code: 'app-text',
 				name: '记事本',
 				component: 'Textpad',
