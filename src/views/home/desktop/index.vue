@@ -634,7 +634,7 @@ export default {
 						this.profileApp = child;
 					}
 					if (child.code == 'app-settings') {
-						this.settingsApp = child;
+						//this.settingsApp = child;
 					}
 					if (child.code == 'app-image') {
 						this.imageApp = child;
@@ -737,6 +737,7 @@ export default {
 			this.backgroundType = 'image';
 			this.backgroundImage = url;
 			this.saveSettings();
+			//this.persistSettings(this.getCurrentConfig());
 		},
 		toggleWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
