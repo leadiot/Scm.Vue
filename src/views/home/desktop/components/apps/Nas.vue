@@ -19,9 +19,30 @@
 						<sc-icon name="ms-cloud" :size="16" />
 						<span>{{ $t('desktop.cloudSpace') }}</span>
 					</span>
-					<span v-for="(item, index) in currentPath" :key="index" class="path-segment">
+					<span v-for="(item, index) in visiblePath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
-						<span @click="goToPath(index)">{{ item.name }}</span>
+						<span @click="goToPath(item.realIndex)">{{ item.name }}</span>
+					</span>
+					<span v-if="collapsedSegments.length > 0" class="path-segment path-ellipsis">
+						<sc-icon name="ms-chevron_right" :size="16" />
+						<el-popover placement="bottom" :width="200" trigger="click">
+							<template #reference>
+								<span class="ellipsis-btn" @click.stop>
+									<sc-icon name="ms-more_horiz" :size="16" />
+								</span>
+							</template>
+							<div class="collapsed-list">
+								<div v-for="(item, index) in collapsedSegments" :key="index" class="collapsed-item"
+									@click="goToPath(item.realIndex)">
+									<sc-icon name="ms-folder" :size="16" />
+									<span>{{ item.name }}</span>
+								</div>
+							</div>
+						</el-popover>
+					</span>
+					<span v-for="(item, index) in tailPath" :key="'tail-' + index" class="path-segment">
+						<sc-icon name="ms-chevron_right" :size="16" />
+						<span @click="goToPath(item.realIndex)">{{ item.name }}</span>
 					</span>
 				</div>
 			</div>
@@ -199,6 +220,26 @@ export default {
 		},
 		canGoForward() {
 			return this.historyIndex < this.history.length - 1;
+		},
+		visiblePath() {
+			if (this.currentPath.length <= 4) {
+				return this.currentPath.map((item, index) => ({ ...item, realIndex: index }));
+			}
+			return this.currentPath.slice(0, 2).map((item, index) => ({ ...item, realIndex: index }));
+		},
+		collapsedSegments() {
+			if (this.currentPath.length <= 4) {
+				return [];
+			}
+			const tailStart = this.currentPath.length - 2;
+			return this.currentPath.slice(2, tailStart).map((item, i) => ({ ...item, realIndex: i + 2 }));
+		},
+		tailPath() {
+			if (this.currentPath.length <= 4) {
+				return [];
+			}
+			const tailStart = this.currentPath.length - 2;
+			return this.currentPath.slice(tailStart).map((item, i) => ({ ...item, realIndex: tailStart + i }));
 		},
 	},
 	mounted() {
@@ -526,6 +567,7 @@ export default {
 	border: 1px solid #ddd;
 	border-radius: 4px;
 	flex: 1;
+	min-width: 0;
 	font-size: 13px;
 	overflow: hidden;
 }
@@ -538,6 +580,8 @@ export default {
 	padding: 2px 4px;
 	border-radius: 3px;
 	color: #333;
+	flex-shrink: 0;
+	white-space: nowrap;
 }
 
 .path-root:hover {
@@ -548,17 +592,57 @@ export default {
 	display: flex;
 	align-items: center;
 	color: #999;
+	flex-shrink: 0;
 }
 
 .path-segment span:last-child {
 	cursor: pointer;
 	padding: 2px 4px;
 	border-radius: 3px;
+	max-width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .path-segment span:last-child:hover {
 	background-color: #f0f0f0;
 	color: #333;
+}
+
+.path-ellipsis .ellipsis-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 4px;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #999;
+}
+
+.path-ellipsis .ellipsis-btn:hover {
+	background-color: #f0f0f0;
+	color: #333;
+}
+
+.collapsed-list {
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.collapsed-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #333;
+}
+
+.collapsed-item:hover {
+	background-color: #f5f5f5;
 }
 
 .toolbar-right {
