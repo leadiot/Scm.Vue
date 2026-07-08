@@ -706,7 +706,7 @@ export default {
 					if (child.code == 'app-video') {
 						this.videoApp = child;
 					}
-					if (child.code == 'app-text') {
+					if (child.code == 'app-textpad') {
 						this.textApp = child;
 					}
 				});
