@@ -111,12 +111,12 @@ import scIcon from '@/components/scIcon/index.vue';
 import scQrcode from '@/components/scQrcode';
 
 const DEVICE_COLORS = {
-	'10': '#409eff',
+	'10': '#f56c6c',
 	'20': '#67c23a',
 	'30': '#e6a23c',
-	'40': '#f56c6c',
-	'50': '#909399',
-	'other': '#00bcd4',
+	'40': '#409eff',
+	'50': '#00bcd4',
+	'other': '#909399',
 };
 
 export default {
