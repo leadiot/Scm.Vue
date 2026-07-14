@@ -137,7 +137,7 @@ export default {
 				],
 				namec: [
 					{ required: true, trigger: "blur", message: "终端名称不能为空" },
-					{ required: true, trigger: "blur", message: "终端名称应4至64个字符", pattern: this.$SCM.REGEX_NAMEC },
+					{ required: true, trigger: "blur", message: "终端名称应1至64个字符", pattern: /^\S{1,64}$/ },
 				],
 			},
 			types_list: [this.$SCM.OPTION_ALL],
@@ -248,10 +248,10 @@ export default {
 				} else {
 					this.$alert(res.message, "提示", { type: "error" });
 				}
-			});
 
-			this.editVisible = false;
-			// this.deviceForm = null;
+				this.editVisible = false;
+				// this.deviceForm = null;
+			});
 		},
 		resetForm() {
 			this.deviceForm = this.def_data();
