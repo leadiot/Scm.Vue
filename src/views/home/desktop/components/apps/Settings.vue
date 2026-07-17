@@ -12,10 +12,14 @@
                 <sc-icon name="ms-brush" :size="20" />
                 <span>{{ $t('desktop.personalSettings') }}</span>
             </div>
-            <div class="sidebar-item" :class="{ active: activeSection === 'layout' }"
-                @click="activeSection = 'layout'">
+            <div class="sidebar-item" :class="{ active: activeSection === 'layout' }" @click="activeSection = 'layout'">
                 <sc-icon name="ms-dashboard" :size="20" />
                 <span>{{ $t('desktop.layout') }}</span>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-item" :class="{ active: activeSection === 'about' }" @click="activeSection = 'about'">
+                <sc-icon name="ms-info" :size="20" />
+                <span>{{ $t('desktop.about') }}</span>
             </div>
         </div>
 
@@ -35,8 +39,8 @@
                                     :class="{ active: localConfig.currentTheme === theme.name }"
                                     @click="selectTheme(theme)">
                                     <div class="theme-preview" :style="theme.previewStyle">
-                                        <div class="theme-taskbar"
-                                            :style="{ backgroundColor: theme.taskbarColor }"></div>
+                                        <div class="theme-taskbar" :style="{ backgroundColor: theme.taskbarColor }">
+                                        </div>
                                     </div>
                                     <span class="theme-label">{{ getThemeName(theme.name) }}</span>
                                     <div v-if="localConfig.currentTheme === theme.name" class="theme-check">
@@ -129,6 +133,89 @@
                             </el-select>
                         </div>
                     </div>
+
+                    <!-- 关于 -->
+                    <div v-if="activeSection === 'about'">
+                        <div class="about-card">
+                            <div class="about-icon">
+                                <sc-icon name="ms-apps" :size="48" />
+                            </div>
+                            <h2 class="about-title">{{ appInfo.name }}</h2>
+                            <p class="about-subtitle">{{ appInfo.slogan }}</p>
+
+                            <div class="about-info">
+                                <div class="info-row">
+                                    <span class="info-label">{{ $t('desktop.version') }}</span>
+                                    <span class="info-value">{{ verInfo.ver_info }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">{{ $t('desktop.build') }}</span>
+                                    <span class="info-value">{{ verInfo.ver_code }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">{{ $t('desktop.buildTime') }}</span>
+                                    <span class="info-value">{{ verInfo.ver_date }}</span>
+                                </div>
+                            </div>
+
+                            <div class="update-section">
+                                <div class="update-status">
+                                    <sc-icon v-if="updateStatus === 'checking'" name="ms-refresh" :size="20"
+                                        class="spin" />
+                                    <sc-icon v-else-if="updateStatus === 'downloading'" name="ms-cloud_download" :size="20"
+                                        class="spin" />
+                                    <sc-icon v-else-if="updateStatus === 'downloaded'" name="ms-check_circle" :size="20"
+                                        class="text-success" />
+                                    <sc-icon v-else-if="updateStatus === 'upgrading'" name="ms-update" :size="20"
+                                        class="spin" />
+                                    <sc-icon v-else-if="updateStatus === 'upgraded'" name="ms-check_circle" :size="20"
+                                        class="text-success" />
+                                    <sc-icon v-else-if="updateStatus === 'latest'" name="ms-check_circle" :size="20"
+                                        class="text-success" />
+                                    <sc-icon v-else-if="updateStatus === 'available'" name="ms-update" :size="20"
+                                        class="text-primary" />
+                                    <sc-icon v-else-if="updateStatus === 'error'" name="ms-error" :size="20"
+                                        class="text-danger" />
+                                    <span>{{ updateMessage }}</span>
+                                </div>
+
+                                <div v-if="updateStatus === 'downloading'" class="update-progress">
+                                    <el-progress :percentage="downloadProgress" :stroke-width="8" />
+                                </div>
+
+                                <div class="update-buttons">
+                                    <el-button v-if="updateStatus === 'idle' || updateStatus === 'latest' || updateStatus === 'error'" 
+                                        :loading="updateStatus === 'checking'"
+                                        type="primary" @click="checkUpdate">
+                                        {{ $t('desktop.checkUpdate') }}
+                                    </el-button>
+                                    <el-button v-if="updateStatus === 'available'" 
+                                        type="success" @click="downloadUpdate">
+                                        {{ $t('desktop.download') }}
+                                    </el-button>
+                                    <el-button v-if="updateStatus === 'downloaded'" 
+                                        type="warning" @click="upgradeUpdate">
+                                        {{ $t('desktop.executeUpdate') }}
+                                    </el-button>
+                                    <el-button v-if="updateStatus === 'upgraded'" 
+                                        type="info" @click="reloadApp">
+                                        {{ $t('desktop.restart') }}
+                                    </el-button>
+                                </div>
+                            </div>
+
+                            <div class="about-links">
+                                <a href="#" class="about-link" @click.prevent="openWebsite">
+                                    <sc-icon name="ms-link" :size="16" />
+                                    {{ $t('desktop.officialSite') }}
+                                </a>
+                                <a href="#" class="about-link" @click.prevent="openHelp">
+                                    <sc-icon name="ms-help" :size="16" />
+                                    {{ $t('desktop.help') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </el-scrollbar>
             </div>
         </div>
@@ -152,6 +239,12 @@ export default {
         return {
             activeSection: 'appearance',
             localConfig: this.cloneConfig(this.config),
+            appInfo: {},
+            verInfo: {},
+            updateStatus: 'idle',
+            updateMessage: '',
+            latestVersion: '',
+            downloadProgress: 0,
         };
     },
     computed: {
@@ -160,6 +253,7 @@ export default {
                 appearance: this.$t('desktop.appearance'),
                 personalization: this.$t('desktop.personalSettings'),
                 layout: this.$t('desktop.layout'),
+                about: this.$t('desktop.about'),
             };
             return map[this.activeSection] || '';
         },
@@ -171,6 +265,28 @@ export default {
             },
             deep: true,
         },
+    },
+    mounted() {
+        this.appInfo = {
+            code: this.appCode,
+            name: 'Scm.Net',
+            slogan: this.$t('desktop.aboutlogan'),
+            project: 'Scm.Net',
+            website: 'http://www.c-scm.net',
+            content: this.$t('desktop.aboutDesc'),
+            email: 'contact@cscm.net',
+            qchat: '1234567890'
+        };
+        this.verInfo = {
+            major: 1,
+            minor: 0,
+            patch: 0,
+            build: 0,
+            ver_info: '1.0.0',
+            ver_code: '1.0.0',
+            ver_date: '2023-01-01',
+            content: ''
+        };
     },
     methods: {
         cloneConfig(cfg) {
@@ -223,6 +339,94 @@ export default {
         },
         saveSettings() {
             this.$emit('save-settings', { ...this.localConfig });
+        },
+        async checkUpdate() {
+            this.updateStatus = 'checking';
+            this.updateMessage = this.$t('desktop.checkingUpdate');
+
+            try {
+                const res = await this.$API.scmsysupgrade.check.get();
+                if (res.code === 200 && res.data) {
+                    var newInfo = res.data;
+                    this.latestVersion = newInfo.ver_info || '';
+                    if (newInfo.build > this.verInfo.build) {
+                        this.updateStatus = 'available';
+                        this.updateMessage = this.$t('desktop.updateAvailable', { version: this.latestVersion });
+                    } else {
+                        this.updateStatus = 'latest';
+                        this.updateMessage = this.$t('desktop.upToDate');
+                    }
+                } else {
+                    this.updateStatus = 'error';
+                    this.updateMessage = this.$t('desktop.checkFailed');
+                }
+            } catch (error) {
+                console.error('检查更新失败:', error);
+                this.updateStatus = 'error';
+                this.updateMessage = this.$t('desktop.checkFailed');
+            }
+        },
+        async downloadUpdate() {
+            this.updateStatus = 'downloading';
+            this.updateMessage = this.$t('desktop.downloading');
+            this.downloadProgress = 0;
+
+            const progressInterval = setInterval(() => {
+                if (this.downloadProgress < 95) {
+                    this.downloadProgress += Math.random() * 15;
+                    if (this.downloadProgress > 95) this.downloadProgress = 95;
+                }
+            }, 300);
+
+            try {
+                const res = await this.$API.scmsysupgrade.download.get(this.latestVersion);
+                clearInterval(progressInterval);
+                this.downloadProgress = 100;
+                
+                if (res.code === 200 && res.data) {
+                    this.updateStatus = 'downloaded';
+                    this.updateMessage = this.$t('desktop.downloadComplete');
+                } else {
+                    this.updateStatus = 'error';
+                    this.updateMessage = this.$t('desktop.downloadFailed');
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                console.error('下载失败:', error);
+                this.updateStatus = 'error';
+                this.updateMessage = this.$t('desktop.downloadFailed');
+            }
+        },
+        async upgradeUpdate() {
+            this.updateStatus = 'upgrading';
+            this.updateMessage = this.$t('desktop.upgrading');
+
+            try {
+                const res = await this.$API.scmsysupgrade.upgrade.get(this.latestVersion);
+                if (res.code === 200 && res.data) {
+                    this.updateStatus = 'upgraded';
+                    this.updateMessage = this.$t('desktop.upgradeComplete');
+                } else {
+                    this.updateStatus = 'error';
+                    this.updateMessage = this.$t('desktop.upgradeFailed');
+                }
+            } catch (error) {
+                console.error('升级失败:', error);
+                this.updateStatus = 'error';
+                this.updateMessage = this.$t('desktop.upgradeFailed');
+            }
+        },
+        reloadApp() {
+            this.$message.success(this.$t('desktop.restarting'));
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        },
+        openWebsite() {
+            window.open('http://www.c-scm.net', '_blank');
+        },
+        openHelp() {
+            window.open('https://gitee.com/leadiot/scm.net', '_blank');
         },
     },
 };
@@ -281,6 +485,12 @@ export default {
 
 .sidebar-item {
     position: relative;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.08);
+    margin: 8px 16px;
 }
 
 /* 右侧内容 */
@@ -473,6 +683,152 @@ export default {
 
     .theme-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.about-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    max-width: 480px;
+    margin: 0px auto;
+    border: 1px solid #e5e5e5;
+}
+
+.about-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: #fff;
+}
+
+.about-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+}
+
+.about-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 24px;
+}
+
+.about-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 13px;
+    color: #666;
+}
+
+.info-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.update-section {
+    margin-bottom: 24px;
+}
+
+.update-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+.update-status .text-success {
+    color: var(--el-color-success);
+}
+
+.update-status .text-primary {
+    color: var(--el-color-primary);
+}
+
+.update-status .text-danger {
+    color: var(--el-color-danger);
+}
+
+.update-status .spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.update-progress {
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.update-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.about-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.about-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--el-color-primary);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.about-link:hover {
+    opacity: 0.7;
+}
+
+@media screen and (max-width: 768px) {
+    .about-card {
+        margin: 20px auto;
+        padding: 24px 16px;
+    }
+
+    .about-title {
+        font-size: 20px;
     }
 }
 </style>
