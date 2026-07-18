@@ -75,7 +75,7 @@
 						</div>
 					</el-form-item>
 					<el-form-item label="是否缓存">
-						<el-radio-group v-model="form.keepAlive">
+						<el-radio-group v-model="form.keep_alive">
 							<el-radio :value="true">是</el-radio>
 							<el-radio :value="false">否</el-radio>
 						</el-radio-group>
@@ -125,7 +125,7 @@
 						</div>
 					</el-form-item>
 					<el-form-item label="显示在桌面" v-if="form.layout == 2">
-						<el-radio-group v-model="form.showInDesktop">
+						<el-radio-group v-model="form.show_in_desktop">
 							<el-radio :value="true">是</el-radio>
 							<el-radio :value="false">否</el-radio>
 						</el-radio-group>
@@ -134,7 +134,7 @@
 						</div>
 					</el-form-item>
 					<el-form-item label="显示在任务栏" v-if="form.layout == 2">
-						<el-radio-group v-model="form.showInTaskbar">
+						<el-radio-group v-model="form.show_in_taskbar">
 							<el-radio :value="true">是</el-radio>
 							<el-radio :value="false">否</el-radio>
 						</el-radio-group>
@@ -243,14 +243,14 @@ export default {
 				color: "",
 				visible: true,
 				fullpage: false,
-				keepAlive: true,
+				keep_alive: true,
 				layout: 1,
 				width: 0,
 				height: 0,
 				resizable: true,
 				center: false,
-				showInDesktop: true,
-				showInTaskbar: true,
+				show_in_desktop: true,
+				show_in_taskbar: true,
 				api: [],
 			}
 		},

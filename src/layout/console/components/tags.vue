@@ -147,7 +147,7 @@ export default {
 		},
 		//增加tag
 		addViewTags(route) {
-			if (route.meta.id && route.meta.keepAlive && !route.meta.fullpage) {
+			if (route.meta.id && route.meta.keep_alive && !route.meta.fullpage) {
 				this.viewTagsStore.pushViewTags(route);
 				this.keepAliveStore.pushKeepLive(route.meta.id);
 			}

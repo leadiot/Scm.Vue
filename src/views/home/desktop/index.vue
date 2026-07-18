@@ -623,7 +623,7 @@ export default {
 		addDeskIcon(menuItem) {
 			if (menuItem && menuItem.children) {
 				menuItem.children.forEach(child => {
-					if (child.meta.showInDesktop) {
+					if (child.meta.show_in_desktop) {
 						this.deskApps.push(child);
 					}
 					this.addDeskIcon(child);
