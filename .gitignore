@@ -14,4 +14,3 @@
 dist/
 node_modules/
 webpack/
-.env.development
