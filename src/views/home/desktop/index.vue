@@ -252,6 +252,7 @@ export default {
 			themes: [
 				{
 					name: 'default',
+					style: 'system',
 					backgroundType: 'color',
 					backgroundColor: '#0078d4',
 					taskbarColor: 'rgba(0, 60, 90, 0.75)',
@@ -270,6 +271,7 @@ export default {
 				},
 				{
 					name: 'dark',
+					style: 'system',
 					backgroundType: 'color',
 					backgroundColor: '#0d1117',
 					taskbarColor: 'rgba(13, 17, 23, 0.92)',
@@ -288,6 +290,7 @@ export default {
 				},
 				{
 					name: 'light',
+					style: 'system',
 					backgroundType: 'color',
 					backgroundColor: '#f5f7fa',
 					taskbarColor: 'rgba(255, 255, 255, 0.85)',
@@ -306,6 +309,7 @@ export default {
 				},
 				{
 					name: 'aurora',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#00c6ff',
 					gradientColor2: '#0072ff',
@@ -326,6 +330,7 @@ export default {
 				},
 				{
 					name: 'midnight',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#0f0c29',
 					gradientColor2: '#302b63',
@@ -346,6 +351,7 @@ export default {
 				},
 				{
 					name: 'ocean',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#1e3c72',
 					gradientColor2: '#2a5298',
@@ -366,6 +372,7 @@ export default {
 				},
 				{
 					name: 'forest',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#134e5e',
 					gradientColor2: '#71b280',
@@ -386,6 +393,7 @@ export default {
 				},
 				{
 					name: 'rose',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#ee9ca7',
 					gradientColor2: '#ffdde1',
@@ -406,6 +414,7 @@ export default {
 				},
 				{
 					name: 'amber',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#f12711',
 					gradientColor2: '#f5af19',
@@ -426,6 +435,7 @@ export default {
 				},
 				{
 					name: 'mint',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#11998e',
 					gradientColor2: '#38ef7d',
@@ -446,6 +456,7 @@ export default {
 				},
 				{
 					name: 'purple',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#654ea3',
 					gradientColor2: '#eaafc8',
@@ -466,6 +477,7 @@ export default {
 				},
 				{
 					name: 'chinesePurple',
+					style: 'system',
 					backgroundType: 'gradient',
 					gradientColor1: '#5D3F6A',
 					gradientColor2: '#8B4789',
@@ -483,6 +495,212 @@ export default {
 						border: 'rgba(139, 71, 137, 0.3)'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #5D3F6A, #8B4789)' }
+				},
+				{
+					name: 'win10',
+					style: 'windows',
+					backgroundType: 'gradient',
+					gradientColor1: '#0078D4',
+					gradientColor2: '#00A3E0',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(24, 24, 24, 0.92)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(32, 32, 32, 0.95)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#ffffff',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#999999',
+						border: 'rgba(0, 120, 212, 0.2)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #0078D4, #00A3E0)' }
+				},
+				{
+					name: 'win11',
+					style: 'windows',
+					backgroundType: 'gradient',
+					gradientColor1: '#667EEA',
+					gradientColor2: '#764BA2',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(32, 32, 32, 0.85)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(48, 48, 48, 0.95)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f8f9fa',
+						titleColor: '#212529',
+						titleColorInactive: '#adb5bd',
+						border: 'rgba(102, 126, 234, 0.15)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #667EEA, #764BA2)' }
+				},
+				{
+					name: 'win7',
+					style: 'windows',
+					backgroundType: 'gradient',
+					gradientColor1: '#1BA1E2',
+					gradientColor2: '#005A9E',
+					gradientDirection: 'to bottom right',
+					taskbarColor: '#1A1A1A',
+					taskbarTextColor: '#ffffff',
+					menuColor: '#2D2D2D',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f0f0f0',
+						titleColor: '#000000',
+						titleColorInactive: '#808080',
+						border: 'rgba(27, 161, 226, 0.3)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #1BA1E2, #005A9E)' }
+				},
+				{
+					name: 'winXP',
+					style: 'windows',
+					backgroundType: 'gradient',
+					gradientColor1: '#1E90FF',
+					gradientColor2: '#000080',
+					gradientDirection: 'to bottom right',
+					taskbarColor: '#1E90FF',
+					taskbarTextColor: '#ffffff',
+					menuColor: '#1E90FF',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#000080',
+						titleColor: '#ffffff',
+						titleColorInactive: '#c0c0c0',
+						border: '#808080'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #1E90FF, #000080)' }
+				},
+				{
+					name: 'winDark',
+					style: 'windows',
+					backgroundType: 'color',
+					backgroundColor: '#1C1C1C',
+					taskbarColor: '#000000',
+					taskbarTextColor: '#ffffff',
+					menuColor: '#2A2A2A',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#1C1C1C',
+						headerBg: '#2D2D2D',
+						titleColor: '#ffffff',
+						titleColorInactive: '#808080',
+						border: '#404040'
+					},
+					previewStyle: { backgroundColor: '#1C1C1C' }
+				},
+				{
+					name: 'macOS',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#667eea',
+					gradientColor2: '#764ba2',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(255, 255, 255, 0.75)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#1a1a1a',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f6f6f6',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#999999',
+						border: 'rgba(0, 0, 0, 0.08)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
+				},
+				{
+					name: 'macOSBigSur',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#007AFF',
+					gradientColor2: '#5AC8FA',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(255, 255, 255, 0.8)',
+					taskbarTextColor: '#000000',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#000000',
+					iconColor: '#000000',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f5f5f5',
+						titleColor: '#000000',
+						titleColorInactive: '#999999',
+						border: 'rgba(0, 0, 0, 0.06)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #007AFF, #5AC8FA)' }
+				},
+				{
+					name: 'macOSMonterey',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#00D4AA',
+					gradientColor2: '#00A8FF',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(255, 255, 255, 0.78)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#1a1a1a',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f8f8f8',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#aaaaaa',
+						border: 'rgba(0, 0, 0, 0.05)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #00D4AA, #00A8FF)' }
+				},
+				{
+					name: 'macOSVentura',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#FB7185',
+					gradientColor2: '#F43F5E',
+					gradientDirection: 'to bottom right',
+					taskbarColor: 'rgba(255, 255, 255, 0.82)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#1a1a1a',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#fafafa',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#bbbbbb',
+						border: 'rgba(0, 0, 0, 0.04)'
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #FB7185, #F43F5E)' }
+				},
+				{
+					name: 'macOSDark',
+					style: 'macos',
+					backgroundType: 'color',
+					backgroundColor: '#0f0f0f',
+					taskbarColor: 'rgba(28, 28, 28, 0.9)',
+					taskbarTextColor: '#ffffff',
+					menuColor: 'rgba(40, 40, 40, 0.95)',
+					menuTextColor: '#ffffff',
+					iconColor: '#ffffff',
+					windowTheme: {
+						bg: '#1c1c1c',
+						headerBg: '#2a2a2a',
+						titleColor: '#ffffff',
+						titleColorInactive: '#888888',
+						border: 'rgba(255, 255, 255, 0.08)'
+					},
+					previewStyle: { backgroundColor: '#0f0f0f' }
 				}
 			]
 		};

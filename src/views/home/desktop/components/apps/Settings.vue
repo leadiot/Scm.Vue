@@ -33,9 +33,28 @@
                     <!-- 主题设置 -->
                     <div v-if="activeSection === 'appearance'">
                         <div class="settings-card">
-                            <h3>{{ $t('desktop.presetThemes') }}</h3>
+                            <h3>{{ $t('desktop.style') }}</h3>
+                            <p class="card-desc">{{ $t('desktop.styleDesc') }}</p>
+                            <el-radio-group v-model="localConfig.style" @change="onStyleChange">
+                                <el-radio-button value="system">
+                                    <sc-icon name="ms-settings" :size="16" />
+                                    {{ $t('desktop.systemStyle') }}
+                                </el-radio-button>
+                                <el-radio-button value="windows">
+                                    <sc-icon name="ms-window" :size="16" />
+                                    {{ $t('desktop.windowsStyle') }}
+                                </el-radio-button>
+                                <el-radio-button value="macos">
+                                    <sc-icon name="ms-apple" :size="16" />
+                                    {{ $t('desktop.macosStyle') }}
+                                </el-radio-button>
+                            </el-radio-group>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>{{ currentStyleName }}</h3>
                             <div class="theme-grid">
-                                <div v-for="theme in themes" :key="theme.name" class="theme-card"
+                                <div v-for="theme in filteredThemes" :key="theme.name" class="theme-card"
                                     :class="{ active: localConfig.currentTheme === theme.name }"
                                     @click="selectTheme(theme)">
                                     <div class="theme-preview" :style="theme.previewStyle">
@@ -257,6 +276,17 @@ export default {
             };
             return map[this.activeSection] || '';
         },
+        currentStyleName() {
+            const map = {
+                system: this.$t('desktop.systemThemes'),
+                windows: this.$t('desktop.windowsThemes'),
+                macos: this.$t('desktop.macosThemes'),
+            };
+            return map[this.localConfig.style] || '';
+        },
+        filteredThemes() {
+            return this.themes.filter(theme => theme.style === this.localConfig.style);
+        },
     },
     watch: {
         config: {
@@ -291,6 +321,7 @@ export default {
     methods: {
         cloneConfig(cfg) {
             return {
+                style: cfg.style || 'system',
                 currentTheme: cfg.currentTheme || 'default',
                 backgroundType: cfg.backgroundType || 'color',
                 backgroundColor: cfg.backgroundColor || '#0078d4',
@@ -329,6 +360,12 @@ export default {
             }
 
             this.$emit('theme-preview', { ...this.localConfig });
+        },
+        onStyleChange() {
+            const firstTheme = this.filteredThemes[0];
+            if (firstTheme) {
+                this.selectTheme(firstTheme);
+            }
         },
         selectImage(img) {
             this.localConfig.backgroundImage = img;
