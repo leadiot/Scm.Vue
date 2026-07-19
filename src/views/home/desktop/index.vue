@@ -1,5 +1,5 @@
 <template>
-	<div class="desktop" :class="themeClass" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
+	<div class="desktop" :class="[themeClass, osFamilyClass]" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
@@ -21,10 +21,10 @@
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
-		<!-- 任务栏 -->
-		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
+		<!-- 任务栏（非 macOS 主题） -->
+		<div v-if="!isMacTheme" class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<template v-if="currentTheme === 'winXP'">
+				<template v-if="showFlagStart">
 					<svg class="xp-start-flag" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 						<path fill="#F65314" d="M2.8 5.2 C5.5 3.4 8.2 3.1 10.9 4.3 L11.3 10.7 C8.6 9.5 5.9 9.8 3.2 11.6 Z" />
 						<path fill="#7CBB00" d="M12.2 4.7 C14.9 3.5 17.6 3.9 20.3 5.7 L20.7 12.1 C18 10.3 15.3 9.9 12.6 11.1 Z" />
@@ -46,6 +46,31 @@
 				<el-tooltip :content="currentDateTime" placement="top">
 					<span class="time" @dblclick="openCalendar">{{ currentTime }}</span>
 				</el-tooltip>
+			</div>
+		</div>
+
+		<!-- macOS 菜单栏 -->
+		<div v-if="isMacTheme" class="mac-menubar">
+			<div class="mac-menubar-left">
+				<div class="mac-menu-apple" @click="toggleStartMenu">
+					<sc-icon name="ms-apple" :size="16" />
+				</div>
+				<span class="mac-menu-appname">{{ macFocusedTitle }}</span>
+			</div>
+			<div class="mac-menubar-right">
+				<el-tooltip :content="currentDateTime" placement="bottom">
+					<span class="mac-menu-clock" @dblclick="openCalendar">{{ currentTime }}</span>
+				</el-tooltip>
+			</div>
+		</div>
+
+		<!-- macOS Dock -->
+		<div v-if="isMacTheme" class="mac-dock">
+			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item"
+				:class="{ running: item.running }" :title="dockItemTitle(item)" @click="onDockClick(item)">
+				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
+				<sc-icon v-else :name="dockIconName(item)" :size="42" />
+				<span v-if="item.running" class="mac-dock-dot"></span>
 			</div>
 		</div>
 
@@ -89,6 +114,143 @@
 						<sc-icon name="ms-power_settings_new" :size="13" color="#ffffff" />
 					</span>
 					<span>{{ $t('desktop.shutdown') }}</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（Windows 95/98/2000 经典复刻） -->
+		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
+			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
+			<div class="classic-menu-body">
+				<div v-for="app in menuApps" :key="app.id" class="classic-menu-item"
+					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
+					<div class="classic-menu-app" @click="app.children ? null : openApp(app)">
+						<sc-icon :name="app.meta.icon" :size="24" />
+						<span>{{ app.name }}</span>
+						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
+					</div>
+				</div>
+				<div class="classic-menu-divider"></div>
+				<div class="classic-menu-item">
+					<div class="classic-menu-app" @click="openSettings">
+						<sc-icon name="ms-settings" :size="24" />
+						<span>{{ $t('desktop.settings') }}</span>
+					</div>
+				</div>
+				<div class="classic-menu-item">
+					<div class="classic-menu-app" @click="logout">
+						<sc-icon name="ms-exit_to_app" :size="24" />
+						<span>{{ $t('desktop.logoff') }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻） -->
+		<div v-else-if="showStartMenu && isAeroTheme" class="start-menu aero-start-menu">
+			<div class="aero-menu-body">
+				<div class="aero-menu-left">
+					<div class="aero-menu-apps">
+						<div v-for="app in filteredMenuApps" :key="app.id" class="aero-app-item"
+							@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
+							<div class="aero-app-link" @click="app.children ? null : openApp(app)">
+								<sc-icon :name="app.meta.icon" :size="24" />
+								<span>{{ app.name }}</span>
+								<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
+							</div>
+						</div>
+					</div>
+					<div class="aero-menu-search">
+						<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
+					</div>
+				</div>
+				<div class="aero-menu-right">
+					<div class="aero-menu-avatar" @click="openProfile">
+						<sc-icon name="ms-account_circle" :size="40" color="#3B6BD4" />
+					</div>
+					<div v-for="link in xpQuickLinks" :key="link.key" class="aero-right-item" @click="openQuickLink(link)">
+						<span>{{ link.name }}</span>
+					</div>
+					<div class="aero-right-divider"></div>
+					<div class="aero-right-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
+					<div class="aero-right-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始屏幕（Windows 8 全屏磁贴复刻） -->
+		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen" @click.self="toggleStartMenu">
+			<div class="win8-screen-header">
+				<span class="win8-screen-title">{{ $t('desktop.start') }}</span>
+				<div class="win8-screen-user" @click="openProfile">
+					<sc-icon name="ms-account_circle" :size="28" />
+					<span>{{ user.userName || 'User' }}</span>
+				</div>
+			</div>
+			<div class="win8-tiles">
+				<div v-for="app in flatMenuApps" :key="app.id" class="win8-tile"
+					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
+					<sc-icon :name="app.meta.icon" :size="36" />
+					<span>{{ app.name }}</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（Windows 10 磁贴复刻） -->
+		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu">
+			<div class="win10-menu-rail">
+				<div class="win10-rail-item" :title="user.userName || 'User'" @click="openProfile">
+					<sc-icon name="ms-account_circle" :size="20" />
+				</div>
+				<div class="win10-rail-spacer"></div>
+				<div class="win10-rail-item" :title="$t('desktop.settings')" @click="openSettings">
+					<sc-icon name="ms-settings" :size="20" />
+				</div>
+				<div class="win10-rail-item" :title="$t('desktop.exit')" @click="logout">
+					<sc-icon name="ms-power_settings_new" :size="20" />
+				</div>
+			</div>
+			<div class="win10-menu-apps">
+				<div class="win10-menu-search">
+					<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
+				</div>
+				<div v-for="app in filteredMenuApps" :key="app.id" class="win10-app-item"
+					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
+					<div class="win10-app-link" @click="app.children ? null : openApp(app)">
+						<sc-icon :name="app.meta.icon" :size="18" />
+						<span>{{ app.name }}</span>
+						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
+					</div>
+				</div>
+			</div>
+			<div class="win10-menu-tiles">
+				<div v-for="app in tileApps" :key="app.id" class="win10-tile"
+					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
+					<sc-icon :name="app.meta.icon" :size="26" />
+					<span>{{ app.name }}</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（Windows 11 居中网格复刻） -->
+		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu">
+			<div class="win11-menu-search">
+				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
+			</div>
+			<div class="win11-menu-section">{{ $t('desktop.pinned') }}</div>
+			<div class="win11-menu-grid">
+				<div v-for="app in filteredFlatApps" :key="app.id" class="win11-grid-item" @click="openApp(app)">
+					<sc-icon :name="app.meta.icon" :size="28" />
+					<span>{{ app.name }}</span>
+				</div>
+			</div>
+			<div class="win11-menu-footer">
+				<div class="win11-footer-user" @click="openProfile">
+					<sc-icon name="ms-account_circle" :size="24" />
+					<span>{{ user.userName || 'User' }}</span>
+				</div>
+				<div class="win11-footer-power" :title="$t('desktop.exit')" @click="logout">
+					<sc-icon name="ms-power_settings_new" :size="18" />
 				</div>
 			</div>
 		</div>
@@ -176,6 +338,7 @@ export default {
 		return {
 			selectedApp: null,
 			showStartMenu: false,
+			menuSearch: '',
 			contextMenu: {
 				visible: false,
 				style: {},
@@ -1221,6 +1384,86 @@ export default {
 		isXpTheme() {
 			return this.currentTheme === 'winXP';
 		},
+		// Windows 95/98/2000 经典主题
+		isClassicTheme() {
+			return ['win95', 'win98', 'win2000'].includes(this.currentTheme);
+		},
+		// Windows 7/Vista Aero 主题
+		isAeroTheme() {
+			return ['win7', 'winVista'].includes(this.currentTheme);
+		},
+		// macOS 系列主题
+		isMacTheme() {
+			return this.currentTheme.startsWith('macOS');
+		},
+		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
+		showFlagStart() {
+			return this.isXpTheme || this.isClassicTheme || this.isAeroTheme;
+		},
+		// 操作系统家族根类（供 grouped CSS 覆盖）
+		osFamilyClass() {
+			if (this.isMacTheme) return 'os-macos';
+			if (this.isClassicTheme) return 'os-classic';
+			if (this.isAeroTheme) return 'os-aero';
+			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
+			return '';
+		},
+		// 经典开始菜单侧栏标题
+		classicMenuTitle() {
+			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000' };
+			return titles[this.currentTheme] || 'Windows';
+		},
+		// macOS 菜单栏应用名（聚焦窗口标题）
+		macFocusedTitle() {
+			const win = this.windows.find(w => w.focused && !w.minimized);
+			return win ? win.title : 'Finder';
+		},
+		// macOS Dock 项：固定桌面图标 + 运行中的临时窗口
+		macDockItems() {
+			const pinned = this.deskApps.map(app => ({
+				key: 'app-' + app.id,
+				app: app,
+				running: this.windows.some(w => w.code === app.code),
+			}));
+			const pinnedCodes = new Set(this.deskApps.map(a => a.code));
+			const transient = this.windows
+				.filter(w => !w.code || !pinnedCodes.has(w.code))
+				.map(w => ({ key: 'win-' + w.id, window: w, running: true }));
+			return [...pinned, ...transient];
+		},
+		// Windows 10/深色 主题
+		isWin10LikeTheme() {
+			return ['win10', 'winDark'].includes(this.currentTheme);
+		},
+		// 打平菜单树（叶子应用）
+		flatMenuApps() {
+			const leaves = [];
+			const walk = (items) => {
+				(items || []).forEach(item => {
+					if (item.children && item.children.length) walk(item.children);
+					else leaves.push(item);
+				});
+			};
+			walk(this.menuApps);
+			return leaves;
+		},
+		// 开始菜单搜索过滤（保留树结构）
+		filteredMenuApps() {
+			const kw = (this.menuSearch || '').toLowerCase();
+			if (!kw) return this.menuApps;
+			const match = (item) => (item.name || '').toLowerCase().includes(kw) || (item.children || []).some(match);
+			return this.menuApps.filter(match);
+		},
+		// 开始菜单搜索过滤（打平叶子）
+		filteredFlatApps() {
+			const kw = (this.menuSearch || '').toLowerCase();
+			if (!kw) return this.flatMenuApps;
+			return this.flatMenuApps.filter(a => (a.name || '').toLowerCase().includes(kw));
+		},
+		// Win10 磁贴应用（前 12 个叶子）
+		tileApps() {
+			return this.flatMenuApps.slice(0, 12);
+		},
 		// XP 开始菜单右栏快捷链接
 		xpQuickLinks() {
 			return [
@@ -1244,7 +1487,7 @@ export default {
 			this.loadTheme();
 
 			this.documentClickHandler = (e) => {
-				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start')) {
+				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start') && !e.target.closest('.mac-menu-apple')) {
 					this.showStartMenu = false;
 				}
 				if (!e.target.closest('.context-menu')) {
@@ -1465,6 +1708,8 @@ export default {
 			this.showStartMenu = !this.showStartMenu;
 			if (!this.showStartMenu) {
 				this.activeSubmenu = null;
+			} else {
+				this.menuSearch = '';
 			}
 		},
 		openSettings() {
@@ -1514,6 +1759,39 @@ export default {
 				.catch(() => {
 					// 取消关闭
 				});
+		},
+		// macOS Dock 图标
+		dockIcon(item) {
+			return this.getThemeIcon(item.app ? item.app.meta.icon : item.window.icon);
+		},
+		dockIconName(item) {
+			return item.app ? item.app.meta.icon : (item.window.icon || 'ms-grid_view');
+		},
+		dockItemTitle(item) {
+			return item.app ? item.app.name : item.window.title;
+		},
+		// macOS Dock 点击：运行中则切换聚焦/最小化，否则打开应用
+		onDockClick(item) {
+			if (item.window) {
+				this.toggleWindow(item.window.id);
+				return;
+			}
+			const running = this.windows.filter(w => w.code === item.app.code);
+			if (running.length > 0) {
+				this.toggleWindow(running[running.length - 1].id);
+			} else {
+				this.openApp(item.app);
+			}
+		},
+		// Win8/10 磁贴颜色（按应用编码散列到 Metro 调色板）
+		tileColor(app) {
+			const palette = ['#0078D7', '#107C10', '#5C2D91', '#D83B01', '#038387', '#CA5010', '#986F0B', '#004E8C'];
+			const code = app.code || app.name || 'app';
+			let hash = 0;
+			for (let i = 0; i < code.length; i++) {
+				hash = (hash * 31 + code.charCodeAt(i)) % 997;
+			}
+			return palette[hash % palette.length];
 		},
 		onProfileUpdated(profile) {
 			if (profile.namec) {
@@ -1776,6 +2054,7 @@ export default {
 <style scoped>
 .desktop {
 	--taskbar-height: 48px;
+	position: relative;
 	background-color: #000;
 	overflow: hidden;
 	user-select: none;
@@ -2367,6 +2646,981 @@ export default {
 
 .xp-icon-shutdown {
 	background: linear-gradient(180deg, #E85D4A 0%, #C1352E 100%);
+}
+
+/* ================= Windows 95/98/2000 经典主题复刻 ================= */
+.os-classic {
+	--taskbar-height: 28px;
+	font-family: Tahoma, 'Microsoft YaHei', 'Segoe UI', sans-serif;
+}
+
+.os-classic .taskbar {
+	padding: 2px;
+	background: #C0C0C0 !important;
+	border-top: 1px solid #FFFFFF;
+	box-shadow: inset 0 1px 0 #DFDFDF;
+}
+
+.os-classic .taskbar-start {
+	height: 22px;
+	margin: 1px 2px;
+	padding: 0 6px;
+	gap: 4px;
+	background: #C0C0C0;
+	border: 1px solid;
+	border-color: #FFFFFF #000000 #000000 #FFFFFF;
+	box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
+	border-radius: 0;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.os-classic .taskbar-start:hover {
+	background: #C0C0C0;
+}
+
+.os-classic .taskbar-start:active {
+	border-color: #000000 #FFFFFF #FFFFFF #000000;
+	box-shadow: inset 1px 1px 0 #808080;
+}
+
+.os-classic .taskbar-start .xp-start-flag {
+	width: 16px;
+	height: 16px;
+}
+
+.os-classic .taskbar-apps {
+	gap: 2px;
+	margin-left: 2px;
+}
+
+.os-classic .taskbar-app {
+	height: 22px;
+	min-width: 110px;
+	max-width: 150px;
+	padding: 0 6px;
+	gap: 4px;
+	background: #C0C0C0;
+	border: 1px solid;
+	border-color: #FFFFFF #000000 #000000 #FFFFFF;
+	box-shadow: inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #808080;
+	border-radius: 0;
+	font-size: 11px;
+}
+
+.os-classic .taskbar-app span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.os-classic .taskbar-app:hover {
+	background: #C0C0C0;
+}
+
+.os-classic .taskbar-app.active {
+	background: #E0E0E0;
+	border-color: #000000 #FFFFFF #FFFFFF #000000;
+	box-shadow: inset 1px 1px 0 #808080;
+}
+
+.os-classic .taskbar-app.minimized {
+	opacity: 0.75;
+}
+
+.os-classic .taskbar-tray {
+	align-self: center;
+	height: 22px;
+	margin: 1px 2px 1px 0;
+	padding: 0 8px;
+	background: #C0C0C0;
+	border: 1px solid;
+	border-color: #808080 #FFFFFF #FFFFFF #808080;
+}
+
+.os-classic .taskbar-tray .time {
+	font-size: 11px;
+}
+
+.os-classic .desktop-icon:hover,
+.os-classic .desktop-icon.selected {
+	background-color: transparent;
+	border-color: transparent;
+	box-shadow: none;
+}
+
+.os-classic .desktop-icon.selected .icon-text {
+	background-color: #000080;
+}
+
+.os-classic .icon-text {
+	padding: 1px 2px;
+	font-size: 11px;
+}
+
+.os-classic .context-menu,
+.os-classic .submenu {
+	background-color: #C0C0C0 !important;
+	color: #000000 !important;
+	border: 1px solid;
+	border-color: #DFDFDF #808080 #808080 #DFDFDF;
+	border-radius: 0;
+	padding: 2px;
+	backdrop-filter: none;
+	box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.os-classic .context-menu-item,
+.os-classic .submenu-item {
+	padding: 5px 16px;
+	font-size: 11px;
+}
+
+.os-classic .context-menu-item:hover,
+.os-classic .submenu-item:hover {
+	background-color: #000080;
+	color: #FFFFFF;
+}
+
+.os-classic .context-menu-divider {
+	height: 0;
+	background: none;
+	border-top: 1px solid #808080;
+	border-bottom: 1px solid #FFFFFF;
+	margin: 2px;
+}
+
+/* 经典开始菜单 */
+.classic-start-menu {
+	left: 2px;
+	bottom: var(--taskbar-height);
+	width: 250px;
+	display: flex;
+	padding: 3px;
+	background: #C0C0C0;
+	border: 1px solid;
+	border-color: #DFDFDF #808080 #808080 #DFDFDF;
+	border-radius: 0;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.classic-menu-banner {
+	width: 26px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 8px 0;
+	background: linear-gradient(180deg, #1084D0 0%, #000080 100%);
+}
+
+.classic-menu-banner span {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+	color: #FFFFFF;
+	font-size: 16px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	white-space: nowrap;
+}
+
+.classic-menu-body {
+	flex: 1;
+	min-width: 0;
+	padding: 2px;
+}
+
+.classic-menu-item {
+	position: relative;
+}
+
+.classic-menu-app {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 8px;
+	cursor: pointer;
+	font-size: 12px;
+	color: #000000;
+}
+
+.classic-menu-app:hover {
+	background-color: #000080;
+	color: #FFFFFF;
+}
+
+.classic-menu-app .arrow {
+	margin-left: auto;
+}
+
+.classic-menu-divider {
+	height: 0;
+	border-top: 1px solid #808080;
+	border-bottom: 1px solid #FFFFFF;
+	margin: 3px 2px;
+}
+
+/* ================= Windows 7 / Vista Aero 主题复刻 ================= */
+.os-aero {
+	--taskbar-height: 40px;
+}
+
+.os-aero .taskbar {
+	padding: 0 8px;
+	background: linear-gradient(180deg, rgba(80, 80, 80, 0.5) 0%, rgba(30, 30, 30, 0.6) 50%, rgba(0, 0, 0, 0.7) 100%) !important;
+	border-top: 1px solid rgba(255, 255, 255, 0.25);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.os-aero .taskbar-start {
+	width: 44px;
+	height: 44px;
+	margin: -8px 6px 0 2px;
+	padding: 0;
+	justify-content: center;
+	border-radius: 50%;
+	background: radial-gradient(circle at 50% 32%, #8FBCEA 0%, #4B86C8 45%, #24568F 100%);
+	border: 1px solid rgba(0, 0, 0, 0.55);
+	box-shadow: 0 0 10px rgba(90, 160, 230, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.os-aero .taskbar-start span {
+	display: none;
+}
+
+.os-aero .taskbar-start:hover {
+	background: radial-gradient(circle at 50% 32%, #ACD0F2 0%, #64A0DA 45%, #32649E 100%);
+	box-shadow: 0 0 14px rgba(120, 190, 255, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.os-aero .taskbar-start:active {
+	background: radial-gradient(circle at 50% 32%, #4B86C8 0%, #24568F 100%);
+}
+
+.os-aero .taskbar-apps {
+	gap: 4px;
+	margin-left: 4px;
+}
+
+.os-aero .taskbar-app {
+	height: 30px;
+	min-width: 56px;
+	max-width: 160px;
+	padding: 0 10px;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.45);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(0, 0, 0, 0.14) 100%);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+	font-size: 12px;
+}
+
+.os-aero .taskbar-app span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.os-aero .taskbar-app:hover {
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.14) 100%);
+	box-shadow: 0 0 8px rgba(130, 195, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.os-aero .taskbar-app.active {
+	background: linear-gradient(180deg, rgba(130, 195, 255, 0.4) 0%, rgba(70, 135, 205, 0.3) 100%);
+	border-color: rgba(0, 0, 0, 0.55);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-aero .taskbar-app.minimized {
+	opacity: 0.7;
+}
+
+.os-aero .taskbar-tray .time {
+	font-size: 12px;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.os-aero .start-menu {
+	background: linear-gradient(180deg, rgba(246, 249, 253, 0.96) 0%, rgba(222, 232, 244, 0.96) 100%) !important;
+	color: #1A1A1A !important;
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	border-radius: 6px !important;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
+.os-aero .start-menu-header {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.os-aero .start-menu-header:hover,
+.os-aero .start-menu-app:hover,
+.os-aero .start-menu-action:hover {
+	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
+	color: #1A1A1A;
+}
+
+.os-aero .start-menu-footer {
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.os-aero .submenu,
+.os-aero .context-menu {
+	background: rgba(246, 249, 253, 0.97) !important;
+	color: #1A1A1A !important;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	border-radius: 4px;
+}
+
+.os-aero .submenu-item:hover,
+.os-aero .context-menu-item:hover {
+	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
+	color: #1A1A1A;
+}
+
+.os-aero .context-menu-divider {
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ================= Windows 8/10/11/深色 扁平主题 ================= */
+.os-winflat {
+	--taskbar-height: 40px;
+}
+
+.os-winflat .taskbar {
+	padding: 0;
+	border-radius: 0 !important;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.os-winflat .taskbar-start {
+	height: 100%;
+	padding: 0 14px;
+	border-radius: 0;
+}
+
+.os-winflat .taskbar-apps {
+	gap: 0;
+	margin-left: 0;
+	align-self: stretch;
+}
+
+.os-winflat .taskbar-app {
+	height: 100%;
+	min-width: 160px;
+	max-width: 200px;
+	padding: 0 10px;
+	border-radius: 0;
+	background: transparent;
+	border-bottom: 2px solid transparent;
+	font-size: 12px;
+}
+
+.os-winflat .taskbar-app span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.os-winflat .taskbar-app:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.os-winflat .taskbar-app.active {
+	background: rgba(255, 255, 255, 0.12);
+	border-bottom: 2px solid #0078D7;
+}
+
+.os-winflat .start-menu,
+.os-winflat .context-menu,
+.os-winflat .submenu {
+	border-radius: 0 !important;
+}
+
+/* ================= Windows 11 居中任务栏 ================= */
+.theme-win11 {
+	--taskbar-height: 48px;
+}
+
+.theme-win11 .taskbar {
+	justify-content: center;
+}
+
+.theme-win11 .taskbar-start {
+	height: 40px;
+	align-self: center;
+	border-radius: 6px;
+}
+
+.theme-win11 .taskbar-apps {
+	flex: 0 1 auto;
+	justify-content: center;
+	gap: 4px;
+}
+
+.theme-win11 .taskbar-app {
+	min-width: 0;
+	width: 40px;
+	height: 40px;
+	align-self: center;
+	justify-content: center;
+	padding: 0;
+	border-bottom: none;
+	border-radius: 6px;
+}
+
+.theme-win11 .taskbar-app span {
+	display: none;
+}
+
+.theme-win11 .taskbar-app.active {
+	border-bottom: none;
+	box-shadow: inset 0 -2px 0 #60CDFF;
+}
+
+.theme-win11 .taskbar-tray {
+	position: absolute;
+	right: 12px;
+}
+
+/* ================= macOS 主题复刻（菜单栏 + Dock） ================= */
+.os-macos {
+	font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+.os-macos .windows-container {
+	inset: 28px 0 72px 0;
+}
+
+.mac-menubar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 14px;
+	z-index: 1000;
+	background: rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	color: #1A1A1A;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.theme-macOSDark .mac-menubar {
+	background: rgba(24, 24, 27, 0.55);
+	color: #F2F2F2;
+}
+
+.mac-menubar-left {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.mac-menu-apple {
+	display: flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.mac-menu-apple:hover {
+	background: rgba(0, 0, 0, 0.08);
+}
+
+.theme-macOSDark .mac-menu-apple:hover {
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.mac-menu-appname {
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.mac-menubar-right {
+	display: flex;
+	align-items: center;
+}
+
+.mac-menu-clock {
+	font-size: 12px;
+}
+
+.mac-dock {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: flex-end;
+	gap: 6px;
+	padding: 6px 10px;
+	background: rgba(255, 255, 255, 0.35);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	border-radius: 18px;
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+	z-index: 1000;
+}
+
+.theme-macOSDark .mac-dock {
+	background: rgba(30, 30, 34, 0.45);
+	border-color: rgba(255, 255, 255, 0.16);
+}
+
+.mac-dock-item {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+	transition: transform 0.15s ease, margin 0.15s ease;
+	transform-origin: center bottom;
+}
+
+.mac-dock-item:hover {
+	transform: scale(1.3);
+	margin: 0 8px;
+}
+
+.mac-dock-item img {
+	width: 44px;
+	height: 44px;
+	object-fit: contain;
+}
+
+.theme-macOSDark .mac-dock-item {
+	color: #F2F2F2;
+}
+
+.mac-dock-dot {
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: #3A3A3C;
+	margin-top: 1px;
+}
+
+.theme-macOSDark .mac-dock-dot {
+	background: #E5E5EA;
+}
+
+/* macOS 苹果菜单（复用通用开始菜单结构） */
+.os-macos .start-menu {
+	top: 32px;
+	bottom: auto;
+	left: 6px;
+	width: 250px;
+	border-radius: 10px !important;
+	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+/* --- Aero 开始菜单（Vista/7 双栏） --- */
+.aero-start-menu {
+	left: 8px;
+	width: 430px;
+	overflow: visible;
+}
+
+.aero-menu-body {
+	display: flex;
+	min-height: 320px;
+}
+
+.aero-menu-left {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.aero-menu-apps {
+	flex: 1;
+	padding: 6px;
+	max-height: 380px;
+	overflow-y: auto;
+}
+
+.aero-app-item {
+	position: relative;
+}
+
+.aero-app-link {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 10px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #1A1A1A;
+}
+
+.aero-app-link:hover {
+	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
+}
+
+.aero-app-link .arrow {
+	margin-left: auto;
+}
+
+.aero-menu-search {
+	padding: 8px;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.aero-menu-search input {
+	width: 100%;
+	padding: 4px 8px;
+	border: 1px solid #9FB6CC;
+	border-radius: 3px;
+	outline: none;
+	font-size: 12px;
+}
+
+.aero-menu-right {
+	position: relative;
+	width: 170px;
+	flex-shrink: 0;
+	padding: 34px 6px 6px;
+	background: rgba(185, 209, 234, 0.45);
+	border-left: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: 0 6px 6px 0;
+}
+
+.aero-menu-avatar {
+	position: absolute;
+	top: -22px;
+	right: 12px;
+	width: 48px;
+	height: 48px;
+	background: #FFFFFF;
+	border: 2px solid rgba(255, 255, 255, 0.9);
+	border-radius: 6px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.aero-right-item {
+	padding: 6px 10px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1A1A1A;
+}
+
+.aero-right-item:hover {
+	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
+}
+
+.aero-right-divider {
+	height: 1px;
+	background: rgba(0, 0, 0, 0.12);
+	margin: 6px 8px;
+}
+
+/* --- Win8 全屏开始屏幕 --- */
+.win8-start-screen {
+	position: absolute;
+	inset: 0;
+	z-index: 1500;
+	padding: 40px 60px;
+	background: linear-gradient(135deg, #1B1B4D 0%, #2D2D6E 60%, #1F4E79 100%);
+	color: #FFFFFF;
+	overflow-y: auto;
+	font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+.win8-screen-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 32px;
+}
+
+.win8-screen-title {
+	font-size: 34px;
+	font-weight: 300;
+	letter-spacing: 1px;
+}
+
+.win8-screen-user {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.win8-screen-user:hover {
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.win8-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 120px);
+	gap: 8px;
+}
+
+.win8-tile {
+	width: 120px;
+	height: 120px;
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 12px;
+	text-align: center;
+	transition: transform 0.08s ease;
+}
+
+.win8-tile:hover {
+	outline: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+.win8-tile:active {
+	transform: scale(0.94);
+}
+
+.win8-tile span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+/* --- Win10 开始菜单（左侧栏 + 应用列表 + 磁贴） --- */
+.win10-start-menu {
+	left: 8px;
+	width: 620px;
+	display: flex;
+	padding: 0;
+}
+
+.win10-menu-rail {
+	width: 44px;
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 4px 0;
+	background: rgba(0, 0, 0, 0.25);
+}
+
+.win10-rail-item {
+	width: 44px;
+	height: 42px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.win10-rail-item:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.win10-rail-spacer {
+	flex: 1;
+}
+
+.win10-menu-apps {
+	width: 230px;
+	flex-shrink: 0;
+	padding: 6px;
+	max-height: 440px;
+	overflow-y: auto;
+}
+
+.win10-menu-search {
+	padding: 2px 2px 6px;
+}
+
+.win10-menu-search input {
+	width: 100%;
+	padding: 5px 10px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 2px;
+	color: inherit;
+	outline: none;
+	font-size: 12px;
+}
+
+.win10-app-item {
+	position: relative;
+}
+
+.win10-app-link {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.win10-app-link:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.win10-app-link .arrow {
+	margin-left: auto;
+}
+
+.win10-menu-tiles {
+	flex: 1;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 4px;
+	padding: 8px;
+	align-content: start;
+	max-height: 440px;
+	overflow-y: auto;
+}
+
+.win10-tile {
+	aspect-ratio: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 6px;
+	cursor: pointer;
+	font-size: 11px;
+	text-align: center;
+}
+
+.win10-tile:hover {
+	outline: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.win10-tile span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+/* --- Win11 开始菜单（居中 + 固定网格） --- */
+.win11-start-menu {
+	left: 50%;
+	bottom: calc(var(--taskbar-height) + 12px);
+	width: 540px;
+	display: flex;
+	flex-direction: column;
+	border-radius: 8px !important;
+	transform: translateX(-50%);
+}
+
+.win11-menu-search {
+	padding: 16px 24px 8px;
+}
+
+.win11-menu-search input {
+	width: 100%;
+	padding: 7px 14px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+	border-radius: 4px;
+	color: inherit;
+	outline: none;
+	font-size: 13px;
+}
+
+.win11-menu-search input:focus {
+	border-bottom-color: #60CDFF;
+}
+
+.win11-menu-section {
+	padding: 8px 28px 4px;
+	font-size: 12px;
+	font-weight: 600;
+	opacity: 0.85;
+}
+
+.win11-menu-grid {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 2px;
+	padding: 4px 18px 12px;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.win11-grid-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 4px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 11px;
+	text-align: center;
+}
+
+.win11-grid-item:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.win11-grid-item span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+.win11-menu-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 28px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(0, 0, 0, 0.15);
+	border-radius: 0 0 8px 8px;
+}
+
+.win11-footer-user {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.win11-footer-user:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.win11-footer-power {
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.win11-footer-power:hover {
+	background: rgba(255, 255, 255, 0.1);
 }
 
 @media screen and (max-width: 1024px) {

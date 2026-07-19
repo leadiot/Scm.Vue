@@ -193,6 +193,7 @@ export default {
 		save: "Save",
 		// XP Start Menu
 		allPrograms: "All Programs",
+		pinned: "Pinned",
 		myComputer: "My Computer",
 		controlPanel: "Control Panel",
 		logoff: "Log Off",

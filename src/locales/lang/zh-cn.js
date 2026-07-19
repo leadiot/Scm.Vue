@@ -191,6 +191,7 @@ export default {
 		save: "保存",
 		// XP 开始菜单
 		allPrograms: "所有程序",
+		pinned: "已固定",
 		myComputer: "我的电脑",
 		controlPanel: "控制面板",
 		logoff: "注销",

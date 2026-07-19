@@ -191,6 +191,7 @@ export default {
 		save: '保存',
 		// XP スタートメニュー
 		allPrograms: 'すべてのプログラム',
+		pinned: 'ピン留め',
 		myComputer: 'マイ コンピュータ',
 		controlPanel: 'コントロール パネル',
 		logoff: 'ログオフ',

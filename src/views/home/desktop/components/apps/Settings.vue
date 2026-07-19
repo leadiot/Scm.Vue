@@ -300,7 +300,7 @@ export default {
         this.appInfo = {
             code: this.appCode,
             name: 'Scm.Net',
-            slogan: this.$t('aboutlogan'),
+            slogan: this.$t('desktop.aboutlogan'),
             project: 'Scm.Net',
             website: 'http://www.c-scm.net',
             content: this.$t('desktop.aboutDesc'),

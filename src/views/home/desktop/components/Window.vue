@@ -36,7 +36,7 @@
 			<template v-else-if="isWinXP">
 				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
 					<div class="winxp-title-left">
-						<sc-icon :name="window.icon || 'ms-grid_view'" size="14" color="#ffffff" />
+						<sc-icon :name="window.icon || 'ms-grid_view'" :size="14" color="#ffffff" />
 					</div>
 					<span class="winxp-title-text">{{ window.title }}</span>
 					<div class="winxp-buttons">
