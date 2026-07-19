@@ -25,11 +25,11 @@
 		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
 				<template v-if="currentTheme === 'winXP'">
-					<svg class="xp-start-flag" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-						<rect x="1" y="1" width="8" height="8" fill="#f25022" />
-						<rect x="11" y="1" width="8" height="8" fill="#7fba00" />
-						<rect x="1" y="11" width="8" height="8" fill="#00a4ef" />
-						<rect x="11" y="11" width="8" height="8" fill="#ffb900" />
+					<svg class="xp-start-flag" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+						<path fill="#F65314" d="M2.8 5.2 C5.5 3.4 8.2 3.1 10.9 4.3 L11.3 10.7 C8.6 9.5 5.9 9.8 3.2 11.6 Z" />
+						<path fill="#7CBB00" d="M12.2 4.7 C14.9 3.5 17.6 3.9 20.3 5.7 L20.7 12.1 C18 10.3 15.3 9.9 12.6 11.1 Z" />
+						<path fill="#00A1F1" d="M3.2 13.0 C5.9 11.2 8.6 10.9 11.3 12.1 L11.7 18.5 C9.0 17.3 6.3 17.6 3.6 19.4 Z" />
+						<path fill="#FFBB00" d="M12.6 12.5 C15.3 11.3 18.0 11.7 20.7 13.5 L21.1 19.9 C18.4 18.1 15.7 17.7 13.0 18.9 Z" />
 					</svg>
 				</template>
 				<sc-icon v-else :name="taskbarStartIcon" :size="24" />
@@ -49,8 +49,52 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单 -->
-		<div v-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
+		<!-- 开始菜单（Windows XP 双栏复刻） -->
+		<div v-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
+			<div class="xp-menu-header" @click="openProfile">
+				<div class="xp-menu-avatar">
+					<sc-icon name="ms-account_circle" :size="30" color="#3B6BD4" />
+				</div>
+				<span class="xp-menu-username">{{ user.userName || 'User' }}</span>
+			</div>
+			<div class="xp-menu-body">
+				<div class="xp-menu-left">
+					<div class="xp-menu-caption">{{ $t('desktop.allPrograms') }}</div>
+					<div v-for="app in menuApps" :key="app.id" class="xp-menu-item"
+						:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
+						@mouseleave="hideSubmenu">
+						<div class="xp-menu-app" @click="app.children ? null : openApp(app)">
+							<sc-icon :name="app.meta.icon" :size="22" />
+							<span>{{ app.name }}</span>
+							<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
+						</div>
+					</div>
+				</div>
+				<div class="xp-menu-right">
+					<div v-for="link in xpQuickLinks" :key="link.key" class="xp-right-item" @click="openQuickLink(link)">
+						<sc-icon :name="link.icon" :size="18" />
+						<span>{{ link.name }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="xp-menu-footer">
+				<div class="xp-footer-btn" @click="logout">
+					<span class="xp-footer-icon xp-icon-logoff">
+						<sc-icon name="ms-logout" :size="13" color="#ffffff" />
+					</span>
+					<span>{{ $t('desktop.logoff') }}</span>
+				</div>
+				<div class="xp-footer-btn" @click="shutdown">
+					<span class="xp-footer-icon xp-icon-shutdown">
+						<sc-icon name="ms-power_settings_new" :size="13" color="#ffffff" />
+					</span>
+					<span>{{ $t('desktop.shutdown') }}</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（通用） -->
+		<div v-else-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
 			<div class="start-menu-header" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="32" />
 				<span>{{ user.userName || 'User' }}</span>
@@ -766,7 +810,7 @@ export default {
 						titleColor: '#ffffff',
 						titleColorInactive: '#c0c0c0',
 						border: '#0054e3',
-						borderRadius: '0px',
+						borderRadius: '8px 8px 0 0',
 						shadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
 						closeBtnHover: '#c42b1c',
 						minBtnHover: '#1e90ff',
@@ -814,7 +858,7 @@ export default {
 						bg: '#ffffff',
 						headerBg: '#000080',
 						titleColor: '#ffffff',
-						titleColorInactive: '#808080',
+						titleColorInactive: '#C0C0C0',
 						border: '#808080',
 						borderRadius: '0px',
 						shadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -823,7 +867,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '28px',
 						buttonWidth: '18px',
-						style: 'xp'
+						style: 'xp',
+						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
+						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
+						xpBtnStart: '#D4D0C8',
+						xpBtnEnd: '#C0C0C0',
+						xpBtnHoverStart: '#E4E0DC',
+						xpBtnHoverEnd: '#D4D0C8',
+						xpCloseStart: '#D4D0C8',
+						xpCloseEnd: '#C0C0C0',
+						xpCloseHoverStart: '#E4E0DC',
+						xpCloseHoverEnd: '#D4D0C8',
+						xpBtnBorder: '#808080',
+						xpCloseBorder: '#808080',
+						xpGlyphColor: '#000000',
+						xpFrame: '#C0C0C0',
+						xpHeaderRadius: '0px',
+						xpBtnSize: '18px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.png)', backgroundSize: 'cover' }
 				},
@@ -852,7 +912,7 @@ export default {
 						bg: '#ffffff',
 						headerBg: '#000080',
 						titleColor: '#ffffff',
-						titleColorInactive: '#808080',
+						titleColorInactive: '#C0C0C0',
 						border: '#808080',
 						borderRadius: '0px',
 						shadow: '0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
@@ -861,7 +921,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '24px',
 						buttonWidth: '16px',
-						style: 'xp'
+						style: 'xp',
+						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
+						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
+						xpBtnStart: '#D4D0C8',
+						xpBtnEnd: '#C0C0C0',
+						xpBtnHoverStart: '#E4E0DC',
+						xpBtnHoverEnd: '#D4D0C8',
+						xpCloseStart: '#D4D0C8',
+						xpCloseEnd: '#C0C0C0',
+						xpCloseHoverStart: '#E4E0DC',
+						xpCloseHoverEnd: '#D4D0C8',
+						xpBtnBorder: '#808080',
+						xpCloseBorder: '#808080',
+						xpGlyphColor: '#000000',
+						xpFrame: '#C0C0C0',
+						xpHeaderRadius: '0px',
+						xpBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.png)', backgroundSize: 'cover' }
 				},
@@ -890,7 +966,7 @@ export default {
 						bg: '#ffffff',
 						headerBg: '#000080',
 						titleColor: '#ffffff',
-						titleColorInactive: '#808080',
+						titleColorInactive: '#C0C0C0',
 						border: '#808080',
 						borderRadius: '0px',
 						shadow: '0 3px 8px rgba(0, 0, 0, 0.15)',
@@ -899,7 +975,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '22px',
 						buttonWidth: '16px',
-						style: 'xp'
+						style: 'xp',
+						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
+						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
+						xpBtnStart: '#D4D0C8',
+						xpBtnEnd: '#C0C0C0',
+						xpBtnHoverStart: '#E4E0DC',
+						xpBtnHoverEnd: '#D4D0C8',
+						xpCloseStart: '#D4D0C8',
+						xpCloseEnd: '#C0C0C0',
+						xpCloseHoverStart: '#E4E0DC',
+						xpCloseHoverEnd: '#D4D0C8',
+						xpBtnBorder: '#808080',
+						xpCloseBorder: '#808080',
+						xpGlyphColor: '#000000',
+						xpFrame: '#C0C0C0',
+						xpHeaderRadius: '0px',
+						xpBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.png)', backgroundSize: 'cover' }
 				},
@@ -1125,6 +1217,18 @@ export default {
 		},
 		themeClass() {
 			return this.currentTheme ? `theme-${this.currentTheme}` : '';
+		},
+		isXpTheme() {
+			return this.currentTheme === 'winXP';
+		},
+		// XP 开始菜单右栏快捷链接
+		xpQuickLinks() {
+			return [
+				{ key: 'computer', icon: 'ms-computer', name: this.$t('desktop.myComputer') },
+				{ key: 'settings', icon: 'ms-settings', name: this.$t('desktop.controlPanel') },
+				{ key: 'profile', icon: 'ms-account_circle', name: this.$t('desktop.profile') },
+				{ key: 'calendar', icon: 'ms-calendar_month', name: this.$t('desktop.calendar') },
+			];
 		}
 	},
 	methods: {
@@ -1263,7 +1367,8 @@ export default {
 			return menu || [];
 		},
 		openApp(app) {
-			if (app.meta && app.meta.type === 'link') {
+			const meta = app.meta || {};
+			if (meta.type === 'link') {
 				this.$router.push({
 					path: app.path
 				});
@@ -1277,18 +1382,18 @@ export default {
 				id: windowId,
 				code: app.code,
 				title: app.name,
-				icon: app.meta.icon,
+				icon: meta.icon || app.icon,
 				component: app.component,
 				props: app.props,
 				minimized: false,
 				maximized: false,
 				focused: true,
-				resizable: app.meta.resizable,
-				centered: app.meta.center !== false,
+				resizable: meta.resizable,
+				centered: meta.center !== false,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
-				width: app.meta.width || 800,
-				height: app.meta.height || 600,
+				width: meta.width || app.width || 800,
+				height: meta.height || app.height || 600,
 			});
 			this.focusWindow(windowId);
 		},
@@ -1379,6 +1484,36 @@ export default {
 		openProfile() {
 			this.hideContextMenu();
 			this.openApp(this.profileApp);
+		},
+		// XP 开始菜单右栏快捷链接
+		openQuickLink(link) {
+			if (link.key === 'computer') {
+				this.openApp({
+					code: 'app-files',
+					name: link.name,
+					component: 'Files',
+					meta: { icon: link.icon, width: 960, height: 620, resizable: true },
+				});
+			} else if (link.key === 'settings') {
+				this.openSettings();
+			} else if (link.key === 'profile') {
+				this.openProfile();
+			} else if (link.key === 'calendar') {
+				this.openCalendar();
+			}
+		},
+		shutdown() {
+			this.$confirm(this.$t('desktop.shutdownConfirm'), this.$t('desktop.tip'), {
+				type: "warning",
+				confirmButtonText: this.$t('desktop.shutdown'),
+				confirmButtonClass: "el-button--danger",
+			})
+				.then(() => {
+					this.$router.replace({ path: "/login" });
+				})
+				.catch(() => {
+					// 取消关闭
+				});
 		},
 		onProfileUpdated(profile) {
 			if (profile.namec) {
@@ -1640,6 +1775,7 @@ export default {
 
 <style scoped>
 .desktop {
+	--taskbar-height: 48px;
 	background-color: #000;
 	overflow: hidden;
 	user-select: none;
@@ -1700,7 +1836,7 @@ export default {
 
 .windows-container {
 	position: absolute;
-	inset: 0 0 48px;
+	inset: 0 0 var(--taskbar-height);
 	pointer-events: none;
 	overflow: hidden;
 }
@@ -1714,7 +1850,7 @@ export default {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 48px;
+	height: var(--taskbar-height);
 	display: flex;
 	align-items: center;
 	padding: 0 10px;
@@ -1791,7 +1927,7 @@ export default {
 
 .start-menu {
 	position: absolute;
-	bottom: 58px;
+	bottom: calc(var(--taskbar-height) + 10px);
 	left: 10px;
 	width: 300px;
 	border-radius: 8px;
@@ -1928,6 +2064,311 @@ export default {
 	margin: 4px 0;
 }
 
+/* ================= Windows XP 主题复刻（仅 .theme-winXP 下生效） ================= */
+.theme-winXP {
+	--taskbar-height: 30px;
+	font-family: Tahoma, 'Microsoft YaHei', 'Segoe UI', sans-serif;
+}
+
+/* --- 任务栏 --- */
+.theme-winXP .taskbar {
+	padding: 0;
+	background: linear-gradient(180deg, #245EDB 0%, #3F8CF3 9%, #245EDB 18%, #245EDB 92%, #1941A5 100%) !important;
+	box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.theme-winXP .taskbar-start {
+	height: 100%;
+	margin: 0;
+	padding: 0 20px 0 10px;
+	gap: 6px;
+	border-radius: 0 10px 10px 0;
+	background: linear-gradient(180deg, #6DBB6A 0%, #4EA24E 35%, #3E9645 60%, #2F7D33 100%);
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.55), inset 0 -2px 3px rgba(0, 0, 0, 0.35), 2px 0 4px rgba(0, 0, 0, 0.3);
+	font-size: 15px;
+	font-style: italic;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.theme-winXP .taskbar-start:hover {
+	background: linear-gradient(180deg, #7FCB7C 0%, #5AB25A 35%, #4CA64A 60%, #3A8C3E 100%);
+}
+
+.theme-winXP .taskbar-start:active {
+	background: linear-gradient(180deg, #2F7D33 0%, #3E9645 100%);
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.theme-winXP .taskbar-apps {
+	gap: 3px;
+	margin-left: 6px;
+}
+
+.theme-winXP .taskbar-app {
+	min-width: 150px;
+	max-width: 200px;
+	height: 23px;
+	padding: 0 8px;
+	border: 1px solid rgba(0, 0, 0, 0.25);
+	border-radius: 3px;
+	background: linear-gradient(180deg, #3B79E8 0%, #2B63D8 50%, #2150B8 100%);
+	box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+	font-size: 11px;
+}
+
+.theme-winXP .taskbar-app span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.theme-winXP .taskbar-app:hover {
+	background: linear-gradient(180deg, #4B88F0 0%, #3B74E4 50%, #2B60C8 100%);
+}
+
+.theme-winXP .taskbar-app.active {
+	background: linear-gradient(180deg, #1A3F8C 0%, #1E4BA8 50%, #2659C9 100%);
+	border: 1px solid rgba(0, 0, 0, 0.35);
+	box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.theme-winXP .taskbar-app.minimized {
+	opacity: 0.85;
+}
+
+.theme-winXP .taskbar-tray {
+	align-self: stretch;
+	padding: 0 12px;
+	background: linear-gradient(180deg, #1290E9 0%, #1CB0F5 50%, #1290E9 100%);
+	border-left: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: inset 2px 0 3px rgba(0, 0, 0, 0.25);
+}
+
+.theme-winXP .taskbar-tray .time {
+	font-size: 11px;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* --- 桌面图标 --- */
+.theme-winXP .desktop-icon {
+	padding: 6px;
+	border-radius: 0;
+}
+
+.theme-winXP .desktop-icon:hover,
+.theme-winXP .desktop-icon.selected {
+	background-color: transparent;
+	border-color: transparent;
+	box-shadow: none;
+}
+
+.theme-winXP .desktop-icon.selected .icon-image {
+	position: relative;
+}
+
+.theme-winXP .desktop-icon.selected .icon-image::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(49, 106, 197, 0.4);
+}
+
+.theme-winXP .icon-text {
+	padding: 1px 3px;
+	font-size: 11px;
+}
+
+.theme-winXP .desktop-icon.selected .icon-text {
+	background-color: #316AC5;
+}
+
+/* --- 右键菜单 / 子菜单 --- */
+.theme-winXP .context-menu,
+.theme-winXP .submenu {
+	background-color: #FFFFFF !important;
+	color: #1A1A1A !important;
+	border: 1px solid #ACA899;
+	border-radius: 0;
+	padding: 2px;
+	backdrop-filter: none;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-winXP .context-menu-item,
+.theme-winXP .submenu-item {
+	padding: 5px 16px;
+	font-size: 11px;
+}
+
+.theme-winXP .context-menu-item:hover,
+.theme-winXP .submenu-item:hover {
+	background-color: #316AC5;
+	color: #FFFFFF;
+}
+
+.theme-winXP .context-menu-divider {
+	background-color: #D4D0C8;
+	margin: 2px 4px;
+}
+
+/* --- XP 开始菜单 --- */
+.xp-start-menu {
+	left: 0;
+	bottom: var(--taskbar-height);
+	width: 400px;
+	border: 3px solid #0054E3;
+	border-bottom: none;
+	border-radius: 6px 6px 0 0;
+	background: #FFFFFF;
+	box-shadow: 4px -2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.xp-menu-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+	background: linear-gradient(180deg, #0058EE 0%, #3A8CF2 4%, #2463D8 50%, #1C50B0 96%, #17459E 100%);
+	cursor: pointer;
+}
+
+.xp-menu-header:hover {
+	filter: brightness(1.08);
+}
+
+.xp-menu-avatar {
+	width: 40px;
+	height: 40px;
+	background: #FFFFFF;
+	border: 2px solid rgba(255, 255, 255, 0.7);
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	flex-shrink: 0;
+}
+
+.xp-menu-username {
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.xp-menu-body {
+	display: flex;
+	min-height: 260px;
+}
+
+.xp-menu-left {
+	flex: 1;
+	background: #FFFFFF;
+	padding: 4px;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.xp-menu-caption {
+	padding: 4px 8px;
+	font-size: 10px;
+	letter-spacing: 1px;
+	color: #808080;
+}
+
+.xp-menu-item {
+	position: relative;
+}
+
+.xp-menu-app {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	cursor: pointer;
+	font-size: 12px;
+	color: #1A1A1A;
+}
+
+.xp-menu-app:hover {
+	background-color: #316AC5;
+	color: #FFFFFF;
+}
+
+.xp-menu-app .arrow {
+	margin-left: auto;
+}
+
+.xp-menu-right {
+	width: 150px;
+	flex-shrink: 0;
+	background: #D9E8FB;
+	border-left: 1px solid #B5CCE8;
+	padding: 4px;
+}
+
+.xp-right-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: bold;
+	color: #0B326E;
+}
+
+.xp-right-item:hover {
+	background-color: #316AC5;
+	color: #FFFFFF;
+}
+
+.xp-menu-footer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	background: linear-gradient(180deg, #2463D8 0%, #1C50B0 100%);
+}
+
+.xp-footer-btn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 6px;
+	cursor: pointer;
+	border-radius: 3px;
+	color: #FFFFFF;
+	font-size: 11px;
+}
+
+.xp-footer-btn:hover {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+.xp-footer-icon {
+	width: 20px;
+	height: 20px;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.xp-icon-logoff {
+	background: linear-gradient(180deg, #F5A623 0%, #D97B00 100%);
+}
+
+.xp-icon-shutdown {
+	background: linear-gradient(180deg, #E85D4A 0%, #C1352E 100%);
+}
+
 @media screen and (max-width: 1024px) {
 	.desktop-icons {
 		grid-template-columns: repeat(auto-fill, 90px);
@@ -1945,6 +2386,10 @@ export default {
 }
 
 @media screen and (max-width: 768px) {
+	.desktop {
+		--taskbar-height: 56px;
+	}
+
 	.desktop-icons {
 		left: 10px;
 		top: 10px;
@@ -1970,11 +2415,10 @@ export default {
 	}
 
 	.windows-container {
-		bottom: 56px;
+		bottom: var(--taskbar-height);
 	}
 
 	.taskbar {
-		height: 56px;
 		padding: 0 8px;
 	}
 
@@ -2011,7 +2455,7 @@ export default {
 	}
 
 	.start-menu {
-		bottom: 66px;
+		bottom: calc(var(--taskbar-height) + 10px);
 		left: 0;
 		right: 0;
 		width: 100%;
@@ -2034,7 +2478,7 @@ export default {
 
 	.submenu {
 		position: fixed;
-		bottom: 66px;
+		bottom: calc(var(--taskbar-height) + 10px);
 		left: 0;
 		right: 0;
 		width: 100%;

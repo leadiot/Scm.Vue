@@ -191,6 +191,13 @@ export default {
 		refresh: "Refresh",
 		cancel: "Cancel",
 		save: "Save",
+		// XP Start Menu
+		allPrograms: "All Programs",
+		myComputer: "My Computer",
+		controlPanel: "Control Panel",
+		logoff: "Log Off",
+		shutdown: "Turn Off Computer",
+		shutdownConfirm: "Turn off the computer (log out)?",
 		// Desktop Settings
 		desktopSettings: "Desktop Settings",
 		themeSettings: "Theme Settings",

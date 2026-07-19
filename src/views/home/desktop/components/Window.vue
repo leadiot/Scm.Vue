@@ -36,24 +36,24 @@
 			<template v-else-if="isWinXP">
 				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
 					<div class="winxp-title-left">
-						<sc-icon name="ms-grid_view" size="14" color="#ffffff" />
+						<sc-icon :name="window.icon || 'ms-grid_view'" size="14" color="#ffffff" />
 					</div>
 					<span class="winxp-title-text">{{ window.title }}</span>
 					<div class="winxp-buttons">
 						<button class="winxp-btn min-btn" title="最小化" @click.stop="$emit('minimize', window.id)">
-							<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="#ffffff"/></svg>
+							<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="currentColor"/></svg>
 						</button>
 						<button class="winxp-btn max-btn" title="最大化" @click.stop="$emit('maximize', window.id)">
 							<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
-								<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+								<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
 							</svg>
 							<svg width="9" height="9" viewBox="0 0 9 9" v-else>
-								<rect x="1" y="2.5" width="6.5" height="6" rx="0.5" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+								<rect x="1" y="2.5" width="6.5" height="6" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
 								<rect x="0" y="0" width="6.5" height="6" rx="0.5" fill="#000080"/>
 							</svg>
 						</button>
 						<button class="winxp-btn close-btn" title="关闭" @click.stop="$emit('close', window.id)">
-							<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="#ffffff" stroke-width="1.2"/></svg>
+							<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="currentColor" stroke-width="1.2"/></svg>
 						</button>
 					</div>
 				</div>
@@ -158,6 +158,19 @@
 				};
 			},
 			windowStyle() {
+				const t = this.windowTheme;
+				const hs = t.xpHeaderStart || '#0058EE';
+				const he = t.xpHeaderEnd || '#0047CC';
+				const his = t.xpHeaderInactiveStart || '#7A96DF';
+				const hie = t.xpHeaderInactiveEnd || '#5E7EB5';
+				const bs = t.xpBtnStart || '#3C8CFF';
+				const be = t.xpBtnEnd || '#0054E3';
+				const bhs = t.xpBtnHoverStart || '#5CA0FF';
+				const bhe = t.xpBtnHoverEnd || '#1E6FE0';
+				const cs = t.xpCloseStart || '#FF6B4A';
+				const ce = t.xpCloseEnd || '#C1352E';
+				const chs = t.xpCloseHoverStart || '#FF8B6A';
+				const che = t.xpCloseHoverEnd || '#D0453E';
 				return {
 					'--win-bg': this.bgColor,
 					'--win-header-bg': this.headerBg,
@@ -171,6 +184,20 @@
 					'--win-max-hover': this.maxBtnHover,
 					'--win-title-height': this.titleHeight,
 					'--win-button-width': this.buttonWidth,
+					// XP 经典风格变量（.style-xp 消费，缺省回退 Luna 蓝）
+					'--xp-header': t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
+					'--xp-header-inactive': t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
+					'--xp-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
+					'--xp-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
+					'--xp-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
+					'--xp-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
+					'--xp-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
+					'--xp-btn-border': t.xpBtnBorder || '#FFFFFF',
+					'--xp-close-border': t.xpCloseBorder || '#A02010',
+					'--xp-glyph-color': t.xpGlyphColor || '#FFFFFF',
+					'--xp-frame': t.xpFrame || '#0054E3',
+					'--xp-header-radius': t.xpHeaderRadius || '6px',
+					'--xp-btn-size': t.xpBtnSize || '21px',
 				};
 			},
 			headerBarStyle() {
@@ -424,32 +451,57 @@
 		flex-shrink: 0;
 	}
 
-	/* === WinXP 经典风格 === */
+	/* === WinXP 经典风格（颜色全部走 --xp-* 变量，可被主题定制） === */
 	.style-xp .window {
-		border-radius: 0;
-		border: 2px solid #0054E3;
+		border: 2px solid var(--xp-frame);
 		border-top: none;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+		border-radius: var(--win-border-radius);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+	}
+
+	.style-xp .window.maximized {
+		border: none;
+		border-radius: 0;
 	}
 
 	.winxp-header {
-		background: linear-gradient(180deg, #0058EE 0%, #3A8CF2 3%, #2A7CE4 5%, #0054E3 50%, #0047CC 95%, #003BB0 100%) !important;
+		background: var(--xp-header) !important;
 		padding: 0 4px 0 8px !important;
 		justify-content: space-between !important;
-		border-radius: 6px 6px 0 0;
+		border-radius: var(--xp-header-radius) var(--xp-header-radius) 0 0;
 		margin: -2px -2px 0 -2px;
-		height: 28px !important;
-		line-height: 28px !important;
+		height: var(--win-title-height) !important;
+		line-height: var(--win-title-height) !important;
+	}
+
+	.style-xp .window.maximized .winxp-header {
+		border-radius: 0;
+		margin: 0;
+	}
+
+	.style-xp .window:not(.focused) .window-header {
+		opacity: 1;
+	}
+
+	.style-xp .window:not(.focused) .winxp-header {
+		background: var(--xp-header-inactive) !important;
 	}
 
 	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
 
 	.winxp-title-text {
-		color: #ffffff !important;
+		color: var(--win-title-color) !important;
 		font-size: 12px;
 		font-weight: bold;
 		flex: 1;
 		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.window:not(.focused) .winxp-title-text {
+		color: var(--win-title-color-inactive) !important;
 	}
 
 	.winxp-buttons {
@@ -461,25 +513,26 @@
 	}
 
 	.winxp-btn {
-		width: 21px;
-		height: 21px;
-		border: 1px solid #ffffff;
+		width: var(--xp-btn-size);
+		height: var(--xp-btn-size);
+		border: 1px solid var(--xp-btn-border);
 		border-radius: 3px;
-		background: linear-gradient(180deg, #3C8CFF 0%, #1E6FE0 50%, #0054E3 100%);
+		background: var(--xp-btn);
+		color: var(--xp-glyph-color);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
-	.winxp-btn:hover { background: linear-gradient(180deg, #5CA0FF 0%, #3C8CFF 50%, #1E6FE0 100%); }
-	.winxp-btn:active { background: linear-gradient(180deg, #1E6FE0 0%, #0054E3 50%, #003BB0 100%); }
+	.winxp-btn:hover { background: var(--xp-btn-hover); }
+	.winxp-btn:active { background: var(--xp-btn-active); }
 	.winxp-btn.close-btn {
-		background: linear-gradient(180deg, #FF6B4A 0%, #E0433A 50%, #C1352E 100%) !important;
-		border-color: #A02010;
+		background: var(--xp-close) !important;
+		border-color: var(--xp-close-border);
 		margin-left: 2px;
 	}
-	.winxp-btn.close-btn:hover { background: linear-gradient(180deg, #FF8B6A 0%, #F0534A 50%, #D0453E 100%) !important; }
+	.winxp-btn.close-btn:hover { background: var(--xp-close-hover) !important; }
 
 	/* === 窗口内容 === */
 	.window-content {

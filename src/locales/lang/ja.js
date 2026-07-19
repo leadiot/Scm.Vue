@@ -189,6 +189,13 @@ export default {
 		refresh: '更新',
 		cancel: 'キャンセル',
 		save: '保存',
+		// XP スタートメニュー
+		allPrograms: 'すべてのプログラム',
+		myComputer: 'マイ コンピュータ',
+		controlPanel: 'コントロール パネル',
+		logoff: 'ログオフ',
+		shutdown: 'コンピュータを終了',
+		shutdownConfirm: 'コンピュータを終了（ログアウト）しますか？',
 		// デスクトップ設定
 		desktopSettings: 'デスクトップ設定',
 		themeSettings: 'テーマ設定',

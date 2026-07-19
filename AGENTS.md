@@ -60,6 +60,15 @@ File precedence: `.env.production` > `.env.development` > `.env`
 
 ---
 
+## Desktop Theming (云桌面主题)
+
+- Cloud desktop lives in `src/views/home/desktop/` (`index.vue` shell + `components/Window.vue` window manager + `components/apps/` built-in apps). All desktop styles are scoped inside these `.vue` files — nothing desktop-related goes into `src/style/`.
+- Themes are data-driven via the `themes` array in `index.vue` (each entry: wallpaper, taskbar/menu colors, icon settings, `windowTheme`, `iconsPath`, `previewStyle`). Applied by `applyTheme()`; persisted via `localStorage.desktop_theme` and server cfg keys.
+- Per-theme shell overrides (taskbar, start menu, context menu, icons): the root `.desktop` element carries a `theme-{name}` class — add scoped CSS under that class (see the `.theme-winXP` block). Use the `--taskbar-height` CSS variable instead of hardcoding taskbar height.
+- Window chrome variants are selected by `windowTheme.style` (`macos` / `xp` / `win7` / ...). The `xp` chrome is fully driven by `--xp-*` CSS variables sourced from the theme's `xp*` keys (`xpHeader(Inactive)`, `xpBtn*`, `xpClose*`, `xpGlyphColor`, `xpFrame`, `xpHeaderRadius`, `xpBtnSize`) — winXP uses the Luna-blue defaults; win95/98/2000 pass classic palettes through the same keys. Add new retro themes by reusing `style: 'xp'` with custom `xp*` values.
+
+---
+
 ## API Layer
 
 - `src/api/index.js` uses `import.meta.glob("./model/**/*.js", { eager: true })` to **auto-import** all API modules under `src/api/model/**/*.js`.

@@ -189,6 +189,13 @@ export default {
 		refresh: "刷新",
 		cancel: "取消",
 		save: "保存",
+		// XP 开始菜单
+		allPrograms: "所有程序",
+		myComputer: "我的电脑",
+		controlPanel: "控制面板",
+		logoff: "注销",
+		shutdown: "关闭计算机",
+		shutdownConfirm: "确定要关闭计算机（退出登录）吗？",
 		// 桌面设置
 		desktopSettings: "桌面设置",
 		themeSettings: "主题设置",
