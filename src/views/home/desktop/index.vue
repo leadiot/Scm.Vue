@@ -5,8 +5,8 @@
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
-				<div class="icon-image">
-					<sc-icon :name="app.meta.icon" :size="48" :color="iconColor" />
+				<div class="icon-image" :style="{ filter: iconShadow }">
+					<sc-icon :name="app.meta.icon" :size="iconSize" :color="iconColor" />
 				</div>
 				<div class="icon-text" :style="{ color: iconColor }">{{ app.name }}</div>
 			</div>
@@ -21,9 +21,9 @@
 		</div>
 
 		<!-- 任务栏 -->
-		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor }">
+		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<sc-icon name="ms-grid_view" :size="24" />
+				<sc-icon :name="taskbarStartIcon" :size="24" />
 				<span>{{ $t('desktop.start') }}</span>
 			</div>
 			<div class="taskbar-apps">
@@ -41,7 +41,7 @@
 		</div>
 
 		<!-- 开始菜单 -->
-		<div v-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor }">
+		<div v-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
 			<div class="start-menu-header" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="32" />
 				<span>{{ user.userName || 'User' }}</span>
@@ -157,17 +157,32 @@ export default {
 			updateTimeInterval: null,
 			documentClickHandler: null,
 			iconColor: '#ffffff',
+			iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+			iconSize: 48,
+			iconBgColor: 'transparent',
+			iconBgRadius: '0px',
+			iconBgSize: '0px',
 			currentTheme: 'default',
 			taskbarColor: 'rgba(0, 0, 0, 0.6)',
 			taskbarTextColor: '#ffffff',
+			taskbarBorderRadius: '4px',
+			taskbarGlass: false,
+			taskbarStartIcon: 'ms-grid_view',
 			menuColor: 'rgba(0, 0, 0, 0.9)',
 			menuTextColor: '#ffffff',
+			menuBorderRadius: '8px',
+			menuGlass: false,
 			windowTheme: {
 				bg: '#f3f3f3',
 				headerBg: '#f3f3f3',
 				titleColor: '#1a1a1a',
 				titleColorInactive: '#666666',
-				border: 'rgba(0, 0, 0, 0.1)'
+				border: 'rgba(0, 0, 0, 0.1)',
+				borderRadius: '8px',
+				shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+				closeBtnHover: '#c42b1c',
+				minBtnHover: 'rgba(0, 0, 0, 0.1)',
+				maxBtnHover: 'rgba(0, 0, 0, 0.1)'
 			},
 			settingsApp: {
 				id: '1',
@@ -499,112 +514,188 @@ export default {
 				{
 					name: 'win10',
 					style: 'windows',
-					backgroundType: 'gradient',
-					gradientColor1: '#0078D4',
-					gradientColor2: '#00A3E0',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(24, 24, 24, 0.92)',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win10/background.svg',
+					taskbarColor: 'rgba(24, 24, 24, 0.98)',
 					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(32, 32, 32, 0.95)',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: 'rgba(32, 32, 32, 0.98)',
 					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: false,
 					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+					iconSize: 48,
+					iconBgColor: 'transparent',
+					iconBgRadius: '0px',
+					iconBgSize: '0px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#ffffff',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#999999',
-						border: 'rgba(0, 120, 212, 0.2)'
+						titleColor: '#000000',
+						titleColorInactive: '#808080',
+						border: '#E5E5E5',
+						borderRadius: '0px',
+						shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: 'rgba(0, 0, 0, 0.1)',
+						maxBtnHover: 'rgba(0, 0, 0, 0.1)',
+						titleHeight: '32px',
+						buttonWidth: '46px'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #0078D4, #00A3E0)' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win10/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win11',
 					style: 'windows',
-					backgroundType: 'gradient',
-					gradientColor1: '#667EEA',
-					gradientColor2: '#764BA2',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win11/background.svg',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '12px',
+					taskbarGlass: true,
+					taskbarStartIcon: 'ms-grid_view',
 					menuColor: 'rgba(48, 48, 48, 0.95)',
 					menuTextColor: '#ffffff',
+					menuBorderRadius: '12px',
+					menuGlass: true,
 					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4))',
+					iconSize: 48,
+					iconBgColor: 'rgba(255, 255, 255, 0.1)',
+					iconBgRadius: '12px',
+					iconBgSize: '80px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#f8f9fa',
 						titleColor: '#212529',
 						titleColorInactive: '#adb5bd',
-						border: 'rgba(102, 126, 234, 0.15)'
+						border: 'rgba(0, 0, 0, 0.08)',
+						borderRadius: '8px',
+						shadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08)',
+						closeBtnHover: '#e81123',
+						minBtnHover: 'rgba(0, 0, 0, 0.08)',
+						maxBtnHover: 'rgba(0, 0, 0, 0.08)',
+						titleHeight: '32px',
+						buttonWidth: '46px'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #667EEA, #764BA2)' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win11/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win7',
 					style: 'windows',
-					backgroundType: 'gradient',
-					gradientColor1: '#1BA1E2',
-					gradientColor2: '#005A9E',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win7/background.svg',
 					taskbarColor: '#1A1A1A',
 					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: true,
+					taskbarStartIcon: 'ms-grid_view',
 					menuColor: '#2D2D2D',
 					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: true,
 					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))',
+					iconSize: 48,
+					iconBgColor: 'rgba(255, 255, 255, 0.05)',
+					iconBgRadius: '4px',
+					iconBgSize: '70px',
 					windowTheme: {
 						bg: '#ffffff',
-						headerBg: '#f0f0f0',
+						headerBg: '#D4D0C8',
 						titleColor: '#000000',
 						titleColorInactive: '#808080',
-						border: 'rgba(27, 161, 226, 0.3)'
+						border: '#808080',
+						borderRadius: '0px',
+						shadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15)',
+						closeBtnHover: '#e81123',
+						minBtnHover: '#D4D0C8',
+						maxBtnHover: '#D4D0C8',
+						titleHeight: '30px',
+						buttonWidth: '45px'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #1BA1E2, #005A9E)' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win7/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winXP',
 					style: 'windows',
-					backgroundType: 'gradient',
-					gradientColor1: '#1E90FF',
-					gradientColor2: '#000080',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/winxp/background.svg',
 					taskbarColor: '#1E90FF',
 					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
 					menuColor: '#1E90FF',
 					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: false,
 					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5))',
+					iconSize: 48,
+					iconBgColor: 'rgba(255, 255, 255, 0.1)',
+					iconBgRadius: '0px',
+					iconBgSize: '64px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#000080',
 						titleColor: '#ffffff',
 						titleColorInactive: '#c0c0c0',
-						border: '#808080'
+						border: '#808080',
+						borderRadius: '0px',
+						shadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: '#1E90FF',
+						maxBtnHover: '#1E90FF',
+						titleHeight: '28px',
+						buttonWidth: '44px'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #1E90FF, #000080)' }
+					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winDark',
 					style: 'windows',
-					backgroundType: 'color',
-					backgroundColor: '#1C1C1C',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/windark/background.svg',
 					taskbarColor: '#000000',
 					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
 					menuColor: '#2A2A2A',
 					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: false,
 					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+					iconSize: 48,
+					iconBgColor: 'transparent',
+					iconBgRadius: '0px',
+					iconBgSize: '0px',
 					windowTheme: {
 						bg: '#1C1C1C',
 						headerBg: '#2D2D2D',
 						titleColor: '#ffffff',
 						titleColorInactive: '#808080',
-						border: '#404040'
+						border: '#404040',
+						borderRadius: '0px',
+						shadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: 'rgba(255, 255, 255, 0.1)',
+						maxBtnHover: 'rgba(255, 255, 255, 0.1)',
+						titleHeight: '32px',
+						buttonWidth: '46px'
 					},
-					previewStyle: { backgroundColor: '#1C1C1C' }
+					previewStyle: { backgroundImage: 'url(/images/windows/windark/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOS',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#667eea',
-					gradientColor2: '#764ba2',
+					backgroundType: 'image',
+					backgroundImage: '/images/macos/background.svg',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -639,7 +730,7 @@ export default {
 						titleColorInactive: '#999999',
 						border: 'rgba(0, 0, 0, 0.06)'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #007AFF, #5AC8FA)' }
+					previewStyle: { backgroundImage: 'url(/images/macos/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
@@ -1038,10 +1129,20 @@ export default {
 			this.gradientColor2 = config.gradientColor2;
 			this.gradientDirection = config.gradientDirection;
 			this.iconColor = config.iconColor;
+			this.iconShadow = config.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+			this.iconSize = config.iconSize || 48;
+			this.iconBgColor = config.iconBgColor || 'transparent';
+			this.iconBgRadius = config.iconBgRadius || '0px';
+			this.iconBgSize = config.iconBgSize || '0px';
 			this.menuColor = config.menuColor;
 			this.menuTextColor = config.menuTextColor;
+			this.menuBorderRadius = config.menuBorderRadius || '0px';
+			this.menuGlass = config.menuGlass || false;
 			this.taskbarColor = config.taskbarColor;
 			this.taskbarTextColor = config.taskbarTextColor;
+			this.taskbarBorderRadius = config.taskbarBorderRadius || '0px';
+			this.taskbarGlass = config.taskbarGlass || false;
+			this.taskbarStartIcon = config.taskbarStartIcon || 'ms-grid_view';
 			this.windowTheme = config.windowTheme || this.windowTheme;
 			this.home = config.home;
 		},
@@ -1076,15 +1177,32 @@ export default {
 			this.backgroundType = theme.backgroundType;
 			this.taskbarColor = theme.taskbarColor;
 			this.taskbarTextColor = theme.taskbarTextColor || '#ffffff';
+			this.taskbarBorderRadius = theme.taskbarBorderRadius || '0px';
+			this.taskbarGlass = theme.taskbarGlass || false;
+			this.taskbarStartIcon = theme.taskbarStartIcon || 'ms-grid_view';
 			this.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
 			this.menuTextColor = theme.menuTextColor || '#ffffff';
+			this.menuBorderRadius = theme.menuBorderRadius || '0px';
+			this.menuGlass = theme.menuGlass || false;
 			this.iconColor = theme.iconColor || '#ffffff';
+			this.iconShadow = theme.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+			this.iconSize = theme.iconSize || 48;
+			this.iconBgColor = theme.iconBgColor || 'transparent';
+			this.iconBgRadius = theme.iconBgRadius || '0px';
+			this.iconBgSize = theme.iconBgSize || '0px';
 			this.windowTheme = theme.windowTheme || {
 				bg: '#f3f3f3',
 				headerBg: '#f3f3f3',
 				titleColor: '#1a1a1a',
 				titleColorInactive: '#666666',
-				border: 'rgba(0, 0, 0, 0.1)'
+				border: 'rgba(0, 0, 0, 0.1)',
+				borderRadius: '0px',
+				shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+				closeBtnHover: '#c42b1c',
+				minBtnHover: 'rgba(0, 0, 0, 0.1)',
+				maxBtnHover: 'rgba(0, 0, 0, 0.1)',
+				titleHeight: '32px',
+				buttonWidth: '46px'
 			};
 
 			if (theme.backgroundType === 'color') {
@@ -1246,7 +1364,7 @@ export default {
 	justify-content: center;
 	width: 64px;
 	height: 64px;
-	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+	transition: all 0.3s ease;
 }
 
 .icon-text {
@@ -1274,11 +1392,20 @@ export default {
 	left: 0;
 	right: 0;
 	height: 48px;
-	backdrop-filter: blur(10px);
 	display: flex;
 	align-items: center;
 	padding: 0 10px;
 	z-index: 1000;
+	transition: all 0.3s ease;
+}
+
+.taskbar-glass {
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+}
+
+.taskbar:not(.taskbar-glass) {
+	backdrop-filter: none;
 }
 
 .taskbar-start {
@@ -1344,11 +1471,20 @@ export default {
 	bottom: 58px;
 	left: 10px;
 	width: 300px;
-	backdrop-filter: blur(20px);
 	border-radius: 8px;
 	overflow: hidden;
 	z-index: 1001;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+}
+
+.menu-glass {
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+}
+
+.start-menu:not(.menu-glass) {
+	backdrop-filter: none;
 }
 
 .start-menu-header {

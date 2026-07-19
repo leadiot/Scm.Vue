@@ -330,10 +330,20 @@ export default {
                 gradientColor2: cfg.gradientColor2 || '#764ba2',
                 gradientDirection: cfg.gradientDirection || 'to bottom right',
                 iconColor: cfg.iconColor || '#ffffff',
+                iconShadow: cfg.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+                iconSize: cfg.iconSize || 48,
+                iconBgColor: cfg.iconBgColor || 'transparent',
+                iconBgRadius: cfg.iconBgRadius || '0px',
+                iconBgSize: cfg.iconBgSize || '0px',
                 menuColor: cfg.menuColor || 'rgba(0, 0, 0, 0.9)',
                 menuTextColor: cfg.menuTextColor || '#ffffff',
+                menuBorderRadius: cfg.menuBorderRadius || '0px',
+                menuGlass: cfg.menuGlass || false,
                 taskbarColor: cfg.taskbarColor || 'rgba(0, 0, 0, 0.6)',
                 taskbarTextColor: cfg.taskbarTextColor || '#ffffff',
+                taskbarBorderRadius: cfg.taskbarBorderRadius || '0px',
+                taskbarGlass: cfg.taskbarGlass || false,
+                taskbarStartIcon: cfg.taskbarStartIcon || 'ms-grid_view',
                 windowTheme: cfg.windowTheme || {},
                 home: cfg.home || '/',
             };
@@ -346,9 +356,19 @@ export default {
             this.localConfig.backgroundType = theme.backgroundType;
             this.localConfig.taskbarColor = theme.taskbarColor;
             this.localConfig.taskbarTextColor = theme.taskbarTextColor || '#ffffff';
+            this.localConfig.taskbarBorderRadius = theme.taskbarBorderRadius || '0px';
+            this.localConfig.taskbarGlass = theme.taskbarGlass || false;
+            this.localConfig.taskbarStartIcon = theme.taskbarStartIcon || 'ms-grid_view';
             this.localConfig.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
             this.localConfig.menuTextColor = theme.menuTextColor || '#ffffff';
+            this.localConfig.menuBorderRadius = theme.menuBorderRadius || '0px';
+            this.localConfig.menuGlass = theme.menuGlass || false;
             this.localConfig.iconColor = theme.iconColor || '#ffffff';
+            this.localConfig.iconShadow = theme.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+            this.localConfig.iconSize = theme.iconSize || 48;
+            this.localConfig.iconBgColor = theme.iconBgColor || 'transparent';
+            this.localConfig.iconBgRadius = theme.iconBgRadius || '0px';
+            this.localConfig.iconBgSize = theme.iconBgSize || '0px';
             this.localConfig.windowTheme = theme.windowTheme || {};
 
             if (theme.backgroundType === 'color') {

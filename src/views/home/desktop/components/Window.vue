@@ -129,6 +129,13 @@ export default {
 				'--win-title-color': this.theme.titleColor || '#1a1a1a',
 				'--win-title-color-inactive': this.theme.titleColorInactive || '#666666',
 				'--win-border': this.theme.border || 'rgba(0, 0, 0, 0.1)',
+				'--win-radius': this.theme.borderRadius || '0px',
+				'--win-shadow': this.theme.shadow || '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+				'--win-close-hover': this.theme.closeBtnHover || '#c42b1c',
+				'--win-min-hover': this.theme.minBtnHover || 'rgba(0, 0, 0, 0.1)',
+				'--win-max-hover': this.theme.maxBtnHover || 'rgba(0, 0, 0, 0.1)',
+				'--win-title-height': this.theme.titleHeight || '32px',
+				'--win-button-width': this.theme.buttonWidth || '46px',
 			};
 
 			if (this.isMobile) {
@@ -309,7 +316,11 @@ export default {
 	--win-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
 	--win-shadow-focused: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.12);
 	--win-title-height: 32px;
-	--win-radius: 8px;
+	--win-radius: 0px;
+	--win-close-hover: #c42b1c;
+	--win-min-hover: rgba(0, 0, 0, 0.1);
+	--win-max-hover: rgba(0, 0, 0, 0.1);
+	--win-button-width: 46px;
 
 	position: absolute;
 	background-color: var(--win-bg);
@@ -378,7 +389,7 @@ export default {
 }
 
 .control-btn {
-	width: 46px;
+	width: var(--win-button-width);
 	height: 100%;
 	border: none;
 	background: transparent;
@@ -392,7 +403,7 @@ export default {
 }
 
 .control-btn:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: var(--win-min-hover);
 }
 
 .control-btn:active {
@@ -400,13 +411,21 @@ export default {
 }
 
 .control-btn.close:hover {
-	background-color: #c42b1c;
+	background-color: var(--win-close-hover);
 	color: #fff;
 }
 
 .control-btn.close:active {
 	background-color: #a0261a;
 	color: #fff;
+}
+
+.control-btn.minimize:hover {
+	background-color: var(--win-min-hover);
+}
+
+.control-btn.maximize:hover {
+	background-color: var(--win-max-hover);
 }
 
 .window-content {
