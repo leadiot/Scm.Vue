@@ -1,12 +1,13 @@
 <template>
-	<div class="desktop" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
+	<div class="desktop" :class="themeClass" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
-				<div class="icon-image" :style="{ filter: iconShadow }">
-					<sc-icon :name="app.meta.icon" :size="iconSize" :color="iconColor" />
+				<div class="icon-image" :style="iconImageStyle(app)">
+					<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" :style="{ width: iconSize + 'px', height: iconSize + 'px', objectFit: 'contain' }" alt="" draggable="false" />
+					<sc-icon v-else :name="app.meta.icon" :size="iconSize" :color="iconColor" />
 				</div>
 				<div class="icon-text" :style="{ color: iconColor }">{{ app.name }}</div>
 			</div>
@@ -23,7 +24,15 @@
 		<!-- 任务栏 -->
 		<div class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<sc-icon :name="taskbarStartIcon" :size="24" />
+				<template v-if="currentTheme === 'winXP'">
+					<svg class="xp-start-flag" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+						<rect x="1" y="1" width="8" height="8" fill="#f25022" />
+						<rect x="11" y="1" width="8" height="8" fill="#7fba00" />
+						<rect x="1" y="11" width="8" height="8" fill="#00a4ef" />
+						<rect x="11" y="11" width="8" height="8" fill="#ffb900" />
+					</svg>
+				</template>
+				<sc-icon v-else :name="taskbarStartIcon" :size="24" />
 				<span>{{ $t('desktop.start') }}</span>
 			</div>
 			<div class="taskbar-apps">
@@ -153,6 +162,34 @@ export default {
 			user: {},
 			home: '/',
 			deskApps: [],
+			// 图标名称到文件名映射（Material Symbols → 主题图标文件名）
+			iconMap: {
+				'ms-computer': 'computer.png',
+				'ms-desktop_windows': 'computer.png',
+				'ms-laptop': 'computer.png',
+				'ms-folder': 'folder.png',
+				'ms-folder_open': 'folder.png',
+				'ms-settings': 'settings.png',
+				'ms-delete': 'trash.png',
+				'ms-delete_outline': 'trash.png',
+				'ms-delete_forever': 'trash.png',
+				'ms-download': 'downloads.png',
+				'ms-downloading': 'downloads.png',
+				'ms-download_done': 'downloads.png',
+				'ms-music_note': 'music.png',
+				'ms-audiotrack': 'music.png',
+				'ms-headphones': 'music.png',
+				'ms-videocam': 'videos.png',
+				'ms-movie': 'videos.png',
+				'ms-movie_creation': 'videos.png',
+				'ms-article': 'documents.png',
+				'ms-description': 'documents.png',
+				'ms-feed': 'documents.png',
+				'ms-photo_library': 'documents.png',
+				'ms-image': 'documents.png',
+				'ms-calendar_month': 'documents.png',
+				'ms-account_circle': 'documents.png',
+			},
 			menuApps: [],
 			updateTimeInterval: null,
 			documentClickHandler: null,
@@ -162,6 +199,7 @@ export default {
 			iconBgColor: 'transparent',
 			iconBgRadius: '0px',
 			iconBgSize: '0px',
+			iconsPath: '',
 			currentTheme: 'default',
 			taskbarColor: 'rgba(0, 0, 0, 0.6)',
 			taskbarTextColor: '#ffffff',
@@ -512,46 +550,11 @@ export default {
 					previewStyle: { background: 'linear-gradient(to bottom right, #5D3F6A, #8B4789)' }
 				},
 				{
-					name: 'win10',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: '/images/windows/win10/background.svg',
-					taskbarColor: 'rgba(24, 24, 24, 0.98)',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(32, 32, 32, 0.98)',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					iconSize: 48,
-					iconBgColor: 'transparent',
-					iconBgRadius: '0px',
-					iconBgSize: '0px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#ffffff',
-						titleColor: '#000000',
-						titleColorInactive: '#808080',
-						border: '#E5E5E5',
-						borderRadius: '0px',
-						shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: 'rgba(0, 0, 0, 0.1)',
-						maxBtnHover: 'rgba(0, 0, 0, 0.1)',
-						titleHeight: '32px',
-						buttonWidth: '46px'
-					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win10/background.svg)', backgroundSize: 'cover' }
-				},
-				{
 					name: 'win11',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win11/background.svg',
+					backgroundImage: '/images/windows/win11/background.png',
+					iconsPath: '/images/windows/win11/',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '12px',
@@ -579,15 +582,93 @@ export default {
 						minBtnHover: 'rgba(0, 0, 0, 0.08)',
 						maxBtnHover: 'rgba(0, 0, 0, 0.08)',
 						titleHeight: '32px',
-						buttonWidth: '46px'
+						buttonWidth: '46px',
+						style: 'win11'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win11/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win11/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'win10',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win10/background.png',
+					iconsPath: '/images/windows/win10/',
+					taskbarColor: 'rgba(24, 24, 24, 0.98)',
+					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: 'rgba(32, 32, 32, 0.98)',
+					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: false,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+					iconSize: 48,
+					iconBgColor: 'transparent',
+					iconBgRadius: '0px',
+					iconBgSize: '0px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#ffffff',
+						titleColor: '#000000',
+						titleColorInactive: '#808080',
+						border: '#E5E5E5',
+						borderRadius: '0px',
+						shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: 'rgba(0, 0, 0, 0.1)',
+						maxBtnHover: 'rgba(0, 0, 0, 0.1)',
+						titleHeight: '32px',
+						buttonWidth: '46px',
+						style: 'win10'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/win10/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'win8',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win8/background.png',
+					iconsPath: '/images/windows/win8/',
+					taskbarColor: 'rgba(20, 20, 40, 0.92)',
+					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: 'rgba(30, 30, 50, 0.95)',
+					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: false,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+					iconSize: 48,
+					iconBgColor: 'rgba(0, 120, 215, 0.8)',
+					iconBgRadius: '0px',
+					iconBgSize: '70px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#0078D7',
+						titleColor: '#ffffff',
+						titleColorInactive: '#cccccc',
+						border: '#0078D7',
+						borderRadius: '0px',
+						shadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: 'rgba(0,0,0,0.1)',
+						maxBtnHover: 'rgba(0,0,0,0.1)',
+						titleHeight: '32px',
+						buttonWidth: '46px',
+						style: 'win10'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/win8/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win7',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win7/background.svg',
+					backgroundImage: '/images/windows/win7/background.png',
+					iconsPath: '/images/windows/win7/',
 					taskbarColor: '#1A1A1A',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -605,61 +686,229 @@ export default {
 					iconBgSize: '70px',
 					windowTheme: {
 						bg: '#ffffff',
-						headerBg: '#D4D0C8',
-						titleColor: '#000000',
+						headerBg: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(200,210,220,0.6) 50%, rgba(170,180,200,0.6) 100%)',
+						titleColor: '#000066',
 						titleColorInactive: '#808080',
 						border: '#808080',
 						borderRadius: '0px',
-						shadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15)',
+						shadow: '0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0,0,0,0.2)',
 						closeBtnHover: '#e81123',
-						minBtnHover: '#D4D0C8',
-						maxBtnHover: '#D4D0C8',
-						titleHeight: '30px',
-						buttonWidth: '45px'
+						minBtnHover: 'rgba(255,255,255,0.3)',
+						maxBtnHover: 'rgba(255,255,255,0.3)',
+						titleHeight: '32px',
+						buttonWidth: '28px',
+						style: 'win7'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win7/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win7/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'winVista',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/winvista/background.png',
+					iconsPath: '/images/windows/winvista/',
+					taskbarColor: 'rgba(0, 0, 0, 0.7)',
+					taskbarTextColor: '#ffffff',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: true,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: 'rgba(30, 30, 30, 0.9)',
+					menuTextColor: '#ffffff',
+					menuBorderRadius: '0px',
+					menuGlass: true,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5))',
+					iconSize: 48,
+					iconBgColor: 'rgba(31, 156, 216, 0.3)',
+					iconBgRadius: '4px',
+					iconBgSize: '70px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: 'linear-gradient(180deg, rgba(220,230,245,0.9) 0%, rgba(185,200,220,0.9) 50%, rgba(150,170,200,0.9) 100%)',
+						titleColor: '#003366',
+						titleColorInactive: '#808080',
+						border: '#7A9EC4',
+						borderRadius: '6px',
+						shadow: '0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0,0,0,0.15)',
+						closeBtnHover: '#e81123',
+						minBtnHover: 'rgba(255,255,255,0.4)',
+						maxBtnHover: 'rgba(255,255,255,0.4)',
+						titleHeight: '32px',
+						buttonWidth: '30px',
+						style: 'win7'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/winvista/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winXP',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/winxp/background.svg',
-					taskbarColor: '#1E90FF',
+					backgroundImage: '/images/windows/winxp/background.png',
+					iconsPath: '/images/windows/winxp/',
+					taskbarColor: '#245edb',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
 					taskbarGlass: false,
 					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#1E90FF',
-					menuTextColor: '#ffffff',
+					menuColor: '#ffffff',
+					menuTextColor: '#1a1a1a',
+					menuBorderRadius: '8px 8px 8px 0',
+					menuGlass: false,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))',
+					iconSize: 48,
+					iconBgColor: 'rgba(255, 255, 255, 0.12)',
+					iconBgRadius: '4px',
+					iconBgSize: '70px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: 'linear-gradient(180deg, #0058ee 0%, #0054e3 50%, #0047cc 100%)',
+						titleColor: '#ffffff',
+						titleColorInactive: '#c0c0c0',
+						border: '#0054e3',
+						borderRadius: '0px',
+						shadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c42b1c',
+						minBtnHover: '#1e90ff',
+						maxBtnHover: '#1e90ff',
+						titleHeight: '28px',
+						buttonWidth: '22px',
+						style: 'xp',
+						xpHeaderStart: '#0058ee',
+						xpHeaderEnd: '#0047cc',
+						xpHeaderInactiveStart: '#7a96df',
+						xpHeaderInactiveEnd: '#5e7eb5',
+						xpBtnStart: '#3c8cff',
+						xpBtnEnd: '#0054e3',
+						xpBtnHoverStart: '#5ca0ff',
+						xpBtnHoverEnd: '#1e6fe0',
+						xpCloseStart: '#ff6b4a',
+						xpCloseEnd: '#c1352e',
+						xpCloseHoverStart: '#ff8b6a',
+						xpCloseHoverEnd: '#d0453e'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'win2000',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win2000/background.png',
+					iconsPath: '/images/windows/win2000/',
+					taskbarColor: '#C0C0C0',
+					taskbarTextColor: '#000000',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: '#C0C0C0',
+					menuTextColor: '#000000',
 					menuBorderRadius: '0px',
 					menuGlass: false,
 					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5))',
-					iconSize: 48,
-					iconBgColor: 'rgba(255, 255, 255, 0.1)',
+					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+					iconSize: 32,
+					iconBgColor: 'rgba(0, 0, 128, 0.15)',
 					iconBgRadius: '0px',
-					iconBgSize: '64px',
+					iconBgSize: '56px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#000080',
 						titleColor: '#ffffff',
-						titleColorInactive: '#c0c0c0',
+						titleColorInactive: '#808080',
 						border: '#808080',
 						borderRadius: '0px',
-						shadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: '#1E90FF',
-						maxBtnHover: '#1E90FF',
+						shadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c00000',
+						minBtnHover: '#808080',
+						maxBtnHover: '#808080',
 						titleHeight: '28px',
-						buttonWidth: '44px'
+						buttonWidth: '18px',
+						style: 'xp'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'win98',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win98/background.png',
+					iconsPath: '/images/windows/win98/',
+					taskbarColor: '#C0C0C0',
+					taskbarTextColor: '#000000',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: '#C0C0C0',
+					menuTextColor: '#000000',
+					menuBorderRadius: '0px',
+					menuGlass: false,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))',
+					iconSize: 32,
+					iconBgColor: 'rgba(0, 128, 128, 0.2)',
+					iconBgRadius: '0px',
+					iconBgSize: '56px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#000080',
+						titleColor: '#ffffff',
+						titleColorInactive: '#808080',
+						border: '#808080',
+						borderRadius: '0px',
+						shadow: '0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
+						closeBtnHover: '#c00000',
+						minBtnHover: '#808080',
+						maxBtnHover: '#808080',
+						titleHeight: '24px',
+						buttonWidth: '16px',
+						style: 'xp'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.png)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'win95',
+					style: 'windows',
+					backgroundType: 'image',
+					backgroundImage: '/images/windows/win95/background.png',
+					iconsPath: '/images/windows/win95/',
+					taskbarColor: '#C0C0C0',
+					taskbarTextColor: '#000000',
+					taskbarBorderRadius: '0px',
+					taskbarGlass: false,
+					taskbarStartIcon: 'ms-grid_view',
+					menuColor: '#C0C0C0',
+					menuTextColor: '#000000',
+					menuBorderRadius: '0px',
+					menuGlass: false,
+					iconColor: '#ffffff',
+					iconShadow: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))',
+					iconSize: 32,
+					iconBgColor: 'rgba(0, 128, 128, 0.2)',
+					iconBgRadius: '0px',
+					iconBgSize: '56px',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#000080',
+						titleColor: '#ffffff',
+						titleColorInactive: '#808080',
+						border: '#808080',
+						borderRadius: '0px',
+						shadow: '0 3px 8px rgba(0, 0, 0, 0.15)',
+						closeBtnHover: '#c00000',
+						minBtnHover: '#808080',
+						maxBtnHover: '#808080',
+						titleHeight: '22px',
+						buttonWidth: '16px',
+						style: 'xp'
+					},
+					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winDark',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/windark/background.svg',
+					backgroundImage: '/images/windows/windark/background.png',
+					iconsPath: '/images/windows/windark/',
 					taskbarColor: '#000000',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -687,15 +936,17 @@ export default {
 						minBtnHover: 'rgba(255, 255, 255, 0.1)',
 						maxBtnHover: 'rgba(255, 255, 255, 0.1)',
 						titleHeight: '32px',
-						buttonWidth: '46px'
+						buttonWidth: '46px',
+						style: 'win10'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/windark/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/windark/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOS',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macos/background.svg',
+					backgroundImage: '/images/macos/background.png',
+					iconsPath: '/images/macos/',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -707,9 +958,17 @@ export default {
 						headerBg: '#f6f6f6',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#999999',
-						border: 'rgba(0, 0, 0, 0.08)'
+						border: 'rgba(0, 0, 0, 0.08)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #667eea, #764ba2)' }
+					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSBigSur',
@@ -718,6 +977,7 @@ export default {
 					gradientColor1: '#007AFF',
 					gradientColor2: '#5AC8FA',
 					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
 					taskbarTextColor: '#000000',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -728,9 +988,17 @@ export default {
 						headerBg: '#f5f5f5',
 						titleColor: '#000000',
 						titleColorInactive: '#999999',
-						border: 'rgba(0, 0, 0, 0.06)'
+						border: 'rgba(0, 0, 0, 0.06)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
@@ -739,6 +1007,7 @@ export default {
 					gradientColor1: '#00D4AA',
 					gradientColor2: '#00A8FF',
 					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -749,7 +1018,15 @@ export default {
 						headerBg: '#f8f8f8',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#aaaaaa',
-						border: 'rgba(0, 0, 0, 0.05)'
+						border: 'rgba(0, 0, 0, 0.05)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #00D4AA, #00A8FF)' }
 				},
@@ -760,6 +1037,7 @@ export default {
 					gradientColor1: '#FB7185',
 					gradientColor2: '#F43F5E',
 					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.82)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -770,7 +1048,15 @@ export default {
 						headerBg: '#fafafa',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.04)'
+						border: 'rgba(0, 0, 0, 0.04)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #FB7185, #F43F5E)' }
 				},
@@ -784,12 +1070,21 @@ export default {
 					menuColor: 'rgba(40, 40, 40, 0.95)',
 					menuTextColor: '#ffffff',
 					iconColor: '#ffffff',
+					iconsPath: '/images/macos/',
 					windowTheme: {
 						bg: '#1c1c1c',
 						headerBg: '#2a2a2a',
 						titleColor: '#ffffff',
 						titleColorInactive: '#888888',
-						border: 'rgba(255, 255, 255, 0.08)'
+						border: 'rgba(255, 255, 255, 0.08)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
 					},
 					previewStyle: { backgroundColor: '#0f0f0f' }
 				}
@@ -827,6 +1122,9 @@ export default {
 				second: '2-digit'
 			});
 			return `${dateStr} ${timeStr}`;
+		},
+		themeClass() {
+			return this.currentTheme ? `theme-${this.currentTheme}` : '';
 		}
 	},
 	methods: {
@@ -1110,6 +1408,7 @@ export default {
 				taskbarColor: this.taskbarColor,
 				taskbarTextColor: this.taskbarTextColor,
 				windowTheme: this.windowTheme,
+				iconsPath: this.iconsPath,
 				home: this.home,
 			};
 		},
@@ -1134,6 +1433,9 @@ export default {
 			this.iconBgColor = config.iconBgColor || 'transparent';
 			this.iconBgRadius = config.iconBgRadius || '0px';
 			this.iconBgSize = config.iconBgSize || '0px';
+			// 根据当前主题推导 iconsPath
+			const themeDef = this.themes.find(t => t.name === config.currentTheme);
+			this.iconsPath = (themeDef && themeDef.iconsPath) ? themeDef.iconsPath : (config.iconsPath || '');
 			this.menuColor = config.menuColor;
 			this.menuTextColor = config.menuTextColor;
 			this.menuBorderRadius = config.menuBorderRadius || '0px';
@@ -1190,6 +1492,7 @@ export default {
 			this.iconBgColor = theme.iconBgColor || 'transparent';
 			this.iconBgRadius = theme.iconBgRadius || '0px';
 			this.iconBgSize = theme.iconBgSize || '0px';
+			this.iconsPath = theme.iconsPath || '';
 			this.windowTheme = theme.windowTheme || {
 				bg: '#f3f3f3',
 				headerBg: '#f3f3f3',
@@ -1227,6 +1530,26 @@ export default {
 			if (savedIconColor) {
 				this.iconColor = savedIconColor;
 			}
+		},
+		/**
+		 * 获取主题图标的 URL
+		 * @param {string} iconName - Material Symbols 图标名称
+		 * @returns {string|null} 主题特定的图标 URL，如果没有则返回 null
+		 */
+		getThemeIcon(iconName) {
+			if (!this.iconsPath) return null;
+			const fileName = this.iconMap[iconName];
+			return fileName ? this.iconsPath + fileName : null;
+		},
+		/**
+		 * 获取桌面图标的图片样式
+		 */
+		iconImageStyle(app) {
+			const style = { filter: this.iconShadow };
+			if (app && this.getThemeIcon(app.meta.icon)) {
+				return style;
+			}
+			return style;
 		},
 		logout() {
 			this.$confirm(this.$t('desktop.logoutConfirm'), this.$t('desktop.tip'), {

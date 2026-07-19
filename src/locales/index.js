@@ -14,6 +14,10 @@ const messages = {
 		el: el_zh_cn,
 		...zh_cn,
 	},
+	zh: {
+		el: el_zh_cn,
+		...zh_cn,
+	},
 	en: {
 		el: el_en,
 		...en,

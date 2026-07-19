@@ -7,4 +7,17 @@
 export default {
 	//是否显示第三方授权登录
 	MY_SHOW_LOGIN_OAUTH: false,
+
+	//AI模型配置
+	MY_AI_MODELS: [
+		{
+			name: "Kimi-K3",
+			model: "moonshot-v1-k3",
+			apiKey: "sk-EYrdk4NTlxqoGDCPpTRTdCDYZwBNCmZ4KTM06OXloDq3WHay",
+			baseUrl: "https://api.moonshot.cn/v1",
+			description: "Kimi大模型K3版本，支持长文本处理",
+			maxTokens: 2048,
+			temperature: 0.7
+		}
+	]
 };

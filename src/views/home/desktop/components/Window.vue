@@ -1,490 +1,523 @@
 <template>
-	<div v-if="!window.minimized" class="window"
-		:class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }"
-		:style="windowStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus"
-		@contextmenu.prevent.stop="handleContextMenu">
-		<div class="window-header" @mousedown="startDrag" @touchstart.passive="startDrag">
-			<div class="window-title">
-				<sc-icon :name="window.icon" :size="16" />
-				<span>{{ window.title }}</span>
-			</div>
-			<div class="window-controls">
-				<button class="control-btn minimize" @click.stop="$emit('minimize', window.id)">
-					<svg width="12" height="12" viewBox="0 0 12 12">
-						<rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" />
-					</svg>
-				</button>
-				<button v-if="window.resizable !== false && !isMobile" class="control-btn maximize"
-					@click.stop="$emit('maximize', window.id)">
-					<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
-						<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
-						<rect x="1" y="3" width="8" height="8" fill="white" stroke="currentColor" stroke-width="1.2" />
-					</svg>
-					<svg v-else width="12" height="12" viewBox="0 0 12 12">
-						<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.2" />
-					</svg>
-				</button>
-				<button class="control-btn close" @click.stop="$emit('close', window.id)">
-					<svg width="12" height="12" viewBox="0 0 12 12">
-						<line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" />
-						<line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.2" />
-					</svg>
-				</button>
-			</div>
-		</div>
+	<div v-if="!window.minimized" class="window-wrapper" :class="[windowClass, winStyleClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
+		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }" :style="windowStyle" ref="windowEl">
+			<!-- macOS 风格标题栏（左侧红黄绿按钮，标题居中） -->
+			<template v-if="isMacOS">
+				<div class="window-header macos-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
+					<div class="traffic-lights">
+						<div class="traffic-btn close-btn" @click.stop="$emit('close', window.id)">
+							<svg width="12" height="12" viewBox="0 0 12 12">
+								<circle cx="6" cy="6" r="6" fill="#ff5f57"/>
+								<path d="M3.8,3.8 L8.2,8.2 M8.2,3.8 L3.8,8.2" stroke="#8b0000" stroke-width="1" opacity="0" class="close-x" />
+							</svg>
+						</div>
+						<div class="traffic-btn min-btn" @click.stop="$emit('minimize', window.id)">
+							<svg width="12" height="12" viewBox="0 0 12 12">
+								<circle cx="6" cy="6" r="6" fill="#ffbd2e"/>
+								<line x1="3" y1="6" x2="9" y2="6" stroke="#995900" stroke-width="1" opacity="0" class="min-line" />
+							</svg>
+						</div>
+						<div class="traffic-btn max-btn" @click.stop="$emit('maximize', window.id)">
+							<svg width="12" height="12" viewBox="0 0 12 12">
+								<circle cx="6" cy="6" r="6" fill="#28c840"/>
+								<path d="M4,3 L4,9 M4,3 L3,3 L3,9 L9,9 L9,8 M4,3 L9,3 L9,9" stroke="#006600" stroke-width="1" opacity="0" class="max-path" />
+							</svg>
+						</div>
+					</div>
+					<div class="macos-title-center">
+						<sc-icon :name="window.icon || 'ms-grid_view'" :size="16" />
+						<span class="macos-title-text">{{ window.title }}</span>
+					</div>
+					<div class="title-spacer"></div>
+				</div>
+			</template>
 
-		<div class="window-content">
-			<component :is="getComponent(window.code, window.component)" v-bind="window.props || {}"
-				@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
-				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
-		</div>
+			<!-- WinXP 经典风格标题栏 -->
+			<template v-else-if="isWinXP">
+				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
+					<div class="winxp-title-left">
+						<sc-icon name="ms-grid_view" size="14" color="#ffffff" />
+					</div>
+					<span class="winxp-title-text">{{ window.title }}</span>
+					<div class="winxp-buttons">
+						<button class="winxp-btn min-btn" title="最小化" @click.stop="$emit('minimize', window.id)">
+							<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="#ffffff"/></svg>
+						</button>
+						<button class="winxp-btn max-btn" title="最大化" @click.stop="$emit('maximize', window.id)">
+							<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
+								<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+							</svg>
+							<svg width="9" height="9" viewBox="0 0 9 9" v-else>
+								<rect x="1" y="2.5" width="6.5" height="6" rx="0.5" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+								<rect x="0" y="0" width="6.5" height="6" rx="0.5" fill="#000080"/>
+							</svg>
+						</button>
+						<button class="winxp-btn close-btn" title="关闭" @click.stop="$emit('close', window.id)">
+							<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="#ffffff" stroke-width="1.2"/></svg>
+						</button>
+					</div>
+				</div>
+			</template>
 
-		<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle"
-			@mousedown.stop="startResize">
+			<!-- 通用 Windows 风格标题栏 (win7/win10/win11/default) -->
+			<template v-else>
+				<div class="window-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
+					<div class="window-title">
+						<sc-icon :name="window.icon || 'ms-grid_view'" :size="16" />
+						<span>{{ window.title }}</span>
+					</div>
+					<div class="window-controls">
+						<button class="control-btn minimize" @click.stop="$emit('minimize', window.id)">
+							<svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" /></svg>
+						</button>
+						<button v-if="window.resizable !== false && !isMobile" class="control-btn maximize" @click.stop="$emit('maximize', window.id)">
+							<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
+								<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
+								<rect x="1" y="3" width="8" height="8" fill="var(--win-bg, #ffffff)" stroke="currentColor" stroke-width="1.2" />
+							</svg>
+							<svg v-else width="12" height="12" viewBox="0 0 12 12">
+								<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.2" />
+							</svg>
+						</button>
+						<button class="control-btn close" @click.stop="$emit('close', window.id)">
+							<svg width="12" height="12" viewBox="0 0 12 12">
+								<line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" />
+								<line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.2" />
+							</svg>
+						</button>
+					</div>
+				</div>
+			</template>
+
+			<div class="window-content">
+				<component :is="getComponent(window.code, window.component)" v-bind="window.props || {}"
+					@set-wallpaper="onSetWallpaper" @profile-updated="onProfileUpdated"
+					@password-changed="onPasswordChanged" @theme-preview="onThemePreview"
+					@save-settings="onSaveSettings" />
+			</div>
+
+			<div v-if="!window.maximized && !isMobile && window.resizable !== false" class="resize-handle" @mousedown.stop="startResize"></div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { defineAsyncComponent, h } from 'vue';
-import scIcon from '@/components/scIcon/index.vue';
+	import { defineAsyncComponent, h, markRaw } from 'vue';
+	import scIcon from '@/components/scIcon/index.vue';
 
-const LoadingComponent = {
-	name: 'LoadingComponent',
-	render() {
-		return h('div', {
-			style: {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100%',
-				color: '#999',
-				fontSize: '14px',
-			}
-		}, this.$t ? this.$t('desktop.loading') : '加载中...');
-	}
-};
+	const LoadingComponent = {
+		name: 'LoadingComponent',
+		render() {
+			return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, '加载中...');
+		}
+	};
 
-const ErrorComponent = {
-	name: 'ErrorComponent',
-	render() {
-		return h('div', {
-			style: {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100%',
-				color: '#f56c6c',
-				fontSize: '14px',
-			}
-		}, this.$t ? this.$t('desktop.loadFailed') : '组件加载失败');
-	}
-};
-
-const componentCache = new Map();
-
-export default {
-	name: 'Window',
-	components: {
-		scIcon,
-	},
-	props: {
-		window: { type: Object, required: true },
-		theme: { type: Object, default: () => ({}) },
-	},
-	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed', 'theme-preview', 'save-settings'],
-	data() {
-		return {
-			isDragging: false,
-			isResizing: false,
-			dragStartX: 0,
-			dragStartY: 0,
-			resizeStartX: 0,
-			resizeStartY: 0,
-			resizeStartWidth: 0,
-			resizeStartHeight: 0,
-		};
-	},
-	computed: {
-		isMobile() {
-			return window.innerWidth < 768;
+	export default {
+		name: 'AppWindow',
+		components: { scIcon },
+		props: {
+			window: { type: Object, required: true },
+			theme: { type: Object, default: () => ({}) },
 		},
-		centeredPosition() {
-			if (this.isMobile || this.window.maximized) {
-				return { x: 0, y: 0 };
-			}
-			const windowWidth = this.window.width || 800;
-			const windowHeight = this.window.height || 600;
-			const screenWidth = window.innerWidth;
-			const screenHeight = window.innerHeight - 48;
+		emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed', 'theme-preview', 'save-settings'],
+		data() {
 			return {
-				x: Math.max(0, (screenWidth - windowWidth) / 2),
-				y: Math.max(0, (screenHeight - windowHeight) / 2),
+				dragData: { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 },
+				resizeData: { isResizing: false, startX: 0, startY: 0, width: 0, height: 0, left: 0, top: 0 },
+				componentCache: {},
+				isMobile: false,
 			};
 		},
-		windowStyle() {
-			const baseStyle = {
-				'--win-bg': this.theme.bg || '#f3f3f3',
-				'--win-header-bg': this.theme.headerBg || '#f3f3f3',
-				'--win-title-color': this.theme.titleColor || '#1a1a1a',
-				'--win-title-color-inactive': this.theme.titleColorInactive || '#666666',
-				'--win-border': this.theme.border || 'rgba(0, 0, 0, 0.1)',
-				'--win-radius': this.theme.borderRadius || '0px',
-				'--win-shadow': this.theme.shadow || '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
-				'--win-close-hover': this.theme.closeBtnHover || '#c42b1c',
-				'--win-min-hover': this.theme.minBtnHover || 'rgba(0, 0, 0, 0.1)',
-				'--win-max-hover': this.theme.maxBtnHover || 'rgba(0, 0, 0, 0.1)',
-				'--win-title-height': this.theme.titleHeight || '32px',
-				'--win-button-width': this.theme.buttonWidth || '46px',
-			};
-
-			if (this.isMobile) {
+		computed: {
+			bgColor() { return this.windowTheme.bg || '#ffffff'; },
+			headerBg() { return this.windowTheme.headerBg || '#f0f0f0'; },
+			titleColor() { return this.windowTitleColor; },
+			borderColor() { return this.windowTheme.border || '#ddd'; },
+			borderRadius() { return this.windowTheme.borderRadius || '0px'; },
+			shadow() { return this.windowTheme.shadow || '0 2px 8px rgba(0,0,0,0.15)'; },
+			closeBtnHover() { return this.windowTheme.closeBtnHover || '#c42b1c'; },
+			minBtnHover() { return this.windowTheme.minBtnHover || 'rgba(0, 0, 0, 0.1)'; },
+			maxBtnHover() { return this.windowTheme.maxBtnHover || 'rgba(0, 0, 0, 0.1)'; },
+			titleHeight() { return this.windowTheme.titleHeight || '32px'; },
+			buttonWidth() { return this.windowTheme.buttonWidth || '46px'; },
+			winStyle() { return this.windowTheme.style || 'modern'; },
+			isMacOS() { return this.winStyle === 'macos'; },
+			isWinXP() { return this.winStyle === 'xp'; },
+			isWin7() { return this.winStyle === 'win7'; },
+			windowTheme() { return this.theme; },
+			windowTitleColor() {
+				return this.window.focused
+					? (this.windowTheme.titleColor || '#000000')
+					: (this.windowTheme.titleColorInactive || '#808080');
+			},
+			wrapperStyle() {
+				if (this.window.maximized) return { left: '0px', top: '0px', width: '100%', height: '100%' };
 				return {
-					...baseStyle,
-					top: '0',
-					left: '0',
-					width: '100%',
-					height: '100%',
-					borderRadius: '0',
+					left: this.window.x + 'px', top: this.window.y + 'px',
+					width: this.window.width + 'px', height: this.window.height + 'px',
 				};
-			}
-
-			if (this.window.maximized) {
+			},
+			windowStyle() {
 				return {
-					...baseStyle,
-					top: '0',
-					left: '0',
-					width: '100%',
-					height: '100%',
+					'--win-bg': this.bgColor,
+					'--win-header-bg': this.headerBg,
+					'--win-title-color': this.titleColor,
+					'--win-title-color-inactive': this.windowTheme.titleColorInactive || '#808080',
+					'--win-border': this.borderColor,
+					'--win-border-radius': this.borderRadius,
+					'--win-shadow': this.shadow,
+					'--win-close-hover': this.closeBtnHover,
+					'--win-min-hover': this.minBtnHover,
+					'--win-max-hover': this.maxBtnHover,
+					'--win-title-height': this.titleHeight,
+					'--win-button-width': this.buttonWidth,
 				};
-			}
-
-			const x = this.window.centered ? this.centeredPosition.x : this.window.x;
-			const y = this.window.centered ? this.centeredPosition.y : this.window.y;
-
-			return {
-				...baseStyle,
-				top: `${y}px`,
-				left: `${x}px`,
-				width: `${this.window.width}px`,
-				height: `${this.window.height}px`,
-			};
+			},
+			headerBarStyle() {
+				return {
+					height: this.titleHeight,
+					lineHeight: this.titleHeight,
+					background: this.headerBg,
+				};
+			},
+			windowClass() {
+				const classes = [];
+				if (this.window.focused) classes.push('focused');
+				if (this.window.maximized) classes.push('maximized');
+				if (this.window.minimized) classes.push('minimized');
+				return classes;
+			},
+			winStyleClass() {
+				return 'style-' + this.winStyle;
+			},
 		},
-	},
-	methods: {
-		getComponent(code, component) {
-			if (!component) {
-				return null;
-			}
-
-			if (componentCache.has(code)) {
-				return componentCache.get(code);
-			}
-
-			const loader = () => import(`./apps/${component}.vue`);
-
-			const asyncComponent = defineAsyncComponent({
-				loader,
-				loadingComponent: LoadingComponent,
-				errorComponent: ErrorComponent,
-				delay: 200,
-				timeout: 10000,
-			});
-
-			componentCache.set(code, asyncComponent);
-			return asyncComponent;
+		mounted() {
+			this.checkMobile();
+			window.addEventListener('resize', this.checkMobile);
+			document.addEventListener('mousemove', this.onDragging);
+			document.addEventListener('mouseup', this.stopDrag);
+			document.addEventListener('mousemove', this.onResizing);
+			document.addEventListener('mouseup', this.stopResize);
+			document.addEventListener('touchmove', this.onDragging, { passive: false });
+			document.addEventListener('touchend', this.stopDrag);
 		},
-		onSetWallpaper(url) {
-			this.$emit('set-wallpaper', url);
-		},
-		onProfileUpdated(profile) {
-			this.$emit('profile-updated', profile);
-		},
-		onPasswordChanged() {
-			this.$emit('password-changed');
-		},
-		onThemePreview(config) {
-			this.$emit('theme-preview', config);
-		},
-		onSaveSettings(config) {
-			this.$emit('save-settings', config);
-		},
-		handleFocus() {
-			this.$emit('focus', this.window.id);
-		},
-		startDrag(e) {
-			if (this.window.maximized || this.isMobile) return;
-			if (e.target.closest('.window-controls')) return;
-
-			if (this.window.centered) {
-				this.window.centered = false;
-				this.window.x = this.centeredPosition.x;
-				this.window.y = this.centeredPosition.y;
-			}
-
-			this.isDragging = true;
-			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-			this.dragStartX = clientX - this.window.x;
-			this.dragStartY = clientY - this.window.y;
-
-			if (e.touches) {
-				document.addEventListener('touchmove', this.handleDrag, { passive: false });
-				document.addEventListener('touchend', this.stopDrag);
-			} else {
-				document.addEventListener('mousemove', this.handleDrag);
-				document.addEventListener('mouseup', this.stopDrag);
-			}
-		},
-		handleDrag(e) {
-			if (!this.isDragging) return;
-			e.preventDefault();
-
-			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-			this.window.x = clientX - this.dragStartX;
-			this.window.y = clientY - this.dragStartY;
-
-			const maxX = window.innerWidth - this.window.width;
-			const maxY = window.innerHeight - this.window.height - 48;
-
-			this.window.x = Math.max(0, Math.min(this.window.x, maxX));
-			this.window.y = Math.max(0, Math.min(this.window.y, maxY));
-		},
-		stopDrag() {
-			this.isDragging = false;
-			document.removeEventListener('mousemove', this.handleDrag);
+		beforeUnmount() {
+			window.removeEventListener('resize', this.checkMobile);
+			document.removeEventListener('mousemove', this.onDragging);
 			document.removeEventListener('mouseup', this.stopDrag);
-			document.removeEventListener('touchmove', this.handleDrag);
+			document.removeEventListener('mousemove', this.onResizing);
+			document.removeEventListener('mouseup', this.stopResize);
+			document.removeEventListener('touchmove', this.onDragging);
 			document.removeEventListener('touchend', this.stopDrag);
 		},
-		startResize(e) {
-			if (this.window.maximized || this.isMobile) return;
-			if (this.window.resizable === false) return;
-
-			this.isResizing = true;
-			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-			this.resizeStartX = clientX;
-			this.resizeStartY = clientY;
-			this.resizeStartWidth = this.window.width;
-			this.resizeStartHeight = this.window.height;
-
-			if (e.touches) {
-				document.addEventListener('touchmove', this.handleResize, { passive: false });
-				document.addEventListener('touchend', this.stopResize);
-			} else {
-				document.addEventListener('mousemove', this.handleResize);
-				document.addEventListener('mouseup', this.stopResize);
+		methods: {
+			checkMobile() { this.isMobile = window.innerWidth <= 768; },
+			handleFocus() { this.$emit('focus', this.window.id); },
+			handleContextMenu() {},
+			onSetWallpaper(url) { this.$emit('set-wallpaper', url); },
+			onProfileUpdated() { this.$emit('profile-updated'); },
+			onPasswordChanged() { this.$emit('password-changed'); },
+			onThemePreview(theme) { this.$emit('theme-preview', theme); },
+			onSaveSettings(config) { this.$emit('save-settings', config); },
+		getComponent(code, component) {
+			if (!this.componentCache[code]) {
+				this.componentCache[code] = markRaw(this.resolveComponent(code, component));
 			}
+			return this.componentCache[code];
 		},
-		handleResize(e) {
-			if (!this.isResizing) return;
-			e.preventDefault();
-
-			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-			const deltaX = clientX - this.resizeStartX;
-			const deltaY = clientY - this.resizeStartY;
-
-			this.window.width = Math.max(300, this.resizeStartWidth + deltaX);
-			this.window.height = Math.max(300, this.resizeStartHeight + deltaY);
+			resolveComponent(code, component) {
+				const modules = import.meta.glob('@/views/**/*.vue');
+				const paths = [`@/views/${component}.vue`, `@/views/${component}/index.vue`];
+				for (const path of paths) {
+					if (modules[path]) return defineAsyncComponent(modules[path]);
+				}
+				const moduleKeys = Object.keys(modules);
+				for (const key of moduleKeys) {
+					if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
+						return defineAsyncComponent(modules[key]);
+					}
+				}
+				return LoadingComponent;
+			},
+			startDrag(e) {
+				if (this.window.maximized || this.isMobile) return;
+				const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+				const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+				this.dragData = { isDragging: true, startX: clientX, startY: clientY, initialX: this.window.x, initialY: this.window.y };
+			},
+			onDragging(e) {
+				if (!this.dragData.isDragging) return;
+				const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+				const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+				const dx = clientX - this.dragData.startX;
+				const dy = clientY - this.dragData.startY;
+				this.window.x = Math.max(-this.window.width + 100, Math.min(this.dragData.initialX + dx, window.innerWidth - 100));
+				this.window.y = Math.max(0, Math.min(this.dragData.initialY + dy, window.innerHeight - 40));
+			},
+			stopDrag() { this.dragData.isDragging = false; },
+			startResize(e) {
+				this.resizeData = {
+					isResizing: true, startX: e.clientX, startY: e.clientY,
+					width: this.window.width, height: this.window.height,
+					left: this.window.x, top: this.window.y,
+				};
+			},
+			onResizing(e) {
+				if (!this.resizeData.isResizing) return;
+				const dx = e.clientX - this.resizeData.startX;
+				const dy = e.clientY - this.resizeData.startY;
+				const minW = 300, minH = 200;
+				this.window.width = Math.max(minW, this.resizeData.width + dx);
+				this.window.height = Math.max(minH, this.resizeData.height + dy);
+			},
+			stopResize() { this.resizeData.isResizing = false; },
 		},
-		stopResize() {
-			this.isResizing = false;
-			document.removeEventListener('mousemove', this.handleResize);
-			document.removeEventListener('mouseup', this.stopResize);
-			document.removeEventListener('touchmove', this.handleResize);
-			document.removeEventListener('touchend', this.stopResize);
-		},
-		handleContextMenu(e) {
-			e.preventDefault();
-		},
-	},
-};
+	};
 </script>
 
 <style scoped>
-.window {
-	--win-bg: #f3f3f3;
-	--win-header-bg: #f3f3f3;
-	--win-title-color: #1a1a1a;
-	--win-title-color-inactive: #666666;
-	--win-border: rgba(0, 0, 0, 0.1);
-	--win-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
-	--win-shadow-focused: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.12);
-	--win-title-height: 32px;
-	--win-radius: 0px;
-	--win-close-hover: #c42b1c;
-	--win-min-hover: rgba(0, 0, 0, 0.1);
-	--win-max-hover: rgba(0, 0, 0, 0.1);
-	--win-button-width: 46px;
-
-	position: absolute;
-	background-color: var(--win-bg);
-	border-radius: var(--win-radius);
-	border: 1px solid var(--win-border);
-	box-shadow: var(--win-shadow);
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-	transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.3s ease;
-}
-
-.window.focused {
-	box-shadow: var(--win-shadow-focused);
-	border-color: rgba(0, 0, 0, 0.08);
-	z-index: 100;
-}
-
-.window:not(.focused) {
-	z-index: 1;
-}
-
-.window:not(.focused) .window-header {
-	background-color: var(--win-header-bg);
-	opacity: 0.85;
-}
-
-.window.maximized {
-	border-radius: 0;
-	border: none;
-}
-
-.window-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: var(--win-title-height);
-	padding: 0 4px 0 12px;
-	background-color: var(--win-header-bg);
-	cursor: move;
-	user-select: none;
-	-webkit-app-region: drag;
-	transition: background-color 0.3s ease;
-}
-
-.window-title {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 12px;
-	font-weight: 400;
-	color: var(--win-title-color);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-.window:not(.focused) .window-title {
-	color: var(--win-title-color-inactive);
-}
-
-.window-controls {
-	display: flex;
-	height: 100%;
-	-webkit-app-region: no-drag;
-}
-
-.control-btn {
-	width: var(--win-button-width);
-	height: 100%;
-	border: none;
-	background: transparent;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--win-title-color);
-	transition: background-color 0.1s ease;
-	position: relative;
-}
-
-.control-btn:hover {
-	background-color: var(--win-min-hover);
-}
-
-.control-btn:active {
-	background-color: rgba(0, 0, 0, 0.08);
-}
-
-.control-btn.close:hover {
-	background-color: var(--win-close-hover);
-	color: #fff;
-}
-
-.control-btn.close:active {
-	background-color: #a0261a;
-	color: #fff;
-}
-
-.control-btn.minimize:hover {
-	background-color: var(--win-min-hover);
-}
-
-.control-btn.maximize:hover {
-	background-color: var(--win-max-hover);
-}
-
-.window-content {
-	flex: 1;
-	overflow: auto;
-	background-color: var(--win-bg);
-}
-
-.resize-handle {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 16px;
-	height: 16px;
-	cursor: nwse-resize;
-}
-
-.resize-handle::after {
-	content: '';
-	position: absolute;
-	bottom: 4px;
-	right: 4px;
-	width: 8px;
-	height: 8px;
-	background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
-	border-radius: 0 0 6px 0;
-}
-
-.window.is-mobile {
-	--win-title-height: 44px;
-}
-
-.window.is-mobile .window-header {
-	cursor: default;
-}
-
-.window.is-mobile .window-title {
-	font-size: 14px;
-}
-
-.window.is-mobile .control-btn {
-	width: 48px;
-}
-
-@media screen and (max-width: 768px) {
-	.window {
-		--win-title-height: 44px;
+	.window-wrapper {
+		position: absolute;
+		pointer-events: auto;
 	}
 
+	.window {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		background: var(--win-bg);
+		border: 1px solid var(--win-border);
+		border-radius: var(--win-border-radius, 0px);
+		box-shadow: var(--win-shadow);
+		overflow: hidden;
+	}
+
+	.style-win11 .window {
+		border-radius: 8px;
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+	}
+
+	.window.maximized {
+		border-radius: 0;
+		border: none;
+	}
+
+	/* === 通用标题栏 === */
 	.window-header {
-		padding: 0 4px 0 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: var(--win-title-height);
+		padding: 0 4px 0 12px;
+		background: var(--win-header-bg);
+		cursor: move;
+		user-select: none;
+		-webkit-app-region: drag;
+		flex-shrink: 0;
+		transition: background-color 0.3s ease;
+	}
+
+	.window:not(.focused) .window-header {
+		opacity: 0.8;
 	}
 
 	.window-title {
-		font-size: 14px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--win-title-color);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.window:not(.focused) .window-title {
+		color: var(--win-title-color-inactive);
+	}
+
+	.window-controls {
+		display: flex;
+		height: 100%;
+		-webkit-app-region: no-drag;
 	}
 
 	.control-btn {
-		width: 48px;
+		width: var(--win-button-width);
+		height: 100%;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--win-title-color);
+		transition: background-color 0.1s ease;
 	}
-}
+
+	.control-btn:hover { background-color: var(--win-min-hover); }
+	.control-btn.close:hover { background-color: var(--win-close-hover); color: #fff; }
+	.control-btn.close:active { background-color: #a0261a; color: #fff; }
+
+	/* === Win7 玻璃效果 === */
+	.style-win7 .window-header {
+		backdrop-filter: blur(10px);
+	}
+	.style-win7 .window {
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 0 2px rgba(0, 0, 0, 0.1);
+	}
+
+	/* === macOS 风格 === */
+	.style-macos .window {
+		border-radius: 10px;
+		box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+		border-color: rgba(0, 0, 0, 0.1);
+	}
+
+	.macos-header {
+		justify-content: flex-start;
+		gap: 0;
+	}
+
+	.traffic-lights {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding-left: 12px;
+		flex-shrink: 0;
+		-webkit-app-region: no-drag;
+	}
+
+	.traffic-btn {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.traffic-btn:hover .close-x,
+	.traffic-btn:hover .min-line,
+	.traffic-btn:hover .max-path { opacity: 1; }
+
+	.macos-title-center {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12px;
+		color: var(--win-title-color);
+		flex: 1;
+		justify-content: center;
+	}
+
+	.macos-title-text {
+		font-weight: 500;
+		font-size: 13px;
+	}
+
+	.title-spacer {
+		width: 60px;
+		flex-shrink: 0;
+	}
+
+	/* === WinXP 经典风格 === */
+	.style-xp .window {
+		border-radius: 0;
+		border: 2px solid #0054E3;
+		border-top: none;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+	}
+
+	.winxp-header {
+		background: linear-gradient(180deg, #0058EE 0%, #3A8CF2 3%, #2A7CE4 5%, #0054E3 50%, #0047CC 95%, #003BB0 100%) !important;
+		padding: 0 4px 0 8px !important;
+		justify-content: space-between !important;
+		border-radius: 6px 6px 0 0;
+		margin: -2px -2px 0 -2px;
+		height: 28px !important;
+		line-height: 28px !important;
+	}
+
+	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
+
+	.winxp-title-text {
+		color: #ffffff !important;
+		font-size: 12px;
+		font-weight: bold;
+		flex: 1;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+	}
+
+	.winxp-buttons {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		gap: 2px;
+		-webkit-app-region: no-drag;
+	}
+
+	.winxp-btn {
+		width: 21px;
+		height: 21px;
+		border: 1px solid #ffffff;
+		border-radius: 3px;
+		background: linear-gradient(180deg, #3C8CFF 0%, #1E6FE0 50%, #0054E3 100%);
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	}
+	.winxp-btn:hover { background: linear-gradient(180deg, #5CA0FF 0%, #3C8CFF 50%, #1E6FE0 100%); }
+	.winxp-btn:active { background: linear-gradient(180deg, #1E6FE0 0%, #0054E3 50%, #003BB0 100%); }
+	.winxp-btn.close-btn {
+		background: linear-gradient(180deg, #FF6B4A 0%, #E0433A 50%, #C1352E 100%) !important;
+		border-color: #A02010;
+		margin-left: 2px;
+	}
+	.winxp-btn.close-btn:hover { background: linear-gradient(180deg, #FF8B6A 0%, #F0534A 50%, #D0453E 100%) !important; }
+
+	/* === 窗口内容 === */
+	.window-content {
+		flex: 1;
+		overflow: auto;
+		background-color: var(--win-bg);
+	}
+
+	/* === 调整大小 === */
+	.resize-handle {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 16px;
+		height: 16px;
+		cursor: nwse-resize;
+	}
+	.resize-handle::after {
+		content: '';
+		position: absolute;
+		bottom: 4px;
+		right: 4px;
+		width: 8px;
+		height: 8px;
+		background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
+		border-radius: 0 0 6px 0;
+	}
+
+	/* === 移动端适配 === */
+	.window.is-mobile { --win-title-height: 44px; }
+	.window.is-mobile .window-header { cursor: default; }
+	.window.is-mobile .window-title { font-size: 14px; }
+	.window.is-mobile .control-btn { width: 48px; }
+
+	@media screen and (max-width: 768px) {
+		.window { --win-title-height: 44px; }
+		.window-header { padding: 0 4px 0 16px; }
+		.window-title { font-size: 14px; }
+		.control-btn { width: 48px; }
+	}
 </style>
