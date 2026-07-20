@@ -943,7 +943,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'win10'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win8/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win8/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win7',
@@ -1334,9 +1334,9 @@ export default {
 					name: 'macOSTahoe',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosyosemite/background.svg',
-					iconsPath: '/images/macos/',
-					startLogo: '/images/macosyosemite/logo.svg',
+					backgroundImage: '/images/macostahoe/background.jpg',
+					iconsPath: '/images/macostahoe/',
+					startLogo: '/images/macostahoe/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1379,15 +1379,15 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSequoia',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macoslion/background.svg',
-					iconsPath: '/images/macos/',
-					startLogo: '/images/macoslion/logo.svg',
+					backgroundImage: '/images/macossequoia/background.jpg',
+					iconsPath: '/images/macossequoia/',
+					startLogo: '/images/macossequoia/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1430,13 +1430,13 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macoslion/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macoslion/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSonoma',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macossonoma/background.svg',
+					backgroundImage: '/images/macossonoma/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macossonoma/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
@@ -1482,15 +1482,15 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macossonoma/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macossonoma/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSVentura',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosleopard/background.svg',
-					iconsPath: '/images/macos/',
-					startLogo: '/images/macosleopard/logo.svg',
+					backgroundImage: '/images/macosventura/background.jpg',
+					iconsPath: '/images/macosventura/',
+					startLogo: '/images/macosventura/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.82)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1533,15 +1533,15 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosx/background.svg',
-					iconsPath: '/images/macos/',
-					startLogo: '/images/macosx/logo.svg',
+					backgroundImage: '/images/macosmonterey/background.jpg',
+					iconsPath: '/images/macosmonterey/',
+					startLogo: '/images/macosmonterey/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1584,15 +1584,15 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosx/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosx/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSBigSur',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macos9/background.svg',
-					iconsPath: '/images/macos/',
-					startLogo: '/images/macos9/logo.svg',
+					backgroundImage: '/images/macosbigsur/background.jpg',
+					iconsPath: '/images/macosbigsur/',
+					startLogo: '/images/macosbigsur/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
 					taskbarTextColor: '#000000',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1692,7 +1692,7 @@ export default {
 					name: 'macOSX',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosx/background.svg',
+					backgroundImage: '/images/macosx/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macosx/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.65)',
@@ -1716,13 +1716,13 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosx/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosx/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSLeopard',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosleopard/background.svg',
+					backgroundImage: '/images/macosleopard/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macosleopard/logo.svg',
 					taskbarColor: 'rgba(230, 230, 235, 0.7)',
@@ -1746,13 +1746,13 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSLion',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macoslion/background.svg',
+					backgroundImage: '/images/macoslion/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macoslion/logo.svg',
 					taskbarColor: 'rgba(240, 240, 242, 0.75)',
@@ -1776,13 +1776,13 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macoslion/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macoslion/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSYosemite',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macosyosemite/background.svg',
+					backgroundImage: '/images/macosyosemite/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macosyosemite/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
@@ -1806,13 +1806,13 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOS9',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macos9/background.svg',
+					backgroundImage: '/images/macos9/background.jpg',
 					iconsPath: '',
 					startLogo: '/images/macos9/logo.svg',
 					taskbarColor: '#FFFFFF',
@@ -1834,7 +1834,7 @@ export default {
 						buttonWidth: '16px',
 						style: 'mac9'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos9/background.svg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macos9/background.jpg)', backgroundSize: 'cover' }
 				},
 			]
 		};
