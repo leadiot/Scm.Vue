@@ -21,7 +21,7 @@
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
-		<!-- 任务栏（非 macOS 主题） -->
+		<!-- 任务栏（�?macOS 主题�?-->
 		<div v-if="!isMacTheme" class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
 				<template v-if="showFlagStart">
@@ -49,7 +49,7 @@
 			</div>
 		</div>
 
-		<!-- macOS 菜单栏 -->
+		<!-- macOS 菜单�?-->
 		<div v-if="isMacTheme" class="mac-menubar">
 			<div class="mac-menubar-left">
 				<div class="mac-menu-apple" @click="toggleStartMenu">
@@ -93,7 +93,7 @@
 			</div>
 		</div>
 
-		<!-- macOS Launchpad 启动台 -->
+		<!-- macOS Launchpad 启动�?-->
 		<div v-if="showLaunchpad && isMacTheme" class="mac-launchpad" @click.self="showLaunchpad = false">
 			<div class="launchpad-search" @click.stop>
 				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
@@ -109,7 +109,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows XP 双栏复刻） -->
+		<!-- 开始菜单（Windows XP 双栏复刻�?-->
 		<div v-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
 			<div class="xp-menu-header" @click="openProfile">
 				<div class="xp-menu-avatar">
@@ -153,7 +153,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 95/98/2000 经典复刻） -->
+		<!-- 开始菜单（Windows 95/98/2000 经典复刻�?-->
 		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
 			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
 			<div class="classic-menu-body">
@@ -181,7 +181,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻） -->
+		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻�?-->
 		<div v-else-if="showStartMenu && isAeroTheme" class="start-menu aero-start-menu">
 			<div class="aero-menu-body">
 				<div class="aero-menu-left">
@@ -213,7 +213,7 @@
 			</div>
 		</div>
 
-		<!-- 开始屏幕（Windows 8 全屏磁贴复刻） -->
+		<!-- 开始屏幕（Windows 8 全屏磁贴复刻�?-->
 		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen" @click.self="toggleStartMenu">
 			<div class="win8-screen-header">
 				<span class="win8-screen-title">{{ $t('desktop.start') }}</span>
@@ -231,7 +231,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 10 磁贴复刻） -->
+		<!-- 开始菜单（Windows 10 磁贴复刻�?-->
 		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu">
 			<div class="win10-menu-rail">
 				<div class="win10-rail-item" :title="user.userName || 'User'" @click="openProfile">
@@ -267,7 +267,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 11 居中网格复刻） -->
+		<!-- 开始菜单（Windows 11 居中网格复刻�?-->
 		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu">
 			<div class="win11-menu-search">
 				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
@@ -303,7 +303,7 @@
 			<div class="apple-menu-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
 		</div>
 
-		<!-- 开始菜单（通用） -->
+		<!-- 开始菜单（通用�?-->
 		<div v-else-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
 			<div class="start-menu-header" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="32" />
@@ -332,7 +332,7 @@
 			</div>
 		</div>
 
-		<!-- 子菜单 -->
+		<!-- 子菜�?-->
 		<div v-if="activeSubmenu" class="submenu"
 			:style="{ ...submenuStyle, backgroundColor: menuColor, color: menuTextColor }" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
@@ -418,7 +418,7 @@ export default {
 			user: {},
 			home: '/',
 			deskApps: [],
-			// 图标名称到文件名映射（Material Symbols → 主题图标文件名）
+			// 图标名称到文件名映射（Material Symbols �?主题图标文件名）
 			iconMap: {
 				'ms-computer': 'computer.png',
 				'ms-desktop_windows': 'computer.png',
@@ -548,16 +548,16 @@ export default {
 				}
 			},
 			textApp: {
-				id: '14',
-				code: 'app-text',
-				name: '记事本',
-				component: 'Textpad',
-				meta: {
-					icon: 'ms-article',
-					width: 800,
-					height: 600
-				}
-			},
+					id: '14',
+					code: 'app-text',
+					name: '记事本',
+					component: 'Textpad',
+					meta: {
+						icon: 'ms-article',
+						width: 800,
+						height: 600
+					}
+				},
 			themes: [
 				{
 					name: 'default',
@@ -809,7 +809,7 @@ export default {
 					name: 'win11',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win11/background.png',
+					backgroundImage: '/images/windows/win11/background.jpg',
 					iconsPath: '/images/windows/win11/',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
@@ -841,13 +841,13 @@ export default {
 						buttonWidth: '46px',
 						style: 'win11'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win11/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win11/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win10',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win10/background.png',
+					backgroundImage: '/images/windows/win10/background.jpg',
 					iconsPath: '/images/windows/win10/',
 					taskbarColor: 'rgba(24, 24, 24, 0.98)',
 					taskbarTextColor: '#ffffff',
@@ -879,7 +879,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'win10'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win10/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win10/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win8',
@@ -923,7 +923,7 @@ export default {
 					name: 'win7',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win7/background.png',
+					backgroundImage: '/images/windows/win7/background.jpg',
 					iconsPath: '/images/windows/win7/',
 					taskbarColor: '#1A1A1A',
 					taskbarTextColor: '#ffffff',
@@ -955,13 +955,13 @@ export default {
 						buttonWidth: '28px',
 						style: 'win7'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win7/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win7/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winVista',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/winvista/background.png',
+					backgroundImage: '/images/windows/winvista/background.jpg',
 					iconsPath: '/images/windows/winvista/',
 					taskbarColor: 'rgba(0, 0, 0, 0.7)',
 					taskbarTextColor: '#ffffff',
@@ -993,13 +993,13 @@ export default {
 						buttonWidth: '30px',
 						style: 'win7'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/winvista/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/winvista/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winXP',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/winxp/background.png',
+					backgroundImage: '/images/windows/winxp/background.jpg',
 					iconsPath: '/images/windows/winxp/',
 					taskbarColor: '#245edb',
 					taskbarTextColor: '#ffffff',
@@ -1043,7 +1043,7 @@ export default {
 						xpCloseHoverStart: '#ff8b6a',
 						xpCloseHoverEnd: '#d0453e'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win2000',
@@ -1299,10 +1299,8 @@ export default {
 				{
 					name: 'macOSTahoe',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#0c4a6e',
-					gradientColor2: '#0ea5e9',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosyosemite/background.svg',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
@@ -1346,15 +1344,13 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #0c4a6e, #0ea5e9)' }
+					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSequoia',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#166534',
-					gradientColor2: '#22c55e',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/macoslion/background.svg',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -1398,7 +1394,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #166534, #22c55e)' }
+					previewStyle: { backgroundImage: 'url(/images/macoslion/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSonoma',
@@ -1454,10 +1450,8 @@ export default {
 				{
 					name: 'macOSVentura',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#FB7185',
-					gradientColor2: '#F43F5E',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosleopard/background.svg',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.82)',
 					taskbarTextColor: '#1a1a1a',
@@ -1501,15 +1495,13 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #FB7185, #F43F5E)' }
+					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#00D4AA',
-					gradientColor2: '#00A8FF',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosx/background.svg',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
@@ -1553,15 +1545,13 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #00D4AA, #00A8FF)' }
+					previewStyle: { backgroundImage: 'url(/images/macosx/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSBigSur',
 					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#007AFF',
-					gradientColor2: '#5AC8FA',
-					gradientDirection: 'to bottom right',
+					backgroundType: 'image',
+					backgroundImage: '/images/macos9/background.svg',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
 					taskbarTextColor: '#000000',
@@ -1853,15 +1843,15 @@ export default {
 		isMacTheme() {
 			return this.currentTheme.startsWith('macOS');
 		},
-		// macOS 主题是否显示 Dock（Mac OS 9 时代无 Dock）
+		// macOS 主题是否显示 Dock（Mac OS 9 时代�?Dock�?
 		hasDock() {
 			return this.isMacTheme && this.currentTheme !== 'macOS9';
 		},
-		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
+		// 开始按钮显�?Windows 旗帜（XP/经典/Aero�?
 		showFlagStart() {
 			return this.isXpTheme || this.isClassicTheme || this.isAeroTheme;
 		},
-		// 操作系统家族根类（供 grouped CSS 覆盖）
+		// 操作系统家族根类（供 grouped CSS 覆盖�?
 		osFamilyClass() {
 			if (this.isMacTheme) return 'os-macos';
 			if (this.isClassicTheme) return 'os-classic';
@@ -1869,7 +1859,7 @@ export default {
 			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
 			return '';
 		},
-		// 经典开始菜单侧栏标题
+		// 经典开始菜单侧栏标�?
 		classicMenuTitle() {
 			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000' };
 			return titles[this.currentTheme] || 'Windows';
@@ -1896,7 +1886,7 @@ export default {
 		isWin10LikeTheme() {
 			return ['win10', 'winDark'].includes(this.currentTheme);
 		},
-		// 打平菜单树（叶子应用）
+		// 打平菜单树（叶子应用�?
 		flatMenuApps() {
 			const leaves = [];
 			const walk = (items) => {
@@ -1915,7 +1905,7 @@ export default {
 			const match = (item) => (item.name || '').toLowerCase().includes(kw) || (item.children || []).some(match);
 			return this.menuApps.filter(match);
 		},
-		// 开始菜单搜索过滤（打平叶子）
+		// 开始菜单搜索过滤（打平叶子�?
 		filteredFlatApps() {
 			const kw = (this.menuSearch || '').toLowerCase();
 			if (!kw) return this.flatMenuApps;
@@ -1925,7 +1915,7 @@ export default {
 		tileApps() {
 			return this.flatMenuApps.slice(0, 12);
 		},
-		// XP 开始菜单右栏快捷链接
+		// XP 开始菜单右栏快捷链�?
 		xpQuickLinks() {
 			return [
 				{ key: 'computer', icon: 'ms-computer', name: this.$t('desktop.myComputer') },
@@ -2004,7 +1994,7 @@ export default {
 		refreshDesktop() {
 			this.hideContextMenu();
 			this.listApp();
-			//this.$message.success('桌面已刷新');
+			//this.$message.success('桌面已刷�?);
 		},
 		async listApp() {
 			this.menuApps = [];
@@ -2199,7 +2189,7 @@ export default {
 				this.menuSearch = '';
 			}
 		},
-		// macOS Launchpad 启动台
+		// macOS Launchpad 启动�?
 		toggleLaunchpad() {
 			this.showStartMenu = false;
 			this.showLaunchpad = !this.showLaunchpad;
@@ -2232,7 +2222,7 @@ export default {
 			this.hideContextMenu();
 			this.openApp(this.profileApp);
 		},
-		// XP 开始菜单右栏快捷链接
+		// XP 开始菜单右栏快捷链�?
 		openQuickLink(link) {
 			if (link.key === 'computer') {
 				this.openApp({
@@ -2272,7 +2262,7 @@ export default {
 		dockItemTitle(item) {
 			return item.app ? item.app.name : item.window.title;
 		},
-		// macOS Dock 点击：运行中则切换聚焦/最小化，否则打开应用
+		// macOS Dock 点击：运行中则切换聚�?最小化，否则打开应用
 		onDockClick(item) {
 			if (item.window) {
 				this.toggleWindow(item.window.id);
@@ -2285,7 +2275,7 @@ export default {
 				this.openApp(item.app);
 			}
 		},
-		// Win8/10 磁贴颜色（按应用编码散列到 Metro 调色板）
+		// Win8/10 磁贴颜色（按应用编码散列�?Metro 调色板）
 		tileColor(app) {
 			const palette = ['#0078D7', '#107C10', '#5C2D91', '#D83B01', '#038387', '#CA5010', '#986F0B', '#004E8C'];
 			const code = app.code || app.name || 'app';
@@ -2447,9 +2437,9 @@ export default {
 			}
 		},
 		/**
-		 * 获取主题图标的 URL
+		 * 获取主题图标�?URL
 		 * @param {string} iconName - Material Symbols 图标名称
-		 * @returns {string|null} 主题特定的图标 URL，如果没有则返回 null
+		 * @returns {string|null} 主题特定的图�?URL，如果没有则返回 null
 		 */
 		getThemeIcon(iconName) {
 			if (!this.iconsPath) return null;
@@ -2457,7 +2447,7 @@ export default {
 			return fileName ? this.iconsPath + fileName : null;
 		},
 		/**
-		 * 获取桌面图标的图片样式
+		 * 获取桌面图标的图片样�?
 		 */
 		iconImageStyle(app) {
 			const style = { filter: this.iconShadow };
@@ -2476,7 +2466,7 @@ export default {
 					this.$router.replace({ path: "/login" });
 				})
 				.catch(() => {
-					// 取消退出
+					// 取消退�?
 				});
 		},
 		/**
@@ -2851,7 +2841,7 @@ export default {
 	font-family: Tahoma, 'Microsoft YaHei', 'Segoe UI', sans-serif;
 }
 
-/* --- 任务栏 --- */
+/* --- 任务�?--- */
 .theme-winXP .taskbar {
 	padding: 0;
 	background: linear-gradient(180deg, #245EDB 0%, #3F8CF3 9%, #245EDB 18%, #245EDB 92%, #1941A5 100%) !important;
@@ -2964,7 +2954,7 @@ export default {
 	background-color: #316AC5;
 }
 
-/* --- 右键菜单 / 子菜单 --- */
+/* --- 右键菜单 / 子菜�?--- */
 .theme-winXP .context-menu,
 .theme-winXP .submenu {
 	background-color: #FFFFFF !important;
@@ -2993,7 +2983,7 @@ export default {
 	margin: 2px 4px;
 }
 
-/* --- XP 开始菜单 --- */
+/* --- XP 开始菜�?--- */
 .xp-start-menu {
 	left: 0;
 	bottom: var(--taskbar-height);
@@ -3292,7 +3282,7 @@ export default {
 	margin: 2px;
 }
 
-/* 经典开始菜单 */
+/* 经典开始菜�?*/
 .classic-start-menu {
 	left: 2px;
 	bottom: var(--taskbar-height);
@@ -3538,7 +3528,7 @@ export default {
 	border-radius: 0 !important;
 }
 
-/* ================= Windows 11 居中任务栏 ================= */
+/* ================= Windows 11 居中任务�?================= */
 .theme-win11 {
 	--taskbar-height: 48px;
 }
@@ -3584,7 +3574,7 @@ export default {
 	right: 12px;
 }
 
-/* ================= macOS 主题复刻（菜单栏 + Dock） ================= */
+/* ================= macOS 主题复刻（菜单栏 + Dock�?================= */
 .os-macos {
 	font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', 'Microsoft YaHei', sans-serif;
 }
@@ -3722,8 +3712,8 @@ export default {
 	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
 }
 
-/* --- Mac 各时代主题微调 --- */
-/* Mac OS 9：白金外观（无 Dock，白底菜单栏） */
+/* --- Mac 各时代主题微�?--- */
+/* Mac OS 9：白金外观（�?Dock，白底菜单栏�?*/
 .theme-macOS9 .mac-menubar {
 	background: #FFFFFF;
 	backdrop-filter: none;
@@ -3750,7 +3740,7 @@ export default {
 	color: #FFFFFF;
 }
 
-/* Mac OS X Aqua：条纹菜单栏 + 半透明白 Dock */
+/* Mac OS X Aqua：条纹菜单栏 + 半透明�?Dock */
 .theme-macOSX .mac-menubar {
 	background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0px, rgba(255, 255, 255, 0.72) 2px, rgba(228, 228, 228, 0.72) 2px, rgba(228, 228, 228, 0.72) 3px);
 }
@@ -3760,7 +3750,7 @@ export default {
 	border-radius: 12px;
 }
 
-/* Leopard：立体玻璃 Dock */
+/* Leopard：立体玻�?Dock */
 .theme-macOSLeopard .mac-dock {
 	bottom: 0;
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(190, 190, 198, 0.6) 45%, rgba(110, 110, 125, 0.6) 100%);
@@ -3770,7 +3760,7 @@ export default {
 	box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Lion：哑光 Dock */
+/* Lion：哑�?Dock */
 .theme-macOSLion .mac-dock {
 	background: rgba(235, 235, 240, 0.65);
 	border-radius: 12px;
@@ -3818,7 +3808,7 @@ export default {
 	background: rgba(255, 255, 255, 0.15);
 }
 
-/* --- macOS Dock 分隔线 --- */
+/* --- macOS Dock 分隔�?--- */
 .mac-dock-separator {
 	width: 1px;
 	align-self: stretch;
@@ -3830,7 +3820,7 @@ export default {
 	background: rgba(255, 255, 255, 0.2);
 }
 
-/* --- macOS Launchpad 启动台 --- */
+/* --- macOS Launchpad 启动�?--- */
 .mac-launchpad {
 	position: absolute;
 	inset: 0;
@@ -3908,7 +3898,7 @@ export default {
 	max-width: 100%;
 }
 
-/* --- Aero 开始菜单（Vista/7 双栏） --- */
+/* --- Aero 开始菜单（Vista/7 双栏�?--- */
 .aero-start-menu {
 	left: 8px;
 	width: 430px;
@@ -4016,7 +4006,7 @@ export default {
 	margin: 6px 8px;
 }
 
-/* --- Win8 全屏开始屏幕 --- */
+/* --- Win8 全屏开始屏�?--- */
 .win8-start-screen {
 	position: absolute;
 	inset: 0;
@@ -4090,7 +4080,7 @@ export default {
 	max-width: 100%;
 }
 
-/* --- Win10 开始菜单（左侧栏 + 应用列表 + 磁贴） --- */
+/* --- Win10 开始菜单（左侧�?+ 应用列表 + 磁贴�?--- */
 .win10-start-menu {
 	left: 8px;
 	width: 620px;
@@ -4203,7 +4193,7 @@ export default {
 	max-width: 100%;
 }
 
-/* --- Win11 开始菜单（居中 + 固定网格） --- */
+/* --- Win11 开始菜单（居中 + 固定网格�?--- */
 .win11-start-menu {
 	left: 50%;
 	bottom: calc(var(--taskbar-height) + 12px);

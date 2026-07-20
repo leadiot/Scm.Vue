@@ -377,6 +377,8 @@ export default {
                 this.localConfig.gradientColor1 = theme.gradientColor1;
                 this.localConfig.gradientColor2 = theme.gradientColor2;
                 this.localConfig.gradientDirection = theme.gradientDirection;
+            } else if (theme.backgroundType === 'image') {
+                this.localConfig.backgroundImage = theme.backgroundImage;
             }
 
             this.$emit('theme-preview', { ...this.localConfig });
