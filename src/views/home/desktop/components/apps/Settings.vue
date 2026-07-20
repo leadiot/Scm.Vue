@@ -37,15 +37,15 @@
                             <p class="card-desc">{{ $t('desktop.styleDesc') }}</p>
                             <el-radio-group v-model="localConfig.style" @change="onStyleChange">
                                 <el-radio-button value="system">
-                                    <sc-icon name="ms-settings" :size="16" />
+                                    <img src="/public/images/scm.svg"/>
                                     {{ $t('desktop.systemStyle') }}
                                 </el-radio-button>
                                 <el-radio-button value="windows">
-                                    <sc-icon name="ms-window" :size="16" />
+                                    <img src="/public/images/windows.svg"/>
                                     {{ $t('desktop.windowsStyle') }}
                                 </el-radio-button>
                                 <el-radio-button value="macos">
-                                    <sc-icon name="ms-apple" :size="16" />
+                                    <img src="/public/images/macos.svg"/>
                                     {{ $t('desktop.macosStyle') }}
                                 </el-radio-button>
                             </el-radio-group>
@@ -344,6 +344,7 @@ export default {
                 taskbarBorderRadius: cfg.taskbarBorderRadius || '0px',
                 taskbarGlass: cfg.taskbarGlass || false,
                 taskbarStartIcon: cfg.taskbarStartIcon || 'ms-grid_view',
+                startLogo: cfg.startLogo || '',
                 windowTheme: cfg.windowTheme || {},
                 home: cfg.home || '/',
             };
@@ -359,6 +360,7 @@ export default {
             this.localConfig.taskbarBorderRadius = theme.taskbarBorderRadius || '0px';
             this.localConfig.taskbarGlass = theme.taskbarGlass || false;
             this.localConfig.taskbarStartIcon = theme.taskbarStartIcon || 'ms-grid_view';
+            this.localConfig.startLogo = theme.startLogo || '';
             this.localConfig.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
             this.localConfig.menuTextColor = theme.menuTextColor || '#ffffff';
             this.localConfig.menuBorderRadius = theme.menuBorderRadius || '0px';

@@ -1,12 +1,15 @@
 <template>
-	<div class="desktop" :class="[themeClass, osFamilyClass]" :style="desktopStyle" @click="clearSelection" @contextmenu.prevent="showContextMenu">
+	<div class="desktop" :class="[themeClass, osFamilyClass]" :style="desktopStyle" @click="clearSelection"
+		@contextmenu.prevent="showContextMenu">
 		<!-- 桌面图标区域 -->
 		<div class="desktop-icons">
 			<div v-for="app in deskApps" :key="app.id" class="desktop-icon"
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image" :style="iconImageStyle(app)">
-					<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" :style="{ width: iconSize + 'px', height: iconSize + 'px', objectFit: 'contain' }" alt="" draggable="false" />
+					<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)"
+						:style="{ width: iconSize + 'px', height: iconSize + 'px', objectFit: 'contain' }" alt=""
+						draggable="false" />
 					<sc-icon v-else :name="app.meta.icon" :size="iconSize" :color="iconColor" />
 				</div>
 				<div class="icon-text" :style="{ color: iconColor }">{{ app.name }}</div>
@@ -21,17 +24,12 @@
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
-		<!-- 任务栏（�?macOS 主题�?-->
-		<div v-if="!isMacTheme" class="taskbar" :style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }" :class="{ 'taskbar-glass': taskbarGlass }">
+		<!-- 任务栏-->
+		<div v-if="!isMacTheme" class="taskbar"
+			:style="{ backgroundColor: taskbarColor, color: taskbarTextColor, borderRadius: taskbarBorderRadius }"
+			:class="{ 'taskbar-glass': taskbarGlass }">
 			<div class="taskbar-start" @click="toggleStartMenu">
-				<template v-if="showFlagStart">
-					<svg class="xp-start-flag" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-						<path fill="#F65314" d="M2.8 5.2 C5.5 3.4 8.2 3.1 10.9 4.3 L11.3 10.7 C8.6 9.5 5.9 9.8 3.2 11.6 Z" />
-						<path fill="#7CBB00" d="M12.2 4.7 C14.9 3.5 17.6 3.9 20.3 5.7 L20.7 12.1 C18 10.3 15.3 9.9 12.6 11.1 Z" />
-						<path fill="#00A1F1" d="M3.2 13.0 C5.9 11.2 8.6 10.9 11.3 12.1 L11.7 18.5 C9.0 17.3 6.3 17.6 3.6 19.4 Z" />
-						<path fill="#FFBB00" d="M12.6 12.5 C15.3 11.3 18.0 11.7 20.7 13.5 L21.1 19.9 C18.4 18.1 15.7 17.7 13.0 18.9 Z" />
-					</svg>
-				</template>
+				<img v-if="startLogo" :src="startLogo" class="start-logo-icon" alt="" draggable="false" />
 				<sc-icon v-else :name="taskbarStartIcon" :size="24" />
 				<span>{{ $t('desktop.start') }}</span>
 			</div>
@@ -49,23 +47,40 @@
 			</div>
 		</div>
 
-		<!-- macOS 菜单�?-->
+		<!-- macOS Dock -->
+		<div v-if="hasDock" class="mac-dock">
+			<div class="mac-dock-item" title="Launchpad" @click="toggleLaunchpad">
+				<sc-icon name="ms-apps" :size="40" />
+			</div>
+			<div class="mac-dock-separator"></div>
+			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item" :class="{ running: item.running }"
+				:title="dockItemTitle(item)" @click="onDockClick(item)">
+				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
+				<sc-icon v-else :name="dockIconName(item)" :size="42" />
+				<span v-if="item.running" class="mac-dock-dot"></span>
+			</div>
+		</div>
+
+		<!-- macOS 菜单-->
 		<div v-if="isMacTheme" class="mac-menubar">
 			<div class="mac-menubar-left">
 				<div class="mac-menu-apple" @click="toggleStartMenu">
-					<svg v-if="currentTheme === 'macOS9'" class="mac9-apple" width="13" height="16" viewBox="0 0 13 16" aria-hidden="true">
+					<img v-if="startLogo" :src="startLogo" class="mac-apple-icon" alt="" draggable="false" />
+					<svg v-else-if="currentTheme === 'macOS9'" class="mac9-apple" width="13" height="16"
+						viewBox="0 0 13 16" aria-hidden="true">
 						<defs>
 							<clipPath id="mac9-apple-clip">
-								<path d="M9.2 0.8 C8.4 1 7.8 1.6 7.6 2.4 C8.5 2.3 9.2 1.7 9.2 0.8 Z M9.4 3.9 C8.3 3.9 7.6 4.7 6.9 4.7 C6.2 4.7 5.6 3.9 4.4 3.9 C2.6 3.9 0.8 5.5 0.8 8 C0.8 11.5 3.6 15 5.3 15 C6.1 15 6.5 14.5 7.3 14.5 C8.1 14.5 8.5 15 9.4 15 C11.1 15 13 12 13 8.6 C11.8 8 11.1 6.9 11.1 5.7 C11.1 4.7 11.7 4.1 12.3 3.7 C11.4 3.1 10.3 3.2 9.4 3.9 Z"/>
+								<path
+									d="M9.2 0.8 C8.4 1 7.8 1.6 7.6 2.4 C8.5 2.3 9.2 1.7 9.2 0.8 Z M9.4 3.9 C8.3 3.9 7.6 4.7 6.9 4.7 C6.2 4.7 5.6 3.9 4.4 3.9 C2.6 3.9 0.8 5.5 0.8 8 C0.8 11.5 3.6 15 5.3 15 C6.1 15 6.5 14.5 7.3 14.5 C8.1 14.5 8.5 15 9.4 15 C11.1 15 13 12 13 8.6 C11.8 8 11.1 6.9 11.1 5.7 C11.1 4.7 11.7 4.1 12.3 3.7 C11.4 3.1 10.3 3.2 9.4 3.9 Z" />
 							</clipPath>
 						</defs>
 						<g clip-path="url(#mac9-apple-clip)">
-							<rect y="0" width="13" height="3" fill="#61BB46"/>
-							<rect y="3" width="13" height="3" fill="#FDB827"/>
-							<rect y="6" width="13" height="3" fill="#F5821F"/>
-							<rect y="9" width="13" height="3" fill="#E03A3E"/>
-							<rect y="12" width="13" height="3" fill="#963D97"/>
-							<rect y="15" width="13" height="2" fill="#009DDC"/>
+							<rect y="0" width="13" height="3" fill="#61BB46" />
+							<rect y="3" width="13" height="3" fill="#FDB827" />
+							<rect y="6" width="13" height="3" fill="#F5821F" />
+							<rect y="9" width="13" height="3" fill="#E03A3E" />
+							<rect y="12" width="13" height="3" fill="#963D97" />
+							<rect y="15" width="13" height="2" fill="#009DDC" />
 						</g>
 					</svg>
 					<sc-icon v-else name="ms-apple" :size="16" />
@@ -79,21 +94,7 @@
 			</div>
 		</div>
 
-		<!-- macOS Dock -->
-		<div v-if="hasDock" class="mac-dock">
-			<div class="mac-dock-item" title="Launchpad" @click="toggleLaunchpad">
-				<sc-icon name="ms-apps" :size="40" />
-			</div>
-			<div class="mac-dock-separator"></div>
-			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item"
-				:class="{ running: item.running }" :title="dockItemTitle(item)" @click="onDockClick(item)">
-				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
-				<sc-icon v-else :name="dockIconName(item)" :size="42" />
-				<span v-if="item.running" class="mac-dock-dot"></span>
-			</div>
-		</div>
-
-		<!-- macOS Launchpad 启动�?-->
+		<!-- macOS Launchpad 启动-->
 		<div v-if="showLaunchpad && isMacTheme" class="mac-launchpad" @click.self="showLaunchpad = false">
 			<div class="launchpad-search" @click.stop>
 				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
@@ -101,7 +102,8 @@
 			<div class="launchpad-grid">
 				<div v-for="app in filteredFlatApps" :key="app.id" class="launchpad-item" @click="openApp(app)">
 					<div class="launchpad-icon">
-						<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" alt="" draggable="false" />
+						<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" alt=""
+							draggable="false" />
 						<sc-icon v-else :name="app.meta.icon" :size="56" />
 					</div>
 					<span>{{ app.name }}</span>
@@ -109,7 +111,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows XP 双栏复刻�?-->
+		<!-- 开始菜单（Windows XP 双栏复刻）-->
 		<div v-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
 			<div class="xp-menu-header" @click="openProfile">
 				<div class="xp-menu-avatar">
@@ -131,7 +133,8 @@
 					</div>
 				</div>
 				<div class="xp-menu-right">
-					<div v-for="link in xpQuickLinks" :key="link.key" class="xp-right-item" @click="openQuickLink(link)">
+					<div v-for="link in xpQuickLinks" :key="link.key" class="xp-right-item"
+						@click="openQuickLink(link)">
 						<sc-icon :name="link.icon" :size="18" />
 						<span>{{ link.name }}</span>
 					</div>
@@ -153,7 +156,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 95/98/2000 经典复刻�?-->
+		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
 		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
 			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
 			<div class="classic-menu-body">
@@ -181,7 +184,7 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻�?-->
+		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
 		<div v-else-if="showStartMenu && isAeroTheme" class="start-menu aero-start-menu">
 			<div class="aero-menu-body">
 				<div class="aero-menu-left">
@@ -203,7 +206,8 @@
 					<div class="aero-menu-avatar" @click="openProfile">
 						<sc-icon name="ms-account_circle" :size="40" color="#3B6BD4" />
 					</div>
-					<div v-for="link in xpQuickLinks" :key="link.key" class="aero-right-item" @click="openQuickLink(link)">
+					<div v-for="link in xpQuickLinks" :key="link.key" class="aero-right-item"
+						@click="openQuickLink(link)">
 						<span>{{ link.name }}</span>
 					</div>
 					<div class="aero-right-divider"></div>
@@ -213,8 +217,9 @@
 			</div>
 		</div>
 
-		<!-- 开始屏幕（Windows 8 全屏磁贴复刻�?-->
-		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen" @click.self="toggleStartMenu">
+		<!-- 开始屏幕（Windows 8 全屏磁贴复刻）-->
+		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen"
+			@click.self="toggleStartMenu">
 			<div class="win8-screen-header">
 				<span class="win8-screen-title">{{ $t('desktop.start') }}</span>
 				<div class="win8-screen-user" @click="openProfile">
@@ -231,8 +236,9 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 10 磁贴复刻�?-->
-		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu">
+		<!-- 开始菜单（Windows 10 磁贴复刻）-->
+		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu"
+			:style="{ backgroundColor: menuColor, color: menuTextColor }">
 			<div class="win10-menu-rail">
 				<div class="win10-rail-item" :title="user.userName || 'User'" @click="openProfile">
 					<sc-icon name="ms-account_circle" :size="20" />
@@ -267,8 +273,9 @@
 			</div>
 		</div>
 
-		<!-- 开始菜单（Windows 11 居中网格复刻�?-->
-		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu">
+		<!-- 开始菜单（Windows 11 居中网格复刻）-->
+		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu"
+			:style="{ backgroundColor: menuColor, color: menuTextColor }">
 			<div class="win11-menu-search">
 				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
 			</div>
@@ -303,8 +310,10 @@
 			<div class="apple-menu-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
 		</div>
 
-		<!-- 开始菜单（通用�?-->
-		<div v-else-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
+		<!-- 开始菜单（通用）-->
+		<div v-else-if="showStartMenu" class="start-menu"
+			:style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }"
+			:class="{ 'menu-glass': menuGlass }">
 			<div class="start-menu-header" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="32" />
 				<span>{{ user.userName || 'User' }}</span>
@@ -332,7 +341,7 @@
 			</div>
 		</div>
 
-		<!-- 子菜�?-->
+		<!-- 子菜单 -->
 		<div v-if="activeSubmenu" class="submenu"
 			:style="{ ...submenuStyle, backgroundColor: menuColor, color: menuTextColor }" @mouseenter="keepSubmenu"
 			@mouseleave="hideSubmenu">
@@ -364,7 +373,8 @@
 				<sc-icon name="ms-terminal" :size="16" />
 				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
-			<div class="context-menu-item" @click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
+			<div class="context-menu-item"
+				@click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
 				<sc-icon name="ms-folder" :size="16" />
 				<span>{{ $t('desktop.openCloudSpace') }}</span>
 			</div>
@@ -462,6 +472,7 @@ export default {
 			taskbarBorderRadius: '4px',
 			taskbarGlass: false,
 			taskbarStartIcon: 'ms-grid_view',
+			startLogo: '',
 			menuColor: 'rgba(0, 0, 0, 0.9)',
 			menuTextColor: '#ffffff',
 			menuBorderRadius: '8px',
@@ -548,16 +559,16 @@ export default {
 				}
 			},
 			textApp: {
-					id: '14',
-					code: 'app-text',
-					name: '记事本',
-					component: 'Textpad',
-					meta: {
-						icon: 'ms-article',
-						width: 800,
-						height: 600
-					}
-				},
+				id: '14',
+				code: 'app-text',
+				name: '记事本',
+				component: 'Textpad',
+				meta: {
+					icon: 'ms-article',
+					width: 800,
+					height: 600
+				}
+			},
 			themes: [
 				{
 					name: 'default',
@@ -574,7 +585,8 @@ export default {
 						headerBg: '#f8f9fa',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(0, 120, 212, 0.15)'
+						border: 'rgba(0, 120, 212, 0.15)',
+						borderRadius: '6px'
 					},
 					previewStyle: { backgroundColor: '#0078d4' }
 				},
@@ -593,7 +605,8 @@ export default {
 						headerBg: '#161b22',
 						titleColor: '#e6edf3',
 						titleColorInactive: '#7d8590',
-						border: 'rgba(48, 54, 61, 0.8)'
+						border: 'rgba(48, 54, 61, 0.8)',
+						borderRadius: '6px'
 					},
 					previewStyle: { backgroundColor: '#0d1117' }
 				},
@@ -612,7 +625,8 @@ export default {
 						headerBg: '#ffffff',
 						titleColor: '#24292f',
 						titleColorInactive: '#57606a',
-						border: 'rgba(27, 31, 36, 0.12)'
+						border: 'rgba(27, 31, 36, 0.12)',
+						borderRadius: '6px'
 					},
 					previewStyle: { backgroundColor: '#f5f7fa' }
 				},
@@ -633,7 +647,8 @@ export default {
 						headerBg: 'rgba(0, 198, 255, 0.12)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(0, 198, 255, 0.25)'
+						border: 'rgba(0, 198, 255, 0.25)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #00c6ff, #0072ff)' }
 				},
@@ -654,7 +669,8 @@ export default {
 						headerBg: 'rgba(30, 27, 55, 0.96)',
 						titleColor: '#e8e8f0',
 						titleColorInactive: '#8b8ba0',
-						border: 'rgba(80, 70, 120, 0.35)'
+						border: 'rgba(80, 70, 120, 0.35)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
 				},
@@ -675,7 +691,8 @@ export default {
 						headerBg: 'rgba(42, 82, 152, 0.12)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(42, 82, 152, 0.25)'
+						border: 'rgba(42, 82, 152, 0.25)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #1e3c72, #2a5298)' }
 				},
@@ -696,7 +713,8 @@ export default {
 						headerBg: 'rgba(113, 178, 128, 0.15)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(113, 178, 128, 0.3)'
+						border: 'rgba(113, 178, 128, 0.3)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
 				},
@@ -717,7 +735,8 @@ export default {
 						headerBg: 'rgba(238, 156, 167, 0.18)',
 						titleColor: '#4a3f44',
 						titleColorInactive: '#8a7a80',
-						border: 'rgba(238, 156, 167, 0.4)'
+						border: 'rgba(238, 156, 167, 0.4)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #ee9ca7, #ffdde1)' }
 				},
@@ -738,7 +757,8 @@ export default {
 						headerBg: 'rgba(245, 175, 25, 0.15)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(245, 175, 25, 0.35)'
+						border: 'rgba(245, 175, 25, 0.35)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #f12711, #f5af19)' }
 				},
@@ -759,7 +779,8 @@ export default {
 						headerBg: 'rgba(56, 239, 125, 0.12)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(56, 239, 125, 0.3)'
+						border: 'rgba(56, 239, 125, 0.3)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #11998e, #38ef7d)' }
 				},
@@ -780,7 +801,8 @@ export default {
 						headerBg: 'rgba(101, 78, 163, 0.12)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(101, 78, 163, 0.25)'
+						border: 'rgba(101, 78, 163, 0.25)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #654ea3, #eaafc8)' }
 				},
@@ -801,7 +823,8 @@ export default {
 						headerBg: 'rgba(139, 71, 137, 0.15)',
 						titleColor: '#1a1a1a',
 						titleColorInactive: '#6c757d',
-						border: 'rgba(139, 71, 137, 0.3)'
+						border: 'rgba(139, 71, 137, 0.3)',
+						borderRadius: '6px'
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #5D3F6A, #8B4789)' }
 				},
@@ -811,14 +834,15 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win11/background.jpg',
 					iconsPath: '/images/windows/win11/',
+					startLogo: '/images/windows/win11/logo.svg',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '12px',
 					taskbarGlass: true,
 					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(48, 48, 48, 0.95)',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '12px',
+					menuColor: 'rgba(32, 32, 32, 0.98)',
+					menuTextColor: '#f0f0f0',
+					menuBorderRadius: '16px',
 					menuGlass: true,
 					iconColor: '#ffffff',
 					iconShadow: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4))',
@@ -849,6 +873,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win10/background.jpg',
 					iconsPath: '/images/windows/win10/',
+					startLogo: '/images/windows/win10/logo.svg',
 					taskbarColor: 'rgba(24, 24, 24, 0.98)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -887,6 +912,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win8/background.png',
 					iconsPath: '/images/windows/win8/',
+					startLogo: '/images/windows/win8/logo.svg',
 					taskbarColor: 'rgba(20, 20, 40, 0.92)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -925,6 +951,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win7/background.jpg',
 					iconsPath: '/images/windows/win7/',
+					startLogo: '/images/windows/win7/logo.svg',
 					taskbarColor: '#1A1A1A',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -963,6 +990,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/winvista/background.jpg',
 					iconsPath: '/images/windows/winvista/',
+					startLogo: '/images/windows/winvista/logo.svg',
 					taskbarColor: 'rgba(0, 0, 0, 0.7)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -1001,6 +1029,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/winxp/background.jpg',
 					iconsPath: '/images/windows/winxp/',
+					startLogo: '/images/windows/winxp/logo.svg',
 					taskbarColor: '#245edb',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -1051,6 +1080,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win2000/background.png',
 					iconsPath: '/images/windows/win2000/',
+					startLogo: '/images/windows/win2000/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -1105,6 +1135,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win98/background.png',
 					iconsPath: '/images/windows/win98/',
+					startLogo: '/images/windows/win98/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -1159,6 +1190,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win95/background.png',
 					iconsPath: '/images/windows/win95/',
+					startLogo: '/images/windows/win95/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -1213,6 +1245,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/windark/background.png',
 					iconsPath: '/images/windows/windark/',
+					startLogo: '/images/windows/windark/logo.svg',
 					taskbarColor: '#000000',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '0px',
@@ -1251,6 +1284,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macos/background.png',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macos/logo.svg',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -1302,6 +1336,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosyosemite/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosyosemite/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1352,6 +1387,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macoslion/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macoslion/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1402,6 +1438,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macossonoma/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macossonoma/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.9)',
@@ -1453,6 +1490,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosleopard/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosleopard/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.82)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1503,6 +1541,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosx/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosx/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1553,6 +1592,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macos9/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macos9/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
 					taskbarTextColor: '#000000',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1602,6 +1642,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'color',
 					backgroundColor: '#0f0f0f',
+					startLogo: '/images/macos/logo.svg',
 					taskbarColor: 'rgba(28, 28, 28, 0.9)',
 					taskbarTextColor: '#ffffff',
 					menuColor: 'rgba(40, 40, 40, 0.95)',
@@ -1653,6 +1694,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosx/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosx/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.65)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.95)',
@@ -1682,6 +1724,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosleopard/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosleopard/logo.svg',
 					taskbarColor: 'rgba(230, 230, 235, 0.7)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(245, 245, 247, 0.95)',
@@ -1711,6 +1754,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macoslion/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macoslion/logo.svg',
 					taskbarColor: 'rgba(240, 240, 242, 0.75)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(250, 250, 250, 0.95)',
@@ -1740,6 +1784,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macosyosemite/background.svg',
 					iconsPath: '/images/macos/',
+					startLogo: '/images/macosyosemite/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
 					taskbarTextColor: '#1a1a1a',
 					menuColor: 'rgba(255, 255, 255, 0.9)',
@@ -1769,6 +1814,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/macos9/background.svg',
 					iconsPath: '',
+					startLogo: '/images/macos9/logo.svg',
 					taskbarColor: '#FFFFFF',
 					taskbarTextColor: '#000000',
 					menuColor: '#FFFFFF',
@@ -1843,15 +1889,15 @@ export default {
 		isMacTheme() {
 			return this.currentTheme.startsWith('macOS');
 		},
-		// macOS 主题是否显示 Dock（Mac OS 9 时代�?Dock�?
+		// macOS 主题是否显示 Dock（Mac OS 9 时代 Dock）
 		hasDock() {
 			return this.isMacTheme && this.currentTheme !== 'macOS9';
 		},
-		// 开始按钮显�?Windows 旗帜（XP/经典/Aero�?
+		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
 			return this.isXpTheme || this.isClassicTheme || this.isAeroTheme;
 		},
-		// 操作系统家族根类（供 grouped CSS 覆盖�?
+		// 操作系统家族根类（供 grouped CSS 覆盖）
 		osFamilyClass() {
 			if (this.isMacTheme) return 'os-macos';
 			if (this.isClassicTheme) return 'os-classic';
@@ -1859,7 +1905,7 @@ export default {
 			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
 			return '';
 		},
-		// 经典开始菜单侧栏标�?
+		// 经典开始菜单侧栏标题
 		classicMenuTitle() {
 			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000' };
 			return titles[this.currentTheme] || 'Windows';
@@ -1886,7 +1932,7 @@ export default {
 		isWin10LikeTheme() {
 			return ['win10', 'winDark'].includes(this.currentTheme);
 		},
-		// 打平菜单树（叶子应用�?
+		// 打平菜单树（叶子应用）
 		flatMenuApps() {
 			const leaves = [];
 			const walk = (items) => {
@@ -1905,7 +1951,7 @@ export default {
 			const match = (item) => (item.name || '').toLowerCase().includes(kw) || (item.children || []).some(match);
 			return this.menuApps.filter(match);
 		},
-		// 开始菜单搜索过滤（打平叶子�?
+		// 开始菜单搜索过滤（打平叶子）
 		filteredFlatApps() {
 			const kw = (this.menuSearch || '').toLowerCase();
 			if (!kw) return this.flatMenuApps;
@@ -1915,7 +1961,7 @@ export default {
 		tileApps() {
 			return this.flatMenuApps.slice(0, 12);
 		},
-		// XP 开始菜单右栏快捷链�?
+		// XP 开始菜单右栏快捷链
 		xpQuickLinks() {
 			return [
 				{ key: 'computer', icon: 'ms-computer', name: this.$t('desktop.myComputer') },
@@ -2338,9 +2384,9 @@ export default {
 			this.iconBgColor = config.iconBgColor || 'transparent';
 			this.iconBgRadius = config.iconBgRadius || '0px';
 			this.iconBgSize = config.iconBgSize || '0px';
-			// 根据当前主题推导 iconsPath
 			const themeDef = this.themes.find(t => t.name === config.currentTheme);
 			this.iconsPath = (themeDef && themeDef.iconsPath) ? themeDef.iconsPath : (config.iconsPath || '');
+			this.startLogo = (themeDef && themeDef.startLogo) ? themeDef.startLogo : (config.startLogo || '');
 			this.menuColor = config.menuColor;
 			this.menuTextColor = config.menuTextColor;
 			this.menuBorderRadius = config.menuBorderRadius || '0px';
@@ -2387,6 +2433,7 @@ export default {
 			this.taskbarBorderRadius = theme.taskbarBorderRadius || '0px';
 			this.taskbarGlass = theme.taskbarGlass || false;
 			this.taskbarStartIcon = theme.taskbarStartIcon || 'ms-grid_view';
+			this.startLogo = theme.startLogo || '';
 			this.menuColor = theme.menuColor || 'rgba(0, 0, 0, 0.9)';
 			this.menuTextColor = theme.menuTextColor || '#ffffff';
 			this.menuBorderRadius = theme.menuBorderRadius || '0px';
@@ -2429,7 +2476,11 @@ export default {
 				const theme = this.themes.find(t => t.name === savedTheme);
 				if (theme) {
 					this.applyTheme(theme);
+					return;
 				}
+			}
+			if (this.themes.length > 0) {
+				this.applyTheme(this.themes[0]);
 			}
 			const savedIconColor = localStorage.getItem('desktop_icon_color');
 			if (savedIconColor) {
@@ -2758,6 +2809,11 @@ export default {
 .start-menu-app .arrow {
 	margin-left: auto;
 	font-size: 12px;
+}
+
+.start-logo-icon {
+	width: 16px;
+	height: 16px;
 }
 
 .submenu {
@@ -4200,8 +4256,10 @@ export default {
 	width: 540px;
 	display: flex;
 	flex-direction: column;
-	border-radius: 8px !important;
+	border-radius: 16px !important;
 	transform: translateX(-50%);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .win11-menu-search {
@@ -4210,18 +4268,20 @@ export default {
 
 .win11-menu-search input {
 	width: 100%;
-	padding: 7px 14px;
+	padding: 8px 16px 8px 36px;
 	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-bottom: 2px solid rgba(255, 255, 255, 0.25);
-	border-radius: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 8px;
 	color: inherit;
 	outline: none;
 	font-size: 13px;
+	font-weight: 500;
 }
 
 .win11-menu-search input:focus {
-	border-bottom-color: #60CDFF;
+	background: rgba(255, 255, 255, 0.12);
+	border-color: rgba(255, 255, 255, 0.2);
+	box-shadow: 0 0 0 2px rgba(96, 205, 255, 0.2);
 }
 
 .win11-menu-section {
@@ -4234,9 +4294,9 @@ export default {
 .win11-menu-grid {
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
-	gap: 2px;
-	padding: 4px 18px 12px;
-	max-height: 300px;
+	gap: 4px;
+	padding: 4px 20px 16px;
+	max-height: 320px;
 	overflow-y: auto;
 }
 
@@ -4245,11 +4305,12 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	gap: 6px;
-	padding: 10px 4px;
-	border-radius: 6px;
+	padding: 12px 6px;
+	border-radius: 8px;
 	cursor: pointer;
 	font-size: 11px;
 	text-align: center;
+	transition: background-color 0.15s ease;
 }
 
 .win11-grid-item:hover {
