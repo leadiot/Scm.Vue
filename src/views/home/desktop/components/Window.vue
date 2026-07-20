@@ -32,6 +32,24 @@
 				</div>
 			</template>
 
+			<!-- Mac OS 9 经典白金风格标题栏 -->
+			<template v-else-if="isMac9">
+				<div class="window-header mac9-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
+					<button class="mac9-btn" title="关闭" @click.stop="$emit('close', window.id)">
+						<span class="mac9-glyph">×</span>
+					</button>
+					<span class="mac9-title">{{ window.title }}</span>
+					<div class="mac9-buttons">
+						<button class="mac9-btn" title="缩放" @click.stop="$emit('maximize', window.id)">
+							<span class="mac9-glyph">+</span>
+						</button>
+						<button class="mac9-btn" title="收起" @click.stop="$emit('minimize', window.id)">
+							<span class="mac9-glyph">–</span>
+						</button>
+					</div>
+				</div>
+			</template>
+
 			<!-- WinXP 经典风格标题栏 -->
 			<template v-else-if="isWinXP">
 				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
@@ -142,6 +160,7 @@
 			buttonWidth() { return this.windowTheme.buttonWidth || '46px'; },
 			winStyle() { return this.windowTheme.style || 'modern'; },
 			isMacOS() { return this.winStyle === 'macos'; },
+			isMac9() { return this.winStyle === 'mac9'; },
 			isWinXP() { return this.winStyle === 'xp'; },
 			isWin7() { return this.winStyle === 'win7'; },
 			windowTheme() { return this.theme; },
@@ -449,6 +468,72 @@
 	.title-spacer {
 		width: 60px;
 		flex-shrink: 0;
+	}
+
+	/* === Mac OS 9 经典白金风格 === */
+	.style-mac9 .window {
+		border: 1px solid #5A5A5A;
+		box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.4);
+	}
+
+	.mac9-header {
+		border-bottom: 1px solid #8A8A8A;
+		padding: 0 6px !important;
+		gap: 6px;
+	}
+
+	.mac9-title {
+		flex: 1;
+		text-align: center;
+		font-size: 12px;
+		font-weight: bold;
+		color: var(--win-title-color);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.window:not(.focused) .mac9-title {
+		color: var(--win-title-color-inactive);
+	}
+
+	.mac9-buttons {
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		-webkit-app-region: no-drag;
+	}
+
+	.mac9-btn {
+		width: 13px;
+		height: 13px;
+		padding: 0;
+		background: linear-gradient(180deg, #F8F8F8 0%, #D8D8D8 100%);
+		border: 1px solid #6E6E6E;
+		border-radius: 2px;
+		box-shadow: inset 1px 1px 0 #FFFFFF, inset -1px -1px 0 #A8A8A8;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 9px;
+		line-height: 1;
+		color: #333333;
+		-webkit-app-region: no-drag;
+	}
+
+	.mac9-btn:active {
+		background: linear-gradient(180deg, #C8C8C8 0%, #E0E0E0 100%);
+		box-shadow: inset 1px 1px 0 #A8A8A8;
+	}
+
+	.mac9-glyph {
+		opacity: 0;
+		font-weight: bold;
+	}
+
+	.mac9-btn:hover .mac9-glyph {
+		opacity: 1;
 	}
 
 	/* === WinXP 经典风格（颜色全部走 --xp-* 变量，可被主题定制） === */

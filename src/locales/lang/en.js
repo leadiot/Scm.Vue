@@ -194,6 +194,11 @@ export default {
 		// XP Start Menu
 		allPrograms: "All Programs",
 		pinned: "Pinned",
+		// macOS System Menu
+		aboutMac: "About This Mac",
+		systemSettings: "System Settings",
+		launchpad: "Launchpad",
+		forceQuit: "Force Quit",
 		myComputer: "My Computer",
 		controlPanel: "Control Panel",
 		logoff: "Log Off",
@@ -271,6 +276,12 @@ export default {
 		themeMacOSMonterey: "MacOS Monterey",
 		themeMacOSVentura: "MacOS Ventura",
 		themeMacOSDark: "MacOS Dark",
+		themeMacOS9: "Mac OS 9",
+		themeMacOSX: "Mac OS X",
+		themeMacOSLeopard: "Mac OS X Leopard",
+		themeMacOSLion: "OS X Lion",
+		themeMacOSYosemite: "OS X Yosemite",
+		themeMacOSSonoma: "macOS Sonoma",
 		aboutlogan: "Rapid development framework, providing efficient solutions for enterprises",
 		// Messages
 		logoutConfirm: "Confirm to logout current user?",

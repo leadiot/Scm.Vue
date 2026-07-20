@@ -53,7 +53,22 @@
 		<div v-if="isMacTheme" class="mac-menubar">
 			<div class="mac-menubar-left">
 				<div class="mac-menu-apple" @click="toggleStartMenu">
-					<sc-icon name="ms-apple" :size="16" />
+					<svg v-if="currentTheme === 'macOS9'" class="mac9-apple" width="13" height="16" viewBox="0 0 13 16" aria-hidden="true">
+						<defs>
+							<clipPath id="mac9-apple-clip">
+								<path d="M9.2 0.8 C8.4 1 7.8 1.6 7.6 2.4 C8.5 2.3 9.2 1.7 9.2 0.8 Z M9.4 3.9 C8.3 3.9 7.6 4.7 6.9 4.7 C6.2 4.7 5.6 3.9 4.4 3.9 C2.6 3.9 0.8 5.5 0.8 8 C0.8 11.5 3.6 15 5.3 15 C6.1 15 6.5 14.5 7.3 14.5 C8.1 14.5 8.5 15 9.4 15 C11.1 15 13 12 13 8.6 C11.8 8 11.1 6.9 11.1 5.7 C11.1 4.7 11.7 4.1 12.3 3.7 C11.4 3.1 10.3 3.2 9.4 3.9 Z"/>
+							</clipPath>
+						</defs>
+						<g clip-path="url(#mac9-apple-clip)">
+							<rect y="0" width="13" height="3" fill="#61BB46"/>
+							<rect y="3" width="13" height="3" fill="#FDB827"/>
+							<rect y="6" width="13" height="3" fill="#F5821F"/>
+							<rect y="9" width="13" height="3" fill="#E03A3E"/>
+							<rect y="12" width="13" height="3" fill="#963D97"/>
+							<rect y="15" width="13" height="2" fill="#009DDC"/>
+						</g>
+					</svg>
+					<sc-icon v-else name="ms-apple" :size="16" />
 				</div>
 				<span class="mac-menu-appname">{{ macFocusedTitle }}</span>
 			</div>
@@ -65,12 +80,32 @@
 		</div>
 
 		<!-- macOS Dock -->
-		<div v-if="isMacTheme" class="mac-dock">
+		<div v-if="hasDock" class="mac-dock">
+			<div class="mac-dock-item" title="Launchpad" @click="toggleLaunchpad">
+				<sc-icon name="ms-apps" :size="40" />
+			</div>
+			<div class="mac-dock-separator"></div>
 			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item"
 				:class="{ running: item.running }" :title="dockItemTitle(item)" @click="onDockClick(item)">
 				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
 				<sc-icon v-else :name="dockIconName(item)" :size="42" />
 				<span v-if="item.running" class="mac-dock-dot"></span>
+			</div>
+		</div>
+
+		<!-- macOS Launchpad 启动台 -->
+		<div v-if="showLaunchpad && isMacTheme" class="mac-launchpad" @click.self="showLaunchpad = false">
+			<div class="launchpad-search" @click.stop>
+				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
+			</div>
+			<div class="launchpad-grid">
+				<div v-for="app in filteredFlatApps" :key="app.id" class="launchpad-item" @click="openApp(app)">
+					<div class="launchpad-icon">
+						<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" alt="" draggable="false" />
+						<sc-icon v-else :name="app.meta.icon" :size="56" />
+					</div>
+					<span>{{ app.name }}</span>
+				</div>
 			</div>
 		</div>
 
@@ -255,6 +290,19 @@
 			</div>
 		</div>
 
+		<!-- macOS 苹果系统菜单 -->
+		<div v-else-if="showStartMenu && isMacTheme" class="start-menu mac-apple-menu">
+			<div class="apple-menu-item" @click="openProfile"><span>{{ $t('desktop.aboutMac') }}</span></div>
+			<div class="apple-menu-item" @click="openSettings"><span>{{ $t('desktop.systemSettings') }}</span></div>
+			<div class="apple-menu-divider"></div>
+			<div class="apple-menu-item" @click="toggleLaunchpad"><span>{{ $t('desktop.launchpad') }}</span></div>
+			<div class="apple-menu-divider"></div>
+			<div class="apple-menu-item" @click="forceQuitFocused"><span>{{ $t('desktop.forceQuit') }}</span></div>
+			<div class="apple-menu-divider"></div>
+			<div class="apple-menu-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
+			<div class="apple-menu-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
+		</div>
+
 		<!-- 开始菜单（通用） -->
 		<div v-else-if="showStartMenu" class="start-menu" :style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }" :class="{ 'menu-glass': menuGlass }">
 			<div class="start-menu-header" @click="openProfile">
@@ -338,6 +386,7 @@ export default {
 		return {
 			selectedApp: null,
 			showStartMenu: false,
+			showLaunchpad: false,
 			menuSearch: '',
 			contextMenu: {
 				visible: false,
@@ -1342,6 +1391,178 @@ export default {
 						style: 'macos'
 					},
 					previewStyle: { backgroundColor: '#0f0f0f' }
+				},
+				{
+					name: 'macOS9',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macos9/background.svg',
+					iconsPath: '',
+					taskbarColor: '#FFFFFF',
+					taskbarTextColor: '#000000',
+					menuColor: '#FFFFFF',
+					menuTextColor: '#000000',
+					iconColor: '#000000',
+					iconShadow: 'none',
+					iconSize: 32,
+					windowTheme: {
+						bg: '#FFFFFF',
+						headerBg: 'repeating-linear-gradient(180deg, #EFEFEF 0px, #EFEFEF 2px, #DADADA 2px, #DADADA 3px)',
+						titleColor: '#000000',
+						titleColorInactive: '#777777',
+						border: '#5A5A5A',
+						borderRadius: '4px 4px 0 0',
+						shadow: '2px 2px 10px rgba(0, 0, 0, 0.4)',
+						titleHeight: '20px',
+						buttonWidth: '16px',
+						style: 'mac9'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macos9/background.svg)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'macOSX',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosx/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.65)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#ffffff',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: 'repeating-linear-gradient(180deg, #F7F7F7 0px, #F7F7F7 2px, #E3E3E3 2px, #E3E3E3 3px)',
+						titleColor: '#333333',
+						titleColorInactive: '#999999',
+						border: 'rgba(0, 0, 0, 0.2)',
+						borderRadius: '6px',
+						shadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '26px',
+						buttonWidth: '46px',
+						style: 'macos'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macosx/background.svg)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'macOSLeopard',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosleopard/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(230, 230, 235, 0.7)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(245, 245, 247, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#ffffff',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: 'linear-gradient(180deg, #EDEDED 0%, #CFCFCF 100%)',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#8a8a8a',
+						border: 'rgba(0, 0, 0, 0.15)',
+						borderRadius: '6px',
+						shadow: '0 12px 40px rgba(0, 0, 0, 0.35)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '24px',
+						buttonWidth: '46px',
+						style: 'macos'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.svg)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'macOSLion',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macoslion/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(240, 240, 242, 0.75)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(250, 250, 250, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#3a3a3c',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: 'linear-gradient(180deg, #E9E9E9 0%, #D3D3D3 100%)',
+						titleColor: '#3a3a3c',
+						titleColorInactive: '#9a9aa0',
+						border: 'rgba(0, 0, 0, 0.12)',
+						borderRadius: '6px',
+						shadow: '0 10px 36px rgba(0, 0, 0, 0.28)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '22px',
+						buttonWidth: '46px',
+						style: 'macos'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macoslion/background.svg)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'macOSYosemite',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macosyosemite/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.6)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.9)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#ffffff',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#F6F6F6',
+						titleColor: '#3a3a3c',
+						titleColorInactive: '#b0b0b5',
+						border: 'rgba(0, 0, 0, 0.08)',
+						borderRadius: '6px',
+						shadow: '0 12px 44px rgba(0, 0, 0, 0.25)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '24px',
+						buttonWidth: '46px',
+						style: 'macos'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.svg)', backgroundSize: 'cover' }
+				},
+				{
+					name: 'macOSSonoma',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macossonoma/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.6)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.9)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#ffffff',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f8f8f8',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#bbbbbb',
+						border: 'rgba(0, 0, 0, 0.05)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos'
+					},
+					previewStyle: { backgroundImage: 'url(/images/macossonoma/background.svg)', backgroundSize: 'cover' }
 				}
 			]
 		};
@@ -1395,6 +1616,10 @@ export default {
 		// macOS 系列主题
 		isMacTheme() {
 			return this.currentTheme.startsWith('macOS');
+		},
+		// macOS 主题是否显示 Dock（Mac OS 9 时代无 Dock）
+		hasDock() {
+			return this.isMacTheme && this.currentTheme !== 'macOS9';
 		},
 		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
@@ -1619,6 +1844,7 @@ export default {
 			}
 
 			this.showStartMenu = false;
+			this.showLaunchpad = false;
 			this.hideContextMenu();
 			const windowId = ++this.windowIdCounter;
 			this.windows.push({
@@ -1710,6 +1936,21 @@ export default {
 				this.activeSubmenu = null;
 			} else {
 				this.menuSearch = '';
+			}
+		},
+		// macOS Launchpad 启动台
+		toggleLaunchpad() {
+			this.showStartMenu = false;
+			this.showLaunchpad = !this.showLaunchpad;
+			if (this.showLaunchpad) {
+				this.menuSearch = '';
+			}
+		},
+		// macOS 强制退出：关闭当前聚焦窗口
+		forceQuitFocused() {
+			const win = this.windows.find(w => w.focused);
+			if (win) {
+				this.closeWindow(win.id);
 			}
 		},
 		openSettings() {
@@ -3218,6 +3459,192 @@ export default {
 	width: 250px;
 	border-radius: 10px !important;
 	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+/* --- Mac 各时代主题微调 --- */
+/* Mac OS 9：白金外观（无 Dock，白底菜单栏） */
+.theme-macOS9 .mac-menubar {
+	background: #FFFFFF;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border-bottom: 1px solid #9A9A9A;
+	box-shadow: none;
+	font-family: 'Charcoal', 'Geneva', Tahoma, sans-serif;
+}
+
+.theme-macOS9 .windows-container {
+	inset: 28px 0 0 0;
+}
+
+.theme-macOS9 .start-menu {
+	border: 1px solid #6E6E6E;
+	border-radius: 0 !important;
+	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.theme-macOS9 .start-menu-header:hover,
+.theme-macOS9 .start-menu-app:hover,
+.theme-macOS9 .start-menu-action:hover {
+	background: #3366CC;
+	color: #FFFFFF;
+}
+
+/* Mac OS X Aqua：条纹菜单栏 + 半透明白 Dock */
+.theme-macOSX .mac-menubar {
+	background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0px, rgba(255, 255, 255, 0.72) 2px, rgba(228, 228, 228, 0.72) 2px, rgba(228, 228, 228, 0.72) 3px);
+}
+
+.theme-macOSX .mac-dock {
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 12px;
+}
+
+/* Leopard：立体玻璃 Dock */
+.theme-macOSLeopard .mac-dock {
+	bottom: 0;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(190, 190, 198, 0.6) 45%, rgba(110, 110, 125, 0.6) 100%);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-bottom: none;
+	border-radius: 12px 12px 0 0;
+	box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Lion：哑光 Dock */
+.theme-macOSLion .mac-dock {
+	background: rgba(235, 235, 240, 0.65);
+	border-radius: 12px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* --- macOS 苹果系统菜单 --- */
+.os-macos .mac-apple-menu {
+	top: 28px;
+	left: 4px;
+	width: 230px;
+	padding: 5px;
+	background: rgba(245, 245, 247, 0.82);
+	backdrop-filter: blur(30px);
+	-webkit-backdrop-filter: blur(30px);
+	border-radius: 8px !important;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(0, 0, 0, 0.15);
+	color: #1A1A1A;
+	font-size: 13px;
+}
+
+.theme-macOSDark .mac-apple-menu {
+	background: rgba(40, 40, 43, 0.85);
+	color: #F2F2F2;
+}
+
+.apple-menu-item {
+	padding: 4px 10px;
+	border-radius: 5px;
+	cursor: default;
+}
+
+.apple-menu-item:hover {
+	background: #0A64FF;
+	color: #FFFFFF;
+}
+
+.apple-menu-divider {
+	height: 1px;
+	margin: 5px 12px;
+	background: rgba(0, 0, 0, 0.12);
+}
+
+.theme-macOSDark .apple-menu-divider {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+/* --- macOS Dock 分隔线 --- */
+.mac-dock-separator {
+	width: 1px;
+	align-self: stretch;
+	margin: 4px 2px;
+	background: rgba(0, 0, 0, 0.15);
+}
+
+.theme-macOSDark .mac-dock-separator {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- macOS Launchpad 启动台 --- */
+.mac-launchpad {
+	position: absolute;
+	inset: 0;
+	z-index: 1600;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 60px 40px 40px;
+	background: rgba(30, 30, 35, 0.45);
+	backdrop-filter: blur(40px);
+	-webkit-backdrop-filter: blur(40px);
+	overflow-y: auto;
+}
+
+.launchpad-search {
+	width: 260px;
+	margin-bottom: 40px;
+}
+
+.launchpad-search input {
+	width: 100%;
+	padding: 6px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.15);
+	color: #FFFFFF;
+	outline: none;
+	font-size: 13px;
+	text-align: center;
+}
+
+.launchpad-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 110px);
+	gap: 24px 16px;
+	justify-content: center;
+	max-width: 900px;
+}
+
+.launchpad-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	color: #FFFFFF;
+	font-size: 12px;
+	text-align: center;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+	transition: transform 0.08s ease;
+}
+
+.launchpad-item:active {
+	transform: scale(0.92);
+}
+
+.launchpad-icon {
+	width: 64px;
+	height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.launchpad-icon img {
+	width: 64px;
+	height: 64px;
+	object-fit: contain;
+}
+
+.launchpad-item span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
 }
 
 /* --- Aero 开始菜单（Vista/7 双栏） --- */

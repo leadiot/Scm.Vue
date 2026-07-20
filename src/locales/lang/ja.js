@@ -192,6 +192,11 @@ export default {
 		// XP スタートメニュー
 		allPrograms: 'すべてのプログラム',
 		pinned: 'ピン留め',
+		// macOS システムメニュー
+		aboutMac: 'この Mac について',
+		systemSettings: 'システム設定',
+		launchpad: 'Launchpad',
+		forceQuit: '強制終了',
 		myComputer: 'マイ コンピュータ',
 		controlPanel: 'コントロール パネル',
 		logoff: 'ログオフ',
@@ -261,6 +266,12 @@ export default {
 		themeMacOSMonterey: 'MacOS Monterey',
 		themeMacOSVentura: 'MacOS Ventura',
 		themeMacOSDark: 'MacOS ダーク',
+		themeMacOS9: 'Mac OS 9',
+		themeMacOSX: 'Mac OS X',
+		themeMacOSLeopard: 'Mac OS X Leopard',
+		themeMacOSLion: 'OS X Lion',
+		themeMacOSYosemite: 'OS X Yosemite',
+		themeMacOSSonoma: 'macOS Sonoma',
 		aboutlogan: '迅速な開発フレームワーク、企業に効率的なソリューションを提供',
 		// メッセージ
 		logoutConfirm: '現在のユーザーからログアウトしますか？',
