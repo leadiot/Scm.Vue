@@ -412,7 +412,7 @@ export default {
 			user: {},
 			home: '/',
 			deskApps: [],
-			// 图标名称到文件名映射（Material Symbols �?主题图标文件名）
+			// 图标名称到文件名映射（Material Symbols 主题图标文件名）
 			iconMap: {
 				'ms-computer': 'computer.png',
 				'ms-desktop_windows': 'computer.png',
@@ -894,7 +894,7 @@ export default {
 					name: 'win8',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win8/background.png',
+					backgroundImage: '/images/windows/win8/background.jpg',
 					iconsPath: '/images/windows/win8/',
 					startLogo: '/images/windows/win8/logo.svg',
 					taskbarColor: 'rgba(20, 20, 40, 0.92)',
@@ -1062,7 +1062,7 @@ export default {
 					name: 'win2000',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win2000/background.png',
+					backgroundImage: '/images/windows/win2000/background.jpg',
 					iconsPath: '/images/windows/win2000/',
 					startLogo: '/images/windows/win2000/logo.svg',
 					taskbarColor: '#C0C0C0',
@@ -1111,13 +1111,13 @@ export default {
 						xpHeaderRadius: '0px',
 						xpBtnSize: '18px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win98',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win98/background.png',
+					backgroundImage: '/images/windows/win98/background.jpg',
 					iconsPath: '/images/windows/win98/',
 					startLogo: '/images/windows/win98/logo.svg',
 					taskbarColor: '#C0C0C0',
@@ -1166,13 +1166,13 @@ export default {
 						xpHeaderRadius: '0px',
 						xpBtnSize: '16px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win95',
 					style: 'windows',
 					backgroundType: 'image',
-					backgroundImage: '/images/windows/win95/background.png',
+					backgroundImage: '/images/windows/win95/background.jpg',
 					iconsPath: '/images/windows/win95/',
 					startLogo: '/images/windows/win95/logo.svg',
 					taskbarColor: '#C0C0C0',
@@ -1221,52 +1221,13 @@ export default {
 						xpHeaderRadius: '0px',
 						xpBtnSize: '16px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.png)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'winDark',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: '/images/windows/windark/background.png',
-					iconsPath: '/images/windows/windark/',
-					startLogo: '/images/windows/windark/logo.svg',
-					taskbarColor: '#000000',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#2A2A2A',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					iconSize: 48,
-					iconBgColor: 'transparent',
-					iconBgRadius: '0px',
-					iconBgSize: '0px',
-					windowTheme: {
-						bg: '#1C1C1C',
-						headerBg: '#2D2D2D',
-						titleColor: '#ffffff',
-						titleColorInactive: '#808080',
-						border: '#404040',
-						borderRadius: '0px',
-						shadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: 'rgba(255, 255, 255, 0.1)',
-						maxBtnHover: 'rgba(255, 255, 255, 0.1)',
-						titleHeight: '32px',
-						buttonWidth: '46px',
-						style: 'win10'
-					},
-					previewStyle: { backgroundImage: 'url(/images/windows/windark/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOS',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macos/background.png',
+					backgroundImage: '/images/macos/background.jpg',
 					iconsPath: '/images/macos/',
 					startLogo: '/images/macos/logo.svg',
 					gradientDirection: 'to bottom right',
@@ -1312,7 +1273,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macos/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSTahoe',
@@ -1363,7 +1324,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macostahoe/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSequoia',
@@ -1414,7 +1375,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macoslion/background.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macossequoia/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSonoma',
@@ -1517,7 +1478,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosleopard/background.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosventura/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
@@ -1568,7 +1529,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macosx/background.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(/images/macosmonterey/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSBigSur',
@@ -1619,58 +1580,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSDark',
-					style: 'macos',
-					backgroundType: 'color',
-					backgroundColor: '#0f0f0f',
-					startLogo: '/images/macos/logo.svg',
-					taskbarColor: 'rgba(28, 28, 28, 0.9)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(40, 40, 40, 0.95)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					iconsPath: '/images/macos/',
-					windowTheme: {
-						bg: '#1c1c1c',
-						headerBg: '#2a2a2a',
-						titleColor: '#ffffff',
-						titleColorInactive: '#888888',
-						border: 'rgba(255, 255, 255, 0.08)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundColor: '#0f0f0f' }
+					previewStyle: { backgroundImage: 'url(/images/macosbigsur/background.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSX',
@@ -2494,9 +2404,9 @@ export default {
 			}
 		},
 		/**
-		 * 获取主题图标�?URL
+		 * 获取主题图标URL
 		 * @param {string} iconName - Material Symbols 图标名称
-		 * @returns {string|null} 主题特定的图�?URL，如果没有则返回 null
+		 * @returns {string|null} 主题特定的图标URL，如果没有则返回 null
 		 */
 		getThemeIcon(iconName) {
 			if (!this.iconsPath) return null;
@@ -2504,7 +2414,7 @@ export default {
 			return fileName ? this.iconsPath + fileName : null;
 		},
 		/**
-		 * 获取桌面图标的图片样�?
+		 * 获取桌面图标的图片样式
 		 */
 		iconImageStyle(app) {
 			const style = { filter: this.iconShadow };
@@ -2523,7 +2433,7 @@ export default {
 					this.$router.replace({ path: "/login" });
 				})
 				.catch(() => {
-					// 取消退�?
+					// 取消退出
 				});
 		},
 		/**
