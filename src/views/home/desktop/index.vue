@@ -67,24 +67,7 @@
 			<div class="mac-menubar-left">
 				<div class="mac-menu-apple" @click="toggleStartMenu">
 					<img v-if="startLogo" :src="startLogo" class="mac-apple-icon" alt="" draggable="false" />
-					<svg v-else-if="currentTheme === 'macOS9'" class="mac9-apple" width="13" height="16"
-						viewBox="0 0 13 16" aria-hidden="true">
-						<defs>
-							<clipPath id="mac9-apple-clip">
-								<path
-									d="M9.2 0.8 C8.4 1 7.8 1.6 7.6 2.4 C8.5 2.3 9.2 1.7 9.2 0.8 Z M9.4 3.9 C8.3 3.9 7.6 4.7 6.9 4.7 C6.2 4.7 5.6 3.9 4.4 3.9 C2.6 3.9 0.8 5.5 0.8 8 C0.8 11.5 3.6 15 5.3 15 C6.1 15 6.5 14.5 7.3 14.5 C8.1 14.5 8.5 15 9.4 15 C11.1 15 13 12 13 8.6 C11.8 8 11.1 6.9 11.1 5.7 C11.1 4.7 11.7 4.1 12.3 3.7 C11.4 3.1 10.3 3.2 9.4 3.9 Z" />
-							</clipPath>
-						</defs>
-						<g clip-path="url(#mac9-apple-clip)">
-							<rect y="0" width="13" height="3" fill="#61BB46" />
-							<rect y="3" width="13" height="3" fill="#FDB827" />
-							<rect y="6" width="13" height="3" fill="#F5821F" />
-							<rect y="9" width="13" height="3" fill="#E03A3E" />
-							<rect y="12" width="13" height="3" fill="#963D97" />
-							<rect y="15" width="13" height="2" fill="#009DDC" />
-						</g>
-					</svg>
-					<sc-icon v-else name="ms-apple" :size="16" />
+					<sc-icon v-else :name="taskbarStartIcon" :size="24" />
 				</div>
 				<span class="mac-menu-appname">{{ macFocusedTitle }}</span>
 			</div>
@@ -108,6 +91,34 @@
 						<sc-icon v-else :name="app.meta.icon" :size="56" />
 					</div>
 					<span>{{ app.name }}</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
+		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
+			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
+			<div class="classic-menu-body">
+				<div v-for="app in menuApps" :key="app.id" class="classic-menu-item"
+					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
+					<div class="classic-menu-app" @click="app.children ? null : openApp(app)">
+						<sc-icon :name="app.meta.icon" :size="24" />
+						<span>{{ app.name }}</span>
+						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
+					</div>
+				</div>
+				<div class="classic-menu-divider"></div>
+				<div class="classic-menu-item">
+					<div class="classic-menu-app" @click="openSettings">
+						<sc-icon name="ms-settings" :size="24" />
+						<span>{{ $t('desktop.settings') }}</span>
+					</div>
+				</div>
+				<div class="classic-menu-item">
+					<div class="classic-menu-app" @click="logout">
+						<sc-icon name="ms-exit_to_app" :size="24" />
+						<span>{{ $t('desktop.logoff') }}</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -153,34 +164,6 @@
 						<sc-icon name="ms-power_settings_new" :size="13" color="#ffffff" />
 					</span>
 					<span>{{ $t('desktop.shutdown') }}</span>
-				</div>
-			</div>
-		</div>
-
-		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
-		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
-			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
-			<div class="classic-menu-body">
-				<div v-for="app in menuApps" :key="app.id" class="classic-menu-item"
-					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-					<div class="classic-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" :size="24" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-					</div>
-				</div>
-				<div class="classic-menu-divider"></div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="openSettings">
-						<sc-icon name="ms-settings" :size="24" />
-						<span>{{ $t('desktop.settings') }}</span>
-					</div>
-				</div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="logout">
-						<sc-icon name="ms-exit_to_app" :size="24" />
-						<span>{{ $t('desktop.logoff') }}</span>
-					</div>
 				</div>
 			</div>
 		</div>
