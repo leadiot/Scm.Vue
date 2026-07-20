@@ -280,6 +280,8 @@ export default {
 		themeMacOSLion: "OS X Lion",
 		themeMacOSYosemite: "OS X Yosemite",
 		themeMacOSSonoma: "macOS Sonoma",
+		themeMacOSSequoia: "macOS Sequoia",
+		themeMacOSTahoe: "macOS Tahoe",
 		about: "关于",
 		aboutDesc: "快速开发框架，为企业提供高效的解决方案",
 		aboutlogan: "快速开发框架，为企业提供高效的解决方案",

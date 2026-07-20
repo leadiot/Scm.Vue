@@ -1,6 +1,6 @@
 <template>
-	<div v-if="!window.minimized" class="window-wrapper" :class="[windowClass, winStyleClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
-		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }" :style="windowStyle" ref="windowEl">
+	<div v-if="!window.minimized || window.animating" class="window-wrapper" :class="[windowClass, winStyleClass, animClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
+		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile, [window.animating]: window.animating }" :style="windowStyle" ref="windowEl">
 			<!-- macOS 风格标题栏（左侧红黄绿按钮，标题居中） -->
 			<template v-if="isMacOS">
 				<div class="window-header macos-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
@@ -235,6 +235,10 @@
 			},
 			winStyleClass() {
 				return 'style-' + this.winStyle;
+			},
+			animClass() {
+				if (!this.windowTheme.animations || !this.isMacOS) return '';
+				return 'macos-anim';
 			},
 		},
 		mounted() {
@@ -644,6 +648,80 @@
 		height: 8px;
 		background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
 		border-radius: 0 0 6px 0;
+	}
+
+	/* === macOS 窗口动画 === */
+	.macos-anim .window {
+		animation: macos-window-open 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.macos-anim .window.closing {
+		animation: macos-window-close 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.macos-anim .window.minimizing {
+		animation: macos-window-minimize 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	}
+
+	.macos-anim .window.maximizing {
+		animation: macos-window-maximize 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.macos-anim .window.focusing {
+		animation: macos-window-focus 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	@keyframes macos-window-open {
+		from {
+			transform: scale(0.92) translateY(10px);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1) translateY(0);
+			opacity: 1;
+		}
+	}
+
+	@keyframes macos-window-close {
+		from {
+			transform: scale(1) translateY(0);
+			opacity: 1;
+		}
+		to {
+			transform: scale(0.92) translateY(10px);
+			opacity: 0;
+		}
+	}
+
+	@keyframes macos-window-minimize {
+		from {
+			transform: scale(1) translateY(0);
+			opacity: 1;
+		}
+		to {
+			transform: scale(0.1) translateY(100%);
+			opacity: 0;
+		}
+	}
+
+	@keyframes macos-window-maximize {
+		from {
+			transform: scale(0.95);
+			opacity: 0.9;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	@keyframes macos-window-focus {
+		from {
+			transform: scale(0.98);
+		}
+		to {
+			transform: scale(1);
+		}
 	}
 
 	/* === 移动端适配 === */

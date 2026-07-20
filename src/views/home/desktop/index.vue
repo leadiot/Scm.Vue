@@ -1270,46 +1270,38 @@ export default {
 						maxBtnHover: '#28c840',
 						titleHeight: '40px',
 						buttonWidth: '48px',
-						style: 'macos'
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
 					},
 					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
 				},
 				{
-					name: 'macOSBigSur',
+					name: 'macOSTahoe',
 					style: 'macos',
 					backgroundType: 'gradient',
-					gradientColor1: '#007AFF',
-					gradientColor2: '#5AC8FA',
-					gradientDirection: 'to bottom right',
-					iconsPath: '/images/macos/',
-					taskbarColor: 'rgba(255, 255, 255, 0.8)',
-					taskbarTextColor: '#000000',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#000000',
-					iconColor: '#000000',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f5f5f5',
-						titleColor: '#000000',
-						titleColorInactive: '#999999',
-						border: 'rgba(0, 0, 0, 0.06)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos'
-					},
-					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSMonterey',
-					style: 'macos',
-					backgroundType: 'gradient',
-					gradientColor1: '#00D4AA',
-					gradientColor2: '#00A8FF',
+					gradientColor1: '#0c4a6e',
+					gradientColor2: '#0ea5e9',
 					gradientDirection: 'to bottom right',
 					iconsPath: '/images/macos/',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
@@ -1321,7 +1313,110 @@ export default {
 						bg: '#ffffff',
 						headerBg: '#f8f8f8',
 						titleColor: '#1a1a1a',
-						titleColorInactive: '#aaaaaa',
+						titleColorInactive: '#bbbbbb',
+						border: 'rgba(0, 0, 0, 0.05)',
+						borderRadius: '12px',
+						shadow: '0 15px 60px rgba(0, 0, 0, 0.25)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #0c4a6e, #0ea5e9)' }
+				},
+				{
+					name: 'macOSSequoia',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#166534',
+					gradientColor2: '#22c55e',
+					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.75)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#1a1a1a',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f5f5f5',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#bbbbbb',
+						border: 'rgba(0, 0, 0, 0.05)',
+						borderRadius: '12px',
+						shadow: '0 15px 60px rgba(0, 0, 0, 0.25)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #166534, #22c55e)' }
+				},
+				{
+					name: 'macOSSonoma',
+					style: 'macos',
+					backgroundType: 'image',
+					backgroundImage: '/images/macossonoma/background.svg',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.6)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.9)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#ffffff',
+					iconSize: 48,
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f8f8f8',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#bbbbbb',
 						border: 'rgba(0, 0, 0, 0.05)',
 						borderRadius: '10px',
 						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
@@ -1330,9 +1425,31 @@ export default {
 						maxBtnHover: '#28c840',
 						titleHeight: '40px',
 						buttonWidth: '48px',
-						style: 'macos'
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
 					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #00D4AA, #00A8FF)' }
+					previewStyle: { backgroundImage: 'url(/images/macossonoma/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSVentura',
@@ -1360,9 +1477,135 @@ export default {
 						maxBtnHover: '#28c840',
 						titleHeight: '40px',
 						buttonWidth: '48px',
-						style: 'macos'
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
 					},
 					previewStyle: { background: 'linear-gradient(to bottom right, #FB7185, #F43F5E)' }
+				},
+				{
+					name: 'macOSMonterey',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#00D4AA',
+					gradientColor2: '#00A8FF',
+					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.78)',
+					taskbarTextColor: '#1a1a1a',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#1a1a1a',
+					iconColor: '#1a1a1a',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f8f8f8',
+						titleColor: '#1a1a1a',
+						titleColorInactive: '#aaaaaa',
+						border: 'rgba(0, 0, 0, 0.05)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
+					},
+					previewStyle: { background: 'linear-gradient(to bottom right, #00D4AA, #00A8FF)' }
+				},
+				{
+					name: 'macOSBigSur',
+					style: 'macos',
+					backgroundType: 'gradient',
+					gradientColor1: '#007AFF',
+					gradientColor2: '#5AC8FA',
+					gradientDirection: 'to bottom right',
+					iconsPath: '/images/macos/',
+					taskbarColor: 'rgba(255, 255, 255, 0.8)',
+					taskbarTextColor: '#000000',
+					menuColor: 'rgba(255, 255, 255, 0.95)',
+					menuTextColor: '#000000',
+					iconColor: '#000000',
+					windowTheme: {
+						bg: '#ffffff',
+						headerBg: '#f5f5f5',
+						titleColor: '#000000',
+						titleColorInactive: '#999999',
+						border: 'rgba(0, 0, 0, 0.06)',
+						borderRadius: '10px',
+						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
+						closeBtnHover: '#ff5f57',
+						minBtnHover: '#ffbd2e',
+						maxBtnHover: '#28c840',
+						titleHeight: '40px',
+						buttonWidth: '48px',
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
+					},
+					previewStyle: { backgroundImage: 'url(/images/macos/background.png)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSDark',
@@ -1388,36 +1631,31 @@ export default {
 						maxBtnHover: '#28c840',
 						titleHeight: '40px',
 						buttonWidth: '48px',
-						style: 'macos'
+						style: 'macos',
+						animations: {
+							open: 'scale(0.92) translateY(10px) opacity(0)',
+							openEnd: 'scale(1) translateY(0) opacity(1)',
+							openDuration: '0.35s',
+							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							close: 'scale(1) translateY(0) opacity(1)',
+							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
+							closeDuration: '0.3s',
+							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							minimize: 'scale(1) translateY(0)',
+							minimizeEnd: 'scale(0.1) translateY(100%)',
+							minimizeDuration: '0.4s',
+							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							maximize: 'scale(1)',
+							maximizeEnd: 'scale(1)',
+							maximizeDuration: '0.3s',
+							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
+							focus: 'scale(1)',
+							focusEnd: 'scale(1)',
+							focusDuration: '0.2s',
+							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
+						}
 					},
 					previewStyle: { backgroundColor: '#0f0f0f' }
-				},
-				{
-					name: 'macOS9',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: '/images/macos9/background.svg',
-					iconsPath: '',
-					taskbarColor: '#FFFFFF',
-					taskbarTextColor: '#000000',
-					menuColor: '#FFFFFF',
-					menuTextColor: '#000000',
-					iconColor: '#000000',
-					iconShadow: 'none',
-					iconSize: 32,
-					windowTheme: {
-						bg: '#FFFFFF',
-						headerBg: 'repeating-linear-gradient(180deg, #EFEFEF 0px, #EFEFEF 2px, #DADADA 2px, #DADADA 3px)',
-						titleColor: '#000000',
-						titleColorInactive: '#777777',
-						border: '#5A5A5A',
-						borderRadius: '4px 4px 0 0',
-						shadow: '2px 2px 10px rgba(0, 0, 0, 0.4)',
-						titleHeight: '20px',
-						buttonWidth: '16px',
-						style: 'mac9'
-					},
-					previewStyle: { backgroundImage: 'url(/images/macos9/background.svg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSX',
@@ -1536,34 +1774,32 @@ export default {
 					previewStyle: { backgroundImage: 'url(/images/macosyosemite/background.svg)', backgroundSize: 'cover' }
 				},
 				{
-					name: 'macOSSonoma',
+					name: 'macOS9',
 					style: 'macos',
 					backgroundType: 'image',
-					backgroundImage: '/images/macossonoma/background.svg',
-					iconsPath: '/images/macos/',
-					taskbarColor: 'rgba(255, 255, 255, 0.6)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.9)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',
-					iconSize: 48,
+					backgroundImage: '/images/macos9/background.svg',
+					iconsPath: '',
+					taskbarColor: '#FFFFFF',
+					taskbarTextColor: '#000000',
+					menuColor: '#FFFFFF',
+					menuTextColor: '#000000',
+					iconColor: '#000000',
+					iconShadow: 'none',
+					iconSize: 32,
 					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f8f8f8',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.05)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos'
+						bg: '#FFFFFF',
+						headerBg: 'repeating-linear-gradient(180deg, #EFEFEF 0px, #EFEFEF 2px, #DADADA 2px, #DADADA 3px)',
+						titleColor: '#000000',
+						titleColorInactive: '#777777',
+						border: '#5A5A5A',
+						borderRadius: '4px 4px 0 0',
+						shadow: '2px 2px 10px rgba(0, 0, 0, 0.4)',
+						titleHeight: '20px',
+						buttonWidth: '16px',
+						style: 'mac9'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macossonoma/background.svg)', backgroundSize: 'cover' }
-				}
+					previewStyle: { backgroundImage: 'url(/images/macos9/background.svg)', backgroundSize: 'cover' }
+				},
 			]
 		};
 	},
@@ -1891,19 +2127,44 @@ export default {
 			}
 		},
 		closeWindow(windowId) {
-			this.windows = this.windows.filter((w) => w.id !== windowId);
+			const window = this.windows.find((w) => w.id === windowId);
+			if (window && this.isMacTheme && this.windowTheme?.animations) {
+				window.animating = 'closing';
+				setTimeout(() => {
+					this.windows = this.windows.filter((w) => w.id !== windowId);
+				}, 300);
+			} else {
+				this.windows = this.windows.filter((w) => w.id !== windowId);
+			}
 		},
 		minimizeWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
 			if (window) {
-				window.minimized = true;
-				window.focused = false;
+				if (this.isMacTheme && this.windowTheme?.animations) {
+					window.animating = 'minimizing';
+					setTimeout(() => {
+						window.minimized = true;
+						window.focused = false;
+						window.animating = '';
+					}, 400);
+				} else {
+					window.minimized = true;
+					window.focused = false;
+				}
 			}
 		},
 		maximizeWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
 			if (window) {
-				window.maximized = !window.maximized;
+				if (this.isMacTheme && this.windowTheme?.animations) {
+					window.animating = 'maximizing';
+					setTimeout(() => {
+						window.maximized = !window.maximized;
+						window.animating = '';
+					}, 300);
+				} else {
+					window.maximized = !window.maximized;
+				}
 			}
 		},
 		focusWindow(windowId) {

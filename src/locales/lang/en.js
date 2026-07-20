@@ -282,6 +282,8 @@ export default {
 		themeMacOSLion: "OS X Lion",
 		themeMacOSYosemite: "OS X Yosemite",
 		themeMacOSSonoma: "macOS Sonoma",
+		themeMacOSSequoia: "macOS Sequoia",
+		themeMacOSTahoe: "macOS Tahoe",
 		aboutlogan: "Rapid development framework, providing efficient solutions for enterprises",
 		// Messages
 		logoutConfirm: "Confirm to logout current user?",
