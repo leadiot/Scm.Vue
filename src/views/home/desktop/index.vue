@@ -2193,11 +2193,11 @@ export default {
 			const window = this.windows.find((w) => w.id === windowId);
 			if (window) {
 				if (this.isMacTheme && this.windowTheme?.animations) {
-					window.animating = 'maximizing';
+					window.animating = window.maximized ? 'restoring' : 'maximizing';
 					setTimeout(() => {
 						window.maximized = !window.maximized;
 						window.animating = '';
-					}, 300);
+					}, 400);
 				} else {
 					window.maximized = !window.maximized;
 				}

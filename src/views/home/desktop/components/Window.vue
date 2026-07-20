@@ -652,28 +652,33 @@
 
 	/* === macOS 窗口动画 === */
 	.macos-anim .window {
-		animation: macos-window-open 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation: macos-window-open 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	}
 
 	.macos-anim .window.closing {
-		animation: macos-window-close 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation: macos-window-close 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	}
 
 	.macos-anim .window.minimizing {
-		animation: macos-window-minimize 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+		animation: macos-window-minimize 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+		transform-origin: center bottom;
 	}
 
 	.macos-anim .window.maximizing {
-		animation: macos-window-maximize 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation: macos-window-maximize 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+	}
+
+	.macos-anim .window.restoring {
+		animation: macos-window-restore 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	}
 
 	.macos-anim .window.focusing {
-		animation: macos-window-focus 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation: macos-window-focus 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	}
 
 	@keyframes macos-window-open {
 		from {
-			transform: scale(0.92) translateY(10px);
+			transform: scale(0.9) translateY(20px);
 			opacity: 0;
 		}
 		to {
@@ -688,39 +693,78 @@
 			opacity: 1;
 		}
 		to {
-			transform: scale(0.92) translateY(10px);
+			transform: scale(0.9) translateY(20px);
 			opacity: 0;
 		}
 	}
 
 	@keyframes macos-window-minimize {
-		from {
-			transform: scale(1) translateY(0);
+		0% {
+			transform: scale(1) translateY(0) rotateX(0deg);
 			opacity: 1;
 		}
-		to {
-			transform: scale(0.1) translateY(100%);
+		30% {
+			transform: scale(0.6) translateY(30px) rotateX(15deg);
+			opacity: 1;
+		}
+		60% {
+			transform: scale(0.3) translateY(60px) rotateX(30deg);
+			opacity: 0.8;
+		}
+		100% {
+			transform: scale(0.05) translateY(100%) rotateX(45deg);
 			opacity: 0;
 		}
 	}
 
 	@keyframes macos-window-maximize {
-		from {
+		0% {
 			transform: scale(0.95);
 			opacity: 0.9;
 		}
-		to {
+		60% {
+			transform: scale(1.02);
+			opacity: 1;
+		}
+		80% {
+			transform: scale(0.99);
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	@keyframes macos-window-restore {
+		0% {
+			transform: scale(1);
+			opacity: 1;
+		}
+		40% {
+			transform: scale(0.96);
+			opacity: 0.98;
+		}
+		70% {
+			transform: scale(1.01);
+		}
+		100% {
 			transform: scale(1);
 			opacity: 1;
 		}
 	}
 
 	@keyframes macos-window-focus {
-		from {
+		0% {
 			transform: scale(0.98);
+			opacity: 0.95;
 		}
-		to {
+		50% {
+			transform: scale(1.01);
+			opacity: 1;
+		}
+		100% {
 			transform: scale(1);
+			opacity: 1;
 		}
 	}
 
