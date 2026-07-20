@@ -1,6 +1,6 @@
 <template>
-	<div v-if="!window.minimized || window.animating" class="window-wrapper" :class="[windowClass, winStyleClass, animClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
-		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile, [window.animating]: window.animating }" :style="windowStyle" ref="windowEl">
+	<div v-show="!window.minimized || window.animating" class="window-wrapper" :class="[windowClass, winStyleClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
+		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }" :style="windowStyle" ref="windowEl">
 			<!-- macOS 风格标题栏（左侧红黄绿按钮，标题居中） -->
 			<template v-if="isMacOS">
 				<div class="window-header macos-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
@@ -137,13 +137,14 @@
 			window: { type: Object, required: true },
 			theme: { type: Object, default: () => ({}) },
 		},
-		emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed', 'theme-preview', 'save-settings'],
+		emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed', 'theme-preview', 'save-settings', 'animation-complete'],
 		data() {
 			return {
 				dragData: { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 },
 				resizeData: { isResizing: false, startX: 0, startY: 0, width: 0, height: 0, left: 0, top: 0 },
 				componentCache: {},
 				isMobile: false,
+				currentAnimation: null,
 			};
 		},
 		computed: {
@@ -236,9 +237,21 @@
 			winStyleClass() {
 				return 'style-' + this.winStyle;
 			},
-			animClass() {
-				if (!this.windowTheme.animations || !this.isMacOS) return '';
-				return 'macos-anim';
+		},
+		watch: {
+			'window.animating'(newVal) {
+				if (!this.isMacOS || !newVal) return;
+				this.cancelCurrentAnimation();
+				if (newVal === 'closing') this.animateClose();
+				else if (newVal === 'minimizing') this.animateMinimize();
+				else if (newVal === 'unminimizing') this.animateUnminimize();
+			},
+			'window.maximized': {
+				handler(newVal, oldVal) {
+					if (!this.isMacOS || newVal === oldVal) return;
+					this.animateFLIPMaximize(newVal);
+				},
+				flush: 'pre', // DOM更新前读取"First"位置，nextTick后读取"Last"位置
 			},
 		},
 		mounted() {
@@ -250,6 +263,10 @@
 			document.addEventListener('mouseup', this.stopResize);
 			document.addEventListener('touchmove', this.onDragging, { passive: false });
 			document.addEventListener('touchend', this.stopDrag);
+			// macOS 窗口打开动画
+			if (this.isMacOS && this.$refs.windowEl) {
+				this.animateOpen();
+			}
 		},
 		beforeUnmount() {
 			window.removeEventListener('resize', this.checkMobile);
@@ -290,7 +307,7 @@
 				return LoadingComponent;
 			},
 			startDrag(e) {
-				if (this.window.maximized || this.isMobile) return;
+				if (this.window.maximized || this.isMobile || this.currentAnimation) return;
 				const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 				const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 				this.dragData = { isDragging: true, startX: clientX, startY: clientY, initialX: this.window.x, initialY: this.window.y };
@@ -306,6 +323,7 @@
 			},
 			stopDrag() { this.dragData.isDragging = false; },
 			startResize(e) {
+				if (this.currentAnimation) return;
 				this.resizeData = {
 					isResizing: true, startX: e.clientX, startY: e.clientY,
 					width: this.window.width, height: this.window.height,
@@ -321,6 +339,198 @@
 				this.window.height = Math.max(minH, this.resizeData.height + dy);
 			},
 			stopResize() { this.resizeData.isResizing = false; },
+
+			/* ================================================================
+			   macOS Web Animations API 动画系统
+			   FLIP 技术处理最大化/还原（GPU合成，零布局重算）
+			   精灵效果(Genie)使用计算的Dock偏移量
+			   ================================================================ */
+
+		cancelCurrentAnimation() {
+			if (this.currentAnimation) {
+				this.currentAnimation.cancel();
+				this.currentAnimation = null;
+			}
+		},
+
+		// 清掉某元素上所有残留的 WAAPI 动画，避免 fill:forwards 旧动画干扰新动画
+		// （如 minimize 的 forwards 锁存态在 unminimize 结束后回退导致窗口再次"消失"）
+		cancelElementAnimations(el) {
+			if (el && typeof el.getAnimations === 'function') {
+				el.getAnimations().forEach((a) => a.cancel());
+			}
+		},
+
+		// 打开动画：从88%缩放+下偏移弹入
+		animateOpen() {
+			const el = this.$refs.windowEl;
+			if (!el) return;
+			this.cancelElementAnimations(el);
+			this.currentAnimation = el.animate([
+					{ transform: 'scale(0.88) translateY(24px)', opacity: 0 },
+					{ transform: 'scale(1) translateY(0)', opacity: 1 }
+				], {
+					duration: 420,
+					easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+					fill: 'backwards',
+				});
+				this.currentAnimation.onfinish = () => { this.currentAnimation = null; };
+			},
+
+			// 关闭动画：反向缩放+淡出
+		animateClose() {
+			const el = this.$refs.windowEl;
+			if (!el) return;
+			this.cancelElementAnimations(el);
+			this.currentAnimation = el.animate([
+					{ transform: 'scale(1) translateY(0)', opacity: 1 },
+					{ transform: 'scale(0.88) translateY(24px)', opacity: 0 }
+				], {
+					duration: 300,
+					easing: 'cubic-bezier(0.4, 0, 1, 1)',
+					fill: 'forwards',
+				});
+				this.currentAnimation.onfinish = () => {
+					this.currentAnimation = null;
+					this.$emit('animation-complete', this.window.id, 'close');
+				};
+			},
+
+			// 精灵最小化：窗口被"吸入"Dock — 计算实际Dock位置偏移
+		animateMinimize() {
+			const el = this.$refs.windowEl;
+			if (!el) return;
+			this.cancelElementAnimations(el);
+			const rect = el.getBoundingClientRect();
+				// macOS Dock在视口底部72px区域
+				const dockY = window.innerHeight - 72;
+				const travelY = Math.max(0, dockY - rect.bottom);
+
+				this.currentAnimation = el.animate([
+					{ transform: 'scale(1, 1) translateY(0px)', opacity: 1, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.93, 0.98) translateY(${travelY * 0.06}px)`, opacity: 1, offset: 0.12, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.75, 0.93) translateY(${travelY * 0.18}px)`, opacity: 1, offset: 0.28, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.45, 0.72) translateY(${travelY * 0.40}px)`, opacity: 0.9, offset: 0.48, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.18, 0.35) translateY(${travelY * 0.65}px)`, opacity: 0.5, offset: 0.68, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.04, 0.08) translateY(${travelY * 0.88}px)`, opacity: 0.12, offset: 0.85, transformOrigin: 'center bottom' },
+					{ transform: `scale(0, 0.01) translateY(${travelY}px)`, opacity: 0, transformOrigin: 'center bottom' }
+				], {
+					duration: 520,
+					easing: 'cubic-bezier(0.32, 0.72, 0, 1)',
+					fill: 'forwards',
+				});
+				this.currentAnimation.onfinish = () => {
+					this.currentAnimation = null;
+					this.$emit('animation-complete', this.window.id, 'minimize');
+				};
+			},
+
+			// 从Dock还原：精灵逆动画
+		animateUnminimize() {
+			const el = this.$refs.windowEl;
+			if (!el) return;
+			// 关键：清掉上一次 minimize 的 fill:forwards 残留动画，否则 unminimize
+			// 结束后元素回退到它的 forwards 锁存态(scale0/opacity0)而再次"消失"
+			this.cancelElementAnimations(el);
+			const rect = el.getBoundingClientRect();
+				const dockY = window.innerHeight - 72;
+				const travelY = Math.max(0, dockY - rect.bottom);
+
+				this.currentAnimation = el.animate([
+					{ transform: `scale(0, 0.01) translateY(${travelY}px)`, opacity: 0, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.04, 0.08) translateY(${travelY * 0.88}px)`, opacity: 0.12, offset: 0.15, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.18, 0.35) translateY(${travelY * 0.65}px)`, opacity: 0.5, offset: 0.32, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.45, 0.72) translateY(${travelY * 0.40}px)`, opacity: 0.9, offset: 0.52, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.75, 0.93) translateY(${travelY * 0.18}px)`, opacity: 1, offset: 0.72, transformOrigin: 'center bottom' },
+					{ transform: `scale(0.93, 0.98) translateY(${travelY * 0.06}px)`, opacity: 1, offset: 0.88, transformOrigin: 'center bottom' },
+					{ transform: 'scale(1, 1) translateY(0px)', opacity: 1, transformOrigin: 'center bottom' }
+				], {
+					duration: 520,
+					easing: 'cubic-bezier(0.32, 0.72, 0, 1)',
+					fill: 'backwards',
+				});
+				this.currentAnimation.onfinish = () => {
+					this.currentAnimation = null;
+					this.$emit('animation-complete', this.window.id, 'unminimize');
+				};
+			},
+
+			// FLIP最大化/还原：GPU合成的位置+尺寸动画，零布局重算
+		animateFLIPMaximize(isMaximizing) {
+			const wrapperEl = this.$el;
+			const innerEl = this.$refs.windowEl;
+			if (!wrapperEl || !innerEl) return;
+			this.cancelCurrentAnimation();
+			// 清掉上一次最大化/还原或聚焦弹跳的残留动画，避免复合顺序冲突
+			this.cancelElementAnimations(wrapperEl);
+			this.cancelElementAnimations(innerEl);
+
+				// First：记录当前位置（DOM尚未更新，仍显示旧布局）
+				const firstRect = wrapperEl.getBoundingClientRect();
+
+				// 等待Vue DOM更新后读取Last位置
+				this.$nextTick(() => {
+					const lastRect = wrapperEl.getBoundingClientRect();
+
+					// Invert：计算位移和缩放差值
+					const dx = firstRect.left - lastRect.left;
+					const dy = firstRect.top - lastRect.top;
+					const scaleX = firstRect.width / lastRect.width;
+					const scaleY = firstRect.height / lastRect.height;
+
+					// 如果差异太小（窗口已是最大化尺寸），跳过动画
+					if (Math.abs(dx) < 2 && Math.abs(dy) < 2 && Math.abs(scaleX - 1) < 0.02 && Math.abs(scaleY - 1) < 0.02) {
+						this.$emit('animation-complete', this.window.id, isMaximizing ? 'maximize' : 'restore');
+						return;
+					}
+
+					// Play：wrapper从旧位置动画到新位置（纯transform，GPU合成）
+					const wrapperAnim = wrapperEl.animate([
+						{ transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`, transformOrigin: 'top left' },
+						{ transform: 'translate(0, 0) scale(1, 1)', transformOrigin: 'top left' }
+					], {
+						duration: 450,
+						easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+						fill: 'none',
+					});
+
+					// 内层微弹效果
+					const bounceEasing = isMaximizing ? 'cubic-bezier(0.32, 0.72, 0, 1)' : 'cubic-bezier(0.16, 1, 0.3, 1)';
+					const bounceFrom = isMaximizing ? 'scale(0.97)' : 'scale(1.008)';
+					const bounceMid = isMaximizing ? 'scale(1.008)' : 'scale(0.992)';
+					innerEl.animate([
+						{ transform: bounceFrom },
+						{ transform: bounceMid, offset: 0.45 },
+						{ transform: 'scale(1)' }
+					], {
+						duration: 450,
+						easing: bounceEasing,
+						fill: 'none',
+					});
+
+					this.currentAnimation = wrapperAnim;
+					wrapperAnim.onfinish = () => {
+						this.currentAnimation = null;
+						this.$emit('animation-complete', this.window.id, isMaximizing ? 'maximize' : 'restore');
+					};
+				});
+			},
+
+			// 聚焦微弹
+			animateFocus() {
+				const el = this.$refs.windowEl;
+				if (!el || this.currentAnimation) return;
+				const anim = el.animate([
+					{ transform: 'scale(0.992)' },
+					{ transform: 'scale(1.004)', offset: 0.5 },
+					{ transform: 'scale(1)' }
+				], {
+					duration: 250,
+					easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+					fill: 'none',
+				});
+				anim.onfinish = () => {};
+			},
 		},
 	};
 </script>
@@ -650,122 +860,15 @@
 		border-radius: 0 0 6px 0;
 	}
 
-	/* === macOS 窗口动画 === */
-	.macos-anim .window {
-		animation: macos-window-open 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-	}
+	/* ================================================================
+	   macOS 窗口视觉样式（动画由 Web Animations API 驱动）
+	   未聚焦窗口的去饱和效果 — 纯静态CSS，无transition避免repaint
+	   ================================================================ */
 
-	.macos-anim .window.closing {
-		animation: macos-window-close 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-	}
-
-	.macos-anim .window.minimizing {
-		animation: macos-window-minimize 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-		transform-origin: center bottom;
-	}
-
-	.macos-anim .window.maximizing {
-		animation: macos-window-maximize 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-	}
-
-	.macos-anim .window.restoring {
-		animation: macos-window-restore 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-	}
-
-	.macos-anim .window.focusing {
-		animation: macos-window-focus 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-	}
-
-	@keyframes macos-window-open {
-		from {
-			transform: scale(0.9) translateY(20px);
-			opacity: 0;
-		}
-		to {
-			transform: scale(1) translateY(0);
-			opacity: 1;
-		}
-	}
-
-	@keyframes macos-window-close {
-		from {
-			transform: scale(1) translateY(0);
-			opacity: 1;
-		}
-		to {
-			transform: scale(0.9) translateY(20px);
-			opacity: 0;
-		}
-	}
-
-	@keyframes macos-window-minimize {
-		0% {
-			transform: scale(1) translateY(0) rotateX(0deg);
-			opacity: 1;
-		}
-		30% {
-			transform: scale(0.6) translateY(30px) rotateX(15deg);
-			opacity: 1;
-		}
-		60% {
-			transform: scale(0.3) translateY(60px) rotateX(30deg);
-			opacity: 0.8;
-		}
-		100% {
-			transform: scale(0.05) translateY(100%) rotateX(45deg);
-			opacity: 0;
-		}
-	}
-
-	@keyframes macos-window-maximize {
-		0% {
-			transform: scale(0.95);
-			opacity: 0.9;
-		}
-		60% {
-			transform: scale(1.02);
-			opacity: 1;
-		}
-		80% {
-			transform: scale(0.99);
-		}
-		100% {
-			transform: scale(1);
-			opacity: 1;
-		}
-	}
-
-	@keyframes macos-window-restore {
-		0% {
-			transform: scale(1);
-			opacity: 1;
-		}
-		40% {
-			transform: scale(0.96);
-			opacity: 0.98;
-		}
-		70% {
-			transform: scale(1.01);
-		}
-		100% {
-			transform: scale(1);
-			opacity: 1;
-		}
-	}
-
-	@keyframes macos-window-focus {
-		0% {
-			transform: scale(0.98);
-			opacity: 0.95;
-		}
-		50% {
-			transform: scale(1.01);
-			opacity: 1;
-		}
-		100% {
-			transform: scale(1);
-			opacity: 1;
-		}
+	/* macOS风格：未聚焦窗口轻微去饱和+变暗 */
+	.style-macos .window:not(.focused) {
+		filter: saturate(0.88) brightness(0.97);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
 	}
 
 	/* === 移动端适配 === */

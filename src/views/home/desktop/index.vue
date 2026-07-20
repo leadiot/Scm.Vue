@@ -20,6 +20,7 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
+				@animation-complete="onAnimationComplete"
 				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
@@ -1889,6 +1890,10 @@ export default {
 		isMacTheme() {
 			return this.currentTheme.startsWith('macOS');
 		},
+		// macOS 风格窗口（style='macos'，排除 mac9）
+		isMacOSStyle() {
+			return this.windowTheme?.style === 'macos';
+		},
 		// macOS 主题是否显示 Dock（Mac OS 9 时代 Dock）
 		hasDock() {
 			return this.isMacTheme && this.currentTheme !== 'macOS9';
@@ -2164,11 +2169,10 @@ export default {
 		},
 		closeWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
-			if (window && this.isMacTheme && this.windowTheme?.animations) {
+			if (window && this.isMacOSStyle) {
+				// 设置动画状态，Window.vue watcher 检测后自动播放关闭动画
 				window.animating = 'closing';
-				setTimeout(() => {
-					this.windows = this.windows.filter((w) => w.id !== windowId);
-				}, 300);
+				// 动画完成后由 onAnimationComplete 从数组移除
 			} else {
 				this.windows = this.windows.filter((w) => w.id !== windowId);
 			}
@@ -2176,13 +2180,10 @@ export default {
 		minimizeWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
 			if (window) {
-				if (this.isMacTheme && this.windowTheme?.animations) {
+				if (this.isMacOSStyle) {
+					// 设置动画状态，Window.vue watcher 检测后自动播放精灵最小化
 					window.animating = 'minimizing';
-					setTimeout(() => {
-						window.minimized = true;
-						window.focused = false;
-						window.animating = '';
-					}, 400);
+					// 动画完成后由 onAnimationComplete 设置 minimized=true
 				} else {
 					window.minimized = true;
 					window.focused = false;
@@ -2192,12 +2193,9 @@ export default {
 		maximizeWindow(windowId) {
 			const window = this.windows.find((w) => w.id === windowId);
 			if (window) {
-				if (this.isMacTheme && this.windowTheme?.animations) {
-					window.animating = window.maximized ? 'restoring' : 'maximizing';
-					setTimeout(() => {
-						window.maximized = !window.maximized;
-						window.animating = '';
-					}, 400);
+				if (this.isMacOSStyle) {
+					// 仅切换状态，Window.vue watcher 自动执行 FLIP 动画
+					window.maximized = !window.maximized;
 				} else {
 					window.maximized = !window.maximized;
 				}
@@ -2205,11 +2203,36 @@ export default {
 		},
 		focusWindow(windowId) {
 			this.windows.forEach((w) => {
-				w.focused = w.id === windowId;
 				if (w.id === windowId) {
-					w.minimized = false;
+					if (w.minimized && this.isMacOSStyle) {
+						// 从 Dock 还原：设置动画状态，Window.vue watcher 播放精灵逆动画
+						w.animating = 'unminimizing';
+						w.minimized = false;
+						w.focused = true;
+						// 动画完成后由 onAnimationComplete 清除 animating
+					} else {
+						w.minimized = false;
+						w.focused = true;
+					}
+				} else {
+					w.focused = false;
 				}
 			});
+		},
+		onAnimationComplete(windowId, type) {
+			const window = this.windows.find((w) => w.id === windowId);
+			if (!window) return;
+			if (type === 'close') {
+				this.windows = this.windows.filter((w) => w.id !== windowId);
+			} else if (type === 'minimize') {
+				window.minimized = true;
+				window.focused = false;
+				window.animating = '';
+			} else if (type === 'maximize' || type === 'restore') {
+				window.animating = '';
+			} else if (type === 'unminimize') {
+				window.animating = '';
+			}
 		},
 		setWallpaper(url) {
 			this.backgroundType = 'image';
