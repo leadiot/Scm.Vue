@@ -444,35 +444,36 @@ export default {
             }
         },
         async downloadUpdate() {
-            this.updateStatus = 'downloading';
-            this.updateMessage = this.$t('desktop.downloading');
-            this.downloadProgress = 0;
+            // this.updateStatus = 'downloading';
+            // this.updateMessage = this.$t('desktop.downloading');
+            // this.downloadProgress = 0;
 
-            const progressInterval = setInterval(() => {
-                if (this.downloadProgress < 95) {
-                    this.downloadProgress += Math.random() * 15;
-                    if (this.downloadProgress > 95) this.downloadProgress = 95;
-                }
-            }, 300);
+            // const progressInterval = setInterval(() => {
+            //     if (this.downloadProgress < 95) {
+            //         this.downloadProgress += Math.random() * 15;
+            //         if (this.downloadProgress > 95) this.downloadProgress = 95;
+            //     }
+            // }, 300);
 
-            try {
-                const res = await this.$API.scmsysupgrade.download.get(this.latestVersion);
-                clearInterval(progressInterval);
-                this.downloadProgress = 100;
+            // try {
+            //     const res = await this.$API.scmsysupgrade.download.get(this.latestVersion);
+            //     clearInterval(progressInterval);
+            //     this.downloadProgress = 100;
                 
-                if (res.code === 200 && res.data) {
-                    this.updateStatus = 'downloaded';
-                    this.updateMessage = this.$t('desktop.downloadComplete');
-                } else {
-                    this.updateStatus = 'error';
-                    this.updateMessage = this.$t('desktop.downloadFailed');
-                }
-            } catch (error) {
-                clearInterval(progressInterval);
-                console.error('下载失败:', error);
-                this.updateStatus = 'error';
-                this.updateMessage = this.$t('desktop.downloadFailed');
-            }
+            //     if (res.code === 200 && res.data) {
+            //         this.updateStatus = 'downloaded';
+            //         this.updateMessage = this.$t('desktop.downloadComplete');
+            //     } else {
+            //         this.updateStatus = 'error';
+            //         this.updateMessage = this.$t('desktop.downloadFailed');
+            //     }
+            // } catch (error) {
+            //     clearInterval(progressInterval);
+            //     console.error('下载失败:', error);
+            //     this.updateStatus = 'error';
+            //     this.updateMessage = this.$t('desktop.downloadFailed');
+            // }
+            window.open('https://www.c-scm.net/download', '_blank');
         },
         async upgradeUpdate() {
             this.updateStatus = 'upgrading';
