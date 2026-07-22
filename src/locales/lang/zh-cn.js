@@ -189,6 +189,9 @@ export default {
 		refresh: "刷新",
 		cancel: "取消",
 		save: "保存",
+		reset: "重置",
+		saveSuccess: "设置已保存",
+		resetSuccess: "已恢复默认设置",
 		// XP 开始菜单
 		allPrograms: "所有程序",
 		pinned: "已固定",

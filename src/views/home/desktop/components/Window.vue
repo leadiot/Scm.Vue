@@ -50,8 +50,8 @@
 				</div>
 			</template>
 
-			<!-- WinXP 经典风格标题栏 -->
-			<template v-else-if="isWinXP">
+			<!-- 经典风格标题栏 -->
+			<template v-else-if="isClassic">
 				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
 					<div class="winxp-title-left">
 						<sc-icon :name="window.icon || 'ms-grid_view'" :size="14" color="#ffffff" />
@@ -162,7 +162,7 @@
 			winStyle() { return this.windowTheme.style || 'modern'; },
 			isMacOS() { return this.winStyle === 'macos'; },
 			isMac9() { return this.winStyle === 'mac9'; },
-			isWinXP() { return this.winStyle === 'xp'; },
+			isClassic() { return this.winStyle === 'classic'; },
 			isWin7() { return this.winStyle === 'win7'; },
 			windowTheme() { return this.theme; },
 			windowTitleColor() {
@@ -179,18 +179,18 @@
 			},
 			windowStyle() {
 				const t = this.windowTheme;
-				const hs = t.xpHeaderStart || '#0058EE';
-				const he = t.xpHeaderEnd || '#0047CC';
-				const his = t.xpHeaderInactiveStart || '#7A96DF';
-				const hie = t.xpHeaderInactiveEnd || '#5E7EB5';
-				const bs = t.xpBtnStart || '#3C8CFF';
-				const be = t.xpBtnEnd || '#0054E3';
-				const bhs = t.xpBtnHoverStart || '#5CA0FF';
-				const bhe = t.xpBtnHoverEnd || '#1E6FE0';
-				const cs = t.xpCloseStart || '#FF6B4A';
-				const ce = t.xpCloseEnd || '#C1352E';
-				const chs = t.xpCloseHoverStart || '#FF8B6A';
-				const che = t.xpCloseHoverEnd || '#D0453E';
+				const hs = t.classicHeaderStart || t.xpHeaderStart || '#0058EE';
+				const he = t.classicHeaderEnd || t.xpHeaderEnd || '#0047CC';
+				const his = t.classicHeaderInactiveStart || t.xpHeaderInactiveStart || '#7A96DF';
+				const hie = t.classicHeaderInactiveEnd || t.xpHeaderInactiveEnd || '#5E7EB5';
+				const bs = t.classicBtnStart || t.xpBtnStart || '#3C8CFF';
+				const be = t.classicBtnEnd || t.xpBtnEnd || '#0054E3';
+				const bhs = t.classicBtnHoverStart || t.xpBtnHoverStart || '#5CA0FF';
+				const bhe = t.classicBtnHoverEnd || t.xpBtnHoverEnd || '#1E6FE0';
+				const cs = t.classicCloseStart || t.xpCloseStart || '#FF6B4A';
+				const ce = t.classicCloseEnd || t.xpCloseEnd || '#C1352E';
+				const chs = t.classicCloseHoverStart || t.xpCloseHoverStart || '#FF8B6A';
+				const che = t.classicCloseHoverEnd || t.xpCloseHoverEnd || '#D0453E';
 				return {
 					'--win-bg': this.bgColor,
 					'--win-header-bg': this.headerBg,
@@ -204,20 +204,19 @@
 					'--win-max-hover': this.maxBtnHover,
 					'--win-title-height': this.titleHeight,
 					'--win-button-width': this.buttonWidth,
-					// XP 经典风格变量（.style-xp 消费，缺省回退 Luna 蓝）
-					'--xp-header': t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
-					'--xp-header-inactive': t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
-					'--xp-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
-					'--xp-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
-					'--xp-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
-					'--xp-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
-					'--xp-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
-					'--xp-btn-border': t.xpBtnBorder || '#FFFFFF',
-					'--xp-close-border': t.xpCloseBorder || '#A02010',
-					'--xp-glyph-color': t.xpGlyphColor || '#FFFFFF',
-					'--xp-frame': t.xpFrame || '#0054E3',
-					'--xp-header-radius': t.xpHeaderRadius || '6px',
-					'--xp-btn-size': t.xpBtnSize || '21px',
+					'--classic-header': t.classicHeader || t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
+					'--classic-header-inactive': t.classicHeaderInactive || t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
+					'--classic-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
+					'--classic-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
+					'--classic-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
+					'--classic-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
+					'--classic-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
+					'--classic-btn-border': t.classicBtnBorder || t.xpBtnBorder || '#FFFFFF',
+					'--classic-close-border': t.classicCloseBorder || t.xpCloseBorder || '#A02010',
+					'--classic-glyph-color': t.classicGlyphColor || t.xpGlyphColor || '#FFFFFF',
+					'--classic-frame': t.classicFrame || t.xpFrame || '#0054E3',
+					'--classic-header-radius': t.classicHeaderRadius || t.xpHeaderRadius || '6px',
+					'--classic-btn-size': t.classicBtnSize || t.xpBtnSize || '21px',
 				};
 			},
 			headerBarStyle() {
@@ -750,40 +749,40 @@
 		opacity: 1;
 	}
 
-	/* === WinXP 经典风格（颜色全部走 --xp-* 变量，可被主题定制） === */
-	.style-xp .window {
-		border: 2px solid var(--xp-frame);
+	/* === 经典窗口风格（颜色全部走 --classic-* 变量，可被主题定制） === */
+	.style-classic .window {
+		border: 2px solid var(--classic-frame);
 		border-top: none;
 		border-radius: var(--win-border-radius);
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 	}
 
-	.style-xp .window.maximized {
+	.style-classic .window.maximized {
 		border: none;
 		border-radius: 0;
 	}
 
 	.winxp-header {
-		background: var(--xp-header) !important;
+		background: var(--classic-header) !important;
 		padding: 0 4px 0 8px !important;
 		justify-content: space-between !important;
-		border-radius: var(--xp-header-radius) var(--xp-header-radius) 0 0;
+		border-radius: var(--classic-header-radius) var(--classic-header-radius) 0 0;
 		margin: -2px -2px 0 -2px;
 		height: var(--win-title-height) !important;
 		line-height: var(--win-title-height) !important;
 	}
 
-	.style-xp .window.maximized .winxp-header {
+	.style-classic .window.maximized .winxp-header {
 		border-radius: 0;
 		margin: 0;
 	}
 
-	.style-xp .window:not(.focused) .window-header {
+	.style-classic .window:not(.focused) .window-header {
 		opacity: 1;
 	}
 
-	.style-xp .window:not(.focused) .winxp-header {
-		background: var(--xp-header-inactive) !important;
+	.style-classic .window:not(.focused) .winxp-header {
+		background: var(--classic-header-inactive) !important;
 	}
 
 	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
@@ -812,26 +811,26 @@
 	}
 
 	.winxp-btn {
-		width: var(--xp-btn-size);
-		height: var(--xp-btn-size);
-		border: 1px solid var(--xp-btn-border);
+		width: var(--classic-btn-size);
+		height: var(--classic-btn-size);
+		border: 1px solid var(--classic-btn-border);
 		border-radius: 3px;
-		background: var(--xp-btn);
-		color: var(--xp-glyph-color);
+		background: var(--classic-btn);
+		color: var(--classic-glyph-color);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
-	.winxp-btn:hover { background: var(--xp-btn-hover); }
-	.winxp-btn:active { background: var(--xp-btn-active); }
+	.winxp-btn:hover { background: var(--classic-btn-hover); }
+	.winxp-btn:active { background: var(--classic-btn-active); }
 	.winxp-btn.close-btn {
-		background: var(--xp-close) !important;
-		border-color: var(--xp-close-border);
+		background: var(--classic-close) !important;
+		border-color: var(--classic-close-border);
 		margin-left: 2px;
 	}
-	.winxp-btn.close-btn:hover { background: var(--xp-close-hover) !important; }
+	.winxp-btn.close-btn:hover { background: var(--classic-close-hover) !important; }
 
 	/* === 窗口内容 === */
 	.window-content {

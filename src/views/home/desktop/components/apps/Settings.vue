@@ -237,6 +237,16 @@
                     </div>
                 </el-scrollbar>
             </div>
+            <div class="content-footer">
+                <el-button type="primary" @click="saveSettings">
+                    <sc-icon name="ms-save" :size="16" />
+                    {{ $t('desktop.save') }}
+                </el-button>
+                <el-button @click="resetSettings">
+                    <sc-icon name="ms-refresh" :size="16" />
+                    {{ $t('desktop.reset') }}
+                </el-button>
+            </div>
         </div>
     </div>
 </template>
@@ -386,10 +396,10 @@ export default {
             this.$emit('theme-preview', { ...this.localConfig });
         },
         onStyleChange() {
-            const firstTheme = this.filteredThemes[0];
-            if (firstTheme) {
-                this.selectTheme(firstTheme);
-            }
+            // const firstTheme = this.filteredThemes[0];
+            // if (firstTheme) {
+            //     this.selectTheme(firstTheme);
+            // }
         },
         selectImage(img) {
             this.localConfig.backgroundImage = img;
@@ -400,6 +410,12 @@ export default {
         },
         saveSettings() {
             this.$emit('save-settings', { ...this.localConfig });
+            this.$message.success(this.$t('desktop.saveSuccess'));
+        },
+        resetSettings() {
+            this.localConfig = this.cloneConfig(this.config);
+            this.updateConfig();
+            this.$message.info(this.$t('desktop.resetSuccess'));
         },
         async checkUpdate() {
             this.updateStatus = 'checking';
@@ -578,6 +594,15 @@ export default {
     flex: 1;
     overflow: hidden;
     padding: 16px 32px 24px;
+}
+
+.content-footer {
+    padding: 16px 32px;
+    background-color: #f3f3f3;
+    border-top: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
 /* 设置卡片 */

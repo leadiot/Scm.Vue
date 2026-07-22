@@ -191,6 +191,9 @@ export default {
 		refresh: "Refresh",
 		cancel: "Cancel",
 		save: "Save",
+		reset: "Reset",
+		saveSuccess: "Settings saved",
+		resetSuccess: "Settings reset to default",
 		// XP Start Menu
 		allPrograms: "All Programs",
 		pinned: "Pinned",

@@ -7,7 +7,7 @@
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image" :style="iconImageStyle(app)">
-					<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)"
+					<img v-if="getThemeIcon(app.code)" :src="getThemeIcon(app.code)"
 						:style="{ width: iconSize + 'px', height: iconSize + 'px', objectFit: 'contain' }" alt=""
 						draggable="false" />
 					<sc-icon v-else :name="app.meta.icon" :size="iconSize" :color="iconColor" />
@@ -20,8 +20,8 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
-				@animation-complete="onAnimationComplete"
-				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
+				@animation-complete="onAnimationComplete" @set-wallpaper="setWallpaper"
+				@profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
@@ -124,7 +124,7 @@
 		</div>
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
-		<div v-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
+		<div v-else-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
 			<div class="xp-menu-header" @click="openProfile">
 				<div class="xp-menu-avatar">
 					<sc-icon name="ms-account_circle" :size="30" color="#3B6BD4" />
@@ -418,7 +418,10 @@ export default {
 				'ms-desktop_windows': 'computer.png',
 				'ms-laptop': 'computer.png',
 				'ms-folder': 'folder.png',
-				'ms-folder_open': 'folder.png',
+				'ms-folder_open': 'folder_open.png',
+				'ms-terminal': 'terminal.png',
+				'ms-trash': 'trash.png',
+				'ms-trash_full': 'trash_full.png',
 				'ms-settings': 'settings.png',
 				'ms-delete': 'trash.png',
 				'ms-delete_outline': 'trash.png',
@@ -432,13 +435,15 @@ export default {
 				'ms-videocam': 'videos.png',
 				'ms-movie': 'videos.png',
 				'ms-movie_creation': 'videos.png',
-				'ms-article': 'documents.png',
-				'ms-description': 'documents.png',
+				'ms-article': 'notepad.png',
+				'ms-description': 'notepad.png',
 				'ms-feed': 'documents.png',
 				'ms-photo_library': 'documents.png',
 				'ms-image': 'documents.png',
 				'ms-calendar_month': 'documents.png',
 				'ms-account_circle': 'documents.png',
+				'app-browser': 'browser.png',
+				'app-textpad': 'notepad.png',
 			},
 			menuApps: [],
 			updateTimeInterval: null,
@@ -451,6 +456,7 @@ export default {
 			iconBgSize: '0px',
 			iconsPath: '',
 			currentTheme: 'default',
+			currentStyle: 'system',
 			taskbarColor: 'rgba(0, 0, 0, 0.6)',
 			taskbarTextColor: '#ffffff',
 			taskbarBorderRadius: '4px',
@@ -817,7 +823,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win11/background.jpg',
-					iconsPath: '/images/windows/win11/',
+					// iconsPath: '/images/windows/win11/',
 					startLogo: '/images/windows/win11/logo.svg',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
@@ -856,7 +862,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win10/background.jpg',
-					iconsPath: '/images/windows/win10/',
+					// iconsPath: '/images/windows/win10/',
 					startLogo: '/images/windows/win10/logo.svg',
 					taskbarColor: 'rgba(24, 24, 24, 0.98)',
 					taskbarTextColor: '#ffffff',
@@ -895,7 +901,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win8/background.jpg',
-					iconsPath: '/images/windows/win8/',
+					// iconsPath: '/images/windows/win8/',
 					startLogo: '/images/windows/win8/logo.svg',
 					taskbarColor: 'rgba(20, 20, 40, 0.92)',
 					taskbarTextColor: '#ffffff',
@@ -934,7 +940,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win7/background.jpg',
-					iconsPath: '/images/windows/win7/',
+					// iconsPath: '/images/windows/win7/',
 					startLogo: '/images/windows/win7/logo.svg',
 					taskbarColor: '#1A1A1A',
 					taskbarTextColor: '#ffffff',
@@ -973,7 +979,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/winvista/background.jpg',
-					iconsPath: '/images/windows/winvista/',
+					// iconsPath: '/images/windows/winvista/',
 					startLogo: '/images/windows/winvista/logo.svg',
 					taskbarColor: 'rgba(0, 0, 0, 0.7)',
 					taskbarTextColor: '#ffffff',
@@ -1042,19 +1048,19 @@ export default {
 						maxBtnHover: '#1e90ff',
 						titleHeight: '28px',
 						buttonWidth: '22px',
-						style: 'xp',
-						xpHeaderStart: '#0058ee',
-						xpHeaderEnd: '#0047cc',
-						xpHeaderInactiveStart: '#7a96df',
-						xpHeaderInactiveEnd: '#5e7eb5',
-						xpBtnStart: '#3c8cff',
-						xpBtnEnd: '#0054e3',
-						xpBtnHoverStart: '#5ca0ff',
-						xpBtnHoverEnd: '#1e6fe0',
-						xpCloseStart: '#ff6b4a',
-						xpCloseEnd: '#c1352e',
-						xpCloseHoverStart: '#ff8b6a',
-						xpCloseHoverEnd: '#d0453e'
+						style: 'classic',
+						classicHeaderStart: '#0058ee',
+						classicHeaderEnd: '#0047cc',
+						classicHeaderInactiveStart: '#7a96df',
+						classicHeaderInactiveEnd: '#5e7eb5',
+						classicBtnStart: '#3c8cff',
+						classicBtnEnd: '#0054e3',
+						classicBtnHoverStart: '#5ca0ff',
+						classicBtnHoverEnd: '#1e6fe0',
+						classicCloseStart: '#ff6b4a',
+						classicCloseEnd: '#c1352e',
+						classicCloseHoverStart: '#ff8b6a',
+						classicCloseHoverEnd: '#d0453e'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1063,7 +1069,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win2000/background.jpg',
-					iconsPath: '/images/windows/win2000/',
+					// iconsPath: '/images/windows/win2000/',
 					startLogo: '/images/windows/win2000/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
@@ -1076,13 +1082,14 @@ export default {
 					menuGlass: false,
 					iconColor: '#ffffff',
 					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					iconSize: 32,
+					// iconSize: 32,
 					iconBgColor: 'rgba(0, 0, 128, 0.15)',
 					iconBgRadius: '0px',
 					iconBgSize: '56px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#000080',
+						// titleHeight: '28px',
 						titleColor: '#ffffff',
 						titleColorInactive: '#C0C0C0',
 						border: '#808080',
@@ -1091,25 +1098,24 @@ export default {
 						closeBtnHover: '#c00000',
 						minBtnHover: '#808080',
 						maxBtnHover: '#808080',
-						titleHeight: '28px',
 						buttonWidth: '18px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '18px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '18px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1118,7 +1124,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win98/background.jpg',
-					iconsPath: '/images/windows/win98/',
+					// iconsPath: '/images/windows/win98/',
 					startLogo: '/images/windows/win98/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
@@ -1131,13 +1137,14 @@ export default {
 					menuGlass: false,
 					iconColor: '#ffffff',
 					iconShadow: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))',
-					iconSize: 32,
+					// iconSize: 32,
 					iconBgColor: 'rgba(0, 128, 128, 0.2)',
 					iconBgRadius: '0px',
 					iconBgSize: '56px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#000080',
+						// titleHeight: '24px',
 						titleColor: '#ffffff',
 						titleColorInactive: '#C0C0C0',
 						border: '#808080',
@@ -1146,25 +1153,24 @@ export default {
 						closeBtnHover: '#c00000',
 						minBtnHover: '#808080',
 						maxBtnHover: '#808080',
-						titleHeight: '24px',
 						buttonWidth: '16px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '16px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1173,7 +1179,7 @@ export default {
 					style: 'windows',
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win95/background.jpg',
-					iconsPath: '/images/windows/win95/',
+					// iconsPath: '/images/windows/win95/',
 					startLogo: '/images/windows/win95/logo.svg',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
@@ -1186,13 +1192,14 @@ export default {
 					menuGlass: false,
 					iconColor: '#ffffff',
 					iconShadow: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))',
-					iconSize: 32,
+					// iconSize: 32,
 					iconBgColor: 'rgba(0, 128, 128, 0.2)',
 					iconBgRadius: '0px',
 					iconBgSize: '56px',
 					windowTheme: {
 						bg: '#ffffff',
 						headerBg: '#000080',
+						// titleHeight: '22px',
 						titleColor: '#ffffff',
 						titleColorInactive: '#C0C0C0',
 						border: '#808080',
@@ -1201,25 +1208,24 @@ export default {
 						closeBtnHover: '#c00000',
 						minBtnHover: '#808080',
 						maxBtnHover: '#808080',
-						titleHeight: '22px',
 						buttonWidth: '16px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '16px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1228,7 +1234,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macos/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macos/logo.svg',
 					gradientDirection: 'to bottom right',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
@@ -1280,7 +1286,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macostahoe/background.jpg',
-					iconsPath: '/images/macostahoe/',
+					// iconsPath: '/images/macostahoe/',
 					startLogo: '/images/macostahoe/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
@@ -1331,7 +1337,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macossequoia/background.jpg',
-					iconsPath: '/images/macossequoia/',
+					// iconsPath: '/images/macossequoia/',
 					startLogo: '/images/macossequoia/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -1382,7 +1388,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macossonoma/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macossonoma/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
 					taskbarTextColor: '#1a1a1a',
@@ -1434,7 +1440,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosventura/background.jpg',
-					iconsPath: '/images/macosventura/',
+					// iconsPath: '/images/macosventura/',
 					startLogo: '/images/macosventura/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.82)',
 					taskbarTextColor: '#1a1a1a',
@@ -1485,7 +1491,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosmonterey/background.jpg',
-					iconsPath: '/images/macosmonterey/',
+					// iconsPath: '/images/macosmonterey/',
 					startLogo: '/images/macosmonterey/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.78)',
 					taskbarTextColor: '#1a1a1a',
@@ -1536,7 +1542,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosbigsur/background.jpg',
-					iconsPath: '/images/macosbigsur/',
+					// iconsPath: '/images/macosbigsur/',
 					startLogo: '/images/macosbigsur/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.8)',
 					taskbarTextColor: '#000000',
@@ -1587,7 +1593,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosx/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macosx/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.65)',
 					taskbarTextColor: '#1a1a1a',
@@ -1617,7 +1623,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosleopard/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macosleopard/logo.svg',
 					taskbarColor: 'rgba(230, 230, 235, 0.7)',
 					taskbarTextColor: '#1a1a1a',
@@ -1647,7 +1653,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macoslion/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macoslion/logo.svg',
 					taskbarColor: 'rgba(240, 240, 242, 0.75)',
 					taskbarTextColor: '#1a1a1a',
@@ -1677,7 +1683,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macosyosemite/background.jpg',
-					iconsPath: '/images/macos/',
+					// iconsPath: '/images/macos/',
 					startLogo: '/images/macosyosemite/logo.svg',
 					taskbarColor: 'rgba(255, 255, 255, 0.6)',
 					taskbarTextColor: '#1a1a1a',
@@ -1707,7 +1713,7 @@ export default {
 					style: 'macos',
 					backgroundType: 'image',
 					backgroundImage: '/images/macos9/background.jpg',
-					iconsPath: '',
+					// iconsPath: '',
 					startLogo: '/images/macos9/logo.svg',
 					taskbarColor: '#FFFFFF',
 					taskbarTextColor: '#000000',
@@ -1768,6 +1774,7 @@ export default {
 		themeClass() {
 			return this.currentTheme ? `theme-${this.currentTheme}` : '';
 		},
+		// Windows XP 主题
 		isXpTheme() {
 			return this.currentTheme === 'winXP';
 		},
@@ -1876,10 +1883,9 @@ export default {
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
-			this.loadSettings();
+			await this.loadSettings();
 
 			this.listApp();
-			this.loadTheme();
 
 			this.documentClickHandler = (e) => {
 				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start') && !e.target.closest('.mac-menu-apple')) {
@@ -1890,8 +1896,6 @@ export default {
 				}
 			};
 			document.addEventListener('click', this.documentClickHandler);
-
-			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 		},
 		updateTime() {
 			const now = new Date();
@@ -2184,7 +2188,7 @@ export default {
 			this.hideContextMenu();
 			this.openApp(this.profileApp);
 		},
-		// XP 开始菜单右栏快捷链�?
+		// XP 开始菜单右栏快捷链接
 		openQuickLink(link) {
 			if (link.key === 'computer') {
 				this.openApp({
@@ -2262,6 +2266,7 @@ export default {
 		},
 		getCurrentConfig() {
 			return {
+				style: this.currentStyle,
 				currentTheme: this.currentTheme,
 				backgroundType: this.backgroundType,
 				backgroundColor: this.backgroundColor,
@@ -2287,6 +2292,7 @@ export default {
 			this.persistSettings(config);
 		},
 		applyConfig(config) {
+			this.currentStyle = config.style || 'system';
 			this.currentTheme = config.currentTheme;
 			this.backgroundType = config.backgroundType;
 			this.backgroundColor = config.backgroundColor;
@@ -2318,9 +2324,21 @@ export default {
 		async persistSettings(config) {
 			var cfgs = [];
 			cfgs.push({ key: "app_home", value: config.home });
+			cfgs.push({ key: "desktop_style", value: config.style || 'system' });
 			cfgs.push({ key: "desktop_theme", value: config.currentTheme });
 			cfgs.push({ key: "desktop_icon_color", value: config.iconColor });
+			cfgs.push({ key: "desktop_icon_shadow", value: config.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' });
+			cfgs.push({ key: "desktop_icon_size", value: config.iconSize || 48 });
 			cfgs.push({ key: "desktop_menu_color", value: config.menuColor });
+			cfgs.push({ key: "desktop_menu_text_color", value: config.menuTextColor });
+			cfgs.push({ key: "desktop_menu_border_radius", value: config.menuBorderRadius || '0px' });
+			cfgs.push({ key: "desktop_menu_glass", value: config.menuGlass ? 'true' : 'false' });
+			cfgs.push({ key: "desktop_taskbar_color", value: config.taskbarColor });
+			cfgs.push({ key: "desktop_taskbar_text_color", value: config.taskbarTextColor });
+			cfgs.push({ key: "desktop_taskbar_border_radius", value: config.taskbarBorderRadius || '0px' });
+			cfgs.push({ key: "desktop_taskbar_glass", value: config.taskbarGlass ? 'true' : 'false' });
+			cfgs.push({ key: "desktop_taskbar_start_icon", value: config.taskbarStartIcon || 'ms-grid_view' });
+			cfgs.push({ key: "desktop_start_logo", value: config.startLogo || '' });
 			cfgs.push({ key: "desktop_background_type", value: config.backgroundType });
 			cfgs.push({ key: "desktop_background_color", value: config.backgroundColor });
 			cfgs.push({ key: "desktop_background_image", value: config.backgroundImage });
@@ -2330,19 +2348,37 @@ export default {
 			await this.$SCM.save_cfg(cfgs);
 		},
 		async loadSettings() {
-			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
+			const style = await this.$SCM.read_cfg("desktop_style", 'system');
+			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 			this.iconColor = await this.$SCM.read_cfg("desktop_icon_color", this.iconColor);
+			this.iconShadow = await this.$SCM.read_cfg("desktop_icon_shadow", 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))');
+			this.iconSize = parseInt(await this.$SCM.read_cfg("desktop_icon_size", '48'));
 			this.menuColor = await this.$SCM.read_cfg("desktop_menu_color", this.menuColor);
+			this.menuTextColor = await this.$SCM.read_cfg("desktop_menu_text_color", '#ffffff');
+			this.menuBorderRadius = await this.$SCM.read_cfg("desktop_menu_border_radius", '0px');
+			this.menuGlass = (await this.$SCM.read_cfg("desktop_menu_glass", 'false')) === 'true';
+			this.taskbarColor = await this.$SCM.read_cfg("desktop_taskbar_color", this.taskbarColor);
+			this.taskbarTextColor = await this.$SCM.read_cfg("desktop_taskbar_text_color", '#ffffff');
+			this.taskbarBorderRadius = await this.$SCM.read_cfg("desktop_taskbar_border_radius", '0px');
+			this.taskbarGlass = (await this.$SCM.read_cfg("desktop_taskbar_glass", 'false')) === 'true';
+			this.taskbarStartIcon = await this.$SCM.read_cfg("desktop_taskbar_start_icon", 'ms-grid_view');
+			this.startLogo = await this.$SCM.read_cfg("desktop_start_logo", '');
 			this.backgroundType = await this.$SCM.read_cfg("desktop_background_type", this.backgroundType);
 			this.backgroundColor = await this.$SCM.read_cfg("desktop_background_color", this.backgroundColor);
 			this.backgroundImage = await this.$SCM.read_cfg("desktop_background_image", this.backgroundImage);
 			this.gradientColor1 = await this.$SCM.read_cfg("desktop_gradient_color1", this.gradientColor1);
 			this.gradientColor2 = await this.$SCM.read_cfg("desktop_gradient_color2", this.gradientColor2);
 			this.gradientDirection = await this.$SCM.read_cfg("desktop_gradient_direction", this.gradientDirection);
+
+			const theme = this.themes.find(t => t.name === themeName);
+			if (theme) {
+				this.applyTheme(theme);
+			}
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
+			this.currentStyle = theme.style || 'system';
 			this.backgroundType = theme.backgroundType;
 			this.taskbarColor = theme.taskbarColor;
 			this.taskbarTextColor = theme.taskbarTextColor || '#ffffff';
@@ -2405,20 +2441,19 @@ export default {
 		},
 		/**
 		 * 获取主题图标URL
-		 * @param {string} iconName - Material Symbols 图标名称
+		 * @param {string} code - Material Symbols 图标名称
 		 * @returns {string|null} 主题特定的图标URL，如果没有则返回 null
 		 */
-		getThemeIcon(iconName) {
+		getThemeIcon(code) {
 			if (!this.iconsPath) return null;
-			const fileName = this.iconMap[iconName];
-			return fileName ? this.iconsPath + fileName : null;
+			return code ? this.iconsPath + code + '.png' : null;
 		},
 		/**
 		 * 获取桌面图标的图片样式
 		 */
 		iconImageStyle(app) {
 			const style = { filter: this.iconShadow };
-			if (app && this.getThemeIcon(app.meta.icon)) {
+			if (app && this.getThemeIcon(app.code)) {
 				return style;
 			}
 			return style;
@@ -2955,7 +2990,7 @@ export default {
 	margin: 2px 4px;
 }
 
-/* --- XP 开始菜�?--- */
+/* --- XP 开始菜单 --- */
 .xp-start-menu {
 	left: 0;
 	bottom: var(--taskbar-height);
