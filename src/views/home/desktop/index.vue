@@ -456,6 +456,7 @@ export default {
 			iconBgSize: '0px',
 			iconsPath: '',
 			currentTheme: 'default',
+			currentStyle: 'system',
 			taskbarColor: 'rgba(0, 0, 0, 0.6)',
 			taskbarTextColor: '#ffffff',
 			taskbarBorderRadius: '4px',
@@ -2265,6 +2266,7 @@ export default {
 		},
 		getCurrentConfig() {
 			return {
+				style: this.currentStyle,
 				currentTheme: this.currentTheme,
 				backgroundType: this.backgroundType,
 				backgroundColor: this.backgroundColor,
@@ -2290,6 +2292,7 @@ export default {
 			this.persistSettings(config);
 		},
 		applyConfig(config) {
+			this.currentStyle = config.style || 'system';
 			this.currentTheme = config.currentTheme;
 			this.backgroundType = config.backgroundType;
 			this.backgroundColor = config.backgroundColor;
@@ -2375,6 +2378,7 @@ export default {
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
+			this.currentStyle = theme.style || 'system';
 			this.backgroundType = theme.backgroundType;
 			this.taskbarColor = theme.taskbarColor;
 			this.taskbarTextColor = theme.taskbarTextColor || '#ffffff';
