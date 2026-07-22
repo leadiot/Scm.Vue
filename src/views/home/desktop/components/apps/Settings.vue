@@ -396,10 +396,10 @@ export default {
             this.$emit('theme-preview', { ...this.localConfig });
         },
         onStyleChange() {
-            const firstTheme = this.filteredThemes[0];
-            if (firstTheme) {
-                this.selectTheme(firstTheme);
-            }
+            // const firstTheme = this.filteredThemes[0];
+            // if (firstTheme) {
+            //     this.selectTheme(firstTheme);
+            // }
         },
         selectImage(img) {
             this.localConfig.backgroundImage = img;
