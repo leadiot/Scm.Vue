@@ -400,14 +400,14 @@ export default {
 			gradientDirection: 'to bottom right',
 			colorList: this.$CONFIG.PREDEFINE_COLORS,
 			presetImages: [
-				'/images/01.jpg',
-				'/images/02.jpg',
-				'/images/03.jpg',
-				'/images/04.jpg',
-				'/images/05.jpg',
-				'/images/06.jpg',
-				'/images/07.jpg',
-				'/images/08.jpg',
+				'/images/desktop/bg/01.jpg',
+				'/images/desktop/bg/02.jpg',
+				'/images/desktop/bg/03.jpg',
+				'/images/desktop/bg/04.jpg',
+				'/images/desktop/bg/05.jpg',
+				'/images/desktop/bg/06.jpg',
+				'/images/desktop/bg/07.jpg',
+				'/images/desktop/bg/08.jpg',
 			],
 			user: {},
 			home: '/',
@@ -1037,7 +1037,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win2000/background.jpg',
 					// iconsPath: '/images/windows/win2000/',
-					startLogo: '/images/windows/win2000/logo.svg',
+					startLogo: '/images/windows/win2000/logo.png',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -1092,7 +1092,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win98/background.jpg',
 					// iconsPath: '/images/windows/win98/',
-					startLogo: '/images/windows/win98/logo.svg',
+					startLogo: '/images/windows/win98/logo.png',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -1147,7 +1147,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win95/background.jpg',
 					// iconsPath: '/images/windows/win95/',
-					startLogo: '/images/windows/win95/logo.svg',
+					startLogo: '/images/windows/win95/logo.png',
 					taskbarColor: '#C0C0C0',
 					taskbarTextColor: '#000000',
 					taskbarBorderRadius: '0px',
@@ -2412,6 +2412,7 @@ export default {
 		 * @returns {string|null} 主题特定的图标URL，如果没有则返回 null
 		 */
 		getThemeIcon(code) {
+			// return (this.iconsPath || '/images/desktop/') + code + '.png';
 			if (!this.iconsPath) return null;
 			return code ? this.iconsPath + code + '.png' : null;
 		},
