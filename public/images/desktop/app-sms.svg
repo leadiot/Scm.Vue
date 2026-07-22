@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ####################################################################
+
+This file was generates automatically via the 
+IconPacks.Browser (MIT-License). 
+
+Visit https://github.com/MahApps/MahApps.Metro.IconPacks and 
+https://github.com/MahApps/MahApps.Metro.IconPacks/blob/develop/LICENSE 
+for more information.
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+Icon-Name: 			Sms
+Iconpack:			MaterialDesign
+Iconpack-Homepage: 	https://github.com/google/material-design-icons
+Iconpack-License:	https://github.com/google/material-design-icons?tab=Apache-2.0-1-ov-file#readme
+
+#####################################################################-->
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="16"
+     height="16">
+    <path d="M 20,2 H 4 C 2.9,2 2.01,2.9 2.01,4 L 2,22 6,18 h 14 c 1.1,0 2,-0.9 2,-2 V 4 C 22,2.9 21.1,2 20,2 Z M 9,11 H 7 V 9 h 2 z m 4,0 H 11 V 9 h 2 z m 4,0 H 15 V 9 h 2 z"
+          style="fill:#000000;
+                 stroke:none
+                 stroke-width:0;
+                 stroke-linecap:flat;
+                 stroke-linejoin:miter;"
+          transform="matrix(0.8,0,0,0.8,-1.6,-1.6)" />
+</svg>
