@@ -791,7 +791,7 @@ export default {
 					backgroundType: 'image',
 					backgroundImage: '/images/windows/win11/background.jpg',
 					// iconsPath: '/images/windows/win11/',
-					startLogo: '/images/windows/win11/logo.svg',
+					startLogo: '/images/windows/win11/logo.png',
 					taskbarColor: 'rgba(32, 32, 32, 0.85)',
 					taskbarTextColor: '#ffffff',
 					taskbarBorderRadius: '12px',
