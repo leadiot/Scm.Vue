@@ -7,7 +7,7 @@
 				:class="{ selected: selectedApp === app.id }" @click.stop="selectApp(app.id)"
 				@dblclick.stop="openApp(app)">
 				<div class="icon-image" :style="iconImageStyle(app)">
-					<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)"
+					<img v-if="getThemeIcon(app.code)" :src="getThemeIcon(app.code)"
 						:style="{ width: iconSize + 'px', height: iconSize + 'px', objectFit: 'contain' }" alt=""
 						draggable="false" />
 					<sc-icon v-else :name="app.meta.icon" :size="iconSize" :color="iconColor" />
@@ -20,8 +20,8 @@
 		<div class="windows-container">
 			<Window v-for="window in windows" :key="window.id" :window="window" :theme="windowTheme"
 				@close="closeWindow" @minimize="minimizeWindow" @maximize="maximizeWindow" @focus="focusWindow"
-				@animation-complete="onAnimationComplete"
-				@set-wallpaper="setWallpaper" @profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
+				@animation-complete="onAnimationComplete" @set-wallpaper="setWallpaper"
+				@profile-updated="onProfileUpdated" @password-changed="onPasswordChanged"
 				@theme-preview="onThemePreview" @save-settings="onSaveSettings" />
 		</div>
 
@@ -418,7 +418,10 @@ export default {
 				'ms-desktop_windows': 'computer.png',
 				'ms-laptop': 'computer.png',
 				'ms-folder': 'folder.png',
-				'ms-folder_open': 'folder.png',
+				'ms-folder_open': 'folder_open.png',
+				'ms-terminal': 'terminal.png',
+				'ms-trash': 'trash.png',
+				'ms-trash_full': 'trash_full.png',
 				'ms-settings': 'settings.png',
 				'ms-delete': 'trash.png',
 				'ms-delete_outline': 'trash.png',
@@ -432,13 +435,15 @@ export default {
 				'ms-videocam': 'videos.png',
 				'ms-movie': 'videos.png',
 				'ms-movie_creation': 'videos.png',
-				'ms-article': 'documents.png',
-				'ms-description': 'documents.png',
+				'ms-article': 'notepad.png',
+				'ms-description': 'notepad.png',
 				'ms-feed': 'documents.png',
 				'ms-photo_library': 'documents.png',
 				'ms-image': 'documents.png',
 				'ms-calendar_month': 'documents.png',
 				'ms-account_circle': 'documents.png',
+				'app-browser': 'browser.png',
+				'app-textpad': 'notepad.png',
 			},
 			menuApps: [],
 			updateTimeInterval: null,
@@ -1042,19 +1047,19 @@ export default {
 						maxBtnHover: '#1e90ff',
 						titleHeight: '28px',
 						buttonWidth: '22px',
-						style: 'xp',
-						xpHeaderStart: '#0058ee',
-						xpHeaderEnd: '#0047cc',
-						xpHeaderInactiveStart: '#7a96df',
-						xpHeaderInactiveEnd: '#5e7eb5',
-						xpBtnStart: '#3c8cff',
-						xpBtnEnd: '#0054e3',
-						xpBtnHoverStart: '#5ca0ff',
-						xpBtnHoverEnd: '#1e6fe0',
-						xpCloseStart: '#ff6b4a',
-						xpCloseEnd: '#c1352e',
-						xpCloseHoverStart: '#ff8b6a',
-						xpCloseHoverEnd: '#d0453e'
+						style: 'classic',
+						classicHeaderStart: '#0058ee',
+						classicHeaderEnd: '#0047cc',
+						classicHeaderInactiveStart: '#7a96df',
+						classicHeaderInactiveEnd: '#5e7eb5',
+						classicBtnStart: '#3c8cff',
+						classicBtnEnd: '#0054e3',
+						classicBtnHoverStart: '#5ca0ff',
+						classicBtnHoverEnd: '#1e6fe0',
+						classicCloseStart: '#ff6b4a',
+						classicCloseEnd: '#c1352e',
+						classicCloseHoverStart: '#ff8b6a',
+						classicCloseHoverEnd: '#d0453e'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/winxp/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1093,23 +1098,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '28px',
 						buttonWidth: '18px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '18px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '18px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win2000/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1148,23 +1153,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '24px',
 						buttonWidth: '16px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '16px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win98/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1203,23 +1208,23 @@ export default {
 						maxBtnHover: '#808080',
 						titleHeight: '22px',
 						buttonWidth: '16px',
-						style: 'xp',
-						xpHeader: 'linear-gradient(90deg, #000080 0%, #1084D0 100%)',
-						xpHeaderInactive: 'linear-gradient(90deg, #808080 0%, #B5B5B5 100%)',
-						xpBtnStart: '#D4D0C8',
-						xpBtnEnd: '#C0C0C0',
-						xpBtnHoverStart: '#E4E0DC',
-						xpBtnHoverEnd: '#D4D0C8',
-						xpCloseStart: '#D4D0C8',
-						xpCloseEnd: '#C0C0C0',
-						xpCloseHoverStart: '#E4E0DC',
-						xpCloseHoverEnd: '#D4D0C8',
-						xpBtnBorder: '#808080',
-						xpCloseBorder: '#808080',
-						xpGlyphColor: '#000000',
-						xpFrame: '#C0C0C0',
-						xpHeaderRadius: '0px',
-						xpBtnSize: '16px'
+						style: 'classic',
+						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
+						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
+						classicBtnStart: '#D4D0C8',
+						classicBtnEnd: '#C0C0C0',
+						classicBtnHoverStart: '#E4E0DC',
+						classicBtnHoverEnd: '#D4D0C8',
+						classicCloseStart: '#D4D0C8',
+						classicCloseEnd: '#C0C0C0',
+						classicCloseHoverStart: '#E4E0DC',
+						classicCloseHoverEnd: '#D4D0C8',
+						classicBtnBorder: '#808080',
+						classicCloseBorder: '#808080',
+						classicGlyphColor: '#000000',
+						classicFrame: '#C0C0C0',
+						classicHeaderRadius: '0px',
+						classicBtnSize: '16px'
 					},
 					previewStyle: { backgroundImage: 'url(/images/windows/win95/background.jpg)', backgroundSize: 'cover' }
 				},
@@ -1768,6 +1773,7 @@ export default {
 		themeClass() {
 			return this.currentTheme ? `theme-${this.currentTheme}` : '';
 		},
+		// Windows XP 主题
 		isXpTheme() {
 			return this.currentTheme === 'winXP';
 		},
@@ -1876,10 +1882,9 @@ export default {
 			this.updateTime();
 			this.updateTimeInterval = setInterval(this.updateTime, 1000);
 
-			this.loadSettings();
+			await this.loadSettings();
 
 			this.listApp();
-			this.loadTheme();
 
 			this.documentClickHandler = (e) => {
 				if (!e.target.closest('.start-menu') && !e.target.closest('.taskbar-start') && !e.target.closest('.mac-menu-apple')) {
@@ -1890,8 +1895,6 @@ export default {
 				}
 			};
 			document.addEventListener('click', this.documentClickHandler);
-
-			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 		},
 		updateTime() {
 			const now = new Date();
@@ -2184,7 +2187,7 @@ export default {
 			this.hideContextMenu();
 			this.openApp(this.profileApp);
 		},
-		// XP 开始菜单右栏快捷链�?
+		// XP 开始菜单右栏快捷链接
 		openQuickLink(link) {
 			if (link.key === 'computer') {
 				this.openApp({
@@ -2318,9 +2321,21 @@ export default {
 		async persistSettings(config) {
 			var cfgs = [];
 			cfgs.push({ key: "app_home", value: config.home });
+			cfgs.push({ key: "desktop_style", value: config.style || 'system' });
 			cfgs.push({ key: "desktop_theme", value: config.currentTheme });
 			cfgs.push({ key: "desktop_icon_color", value: config.iconColor });
+			cfgs.push({ key: "desktop_icon_shadow", value: config.iconShadow || 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' });
+			cfgs.push({ key: "desktop_icon_size", value: config.iconSize || 48 });
 			cfgs.push({ key: "desktop_menu_color", value: config.menuColor });
+			cfgs.push({ key: "desktop_menu_text_color", value: config.menuTextColor });
+			cfgs.push({ key: "desktop_menu_border_radius", value: config.menuBorderRadius || '0px' });
+			cfgs.push({ key: "desktop_menu_glass", value: config.menuGlass ? 'true' : 'false' });
+			cfgs.push({ key: "desktop_taskbar_color", value: config.taskbarColor });
+			cfgs.push({ key: "desktop_taskbar_text_color", value: config.taskbarTextColor });
+			cfgs.push({ key: "desktop_taskbar_border_radius", value: config.taskbarBorderRadius || '0px' });
+			cfgs.push({ key: "desktop_taskbar_glass", value: config.taskbarGlass ? 'true' : 'false' });
+			cfgs.push({ key: "desktop_taskbar_start_icon", value: config.taskbarStartIcon || 'ms-grid_view' });
+			cfgs.push({ key: "desktop_start_logo", value: config.startLogo || '' });
 			cfgs.push({ key: "desktop_background_type", value: config.backgroundType });
 			cfgs.push({ key: "desktop_background_color", value: config.backgroundColor });
 			cfgs.push({ key: "desktop_background_image", value: config.backgroundImage });
@@ -2330,16 +2345,33 @@ export default {
 			await this.$SCM.save_cfg(cfgs);
 		},
 		async loadSettings() {
-			this.currentTheme = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
+			const style = await this.$SCM.read_cfg("desktop_style", 'system');
+			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 			this.iconColor = await this.$SCM.read_cfg("desktop_icon_color", this.iconColor);
+			this.iconShadow = await this.$SCM.read_cfg("desktop_icon_shadow", 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))');
+			this.iconSize = parseInt(await this.$SCM.read_cfg("desktop_icon_size", '48'));
 			this.menuColor = await this.$SCM.read_cfg("desktop_menu_color", this.menuColor);
+			this.menuTextColor = await this.$SCM.read_cfg("desktop_menu_text_color", '#ffffff');
+			this.menuBorderRadius = await this.$SCM.read_cfg("desktop_menu_border_radius", '0px');
+			this.menuGlass = (await this.$SCM.read_cfg("desktop_menu_glass", 'false')) === 'true';
+			this.taskbarColor = await this.$SCM.read_cfg("desktop_taskbar_color", this.taskbarColor);
+			this.taskbarTextColor = await this.$SCM.read_cfg("desktop_taskbar_text_color", '#ffffff');
+			this.taskbarBorderRadius = await this.$SCM.read_cfg("desktop_taskbar_border_radius", '0px');
+			this.taskbarGlass = (await this.$SCM.read_cfg("desktop_taskbar_glass", 'false')) === 'true';
+			this.taskbarStartIcon = await this.$SCM.read_cfg("desktop_taskbar_start_icon", 'ms-grid_view');
+			this.startLogo = await this.$SCM.read_cfg("desktop_start_logo", '');
 			this.backgroundType = await this.$SCM.read_cfg("desktop_background_type", this.backgroundType);
 			this.backgroundColor = await this.$SCM.read_cfg("desktop_background_color", this.backgroundColor);
 			this.backgroundImage = await this.$SCM.read_cfg("desktop_background_image", this.backgroundImage);
 			this.gradientColor1 = await this.$SCM.read_cfg("desktop_gradient_color1", this.gradientColor1);
 			this.gradientColor2 = await this.$SCM.read_cfg("desktop_gradient_color2", this.gradientColor2);
 			this.gradientDirection = await this.$SCM.read_cfg("desktop_gradient_direction", this.gradientDirection);
+
+			const theme = this.themes.find(t => t.name === themeName);
+			if (theme) {
+				this.applyTheme(theme);
+			}
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
@@ -2405,20 +2437,19 @@ export default {
 		},
 		/**
 		 * 获取主题图标URL
-		 * @param {string} iconName - Material Symbols 图标名称
+		 * @param {string} code - Material Symbols 图标名称
 		 * @returns {string|null} 主题特定的图标URL，如果没有则返回 null
 		 */
-		getThemeIcon(iconName) {
+		getThemeIcon(code) {
 			if (!this.iconsPath) return null;
-			const fileName = this.iconMap[iconName];
-			return fileName ? this.iconsPath + fileName : null;
+			return code ? this.iconsPath + code + '.png' : null;
 		},
 		/**
 		 * 获取桌面图标的图片样式
 		 */
 		iconImageStyle(app) {
 			const style = { filter: this.iconShadow };
-			if (app && this.getThemeIcon(app.meta.icon)) {
+			if (app && this.getThemeIcon(app.code)) {
 				return style;
 			}
 			return style;
@@ -2955,7 +2986,7 @@ export default {
 	margin: 2px 4px;
 }
 
-/* --- XP 开始菜�?--- */
+/* --- XP 开始菜单 --- */
 .xp-start-menu {
 	left: 0;
 	bottom: var(--taskbar-height);

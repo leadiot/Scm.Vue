@@ -189,6 +189,9 @@ export default {
 		refresh: '更新',
 		cancel: 'キャンセル',
 		save: '保存',
+		reset: 'リセット',
+		saveSuccess: '設定を保存しました',
+		resetSuccess: '設定をデフォルトにリセットしました',
 		// XP スタートメニュー
 		allPrograms: 'すべてのプログラム',
 		pinned: 'ピン留め',
