@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ####################################################################
+
+This file was generates automatically via the 
+IconPacks.Browser (MIT-License). 
+
+Visit https://github.com/MahApps/MahApps.Metro.IconPacks and 
+https://github.com/MahApps/MahApps.Metro.IconPacks/blob/develop/LICENSE 
+for more information.
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+Icon-Name: 			ImageOutline
+Iconpack:			MaterialDesign
+Iconpack-Homepage: 	https://github.com/google/material-design-icons
+Iconpack-License:	https://github.com/google/material-design-icons?tab=Apache-2.0-1-ov-file#readme
+
+#####################################################################-->
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="16"
+     height="16">
+    <path d="M 5 3 C 3.9000011 3 3 3.9000011 3 5 L 3 19 C 3 20.099999 3.9000011 21 5 21 L 19 21 C 20.099999 21 21 20.099999 21 19 L 21 5 C 21 3.9000011 20.099999 3 19 3 L 5 3 z M 5 5 L 19 5 L 19 19 L 5 19 L 5 5 z M 14.140625 11.859375 L 11.140625 15.730469 L 9 13.140625 L 6 17 L 18 17 L 14.140625 11.859375 z "
+          style="fill:#000000;
+                 stroke:none
+                 stroke-width:0;
+                 stroke-linecap:flat;
+                 stroke-linejoin:miter;"
+          transform="matrix(0.888888888888889,0,0,0.888888888888889,-2.66666666666667,-2.66666666666667)" />
+</svg>
