@@ -129,7 +129,7 @@ export default {
 	emits: ['complete'],
 	data() {
 		return {
-			uploadApi: this.$API.scmsysfile.avatar,
+			uploadApi: this.$API.scmsysfile.upload,
 			mode: "add",
 			titleMap: {
 				add: "新增",

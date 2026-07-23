@@ -85,13 +85,6 @@ export default {
 			return await http.post(this.url + "?path=/upload/vote/", data);
 		},
 	},
-	avatar: {
-		url: `${config.API_URL}/scmsysfile/upload`,
-		name: "上传头像",
-		post: async function (data) {
-			return await http.post(this.url + "?path=/upload/avatar/", data);
-		},
-	},
 	artice: {
 		url: `${config.API_URL}/scmsysfile/upload`,
 		name: "上传文章图片",

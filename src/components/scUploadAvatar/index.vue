@@ -229,6 +229,7 @@ export default {
 			}
 			const data = new FormData();
 			data.append('type', '1');
+			data.append('path', 'avatar');
 			data.append(param.filename, param.file);
 			for (const key in param.data) {
 				data.append(key, param.data[key]);
