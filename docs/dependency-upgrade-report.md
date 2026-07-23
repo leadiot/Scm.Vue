@@ -126,7 +126,7 @@ npm i xgplayer@^3.0.26 xgplayer-hls@^3.0.26   # 必须一起升
 > 重点回归：播放器（HLS 视频）、Pinia store 相关页面（布局/多标签/语言切换）。
 
 **第 4 步｜评估后决策**
-- `esbuild`：确认有无直接 import，无则移除该 devDependency。
+- `esbuild`：本项目 `vite.config.js` 仅把 `minify` 设为字符串 `'esbuild'`，无直接 import；但 Vite 8.1.5 的 `dependencies` 未声明 esbuild、运行时依赖顶层 hoist 的 esbuild，**不能移除**（否则 Vite 找不到 esbuild），只能升级到 `^0.28.1` 修 Windows dev-server 任意文件读取漏洞。
 - `cropperjs`：排单独任务，按 2.x 新 API 改造图片裁剪组件。
 
 **第 5 步｜复核**
@@ -140,3 +140,34 @@ npm run build
 ## 五、不建议做的事
 - 不要把 `vue` 升到 3.6.0-rc / `vue-i18n` 升到 12-alpha / `cropperjs` 顺手升 2.x —— 这些都是未完成或破坏性大的，等 stable 或单独排期。
 - 不要直接 `npm i latest` 全量拉满，major 跳变会一次带进多个破坏性变更，难以定位问题。
+
+---
+
+## 六、执行记录（2026-07-23）
+
+**第 1 步（安全优先）— 已完成**
+- `package.json` 收紧：axios ^1.18.1、element-plus ^2.14.3、echarts ^6.1.0、vite ^8.1.5、@vitejs/plugin-vue ^6.0.8。
+- `npm run build` ✓（12.32s）。
+
+**后续三项 — 已完成**
+1. `npm audit fix`：修复 brace-expansion / form-data / immutable / ws 4 个传递依赖漏洞。audit 现状：仅 `xlsx` 1 high（npm 无解）。
+2. esbuild `^0.27.7` → `^0.28.1`：修 Windows dev-server 任意文件读取漏洞（升级而非移除，因 Vite 8 运行时依赖顶层 esbuild）。build ✓（11.03s），vite 与 vue-router 的 unplugin 均 deduped 到 0.28.1。
+3. eslint.config.js 补 15 个全局（alert/MouseEvent/atob/btoa/caches/indexedDB/location/Notification/self/__dirname/__filename/module/exports/require/oidc/define）：lint errors 222 → 0，剩 40 个 `no-unused-vars` warnings（非阻塞）。
+
+**第三批（xlsx / pinia / xgplayer-hls）— 已完成（15:15）**
+- xlsx：`npm i xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz`（npm 0.18.5 无修复版，走 SheetJS 官方 CDN；最新 tag v0.20.3，CDN tarball HTTP 200，0.20.4+ 不存在）。`package.json` 该依赖写成 CDN URL；实际安装 **0.20.3**。验证：build ✓（11.27s），`npm audit` 终于 **found 0 vulnerabilities**（全清）。注意 0.20.x 的 `package.json` 新增 `exports` 字段，限制子路径（如 `./package.json`）访问——属预期行为，不影响顶层 `import * as XLSX from 'xlsx'`。项目仅 `src/utils/exportToExcel.js` 使用 `XLSX.utils` 写入 API（bookType/type:'binary'/cellStyles），0.20 兼容。
+- pinia `^3.0.0` → `^4.0.2`：实际 **4.0.2**（peer 要求 vue≥3.5.11 已满足；typescript 仅类型 peer，纯 JS 项目无影响）。
+- xgplayer-hls `^2.5.2` → `^3.0.26`：与 xgplayer 3.0.26 对齐（peer 要求 xgplayer 3.0.26，已满足），消除 HLS 插件与播放器核心不配套的隐患。
+
+**第四批（cropperjs 2.x 破坏性改造）— 已完成（15:27）**
+- cropperjs `^1.6.2` → `^2.1.1`：2.x 是 Web Components 完全重写（非增量）。实际安装 **2.1.1**。
+- 改造 `src/components/scCropper/index.vue`：
+  - 导入改为 `import 'cropperjs'`（副作用自动注册全部自定义元素）；2.x 为 CSS-in-JS，**不再需要** `import 'cropperjs/dist/cropper.css'`。
+  - 模板改为 `<cropper-canvas>/<cropper-image>/<cropper-shade>/<cropper-selection>/<cropper-grid>/<cropper-crosshair>/<cropper-handle>` 结构；`getCroppedCanvas()` → `selection.$toCanvas()`，`setAspectRatio()` → `selection.aspectRatio` 属性，`preview` → `<cropper-viewer>`（本项目用监听 selection `change` 手绘 canvas 复刻右侧固定预览框）。
+  - **对外接口保持不变**：`props(src/compress/aspectRatio)` + 四个方法 `getCropData/getCropBlob/getCropFile/setAspectRatio`，故消费方 `scUploadAvatar` 与文档示例**无需改动**。
+- `vite.config.js`：`@vitejs/plugin-vue` 加 `template.compilerOptions.isCustomElement: tag => tag.startsWith('cropper-')`，让 Vue 把 `cropper-*` 当原生自定义元素编译（消除 "failed to resolve component" 警告、正确透传 attributes）。
+- 验证：`npm run build` ✓（10.86s，cropperjs 进 vendor chunk）；`npm run lint` 0 errors / 40 warnings（无新增）。`package.json` 的 `sideEffects` **未声明** → Rollup 保守保留 `import 'cropperjs'` 的注册副作用，不会被 tree-shake 掉。
+- ⚠️ **运行时需手动回归**：头像裁剪（`scUploadAvatar` 走 `scCropper`）的拖拽 / 缩放 / 预览 / 保存交互，构建无法覆盖，建议在 `npm run dev` 里实测一次。
+
+**剩余待办**
+- 40 个 `no-unused-vars` lint warnings：真实未用变量，可后续清理，非阻塞。
