@@ -2294,6 +2294,12 @@ export default {
 		async loadSettings() {
 			const style = await this.$SCM.read_cfg("desktop_style", 'system');
 			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
+			
+			const theme = this.themes.find(t => t.name === themeName);
+			if (theme) {
+				this.applyTheme(theme);
+			}
+
 			this.home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 			this.iconColor = await this.$SCM.read_cfg("desktop_icon_color", this.iconColor);
 			this.iconShadow = await this.$SCM.read_cfg("desktop_icon_shadow", 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))');
@@ -2315,10 +2321,6 @@ export default {
 			this.gradientColor2 = await this.$SCM.read_cfg("desktop_gradient_color2", this.gradientColor2);
 			this.gradientDirection = await this.$SCM.read_cfg("desktop_gradient_direction", this.gradientDirection);
 
-			const theme = this.themes.find(t => t.name === themeName);
-			if (theme) {
-				this.applyTheme(theme);
-			}
 		},
 		applyTheme(theme) {
 			this.currentTheme = theme.name;
@@ -2362,6 +2364,8 @@ export default {
 				this.gradientColor1 = theme.gradientColor1;
 				this.gradientColor2 = theme.gradientColor2;
 				this.gradientDirection = theme.gradientDirection;
+			} else if (theme.backgroundType === 'image') {
+				this.backgroundImage = this.backgroundImage;
 			}
 
 			localStorage.setItem('desktop_theme', theme.name);
