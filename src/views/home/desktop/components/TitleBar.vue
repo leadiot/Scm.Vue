@@ -50,16 +50,16 @@
 
 	<!-- 经典风格标题栏 -->
 	<template v-else-if="winStyle === 'winClassic'">
-		<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="$emit('start-drag', $event)" @touchstart.passive="$emit('start-drag', $event)">
-			<div class="winxp-title-left">
+		<div class="window-header win-xp-header" :style="headerBarStyle" @mousedown="$emit('start-drag', $event)" @touchstart.passive="$emit('start-drag', $event)">
+			<div class="win-xp-title-left">
 				<sc-icon :name="window.icon || 'ms-grid_view'" :size="14" color="#ffffff" />
 			</div>
-			<span class="winxp-title-text">{{ window.title }}</span>
-			<div class="winxp-buttons">
-				<button class="winxp-btn min-btn" :title="$t('desktop.winMinimize')" @click.stop="$emit('minimize')">
+			<span class="win-xp-title-text">{{ window.title }}</span>
+			<div class="win-xp-buttons">
+				<button class="win-xp-btn min-btn" :title="$t('desktop.winMinimize')" @click.stop="$emit('minimize')">
 					<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="currentColor"/></svg>
 				</button>
-				<button class="winxp-btn max-btn" :title="$t('desktop.winMaximize')" @click.stop="$emit('maximize')">
+				<button class="win-xp-btn max-btn" :title="$t('desktop.winMaximize')" @click.stop="$emit('maximize')">
 					<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
 						<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
 					</svg>
@@ -68,7 +68,7 @@
 						<rect x="0" y="0" width="6.5" height="6" rx="0.5" fill="#000080"/>
 					</svg>
 				</button>
-				<button class="winxp-btn close-btn" :title="$t('desktop.winClose')" @click.stop="$emit('close')">
+				<button class="win-xp-btn close-btn" :title="$t('desktop.winClose')" @click.stop="$emit('close')">
 					<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="currentColor" stroke-width="1.2"/></svg>
 				</button>
 			</div>

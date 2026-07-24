@@ -67,7 +67,7 @@
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
-		<XpMenu v-else-if="showStartMenu && isXpTheme" :apps="menuApps" :quick-links="xpQuickLinks"
+		<WinXpMenu v-else-if="showStartMenu && isWinXpTheme" :apps="menuApps" :quick-links="xpQuickLinks"
 			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
 			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
@@ -154,7 +154,7 @@ import MacDock from './components/menus/MacDock.vue';
 import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
 import WinClassicMenu from './components/menus/WinClassicMenu.vue';
-import XpMenu from './components/menus/XpMenu.vue';
+import WinXpMenu from './components/menus/WinXpMenu.vue';
 import AeroMenu from './components/menus/AeroMenu.vue';
 import Win8Screen from './components/menus/Win8Screen.vue';
 import Win10Menu from './components/menus/Win10Menu.vue';
@@ -188,7 +188,7 @@ export default {
 		MacMenubar,
 		MacLaunchpad,
 		WinClassicMenu,
-		XpMenu,
+		WinXpMenu,
 		AeroMenu,
 		Win8Screen,
 		Win10Menu,
@@ -373,7 +373,7 @@ export default {
 			return this.currentTheme ? `theme-${this.currentTheme}` : '';
 		},
 		// Windows XP 主题
-		isXpTheme() {
+		isWinXpTheme() {
 			return this.currentTheme === 'winXP';
 		},
 		// Windows 95/98/2000 经典主题
@@ -398,7 +398,7 @@ export default {
 		},
 		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
-			return this.isXpTheme || this.isWinClassicTheme || this.isAeroTheme;
+			return this.isWinXpTheme || this.isWinClassicTheme || this.isAeroTheme;
 		},
 		// 操作系统家族根类（供 grouped CSS 覆盖）
 		osFamilyClass() {
@@ -1576,7 +1576,7 @@ export default {
 }
 
 /* --- XP 开始菜单 --- */
-.xp-start-menu {
+.win-xp-start-menu {
 	left: 0;
 	bottom: var(--taskbar-height);
 	width: 400px;
@@ -1587,7 +1587,7 @@ export default {
 	box-shadow: 4px -2px 12px rgba(0, 0, 0, 0.35);
 }
 
-.xp-menu-header {
+.win-xp-menu-header {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -1596,11 +1596,11 @@ export default {
 	cursor: pointer;
 }
 
-.xp-menu-header:hover {
+.win-xp-menu-header:hover {
 	filter: brightness(1.08);
 }
 
-.xp-menu-avatar {
+.win-xp-menu-avatar {
 	width: 40px;
 	height: 40px;
 	background: #FFFFFF;
@@ -1613,7 +1613,7 @@ export default {
 	flex-shrink: 0;
 }
 
-.xp-menu-username {
+.win-xp-menu-username {
 	color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
@@ -1623,12 +1623,12 @@ export default {
 	text-overflow: ellipsis;
 }
 
-.xp-menu-body {
+.win-xp-menu-body {
 	display: flex;
 	min-height: 260px;
 }
 
-.xp-menu-left {
+.win-xp-menu-left {
 	flex: 1;
 	background: #FFFFFF;
 	padding: 4px;
@@ -1636,18 +1636,18 @@ export default {
 	overflow-y: auto;
 }
 
-.xp-menu-caption {
+.win-xp-menu-caption {
 	padding: 4px 8px;
 	font-size: 10px;
 	letter-spacing: 1px;
 	color: #808080;
 }
 
-.xp-menu-item {
+.win-xp-menu-item {
 	position: relative;
 }
 
-.xp-menu-app {
+.win-xp-menu-app {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1657,16 +1657,16 @@ export default {
 	color: #1A1A1A;
 }
 
-.xp-menu-app:hover {
+.win-xp-menu-app:hover {
 	background-color: #316AC5;
 	color: #FFFFFF;
 }
 
-.xp-menu-app .arrow {
+.win-xp-menu-app .arrow {
 	margin-left: auto;
 }
 
-.xp-menu-right {
+.win-xp-menu-right {
 	width: 150px;
 	flex-shrink: 0;
 	background: #D9E8FB;
@@ -1674,7 +1674,7 @@ export default {
 	padding: 4px;
 }
 
-.xp-right-item {
+.win-xp-right-item {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1685,12 +1685,12 @@ export default {
 	color: #0B326E;
 }
 
-.xp-right-item:hover {
+.win-xp-right-item:hover {
 	background-color: #316AC5;
 	color: #FFFFFF;
 }
 
-.xp-menu-footer {
+.win-xp-menu-footer {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
@@ -1699,7 +1699,7 @@ export default {
 	background: linear-gradient(180deg, #2463D8 0%, #1C50B0 100%);
 }
 
-.xp-footer-btn {
+.win-xp-footer-btn {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -1710,11 +1710,11 @@ export default {
 	font-size: 11px;
 }
 
-.xp-footer-btn:hover {
+.win-xp-footer-btn:hover {
 	background: rgba(255, 255, 255, 0.15);
 }
 
-.xp-footer-icon {
+.win-xp-footer-icon {
 	width: 20px;
 	height: 20px;
 	border-radius: 4px;
@@ -1724,11 +1724,11 @@ export default {
 	box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.xp-icon-logoff {
+.win-xp-icon-logoff {
 	background: linear-gradient(180deg, #F5A623 0%, #D97B00 100%);
 }
 
-.xp-icon-shutdown {
+.win-xp-icon-shutdown {
 	background: linear-gradient(180deg, #E85D4A 0%, #C1352E 100%);
 }
 
@@ -1768,7 +1768,7 @@ export default {
 	box-shadow: inset 1px 1px 0 #808080;
 }
 
-.os-win-classic .taskbar-start .xp-start-flag {
+.os-win-classic .taskbar-start .win-xp-start-flag {
 	width: 16px;
 	height: 16px;
 }

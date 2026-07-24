@@ -682,7 +682,7 @@
 		border-radius: 0;
 	}
 
-	.winxp-header {
+	.win-xp-header {
 		background: var(--win-classic-header) !important;
 		padding: 0 4px 0 8px !important;
 		justify-content: space-between !important;
@@ -692,7 +692,7 @@
 		line-height: var(--win-title-height) !important;
 	}
 
-	.style-classic .window.maximized .winxp-header {
+	.style-classic .window.maximized .win-xp-header {
 		border-radius: 0;
 		margin: 0;
 	}
@@ -701,13 +701,13 @@
 		opacity: 1;
 	}
 
-	.style-classic .window:not(.focused) .winxp-header {
+	.style-classic .window:not(.focused) .win-xp-header {
 		background: var(--win-classic-header-inactive) !important;
 	}
 
-	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
+	.win-xp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
 
-	.winxp-title-text {
+	.win-xp-title-text {
 		color: var(--win-title-color) !important;
 		font-size: 12px;
 		font-weight: bold;
@@ -718,11 +718,11 @@
 		text-overflow: ellipsis;
 	}
 
-	.window:not(.focused) .winxp-title-text {
+	.window:not(.focused) .win-xp-title-text {
 		color: var(--win-title-color-inactive) !important;
 	}
 
-	.winxp-buttons {
+	.win-xp-buttons {
 		display: flex;
 		align-items: center;
 		height: 100%;
@@ -730,7 +730,7 @@
 		-webkit-app-region: no-drag;
 	}
 
-	.winxp-btn {
+	.win-xp-btn {
 		width: var(--win-classic-btn-size);
 		height: var(--win-classic-btn-size);
 		border: 1px solid var(--win-classic-btn-border);
@@ -743,14 +743,14 @@
 		justify-content: center;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
-	.winxp-btn:hover { background: var(--win-classic-btn-hover); }
-	.winxp-btn:active { background: var(--win-classic-btn-active); }
-	.winxp-btn.close-btn {
+	.win-xp-btn:hover { background: var(--win-classic-btn-hover); }
+	.win-xp-btn:active { background: var(--win-classic-btn-active); }
+	.win-xp-btn.close-btn {
 		background: var(--win-classic-close) !important;
 		border-color: var(--win-classic-close-border);
 		margin-left: 2px;
 	}
-	.winxp-btn.close-btn:hover { background: var(--win-classic-close-hover) !important; }
+	.win-xp-btn.close-btn:hover { background: var(--win-classic-close-hover) !important; }
 
 	/* === 窗口内容 === */
 	.window-content {
