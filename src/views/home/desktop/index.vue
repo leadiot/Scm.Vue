@@ -49,281 +49,61 @@
 		</div>
 
 		<!-- macOS Dock -->
-		<div v-if="hasDock" class="mac-dock">
-			<div class="mac-dock-item" title="Launchpad" @click="toggleLaunchpad">
-				<sc-icon name="ms-apps" :size="40" />
-			</div>
-			<div class="mac-dock-separator"></div>
-			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item" :class="{ running: item.running }"
-				:title="dockItemTitle(item)" @click="onDockClick(item)">
-				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
-				<sc-icon v-else :name="dockIconName(item)" :size="42" />
-				<span v-if="item.running" class="mac-dock-dot"></span>
-			</div>
-		</div>
+		<MacDock v-if="hasDock" :items="macDockItems" :icons-path="iconsPath"
+			@toggle-launchpad="toggleLaunchpad" @dock-click="onDockClick" />
 
-		<!-- macOS 菜单-->
-		<div v-if="isMacTheme" class="mac-menubar">
-			<div class="mac-menubar-left">
-				<div class="mac-menu-apple" @click="toggleStartMenu">
-					<img v-if="startLogo" :src="startLogo" class="mac-apple-icon" alt="" draggable="false" />
-					<sc-icon v-else :name="taskbarStartIcon" :size="24" />
-				</div>
-				<span class="mac-menu-appname">{{ macFocusedTitle }}</span>
-			</div>
-			<div class="mac-menubar-right">
-				<el-tooltip :content="currentDateTime" placement="bottom">
-					<span class="mac-menu-clock" @dblclick="openCalendar">{{ currentTime }}</span>
-				</el-tooltip>
-			</div>
-		</div>
+		<!-- macOS 菜单栏 -->
+		<MacMenubar v-if="isMacTheme" :start-logo="startLogo" :start-icon="taskbarStartIcon"
+			:focused-title="macFocusedTitle" :date-time="currentDateTime" :time="currentTime"
+			@toggle-start-menu="toggleStartMenu" @open-calendar="openCalendar" />
 
-		<!-- macOS Launchpad 启动-->
-		<div v-if="showLaunchpad && isMacTheme" class="mac-launchpad" @click.self="showLaunchpad = false">
-			<div class="launchpad-search" @click.stop>
-				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-			</div>
-			<div class="launchpad-grid">
-				<div v-for="app in filteredFlatApps" :key="app.id" class="launchpad-item" @click="openApp(app)">
-					<div class="launchpad-icon">
-						<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" alt=""
-							draggable="false" />
-						<sc-icon v-else :name="app.meta.icon" :size="56" />
-					</div>
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<!-- macOS Launchpad -->
+		<MacLaunchpad v-if="showLaunchpad && isMacTheme" :apps="filteredFlatApps" :icons-path="iconsPath"
+			v-model="menuSearch" @open-app="openApp" @close="showLaunchpad = false" />
 
 		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
-		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
-			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
-			<div class="classic-menu-body">
-				<div v-for="app in menuApps" :key="app.id" class="classic-menu-item"
-					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-					<div class="classic-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" :size="24" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-					</div>
-				</div>
-				<div class="classic-menu-divider"></div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="openSettings">
-						<sc-icon name="ms-settings" :size="24" />
-						<span>{{ $t('desktop.settings') }}</span>
-					</div>
-				</div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="logout">
-						<sc-icon name="ms-exit_to_app" :size="24" />
-						<span>{{ $t('desktop.logoff') }}</span>
-					</div>
-				</div>
-			</div>
-		</div>
+		<ClassicMenu v-else-if="showStartMenu && isClassicTheme" :apps="menuApps" :title="classicMenuTitle"
+			@open-app="openApp" @open-settings="openSettings" @logout="logout"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
-		<div v-else-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
-			<div class="xp-menu-header" @click="openProfile">
-				<div class="xp-menu-avatar">
-					<sc-icon name="ms-account_circle" :size="30" color="#3B6BD4" />
-				</div>
-				<span class="xp-menu-username">{{ user.userName || 'User' }}</span>
-			</div>
-			<div class="xp-menu-body">
-				<div class="xp-menu-left">
-					<div class="xp-menu-caption">{{ $t('desktop.allPrograms') }}</div>
-					<div v-for="app in menuApps" :key="app.id" class="xp-menu-item"
-						:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
-						@mouseleave="hideSubmenu">
-						<div class="xp-menu-app" @click="app.children ? null : openApp(app)">
-							<sc-icon :name="app.meta.icon" :size="22" />
-							<span>{{ app.name }}</span>
-							<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-						</div>
-					</div>
-				</div>
-				<div class="xp-menu-right">
-					<div v-for="link in xpQuickLinks" :key="link.key" class="xp-right-item"
-						@click="openQuickLink(link)">
-						<sc-icon :name="link.icon" :size="18" />
-						<span>{{ link.name }}</span>
-					</div>
-				</div>
-			</div>
-			<div class="xp-menu-footer">
-				<div class="xp-footer-btn" @click="logout">
-					<span class="xp-footer-icon xp-icon-logoff">
-						<sc-icon name="ms-logout" :size="13" color="#ffffff" />
-					</span>
-					<span>{{ $t('desktop.logoff') }}</span>
-				</div>
-				<div class="xp-footer-btn" @click="shutdown">
-					<span class="xp-footer-icon xp-icon-shutdown">
-						<sc-icon name="ms-power_settings_new" :size="13" color="#ffffff" />
-					</span>
-					<span>{{ $t('desktop.shutdown') }}</span>
-				</div>
-			</div>
-		</div>
+		<XpMenu v-else-if="showStartMenu && isXpTheme" :apps="menuApps" :quick-links="xpQuickLinks"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
-		<div v-else-if="showStartMenu && isAeroTheme" class="start-menu aero-start-menu">
-			<div class="aero-menu-body">
-				<div class="aero-menu-left">
-					<div class="aero-menu-apps">
-						<div v-for="app in filteredMenuApps" :key="app.id" class="aero-app-item"
-							@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-							<div class="aero-app-link" @click="app.children ? null : openApp(app)">
-								<sc-icon :name="app.meta.icon" :size="24" />
-								<span>{{ app.name }}</span>
-								<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-							</div>
-						</div>
-					</div>
-					<div class="aero-menu-search">
-						<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-					</div>
-				</div>
-				<div class="aero-menu-right">
-					<div class="aero-menu-avatar" @click="openProfile">
-						<sc-icon name="ms-account_circle" :size="40" color="#3B6BD4" />
-					</div>
-					<div v-for="link in xpQuickLinks" :key="link.key" class="aero-right-item"
-						@click="openQuickLink(link)">
-						<span>{{ link.name }}</span>
-					</div>
-					<div class="aero-right-divider"></div>
-					<div class="aero-right-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
-					<div class="aero-right-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
-				</div>
-			</div>
-		</div>
+		<AeroMenu v-else-if="showStartMenu && isAeroTheme" :apps="filteredMenuApps" :quick-links="xpQuickLinks"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile"
+			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始屏幕（Windows 8 全屏磁贴复刻）-->
-		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen"
-			@click.self="toggleStartMenu">
-			<div class="win8-screen-header">
-				<span class="win8-screen-title">{{ $t('desktop.start') }}</span>
-				<div class="win8-screen-user" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="28" />
-					<span>{{ user.userName || 'User' }}</span>
-				</div>
-			</div>
-			<div class="win8-tiles">
-				<div v-for="app in flatMenuApps" :key="app.id" class="win8-tile"
-					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="36" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<Win8Screen v-else-if="showStartMenu && currentTheme === 'win8'" :apps="flatMenuApps"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@close="toggleStartMenu" />
 
 		<!-- 开始菜单（Windows 10 磁贴复刻）-->
-		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor }">
-			<div class="win10-menu-rail">
-				<div class="win10-rail-item" :title="user.userName || 'User'" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="20" />
-				</div>
-				<div class="win10-rail-spacer"></div>
-				<div class="win10-rail-item" :title="$t('desktop.settings')" @click="openSettings">
-					<sc-icon name="ms-settings" :size="20" />
-				</div>
-				<div class="win10-rail-item" :title="$t('desktop.exit')" @click="logout">
-					<sc-icon name="ms-power_settings_new" :size="20" />
-				</div>
-			</div>
-			<div class="win10-menu-apps">
-				<div class="win10-menu-search">
-					<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-				</div>
-				<div v-for="app in filteredMenuApps" :key="app.id" class="win10-app-item"
-					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-					<div class="win10-app-link" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" :size="18" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-					</div>
-				</div>
-			</div>
-			<div class="win10-menu-tiles">
-				<div v-for="app in tileApps" :key="app.id" class="win10-tile"
-					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="26" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<Win10Menu v-else-if="showStartMenu && isWin10LikeTheme" :apps="filteredMenuApps" :tiles="tileApps"
+			:menu-color="menuColor" :menu-text-color="menuTextColor" :user-name="user.userName || 'User'"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @open-settings="openSettings"
+			@logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows 11 居中网格复刻）-->
-		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor }">
-			<div class="win11-menu-search">
-				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-			</div>
-			<div class="win11-menu-section">{{ $t('desktop.pinned') }}</div>
-			<div class="win11-menu-grid">
-				<div v-for="app in filteredFlatApps" :key="app.id" class="win11-grid-item" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="28" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-			<div class="win11-menu-footer">
-				<div class="win11-footer-user" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="24" />
-					<span>{{ user.userName || 'User' }}</span>
-				</div>
-				<div class="win11-footer-power" :title="$t('desktop.exit')" @click="logout">
-					<sc-icon name="ms-power_settings_new" :size="18" />
-				</div>
-			</div>
-		</div>
+		<Win11Menu v-else-if="showStartMenu && currentTheme === 'win11'" :apps="filteredFlatApps"
+			:menu-color="menuColor" :menu-text-color="menuTextColor" :user-name="user.userName || 'User'"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @logout="logout" />
 
 		<!-- macOS 苹果系统菜单 -->
-		<div v-else-if="showStartMenu && isMacTheme" class="start-menu mac-apple-menu">
-			<div class="apple-menu-item" @click="openProfile"><span>{{ $t('desktop.aboutMac') }}</span></div>
-			<div class="apple-menu-item" @click="openSettings"><span>{{ $t('desktop.systemSettings') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="toggleLaunchpad"><span>{{ $t('desktop.launchpad') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="forceQuitFocused"><span>{{ $t('desktop.forceQuit') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
-			<div class="apple-menu-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
-		</div>
+		<MacAppleMenu v-else-if="showStartMenu && isMacTheme" @open-profile="openProfile"
+			@open-settings="openSettings" @toggle-launchpad="toggleLaunchpad" @force-quit="forceQuitFocused"
+			@shutdown="shutdown" @logout="logout" />
 
 		<!-- 开始菜单（通用）-->
-		<div v-else-if="showStartMenu" class="start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }"
-			:class="{ 'menu-glass': menuGlass }">
-			<div class="start-menu-header" @click="openProfile">
-				<sc-icon name="ms-account_circle" :size="32" />
-				<span>{{ user.userName || 'User' }}</span>
-			</div>
-			<div class="start-menu-apps">
-				<div v-for="app in menuApps" :key="app.id" class="start-menu-item"
-					:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
-					@mouseleave="hideSubmenu">
-					<div class="start-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="16" />
-					</div>
-				</div>
-			</div>
-			<div class="start-menu-footer">
-				<div class="start-menu-action" @click="openSettings">
-					<sc-icon name="ms-settings" />
-					<span>{{ $t('desktop.settings') }}</span>
-				</div>
-				<div class="start-menu-action" @click="logout">
-					<sc-icon name="ms-exit_to_app" />
-					<span>{{ $t('desktop.exit') }}</span>
-				</div>
-			</div>
-		</div>
+		<GenericMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor"
+			:menu-text-color="menuTextColor" :menu-border-radius="menuBorderRadius" :menu-glass="menuGlass"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@open-settings="openSettings" @logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 子菜单 -->
 		<div v-if="activeSubmenu" class="submenu"
@@ -370,12 +150,51 @@
 import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
 import { themes } from './themes.js';
+import MacDock from './components/menus/MacDock.vue';
+import MacMenubar from './components/menus/MacMenubar.vue';
+import MacLaunchpad from './components/menus/MacLaunchpad.vue';
+import ClassicMenu from './components/menus/ClassicMenu.vue';
+import XpMenu from './components/menus/XpMenu.vue';
+import AeroMenu from './components/menus/AeroMenu.vue';
+import Win8Screen from './components/menus/Win8Screen.vue';
+import Win10Menu from './components/menus/Win10Menu.vue';
+import Win11Menu from './components/menus/Win11Menu.vue';
+import MacAppleMenu from './components/menus/MacAppleMenu.vue';
+import GenericMenu from './components/menus/GenericMenu.vue';
+
+// 后端菜单码 → 应用角色（settings 刻意不覆盖，始终使用本地配置）
+const CODE_TO_ROLE = {
+	'app-profile': 'profile',
+	'app-calendar': 'calendar',
+	'app-image': 'image',
+	'app-audio': 'audio',
+	'app-video': 'video',
+	'app-textpad': 'text',
+};
+// 文件类型 → 应用角色（openNasFileWithApp 用）
+const KIND_TO_ROLE = {
+	text: 'text',
+	image: 'image',
+	audio: 'audio',
+	video: 'video',
+};
 
 export default {
 	name: 'Desktop',
 	components: {
 		Window,
 		scIcon,
+		MacDock,
+		MacMenubar,
+		MacLaunchpad,
+		ClassicMenu,
+		XpMenu,
+		AeroMenu,
+		Win8Screen,
+		Win10Menu,
+		Win11Menu,
+		MacAppleMenu,
+		GenericMenu,
 	},
 	data() {
 		return {
@@ -448,85 +267,88 @@ export default {
 				minBtnHover: 'rgba(0, 0, 0, 0.1)',
 				maxBtnHover: 'rgba(0, 0, 0, 0.1)'
 			},
-			settingsApp: {
-				id: '1',
-				code: 'app-settings',
-				name: '设置',
-				component: 'Settings',
-				meta: {
-					icon: 'ms-settings',
-					width: 900,
-					height: 620,
-					resizable: true,
-				}
-			},
-			profileApp: {
-				id: '2',
-				code: 'app-profile',
-				name: '个人信息',
-				component: 'Profile',
-				meta: {
-					icon: 'ms-account_circle',
-					width: 460,
-					height: 680,
-					resizable: false,
-				}
-			},
-			calendarApp: {
-				id: '3',
-				code: 'app-calendar',
-				name: '日历',
-				component: 'Calendar',
-				meta: {
-					icon: 'ms-calendar_month',
-					width: 320,
-					height: 460,
-					resizable: false
-				}
-			},
-			imageApp: {
-				id: '11',
-				code: 'app-image',
-				name: '图像',
-				component: 'Image',
-				meta: {
-					icon: 'ms-photo_library',
-					width: 900,
-					height: 700
-				}
-			},
-			audioApp: {
-				id: '12',
-				code: 'app-audio',
-				name: '音频',
-				component: 'Audio',
-				meta: {
-					icon: 'ms-music_note',
-					width: 500,
-					height: 600
-				}
-			},
-			videoApp: {
-				id: '13',
-				code: 'app-video',
-				name: '视频',
-				component: 'Video',
-				meta: {
-					icon: 'ms-videocam',
-					width: 900,
-					height: 600
-				}
-			},
-			textApp: {
-				id: '14',
-				code: 'app-text',
-				name: '记事本',
-				component: 'Textpad',
-				meta: {
-					icon: 'ms-article',
-					width: 800,
-					height: 600
-				}
+			// 应用配置表（以逻辑角色为键；登录后 addDeskIcon 用后端菜单覆盖，settings 除外）
+			appMap: {
+				settings: {
+					id: '1',
+					code: 'app-settings',
+					name: '设置',
+					component: 'Settings',
+					meta: {
+						icon: 'ms-settings',
+						width: 900,
+						height: 620,
+						resizable: true,
+					}
+				},
+				profile: {
+					id: '2',
+					code: 'app-profile',
+					name: '个人信息',
+					component: 'Profile',
+					meta: {
+						icon: 'ms-account_circle',
+						width: 460,
+						height: 680,
+						resizable: false,
+					}
+				},
+				calendar: {
+					id: '3',
+					code: 'app-calendar',
+					name: '日历',
+					component: 'Calendar',
+					meta: {
+						icon: 'ms-calendar_month',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				image: {
+					id: '11',
+					code: 'app-image',
+					name: '图像',
+					component: 'Image',
+					meta: {
+						icon: 'ms-photo_library',
+						width: 900,
+						height: 700
+					}
+				},
+				audio: {
+					id: '12',
+					code: 'app-audio',
+					name: '音频',
+					component: 'Audio',
+					meta: {
+						icon: 'ms-music_note',
+						width: 500,
+						height: 600
+					}
+				},
+				video: {
+					id: '13',
+					code: 'app-video',
+					name: '视频',
+					component: 'Video',
+					meta: {
+						icon: 'ms-videocam',
+						width: 900,
+						height: 600
+					}
+				},
+				text: {
+					id: '14',
+					code: 'app-textpad',
+					name: '记事本',
+					component: 'Textpad',
+					meta: {
+						icon: 'ms-article',
+						width: 800,
+						height: 600
+					}
+				},
 			},
 		};
 	},
@@ -763,26 +585,9 @@ export default {
 						this.deskApps.push(child);
 					}
 					this.addDeskIcon(child);
-					if (child.code == 'app-calendar') {
-						this.calendarApp = child;
-					}
-					if (child.code == 'app-profile') {
-						this.profileApp = child;
-					}
-					if (child.code == 'app-settings') {
-						//this.settingsApp = child;
-					}
-					if (child.code == 'app-image') {
-						this.imageApp = child;
-					}
-					if (child.code == 'app-audio') {
-						this.audioApp = child;
-					}
-					if (child.code == 'app-video') {
-						this.videoApp = child;
-					}
-					if (child.code == 'app-textpad') {
-						this.textApp = child;
+					const role = CODE_TO_ROLE[child.code];
+					if (role) {
+						this.appMap[role] = child;
 					}
 				});
 			}
@@ -952,20 +757,20 @@ export default {
 		openSettings() {
 			this.showStartMenu = false;
 			this.hideContextMenu();
-			this.settingsApp.props = {
+			this.appMap.settings.props = {
 				config: this.getCurrentConfig(),
 				themes: themes,
 				colorList: this.colorList,
 				presetImages: this.presetImages,
 			};
-			this.openApp(this.settingsApp);
+			this.openApp(this.appMap.settings);
 		},
 		openCalendar() {
-			this.openApp(this.calendarApp);
+			this.openApp(this.appMap.calendar);
 		},
 		openProfile() {
 			this.hideContextMenu();
-			this.openApp(this.profileApp);
+			this.openApp(this.appMap.profile);
 		},
 		// XP 开始菜单右栏快捷链接
 		openQuickLink(link) {
@@ -1268,16 +1073,8 @@ export default {
 		openNasFileWithApp(kind, files, index) {
 			if (!files || files.length === 0) return;
 
-			let appConfig = null;
-			if (kind === 'text') {
-				appConfig = this.textApp;
-			} else if (kind === 'image') {
-				appConfig = this.imageApp;
-			} else if (kind === 'audio') {
-				appConfig = this.audioApp;
-			} else if (kind === 'video') {
-				appConfig = this.videoApp;
-			} else {
+			const appConfig = this.appMap[KIND_TO_ROLE[kind]];
+			if (!appConfig) {
 				this.$message.info(this.$t('desktop.cannotOpenFile'));
 				return;
 			}
@@ -1333,7 +1130,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .desktop {
 	--taskbar-height: 48px;
 	position: relative;
