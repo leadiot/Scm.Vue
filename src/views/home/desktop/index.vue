@@ -822,7 +822,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'win11'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-11/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-11/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win10',
@@ -861,7 +861,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'win10'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-10/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-10/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win8',
@@ -900,7 +900,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'win10'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-8/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-8/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win7',
@@ -939,7 +939,7 @@ export default {
 						buttonWidth: '28px',
 						style: 'win7'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-7/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-7/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winVista',
@@ -978,7 +978,7 @@ export default {
 						buttonWidth: '30px',
 						style: 'win7'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-vista/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-vista/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winXP',
@@ -1029,7 +1029,7 @@ export default {
 						classicCloseHoverStart: '#ff8b6a',
 						classicCloseHoverEnd: '#d0453e'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-xp/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-xp/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win2000',
@@ -1085,7 +1085,7 @@ export default {
 						classicHeaderRadius: '0px',
 						classicBtnSize: '18px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-2000/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-2000/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'winMe',
@@ -1141,7 +1141,7 @@ export default {
 						classicHeaderRadius: '0px',
 						classicBtnSize: '16px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-me/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-me/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win98',
@@ -1197,7 +1197,7 @@ export default {
 						classicHeaderRadius: '0px',
 						classicBtnSize: '16px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-98/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-98/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'win95',
@@ -1253,7 +1253,7 @@ export default {
 						classicHeaderRadius: '0px',
 						classicBtnSize: '16px'
 					},
-					previewStyle: { backgroundImage: 'url(/images/windows-95/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-95/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSTahoe',
@@ -1304,7 +1304,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-26-tahoe/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-26-tahoe/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSequoia',
@@ -1355,7 +1355,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-15-sequoia/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-15-sequoia/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSSonoma',
@@ -1407,7 +1407,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-14-sonoma/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-14-sonoma/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSVentura',
@@ -1458,7 +1458,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-13-ventura/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-13-ventura/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSMonterey',
@@ -1509,7 +1509,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-12-monterey/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-12-monterey/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSBigSur',
@@ -1560,7 +1560,7 @@ export default {
 							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
 						}
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-11-big-sur/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-11-big-sur/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSYosemite',
@@ -1590,7 +1590,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-10.10-yosemite/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.10-yosemite/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSLion',
@@ -1620,7 +1620,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-10.7-lion/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.7-lion/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOSLeopard',
@@ -1650,7 +1650,7 @@ export default {
 						buttonWidth: '46px',
 						style: 'macos'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-10.5-leopard/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.5-leopard/preview.jpg)', backgroundSize: 'cover' }
 				},
 				{
 					name: 'macOS9',
@@ -1678,7 +1678,7 @@ export default {
 						buttonWidth: '16px',
 						style: 'mac9'
 					},
-					previewStyle: { backgroundImage: 'url(/images/macos-9/preview.jpg)', backgroundSize: 'cover' }
+					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-9/preview.jpg)', backgroundSize: 'cover' }
 				},
 			]
 		};
