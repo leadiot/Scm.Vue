@@ -194,6 +194,12 @@ export default {
 		reset: "Reset",
 		saveSuccess: "Settings saved",
 		resetSuccess: "Settings reset to default",
+		// Window Buttons
+		winClose: "Close",
+		winMinimize: "Minimize",
+		winMaximize: "Maximize",
+		winZoom: "Zoom",
+		winCollapse: "Collapse",
 		// XP Start Menu
 		allPrograms: "All Programs",
 		pinned: "Pinned",

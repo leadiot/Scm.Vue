@@ -726,7 +726,6 @@ export default {
 		refreshDesktop() {
 			this.hideContextMenu();
 			this.listApp();
-			//this.$message.success('桌面已刷�?);
 		},
 		async listApp() {
 			this.menuApps = [];
@@ -787,10 +786,6 @@ export default {
 					}
 				});
 			}
-		},
-		getSubMenu(list, pid) {
-			var menu = list.filter((item) => item.pid == pid);
-			return menu || [];
 		},
 		openApp(app) {
 			const meta = app.meta || {};

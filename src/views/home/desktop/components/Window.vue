@@ -35,15 +35,15 @@
 			<!-- Mac OS 9 经典白金风格标题栏 -->
 			<template v-else-if="isMac9">
 				<div class="window-header mac9-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
-					<button class="mac9-btn" title="关闭" @click.stop="$emit('close', window.id)">
+					<button class="mac9-btn" :title="$t('desktop.winClose')" @click.stop="$emit('close', window.id)">
 						<span class="mac9-glyph">×</span>
 					</button>
 					<span class="mac9-title">{{ window.title }}</span>
 					<div class="mac9-buttons">
-						<button class="mac9-btn" title="缩放" @click.stop="$emit('maximize', window.id)">
+						<button class="mac9-btn" :title="$t('desktop.winZoom')" @click.stop="$emit('maximize', window.id)">
 							<span class="mac9-glyph">+</span>
 						</button>
-						<button class="mac9-btn" title="收起" @click.stop="$emit('minimize', window.id)">
+						<button class="mac9-btn" :title="$t('desktop.winCollapse')" @click.stop="$emit('minimize', window.id)">
 							<span class="mac9-glyph">–</span>
 						</button>
 					</div>
@@ -58,10 +58,10 @@
 					</div>
 					<span class="winxp-title-text">{{ window.title }}</span>
 					<div class="winxp-buttons">
-						<button class="winxp-btn min-btn" title="最小化" @click.stop="$emit('minimize', window.id)">
+						<button class="winxp-btn min-btn" :title="$t('desktop.winMinimize')" @click.stop="$emit('minimize', window.id)">
 							<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="currentColor"/></svg>
 						</button>
-						<button class="winxp-btn max-btn" title="最大化" @click.stop="$emit('maximize', window.id)">
+						<button class="winxp-btn max-btn" :title="$t('desktop.winMaximize')" @click.stop="$emit('maximize', window.id)">
 							<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
 								<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
 							</svg>
@@ -70,7 +70,7 @@
 								<rect x="0" y="0" width="6.5" height="6" rx="0.5" fill="#000080"/>
 							</svg>
 						</button>
-						<button class="winxp-btn close-btn" title="关闭" @click.stop="$emit('close', window.id)">
+						<button class="winxp-btn close-btn" :title="$t('desktop.winClose')" @click.stop="$emit('close', window.id)">
 							<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="currentColor" stroke-width="1.2"/></svg>
 						</button>
 					</div>
@@ -122,11 +122,12 @@
 <script>
 	import { defineAsyncComponent, h, markRaw } from 'vue';
 	import scIcon from '@/components/scIcon/index.vue';
+	import i18n from '@/locales';
 
 	const LoadingComponent = {
 		name: 'LoadingComponent',
 		render() {
-			return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, '加载中...');
+			return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, i18n.global.t('desktop.loading'));
 		}
 	};
 
