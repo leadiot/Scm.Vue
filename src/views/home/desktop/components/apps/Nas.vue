@@ -324,8 +324,8 @@ export default {
 				return;
 			}
 
-			var rows = res.data.rows || [];
-			this.total = res.data.total || 0;
+			var rows = res.data.items || [];
+			this.total = res.data.totalItems || 0;
 			if (this.param.page === 1) {
 				this.fileList = rows;
 			} else {
