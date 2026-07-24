@@ -130,6 +130,11 @@
 		}
 	};
 
+	// 模块级：视图组件映射表（构建期一次性求值，避免每个窗口 resolveComponent 时重复调用 import.meta.glob）
+	const viewModules = import.meta.glob('@/views/**/*.vue');
+	// 模块级：组件缓存（跨窗口共享、非响应式，避免重复解析同一组件）
+	const componentCache = new Map();
+
 	export default {
 		name: 'AppWindow',
 		components: { scIcon },
@@ -142,7 +147,6 @@
 			return {
 				dragData: { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 },
 				resizeData: { isResizing: false, startX: 0, startY: 0, width: 0, height: 0, left: 0, top: 0 },
-				componentCache: {},
 				isMobile: false,
 				currentAnimation: null,
 			};
@@ -256,12 +260,6 @@
 		mounted() {
 			this.checkMobile();
 			window.addEventListener('resize', this.checkMobile);
-			document.addEventListener('mousemove', this.onDragging);
-			document.addEventListener('mouseup', this.stopDrag);
-			document.addEventListener('mousemove', this.onResizing);
-			document.addEventListener('mouseup', this.stopResize);
-			document.addEventListener('touchmove', this.onDragging, { passive: false });
-			document.addEventListener('touchend', this.stopDrag);
 			// macOS 窗口打开动画
 			if (this.isMacOS && this.$refs.windowEl) {
 				this.animateOpen();
@@ -269,12 +267,9 @@
 		},
 		beforeUnmount() {
 			window.removeEventListener('resize', this.checkMobile);
-			document.removeEventListener('mousemove', this.onDragging);
-			document.removeEventListener('mouseup', this.stopDrag);
-			document.removeEventListener('mousemove', this.onResizing);
-			document.removeEventListener('mouseup', this.stopResize);
-			document.removeEventListener('touchmove', this.onDragging);
-			document.removeEventListener('touchend', this.stopDrag);
+			// 兜底：若卸载时仍处于拖拽/缩放中，移除按需注册的 document 监听器
+			this.unbindDragListeners();
+			this.unbindResizeListeners();
 		},
 		methods: {
 			checkMobile() { this.isMobile = window.innerWidth <= 768; },
@@ -286,21 +281,20 @@
 			onThemePreview(theme) { this.$emit('theme-preview', theme); },
 			onSaveSettings(config) { this.$emit('save-settings', config); },
 		getComponent(code, component) {
-			if (!this.componentCache[code]) {
-				this.componentCache[code] = markRaw(this.resolveComponent(code, component));
+			if (!componentCache.has(code)) {
+				componentCache.set(code, markRaw(this.resolveComponent(code, component)));
 			}
-			return this.componentCache[code];
+			return componentCache.get(code);
 		},
 			resolveComponent(code, component) {
-				const modules = import.meta.glob('@/views/**/*.vue');
 				const paths = [`@/views/${component}.vue`, `@/views/${component}/index.vue`];
 				for (const path of paths) {
-					if (modules[path]) return defineAsyncComponent(modules[path]);
+					if (viewModules[path]) return defineAsyncComponent(viewModules[path]);
 				}
-				const moduleKeys = Object.keys(modules);
+				const moduleKeys = Object.keys(viewModules);
 				for (const key of moduleKeys) {
 					if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
-						return defineAsyncComponent(modules[key]);
+						return defineAsyncComponent(viewModules[key]);
 					}
 				}
 				return LoadingComponent;
@@ -310,6 +304,8 @@
 				const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 				const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 				this.dragData = { isDragging: true, startX: clientX, startY: clientY, initialX: this.window.x, initialY: this.window.y };
+				// 按需注册 document 监听器（仅拖拽期间存在，避免每窗口常驻多个全局监听器）
+				this.bindDragListeners();
 			},
 			onDragging(e) {
 				if (!this.dragData.isDragging) return;
@@ -320,7 +316,7 @@
 				this.window.x = Math.max(-this.window.width + 100, Math.min(this.dragData.initialX + dx, window.innerWidth - 100));
 				this.window.y = Math.max(0, Math.min(this.dragData.initialY + dy, window.innerHeight - 40));
 			},
-			stopDrag() { this.dragData.isDragging = false; },
+			stopDrag() { this.dragData.isDragging = false; this.unbindDragListeners(); },
 			startResize(e) {
 				if (this.currentAnimation) return;
 				this.resizeData = {
@@ -328,6 +324,8 @@
 					width: this.window.width, height: this.window.height,
 					left: this.window.x, top: this.window.y,
 				};
+				// 按需注册 document 监听器（仅缩放期间存在）
+				this.bindResizeListeners();
 			},
 			onResizing(e) {
 				if (!this.resizeData.isResizing) return;
@@ -337,7 +335,29 @@
 				this.window.width = Math.max(minW, this.resizeData.width + dx);
 				this.window.height = Math.max(minH, this.resizeData.height + dy);
 			},
-			stopResize() { this.resizeData.isResizing = false; },
+			stopResize() { this.resizeData.isResizing = false; this.unbindResizeListeners(); },
+			// 拖拽监听器按需注册/移除：仅拖拽期间挂载 document 监听，空闲时零开销
+			bindDragListeners() {
+				document.addEventListener('mousemove', this.onDragging);
+				document.addEventListener('mouseup', this.stopDrag);
+				document.addEventListener('touchmove', this.onDragging, { passive: false });
+				document.addEventListener('touchend', this.stopDrag);
+			},
+			unbindDragListeners() {
+				document.removeEventListener('mousemove', this.onDragging);
+				document.removeEventListener('mouseup', this.stopDrag);
+				document.removeEventListener('touchmove', this.onDragging);
+				document.removeEventListener('touchend', this.stopDrag);
+			},
+			// 缩放监听器按需注册/移除
+			bindResizeListeners() {
+				document.addEventListener('mousemove', this.onResizing);
+				document.addEventListener('mouseup', this.stopResize);
+			},
+			unbindResizeListeners() {
+				document.removeEventListener('mousemove', this.onResizing);
+				document.removeEventListener('mouseup', this.stopResize);
+			},
 
 			/* ================================================================
 			   macOS Web Animations API 动画系统
