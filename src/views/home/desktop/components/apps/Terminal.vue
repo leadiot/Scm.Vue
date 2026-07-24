@@ -35,10 +35,10 @@ export default {
 	data() {
 		return {
 			command: '',
-			version: 'LeadIOT Scm.Net [版本 ' + this.$CONFIG.APP_VER + ']',
+			version: 'Scm.Net [版本 ' + this.$CONFIG.APP_VER + ']',
 			build: this.$CONFIG.APP_BUILD,
 			copyright: '(c) LeadIOT。保留所有权利。',
-			rootDir: 'nas://',
+			rootDir: 'Scm://',
 			userName: 'User',
 			output: [],
 			history: [],
