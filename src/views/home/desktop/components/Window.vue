@@ -66,7 +66,7 @@
 			winStyle() { return this.windowTheme.style || 'modern'; },
 			isMacOS() { return this.winStyle === 'macos'; },
 			isMac9() { return this.winStyle === 'mac9'; },
-			isClassic() { return this.winStyle === 'classic'; },
+			isWinClassic() { return this.winStyle === 'winClassic'; },
 			isWin7() { return this.winStyle === 'win7'; },
 			windowTheme() { return this.theme; },
 			windowTitleColor() {
@@ -83,18 +83,18 @@
 			},
 			windowStyle() {
 				const t = this.windowTheme;
-				const hs = t.classicHeaderStart || t.xpHeaderStart || '#0058EE';
-				const he = t.classicHeaderEnd || t.xpHeaderEnd || '#0047CC';
-				const his = t.classicHeaderInactiveStart || t.xpHeaderInactiveStart || '#7A96DF';
-				const hie = t.classicHeaderInactiveEnd || t.xpHeaderInactiveEnd || '#5E7EB5';
-				const bs = t.classicBtnStart || t.xpBtnStart || '#3C8CFF';
-				const be = t.classicBtnEnd || t.xpBtnEnd || '#0054E3';
-				const bhs = t.classicBtnHoverStart || t.xpBtnHoverStart || '#5CA0FF';
-				const bhe = t.classicBtnHoverEnd || t.xpBtnHoverEnd || '#1E6FE0';
-				const cs = t.classicCloseStart || t.xpCloseStart || '#FF6B4A';
-				const ce = t.classicCloseEnd || t.xpCloseEnd || '#C1352E';
-				const chs = t.classicCloseHoverStart || t.xpCloseHoverStart || '#FF8B6A';
-				const che = t.classicCloseHoverEnd || t.xpCloseHoverEnd || '#D0453E';
+				const hs = t.winClassicHeaderStart || t.xpHeaderStart || '#0058EE';
+				const he = t.winClassicHeaderEnd || t.xpHeaderEnd || '#0047CC';
+				const his = t.winClassicHeaderInactiveStart || t.xpHeaderInactiveStart || '#7A96DF';
+				const hie = t.winClassicHeaderInactiveEnd || t.xpHeaderInactiveEnd || '#5E7EB5';
+				const bs = t.winClassicBtnStart || t.xpBtnStart || '#3C8CFF';
+				const be = t.winClassicBtnEnd || t.xpBtnEnd || '#0054E3';
+				const bhs = t.winClassicBtnHoverStart || t.xpBtnHoverStart || '#5CA0FF';
+				const bhe = t.winClassicBtnHoverEnd || t.xpBtnHoverEnd || '#1E6FE0';
+				const cs = t.winClassicCloseStart || t.xpCloseStart || '#FF6B4A';
+				const ce = t.winClassicCloseEnd || t.xpCloseEnd || '#C1352E';
+				const chs = t.winClassicCloseHoverStart || t.xpCloseHoverStart || '#FF8B6A';
+				const che = t.winClassicCloseHoverEnd || t.xpCloseHoverEnd || '#D0453E';
 				return {
 					'--win-bg': this.bgColor,
 					'--win-header-bg': this.headerBg,
@@ -108,19 +108,19 @@
 					'--win-max-hover': this.maxBtnHover,
 					'--win-title-height': this.titleHeight,
 					'--win-button-width': this.buttonWidth,
-					'--classic-header': t.classicHeader || t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
-					'--classic-header-inactive': t.classicHeaderInactive || t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
-					'--classic-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
-					'--classic-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
-					'--classic-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
-					'--classic-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
-					'--classic-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
-					'--classic-btn-border': t.classicBtnBorder || t.xpBtnBorder || '#FFFFFF',
-					'--classic-close-border': t.classicCloseBorder || t.xpCloseBorder || '#A02010',
-					'--classic-glyph-color': t.classicGlyphColor || t.xpGlyphColor || '#FFFFFF',
-					'--classic-frame': t.classicFrame || t.xpFrame || '#0054E3',
-					'--classic-header-radius': t.classicHeaderRadius || t.xpHeaderRadius || '6px',
-					'--classic-btn-size': t.classicBtnSize || t.xpBtnSize || '21px',
+					'--win-classic-header': t.winClassicHeader || t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
+					'--win-classic-header-inactive': t.winClassicHeaderInactive || t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
+					'--win-classic-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
+					'--win-classic-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
+					'--win-classic-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
+					'--win-classic-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
+					'--win-classic-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
+					'--win-classic-btn-border': t.winClassicBtnBorder || t.xpBtnBorder || '#FFFFFF',
+					'--win-classic-close-border': t.winClassicCloseBorder || t.xpCloseBorder || '#A02010',
+					'--win-classic-glyph-color': t.winClassicGlyphColor || t.xpGlyphColor || '#FFFFFF',
+					'--win-classic-frame': t.winClassicFrame || t.xpFrame || '#0054E3',
+					'--win-classic-header-radius': t.winClassicHeaderRadius || t.xpHeaderRadius || '6px',
+					'--win-classic-btn-size': t.winClassicBtnSize || t.xpBtnSize || '21px',
 				};
 			},
 			headerBarStyle() {
@@ -669,9 +669,9 @@
 		opacity: 1;
 	}
 
-	/* === 经典窗口风格（颜色全部走 --classic-* 变量，可被主题定制） === */
+	/* === 经典窗口风格（颜色全部走 --win-classic-* 变量，可被主题定制） === */
 	.style-classic .window {
-		border: 2px solid var(--classic-frame);
+		border: 2px solid var(--win-classic-frame);
 		border-top: none;
 		border-radius: var(--win-border-radius);
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
@@ -683,10 +683,10 @@
 	}
 
 	.winxp-header {
-		background: var(--classic-header) !important;
+		background: var(--win-classic-header) !important;
 		padding: 0 4px 0 8px !important;
 		justify-content: space-between !important;
-		border-radius: var(--classic-header-radius) var(--classic-header-radius) 0 0;
+		border-radius: var(--win-classic-header-radius) var(--win-classic-header-radius) 0 0;
 		margin: -2px -2px 0 -2px;
 		height: var(--win-title-height) !important;
 		line-height: var(--win-title-height) !important;
@@ -702,7 +702,7 @@
 	}
 
 	.style-classic .window:not(.focused) .winxp-header {
-		background: var(--classic-header-inactive) !important;
+		background: var(--win-classic-header-inactive) !important;
 	}
 
 	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
@@ -731,26 +731,26 @@
 	}
 
 	.winxp-btn {
-		width: var(--classic-btn-size);
-		height: var(--classic-btn-size);
-		border: 1px solid var(--classic-btn-border);
+		width: var(--win-classic-btn-size);
+		height: var(--win-classic-btn-size);
+		border: 1px solid var(--win-classic-btn-border);
 		border-radius: 3px;
-		background: var(--classic-btn);
-		color: var(--classic-glyph-color);
+		background: var(--win-classic-btn);
+		color: var(--win-classic-glyph-color);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
-	.winxp-btn:hover { background: var(--classic-btn-hover); }
-	.winxp-btn:active { background: var(--classic-btn-active); }
+	.winxp-btn:hover { background: var(--win-classic-btn-hover); }
+	.winxp-btn:active { background: var(--win-classic-btn-active); }
 	.winxp-btn.close-btn {
-		background: var(--classic-close) !important;
-		border-color: var(--classic-close-border);
+		background: var(--win-classic-close) !important;
+		border-color: var(--win-classic-close-border);
 		margin-left: 2px;
 	}
-	.winxp-btn.close-btn:hover { background: var(--classic-close-hover) !important; }
+	.winxp-btn.close-btn:hover { background: var(--win-classic-close-hover) !important; }
 
 	/* === 窗口内容 === */
 	.window-content {

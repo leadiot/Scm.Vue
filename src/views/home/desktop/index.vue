@@ -62,7 +62,7 @@
 			v-model="menuSearch" @open-app="openApp" @close="showLaunchpad = false" />
 
 		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
-		<ClassicMenu v-else-if="showStartMenu && isClassicTheme" :apps="menuApps" :title="classicMenuTitle"
+		<WinClassicMenu v-else-if="showStartMenu && isWinClassicTheme" :apps="menuApps" :title="winClassicMenuTitle"
 			@open-app="openApp" @open-settings="openSettings" @logout="logout"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
@@ -153,7 +153,7 @@ import { themes } from './themes.js';
 import MacDock from './components/menus/MacDock.vue';
 import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
-import ClassicMenu from './components/menus/ClassicMenu.vue';
+import WinClassicMenu from './components/menus/WinClassicMenu.vue';
 import XpMenu from './components/menus/XpMenu.vue';
 import AeroMenu from './components/menus/AeroMenu.vue';
 import Win8Screen from './components/menus/Win8Screen.vue';
@@ -187,7 +187,7 @@ export default {
 		MacDock,
 		MacMenubar,
 		MacLaunchpad,
-		ClassicMenu,
+		WinClassicMenu,
 		XpMenu,
 		AeroMenu,
 		Win8Screen,
@@ -377,7 +377,7 @@ export default {
 			return this.currentTheme === 'winXP';
 		},
 		// Windows 95/98/2000 经典主题
-		isClassicTheme() {
+		isWinClassicTheme() {
 			return ['win95', 'win98', 'win2000', 'winMe'].includes(this.currentTheme);
 		},
 		// Windows 7/Vista Aero 主题
@@ -398,18 +398,18 @@ export default {
 		},
 		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
-			return this.isXpTheme || this.isClassicTheme || this.isAeroTheme;
+			return this.isXpTheme || this.isWinClassicTheme || this.isAeroTheme;
 		},
 		// 操作系统家族根类（供 grouped CSS 覆盖）
 		osFamilyClass() {
 			if (this.isMacTheme) return 'os-macos';
-			if (this.isClassicTheme) return 'os-classic';
+			if (this.isWinClassicTheme) return 'os-win-classic';
 			if (this.isAeroTheme) return 'os-aero';
 			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
 			return '';
 		},
 		// 经典开始菜单侧栏标题
-		classicMenuTitle() {
+		winClassicMenuTitle() {
 			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000', winMe: 'Windows ME' };
 			return titles[this.currentTheme] || 'Windows';
 		},
@@ -1733,19 +1733,19 @@ export default {
 }
 
 /* ================= Windows 95/98/2000 经典主题复刻 ================= */
-.os-classic {
+.os-win-classic {
 	--taskbar-height: 28px;
 	font-family: Tahoma, 'Microsoft YaHei', 'Segoe UI', sans-serif;
 }
 
-.os-classic .taskbar {
+.os-win-classic .taskbar {
 	padding: 2px;
 	background: #C0C0C0 !important;
 	border-top: 1px solid #FFFFFF;
 	box-shadow: inset 0 1px 0 #DFDFDF;
 }
 
-.os-classic .taskbar-start {
+.os-win-classic .taskbar-start {
 	height: 22px;
 	margin: 1px 2px;
 	padding: 0 6px;
@@ -1759,26 +1759,26 @@ export default {
 	font-weight: bold;
 }
 
-.os-classic .taskbar-start:hover {
+.os-win-classic .taskbar-start:hover {
 	background: #C0C0C0;
 }
 
-.os-classic .taskbar-start:active {
+.os-win-classic .taskbar-start:active {
 	border-color: #000000 #FFFFFF #FFFFFF #000000;
 	box-shadow: inset 1px 1px 0 #808080;
 }
 
-.os-classic .taskbar-start .xp-start-flag {
+.os-win-classic .taskbar-start .xp-start-flag {
 	width: 16px;
 	height: 16px;
 }
 
-.os-classic .taskbar-apps {
+.os-win-classic .taskbar-apps {
 	gap: 2px;
 	margin-left: 2px;
 }
 
-.os-classic .taskbar-app {
+.os-win-classic .taskbar-app {
 	height: 22px;
 	min-width: 110px;
 	max-width: 150px;
@@ -1792,27 +1792,27 @@ export default {
 	font-size: 11px;
 }
 
-.os-classic .taskbar-app span {
+.os-win-classic .taskbar-app span {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.os-classic .taskbar-app:hover {
+.os-win-classic .taskbar-app:hover {
 	background: #C0C0C0;
 }
 
-.os-classic .taskbar-app.active {
+.os-win-classic .taskbar-app.active {
 	background: #E0E0E0;
 	border-color: #000000 #FFFFFF #FFFFFF #000000;
 	box-shadow: inset 1px 1px 0 #808080;
 }
 
-.os-classic .taskbar-app.minimized {
+.os-win-classic .taskbar-app.minimized {
 	opacity: 0.75;
 }
 
-.os-classic .taskbar-tray {
+.os-win-classic .taskbar-tray {
 	align-self: center;
 	height: 22px;
 	margin: 1px 2px 1px 0;
@@ -1822,28 +1822,28 @@ export default {
 	border-color: #808080 #FFFFFF #FFFFFF #808080;
 }
 
-.os-classic .taskbar-tray .time {
+.os-win-classic .taskbar-tray .time {
 	font-size: 11px;
 }
 
-.os-classic .desktop-icon:hover,
-.os-classic .desktop-icon.selected {
+.os-win-classic .desktop-icon:hover,
+.os-win-classic .desktop-icon.selected {
 	background-color: transparent;
 	border-color: transparent;
 	box-shadow: none;
 }
 
-.os-classic .desktop-icon.selected .icon-text {
+.os-win-classic .desktop-icon.selected .icon-text {
 	background-color: #000080;
 }
 
-.os-classic .icon-text {
+.os-win-classic .icon-text {
 	padding: 1px 2px;
 	font-size: 11px;
 }
 
-.os-classic .context-menu,
-.os-classic .submenu {
+.os-win-classic .context-menu,
+.os-win-classic .submenu {
 	background-color: #C0C0C0 !important;
 	color: #000000 !important;
 	border: 1px solid;
@@ -1854,19 +1854,19 @@ export default {
 	box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
 }
 
-.os-classic .context-menu-item,
-.os-classic .submenu-item {
+.os-win-classic .context-menu-item,
+.os-win-classic .submenu-item {
 	padding: 5px 16px;
 	font-size: 11px;
 }
 
-.os-classic .context-menu-item:hover,
-.os-classic .submenu-item:hover {
+.os-win-classic .context-menu-item:hover,
+.os-win-classic .submenu-item:hover {
 	background-color: #000080;
 	color: #FFFFFF;
 }
 
-.os-classic .context-menu-divider {
+.os-win-classic .context-menu-divider {
 	height: 0;
 	background: none;
 	border-top: 1px solid #808080;
@@ -1874,8 +1874,8 @@ export default {
 	margin: 2px;
 }
 
-/* 经典开始菜�?*/
-.classic-start-menu {
+/* 经典开始菜单侧栏标题*/
+.win-classic-start-menu {
 	left: 2px;
 	bottom: var(--taskbar-height);
 	width: 250px;
@@ -1888,7 +1888,7 @@ export default {
 	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.classic-menu-banner {
+.win-classic-menu-banner {
 	width: 26px;
 	flex-shrink: 0;
 	display: flex;
@@ -1898,7 +1898,7 @@ export default {
 	background: linear-gradient(180deg, #1084D0 0%, #000080 100%);
 }
 
-.classic-menu-banner span {
+.win-classic-menu-banner span {
 	writing-mode: vertical-rl;
 	transform: rotate(180deg);
 	color: #FFFFFF;
@@ -1908,17 +1908,17 @@ export default {
 	white-space: nowrap;
 }
 
-.classic-menu-body {
+.win-classic-menu-body {
 	flex: 1;
 	min-width: 0;
 	padding: 2px;
 }
 
-.classic-menu-item {
+.win-classic-menu-item {
 	position: relative;
 }
 
-.classic-menu-app {
+.win-classic-menu-app {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -1928,16 +1928,16 @@ export default {
 	color: #000000;
 }
 
-.classic-menu-app:hover {
+.win-classic-menu-app:hover {
 	background-color: #000080;
 	color: #FFFFFF;
 }
 
-.classic-menu-app .arrow {
+.win-classic-menu-app .arrow {
 	margin-left: auto;
 }
 
-.classic-menu-divider {
+.win-classic-menu-divider {
 	height: 0;
 	border-top: 1px solid #808080;
 	border-bottom: 1px solid #FFFFFF;

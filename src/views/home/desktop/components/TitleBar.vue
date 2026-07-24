@@ -49,7 +49,7 @@
 	</template>
 
 	<!-- 经典风格标题栏 -->
-	<template v-else-if="winStyle === 'classic'">
+	<template v-else-if="winStyle === 'winClassic'">
 		<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="$emit('start-drag', $event)" @touchstart.passive="$emit('start-drag', $event)">
 			<div class="winxp-title-left">
 				<sc-icon :name="window.icon || 'ms-grid_view'" :size="14" color="#ffffff" />
