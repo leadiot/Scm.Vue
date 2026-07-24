@@ -73,7 +73,7 @@
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
-		<AeroMenu v-else-if="showStartMenu && isAeroTheme" :apps="filteredMenuApps" :quick-links="xpQuickLinks"
+		<WinAeroMenu v-else-if="showStartMenu && isWinAeroTheme" :apps="filteredMenuApps" :quick-links="xpQuickLinks"
 			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile"
 			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
@@ -155,7 +155,7 @@ import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
 import WinClassicMenu from './components/menus/WinClassicMenu.vue';
 import WinXpMenu from './components/menus/WinXpMenu.vue';
-import AeroMenu from './components/menus/AeroMenu.vue';
+import WinAeroMenu from './components/menus/WinAeroMenu.vue';
 import Win8Screen from './components/menus/Win8Screen.vue';
 import Win10Menu from './components/menus/Win10Menu.vue';
 import Win11Menu from './components/menus/Win11Menu.vue';
@@ -189,7 +189,7 @@ export default {
 		MacLaunchpad,
 		WinClassicMenu,
 		WinXpMenu,
-		AeroMenu,
+		WinAeroMenu,
 		Win8Screen,
 		Win10Menu,
 		Win11Menu,
@@ -381,7 +381,7 @@ export default {
 			return ['win95', 'win98', 'win2000', 'winMe'].includes(this.currentTheme);
 		},
 		// Windows 7/Vista Aero 主题
-		isAeroTheme() {
+		isWinAeroTheme() {
 			return ['win7', 'winVista'].includes(this.currentTheme);
 		},
 		// macOS 系列主题
@@ -398,13 +398,13 @@ export default {
 		},
 		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
-			return this.isWinXpTheme || this.isWinClassicTheme || this.isAeroTheme;
+			return this.isWinXpTheme || this.isWinClassicTheme || this.isWinAeroTheme;
 		},
 		// 操作系统家族根类（供 grouped CSS 覆盖）
 		osFamilyClass() {
 			if (this.isMacTheme) return 'os-macos';
 			if (this.isWinClassicTheme) return 'os-win-classic';
-			if (this.isAeroTheme) return 'os-aero';
+			if (this.isWinAeroTheme) return 'os-win-aero';
 			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
 			return '';
 		},
@@ -1945,18 +1945,18 @@ export default {
 }
 
 /* ================= Windows 7 / Vista Aero 主题复刻 ================= */
-.os-aero {
+.os-win-aero {
 	--taskbar-height: 40px;
 }
 
-.os-aero .taskbar {
+.os-win-aero .taskbar {
 	padding: 0 8px;
 	background: linear-gradient(180deg, rgba(80, 80, 80, 0.5) 0%, rgba(30, 30, 30, 0.6) 50%, rgba(0, 0, 0, 0.7) 100%) !important;
 	border-top: 1px solid rgba(255, 255, 255, 0.25);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.os-aero .taskbar-start {
+.os-win-aero .taskbar-start {
 	width: 44px;
 	height: 44px;
 	margin: -8px 6px 0 2px;
@@ -1968,25 +1968,25 @@ export default {
 	box-shadow: 0 0 10px rgba(90, 160, 230, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.5);
 }
 
-.os-aero .taskbar-start span {
+.os-win-aero .taskbar-start span {
 	display: none;
 }
 
-.os-aero .taskbar-start:hover {
+.os-win-aero .taskbar-start:hover {
 	background: radial-gradient(circle at 50% 32%, #ACD0F2 0%, #64A0DA 45%, #32649E 100%);
 	box-shadow: 0 0 14px rgba(120, 190, 255, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.6);
 }
 
-.os-aero .taskbar-start:active {
+.os-win-aero .taskbar-start:active {
 	background: radial-gradient(circle at 50% 32%, #4B86C8 0%, #24568F 100%);
 }
 
-.os-aero .taskbar-apps {
+.os-win-aero .taskbar-apps {
 	gap: 4px;
 	margin-left: 4px;
 }
 
-.os-aero .taskbar-app {
+.os-win-aero .taskbar-app {
 	height: 30px;
 	min-width: 56px;
 	max-width: 160px;
@@ -1998,33 +1998,33 @@ export default {
 	font-size: 12px;
 }
 
-.os-aero .taskbar-app span {
+.os-win-aero .taskbar-app span {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.os-aero .taskbar-app:hover {
+.os-win-aero .taskbar-app:hover {
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.14) 100%);
 	box-shadow: 0 0 8px rgba(130, 195, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.os-aero .taskbar-app.active {
+.os-win-aero .taskbar-app.active {
 	background: linear-gradient(180deg, rgba(130, 195, 255, 0.4) 0%, rgba(70, 135, 205, 0.3) 100%);
 	border-color: rgba(0, 0, 0, 0.55);
 	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.os-aero .taskbar-app.minimized {
+.os-win-aero .taskbar-app.minimized {
 	opacity: 0.7;
 }
 
-.os-aero .taskbar-tray .time {
+.os-win-aero .taskbar-tray .time {
 	font-size: 12px;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.os-aero .start-menu {
+.os-win-aero .start-menu {
 	background: linear-gradient(180deg, rgba(246, 249, 253, 0.96) 0%, rgba(222, 232, 244, 0.96) 100%) !important;
 	color: #1A1A1A !important;
 	border: 1px solid rgba(0, 0, 0, 0.4);
@@ -2032,36 +2032,36 @@ export default {
 	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 
-.os-aero .start-menu-header {
+.os-win-aero .start-menu-header {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.os-aero .start-menu-header:hover,
-.os-aero .start-menu-app:hover,
-.os-aero .start-menu-action:hover {
+.os-win-aero .start-menu-header:hover,
+.os-win-aero .start-menu-app:hover,
+.os-win-aero .start-menu-action:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 	color: #1A1A1A;
 }
 
-.os-aero .start-menu-footer {
+.os-win-aero .start-menu-footer {
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.os-aero .submenu,
-.os-aero .context-menu {
+.os-win-aero .submenu,
+.os-win-aero .context-menu {
 	background: rgba(246, 249, 253, 0.97) !important;
 	color: #1A1A1A !important;
 	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 4px;
 }
 
-.os-aero .submenu-item:hover,
-.os-aero .context-menu-item:hover {
+.os-win-aero .submenu-item:hover,
+.os-win-aero .context-menu-item:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 	color: #1A1A1A;
 }
 
-.os-aero .context-menu-divider {
+.os-win-aero .context-menu-divider {
 	background-color: rgba(0, 0, 0, 0.12);
 }
 
@@ -2120,7 +2120,7 @@ export default {
 	border-radius: 0 !important;
 }
 
-/* ================= Windows 11 居中任务�?================= */
+/* ================= Windows 11 居中任务栏 ================= */
 .theme-win11 {
 	--taskbar-height: 48px;
 }
@@ -2490,37 +2490,37 @@ export default {
 	max-width: 100%;
 }
 
-/* --- Aero 开始菜单（Vista/7 双栏�?--- */
-.aero-start-menu {
+/* --- Aero 开始菜单（Vista/7 双栏菜单）--- */
+.win-aero-start-menu {
 	left: 8px;
 	width: 430px;
 	overflow: visible;
 }
 
-.aero-menu-body {
+.win-aero-menu-body {
 	display: flex;
 	min-height: 320px;
 }
 
-.aero-menu-left {
+.win-aero-menu-left {
 	flex: 1;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
 }
 
-.aero-menu-apps {
+.win-aero-menu-apps {
 	flex: 1;
 	padding: 6px;
 	max-height: 380px;
 	overflow-y: auto;
 }
 
-.aero-app-item {
+.win-aero-app-item {
 	position: relative;
 }
 
-.aero-app-link {
+.win-aero-app-link {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -2531,20 +2531,20 @@ export default {
 	color: #1A1A1A;
 }
 
-.aero-app-link:hover {
+.win-aero-app-link:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 }
 
-.aero-app-link .arrow {
+.win-aero-app-link .arrow {
 	margin-left: auto;
 }
 
-.aero-menu-search {
+.win-aero-menu-search {
 	padding: 8px;
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.aero-menu-search input {
+.win-aero-menu-search input {
 	width: 100%;
 	padding: 4px 8px;
 	border: 1px solid #9FB6CC;
@@ -2553,7 +2553,7 @@ export default {
 	font-size: 12px;
 }
 
-.aero-menu-right {
+.win-aero-menu-right {
 	position: relative;
 	width: 170px;
 	flex-shrink: 0;
@@ -2563,7 +2563,7 @@ export default {
 	border-radius: 0 6px 6px 0;
 }
 
-.aero-menu-avatar {
+.win-aero-menu-avatar {
 	position: absolute;
 	top: -22px;
 	right: 12px;
@@ -2579,7 +2579,7 @@ export default {
 	cursor: pointer;
 }
 
-.aero-right-item {
+.win-aero-right-item {
 	padding: 6px 10px;
 	border-radius: 3px;
 	cursor: pointer;
@@ -2588,11 +2588,11 @@ export default {
 	color: #1A1A1A;
 }
 
-.aero-right-item:hover {
+.win-aero-right-item:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 }
 
-.aero-right-divider {
+.win-aero-right-divider {
 	height: 1px;
 	background: rgba(0, 0, 0, 0.12);
 	margin: 6px 8px;
