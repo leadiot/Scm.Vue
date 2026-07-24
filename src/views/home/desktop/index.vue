@@ -123,19 +123,19 @@
 				<span>{{ $t('desktop.refresh') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item" @click="openSettings">
-				<sc-icon name="ms-settings" :size="16" />
-				<span>{{ $t('desktop.desktopSettings') }}</span>
+			<div class="context-menu-item"
+				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+				<sc-icon name="ms-terminal" :size="16" />
+				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
 			<div class="context-menu-item" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="16" />
 				<span>{{ $t('desktop.profile') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item"
-				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
-				<sc-icon name="ms-terminal" :size="16" />
-				<span>{{ $t('desktop.openTerminal') }}</span>
+			<div class="context-menu-item" @click="openSettings">
+				<sc-icon name="ms-settings" :size="16" />
+				<span>{{ $t('desktop.desktopSettings') }}</span>
 			</div>
 			<div class="context-menu-item"
 				@click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
