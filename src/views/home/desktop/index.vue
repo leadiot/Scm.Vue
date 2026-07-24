@@ -2292,6 +2292,10 @@ export default {
 			await this.$SCM.save_cfg(cfgs);
 		},
 		async loadSettings() {
+			// 一次性批量加载配置到缓存，后续 read_cfg 直接命中缓存，
+			// 避免 20+ 次串行 HTTP 请求（页面刷新后内存缓存丢失时尤为明显）
+			await this.$SCM.list_cfg();
+
 			const style = await this.$SCM.read_cfg("desktop_style", 'system');
 			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 			

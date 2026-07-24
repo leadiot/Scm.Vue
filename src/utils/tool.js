@@ -300,6 +300,10 @@ tool.timeFormat = function (date) {
  * E:星期
  */
 tool.dateTimeFormat = function (time, fmt) {
+	if (!time) {
+		return '';
+	}
+
 	var date = new Date(time);
 	var y = date.getFullYear();
 	var M = date.getMonth() + 1;

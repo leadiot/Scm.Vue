@@ -94,7 +94,7 @@
 				</div>
 			</div>
 
-			<div class="main-content" ref="contentRef" @click.self="clearSelection">
+			<div class="main-content" ref="contentRef" v-loading="loading" @click.self="clearSelection" @scroll="handleScroll">
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
 					<div v-for="item in fileList" :key="item.id" class="tile-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
@@ -153,7 +153,12 @@
 					</div>
 				</div>
 
-				<div v-if="fileList.length === 0" class="empty-state">
+				<div v-if="loadingMore" class="load-more">
+					<span class="load-more-icon"><sc-icon name="ms-refresh" :size="16" /></span>
+					<span>{{ $t('desktop.loading') }}</span>
+				</div>
+				
+				<div v-if="fileList.length === 0 && !loading" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
 					<p>{{ $t('desktop.folderEmpty') }}</p>
 				</div>
@@ -161,7 +166,7 @@
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ fileList.length }} {{ $t('desktop.items') }}</span>
+			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{ $t('desktop.items') }}</span>
 			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
 		</div>
 	</div>
@@ -181,6 +186,8 @@ export default {
 				dir_id: '0',
 				kind: 0,
 				key: '',
+				page: 1,
+				limit: 50,
 			},
 			viewMode: 'details',
 			sortField: 'name',
@@ -212,6 +219,9 @@ export default {
 			deviceList: [],
 			folderList: [],
 			fileList: [],
+			total: 0,
+			loading: false,
+			loadingMore: false,
 		};
 	},
 	computed: {
@@ -241,11 +251,30 @@ export default {
 			const tailStart = this.currentPath.length - 2;
 			return this.currentPath.slice(tailStart).map((item, i) => ({ ...item, realIndex: tailStart + i }));
 		},
+		noMore() {
+			return this.fileList.length >= this.total;
+		},
+	},
+	watch: {
+		// 搜索防抖，避免输入时频繁请求
+		'param.key'() {
+			if (this.searchTimer) {
+				clearTimeout(this.searchTimer);
+			}
+			this.searchTimer = setTimeout(() => {
+				this.listFile();
+			}, 300);
+		},
 	},
 	mounted() {
 		this.loadCfg();
 		this.listFolder();
 		this.listDevice();
+	},
+	beforeUnmount() {
+		if (this.searchTimer) {
+			clearTimeout(this.searchTimer);
+		}
 	},
 	methods: {
 		async listDevice() {
@@ -265,13 +294,57 @@ export default {
 			this.folderList = res.data || [];
 		},
 		async listFile() {
-			var res = await this.$API.nasresfile.list.get(this.param);
+			// 分页加载：重置到第一页并清空已有数据
+			this.param.page = 1;
+			this.fileList = [];
+			this.total = 0;
+			this.$nextTick(() => {
+				if (this.$refs.contentRef) {
+					this.$refs.contentRef.scrollTop = 0;
+				}
+			});
+			await this.loadFilePage();
+		},
+		async loadFilePage() {
+			if (this.loading || this.loadingMore) {
+				return;
+			}
+			if (this.param.page === 1) {
+				this.loading = true;
+			} else {
+				this.loadingMore = true;
+			}
+
+			var res = await this.$API.nasresfile.page.get(this.param);
+
+			this.loading = false;
+			this.loadingMore = false;
+
 			if (res.code != 200) {
-				this.fileList = [];
 				return;
 			}
 
-			this.fileList = res.data || [];
+			var rows = res.data.rows || [];
+			this.total = res.data.total || 0;
+			if (this.param.page === 1) {
+				this.fileList = rows;
+			} else {
+				this.fileList = this.fileList.concat(rows);
+			}
+		},
+		async loadMore() {
+			if (this.loading || this.loadingMore || this.noMore) {
+				return;
+			}
+			this.param.page++;
+			await this.loadFilePage();
+		},
+		handleScroll(e) {
+			var el = e.target;
+			// 滚动到距底部 80px 内自动加载下一页
+			if (el.scrollTop + el.clientHeight >= el.scrollHeight - 80) {
+				this.loadMore();
+			}
 		},
 		async loadCfg() {
 			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
@@ -315,7 +388,7 @@ export default {
 					this.selectedItems.push(item.id);
 				}
 			} else if (event.shiftKey && this.selectedItems.length > 0) {
-				const items = this.filteredItems;
+				const items = this.fileList;
 				const lastSelected = this.selectedItems[this.selectedItems.length - 1];
 				const lastIndex = items.findIndex(i => i.id === lastSelected);
 				const currentIndex = items.findIndex(i => i.id === item.id);
@@ -912,6 +985,26 @@ export default {
 	font-size: 12px;
 	color: #666;
 	text-align: right;
+}
+
+.load-more {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px;
+	color: #999;
+	font-size: 12px;
+}
+
+.load-more-icon {
+	display: inline-flex;
+	animation: nas-spin 1s linear infinite;
+}
+
+@keyframes nas-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
 }
 
 .empty-state {
