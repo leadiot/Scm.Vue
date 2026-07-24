@@ -556,7 +556,7 @@ export default {
 		},
 		// Windows 95/98/2000 经典主题
 		isClassicTheme() {
-			return ['win95', 'win98', 'win2000'].includes(this.currentTheme);
+			return ['win95', 'win98', 'win2000', 'winMe'].includes(this.currentTheme);
 		},
 		// Windows 7/Vista Aero 主题
 		isAeroTheme() {
@@ -588,7 +588,7 @@ export default {
 		},
 		// 经典开始菜单侧栏标题
 		classicMenuTitle() {
-			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000' };
+			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000', winMe: 'Windows ME' };
 			return titles[this.currentTheme] || 'Windows';
 		},
 		// macOS 菜单栏应用名（聚焦窗口标题）
