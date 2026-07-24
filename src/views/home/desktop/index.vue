@@ -67,13 +67,13 @@
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
-		<WinXpMenu v-else-if="showStartMenu && isWinXpTheme" :apps="menuApps" :quick-links="xpQuickLinks"
+		<WinXpMenu v-else-if="showStartMenu && isWinXpTheme" :apps="menuApps" :quick-links="winXpQuickLinks"
 			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
 			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
-		<WinAeroMenu v-else-if="showStartMenu && isWinAeroTheme" :apps="filteredMenuApps" :quick-links="xpQuickLinks"
+		<WinAeroMenu v-else-if="showStartMenu && isWinAeroTheme" :apps="filteredMenuApps" :quick-links="winXpQuickLinks"
 			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile"
 			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
@@ -84,7 +84,7 @@
 			@close="toggleStartMenu" />
 
 		<!-- 开始菜单（Windows 10 磁贴复刻）-->
-		<Win10Menu v-else-if="showStartMenu && isWin10LikeTheme" :apps="filteredMenuApps" :tiles="tileApps"
+		<Win10Menu v-else-if="showStartMenu && isWin10LikeTheme" :apps="filteredMenuApps" :tiles="win10TileApps"
 			:menu-color="menuColor" :menu-text-color="menuTextColor" :user-name="user.userName || 'User'"
 			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @open-settings="openSettings"
 			@logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
@@ -461,11 +461,11 @@ export default {
 			return this.flatMenuApps.filter(a => (a.name || '').toLowerCase().includes(kw));
 		},
 		// Win10 磁贴应用（前 12 个叶子）
-		tileApps() {
+		win10TileApps() {
 			return this.flatMenuApps.slice(0, 12);
 		},
 		// XP 开始菜单右栏快捷链
-		xpQuickLinks() {
+		winXpQuickLinks() {
 			return [
 				{ key: 'computer', icon: 'ms-computer', name: this.$t('desktop.myComputer') },
 				{ key: 'settings', icon: 'ms-settings', name: this.$t('desktop.controlPanel') },
