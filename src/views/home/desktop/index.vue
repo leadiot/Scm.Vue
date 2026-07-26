@@ -2059,6 +2059,13 @@ export default {
 					w.focused = false;
 				}
 			});
+			// 将目标窗口移到数组末尾：v-for 末尾元素 DOM 顺序最靠后即位于最上层
+			// :key="window.id" 保证 Vue 复用同一组件实例与 DOM 节点，动画状态不丢失
+			const idx = this.windows.findIndex(w => w.id === windowId);
+			if (idx !== -1 && idx !== this.windows.length - 1) {
+				const [w] = this.windows.splice(idx, 1);
+				this.windows.push(w);
+			}
 		},
 		onAnimationComplete(windowId, type) {
 			const window = this.windows.find((w) => w.id === windowId);
