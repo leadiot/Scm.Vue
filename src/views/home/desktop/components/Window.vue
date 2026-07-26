@@ -1,111 +1,9 @@
 <template>
 	<div v-show="!window.minimized || window.animating" class="window-wrapper" :class="[windowClass, winStyleClass]" :style="wrapperStyle" @mousedown="handleFocus" @touchstart.passive="handleFocus" @contextmenu.prevent.stop="handleContextMenu">
 		<div class="window" :class="{ maximized: window.maximized || isMobile, focused: window.focused, 'is-mobile': isMobile }" :style="windowStyle" ref="windowEl">
-			<!-- macOS 风格标题栏（左侧红黄绿按钮，标题居中） -->
-			<template v-if="isMacOS">
-				<div class="window-header macos-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
-					<div class="traffic-lights">
-						<div class="traffic-btn close-btn" @click.stop="$emit('close', window.id)">
-							<svg width="12" height="12" viewBox="0 0 12 12">
-								<circle cx="6" cy="6" r="6" fill="#ff5f57"/>
-								<path d="M3.8,3.8 L8.2,8.2 M8.2,3.8 L3.8,8.2" stroke="#8b0000" stroke-width="1" opacity="0" class="close-x" />
-							</svg>
-						</div>
-						<div class="traffic-btn min-btn" @click.stop="$emit('minimize', window.id)">
-							<svg width="12" height="12" viewBox="0 0 12 12">
-								<circle cx="6" cy="6" r="6" fill="#ffbd2e"/>
-								<line x1="3" y1="6" x2="9" y2="6" stroke="#995900" stroke-width="1" opacity="0" class="min-line" />
-							</svg>
-						</div>
-						<div class="traffic-btn max-btn" @click.stop="$emit('maximize', window.id)">
-							<svg width="12" height="12" viewBox="0 0 12 12">
-								<circle cx="6" cy="6" r="6" fill="#28c840"/>
-								<path d="M4,3 L4,9 M4,3 L3,3 L3,9 L9,9 L9,8 M4,3 L9,3 L9,9" stroke="#006600" stroke-width="1" opacity="0" class="max-path" />
-							</svg>
-						</div>
-					</div>
-					<div class="macos-title-center">
-						<sc-icon :name="window.icon || 'ms-grid_view'" :size="16" />
-						<span class="macos-title-text">{{ window.title }}</span>
-					</div>
-					<div class="title-spacer"></div>
-				</div>
-			</template>
-
-			<!-- Mac OS 9 经典白金风格标题栏 -->
-			<template v-else-if="isMac9">
-				<div class="window-header mac9-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
-					<button class="mac9-btn" title="关闭" @click.stop="$emit('close', window.id)">
-						<span class="mac9-glyph">×</span>
-					</button>
-					<span class="mac9-title">{{ window.title }}</span>
-					<div class="mac9-buttons">
-						<button class="mac9-btn" title="缩放" @click.stop="$emit('maximize', window.id)">
-							<span class="mac9-glyph">+</span>
-						</button>
-						<button class="mac9-btn" title="收起" @click.stop="$emit('minimize', window.id)">
-							<span class="mac9-glyph">–</span>
-						</button>
-					</div>
-				</div>
-			</template>
-
-			<!-- 经典风格标题栏 -->
-			<template v-else-if="isClassic">
-				<div class="window-header winxp-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
-					<div class="winxp-title-left">
-						<sc-icon :name="window.icon || 'ms-grid_view'" :size="14" color="#ffffff" />
-					</div>
-					<span class="winxp-title-text">{{ window.title }}</span>
-					<div class="winxp-buttons">
-						<button class="winxp-btn min-btn" title="最小化" @click.stop="$emit('minimize', window.id)">
-							<svg width="8" height="8" viewBox="0 0 8 8"><rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="currentColor"/></svg>
-						</button>
-						<button class="winxp-btn max-btn" title="最大化" @click.stop="$emit('maximize', window.id)">
-							<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
-								<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
-							</svg>
-							<svg width="9" height="9" viewBox="0 0 9 9" v-else>
-								<rect x="1" y="2.5" width="6.5" height="6" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
-								<rect x="0" y="0" width="6.5" height="6" rx="0.5" fill="#000080"/>
-							</svg>
-						</button>
-						<button class="winxp-btn close-btn" title="关闭" @click.stop="$emit('close', window.id)">
-							<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,1 L7,7 M7,1 L1,7" stroke="currentColor" stroke-width="1.2"/></svg>
-						</button>
-					</div>
-				</div>
-			</template>
-
-			<!-- 通用 Windows 风格标题栏 (win7/win10/win11/default) -->
-			<template v-else>
-				<div class="window-header" :style="headerBarStyle" @mousedown="startDrag" @touchstart.passive="startDrag">
-					<div class="window-title">
-						<sc-icon :name="window.icon || 'ms-grid_view'" :size="16" />
-						<span>{{ window.title }}</span>
-					</div>
-					<div class="window-controls">
-						<button class="control-btn minimize" @click.stop="$emit('minimize', window.id)">
-							<svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" /></svg>
-						</button>
-						<button v-if="window.resizable !== false && !isMobile" class="control-btn maximize" @click.stop="$emit('maximize', window.id)">
-							<svg v-if="window.maximized" width="12" height="12" viewBox="0 0 12 12">
-								<rect x="3" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1" />
-								<rect x="1" y="3" width="8" height="8" fill="var(--win-bg, #ffffff)" stroke="currentColor" stroke-width="1.2" />
-							</svg>
-							<svg v-else width="12" height="12" viewBox="0 0 12 12">
-								<rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.2" />
-							</svg>
-						</button>
-						<button class="control-btn close" @click.stop="$emit('close', window.id)">
-							<svg width="12" height="12" viewBox="0 0 12 12">
-								<line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" />
-								<line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.2" />
-							</svg>
-						</button>
-					</div>
-				</div>
-			</template>
+			<TitleBar :window="window" :win-style="winStyle" :header-bar-style="headerBarStyle" :is-mobile="isMobile"
+				@close="$emit('close', window.id)" @minimize="$emit('minimize', window.id)"
+				@maximize="$emit('maximize', window.id)" @start-drag="startDrag" />
 
 			<div class="window-content">
 				<component :is="getComponent(window.code, window.component)" v-bind="window.props || {}"
@@ -122,17 +20,24 @@
 <script>
 	import { defineAsyncComponent, h, markRaw } from 'vue';
 	import scIcon from '@/components/scIcon/index.vue';
+	import TitleBar from './TitleBar.vue';
+	import i18n from '@/locales';
 
 	const LoadingComponent = {
 		name: 'LoadingComponent',
 		render() {
-			return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, '加载中...');
+			return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, i18n.global.t('desktop.loading'));
 		}
 	};
 
+	// 模块级：视图组件映射表（构建期一次性求值，避免每个窗口 resolveComponent 时重复调用 import.meta.glob）
+	const viewModules = import.meta.glob('@/views/**/*.vue');
+	// 模块级：组件缓存（跨窗口共享、非响应式，避免重复解析同一组件）
+	const componentCache = new Map();
+
 	export default {
 		name: 'AppWindow',
-		components: { scIcon },
+		components: { scIcon, TitleBar },
 		props: {
 			window: { type: Object, required: true },
 			theme: { type: Object, default: () => ({}) },
@@ -142,7 +47,6 @@
 			return {
 				dragData: { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 },
 				resizeData: { isResizing: false, startX: 0, startY: 0, width: 0, height: 0, left: 0, top: 0 },
-				componentCache: {},
 				isMobile: false,
 				currentAnimation: null,
 			};
@@ -162,7 +66,7 @@
 			winStyle() { return this.windowTheme.style || 'modern'; },
 			isMacOS() { return this.winStyle === 'macos'; },
 			isMac9() { return this.winStyle === 'mac9'; },
-			isClassic() { return this.winStyle === 'classic'; },
+			isWinClassic() { return this.winStyle === 'winClassic'; },
 			isWin7() { return this.winStyle === 'win7'; },
 			windowTheme() { return this.theme; },
 			windowTitleColor() {
@@ -179,18 +83,18 @@
 			},
 			windowStyle() {
 				const t = this.windowTheme;
-				const hs = t.classicHeaderStart || t.xpHeaderStart || '#0058EE';
-				const he = t.classicHeaderEnd || t.xpHeaderEnd || '#0047CC';
-				const his = t.classicHeaderInactiveStart || t.xpHeaderInactiveStart || '#7A96DF';
-				const hie = t.classicHeaderInactiveEnd || t.xpHeaderInactiveEnd || '#5E7EB5';
-				const bs = t.classicBtnStart || t.xpBtnStart || '#3C8CFF';
-				const be = t.classicBtnEnd || t.xpBtnEnd || '#0054E3';
-				const bhs = t.classicBtnHoverStart || t.xpBtnHoverStart || '#5CA0FF';
-				const bhe = t.classicBtnHoverEnd || t.xpBtnHoverEnd || '#1E6FE0';
-				const cs = t.classicCloseStart || t.xpCloseStart || '#FF6B4A';
-				const ce = t.classicCloseEnd || t.xpCloseEnd || '#C1352E';
-				const chs = t.classicCloseHoverStart || t.xpCloseHoverStart || '#FF8B6A';
-				const che = t.classicCloseHoverEnd || t.xpCloseHoverEnd || '#D0453E';
+				const hs = t.winClassicHeaderStart || t.xpHeaderStart || '#0058EE';
+				const he = t.winClassicHeaderEnd || t.xpHeaderEnd || '#0047CC';
+				const his = t.winClassicHeaderInactiveStart || t.xpHeaderInactiveStart || '#7A96DF';
+				const hie = t.winClassicHeaderInactiveEnd || t.xpHeaderInactiveEnd || '#5E7EB5';
+				const bs = t.winClassicBtnStart || t.xpBtnStart || '#3C8CFF';
+				const be = t.winClassicBtnEnd || t.xpBtnEnd || '#0054E3';
+				const bhs = t.winClassicBtnHoverStart || t.xpBtnHoverStart || '#5CA0FF';
+				const bhe = t.winClassicBtnHoverEnd || t.xpBtnHoverEnd || '#1E6FE0';
+				const cs = t.winClassicCloseStart || t.xpCloseStart || '#FF6B4A';
+				const ce = t.winClassicCloseEnd || t.xpCloseEnd || '#C1352E';
+				const chs = t.winClassicCloseHoverStart || t.xpCloseHoverStart || '#FF8B6A';
+				const che = t.winClassicCloseHoverEnd || t.xpCloseHoverEnd || '#D0453E';
 				return {
 					'--win-bg': this.bgColor,
 					'--win-header-bg': this.headerBg,
@@ -204,19 +108,19 @@
 					'--win-max-hover': this.maxBtnHover,
 					'--win-title-height': this.titleHeight,
 					'--win-button-width': this.buttonWidth,
-					'--classic-header': t.classicHeader || t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
-					'--classic-header-inactive': t.classicHeaderInactive || t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
-					'--classic-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
-					'--classic-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
-					'--classic-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
-					'--classic-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
-					'--classic-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
-					'--classic-btn-border': t.classicBtnBorder || t.xpBtnBorder || '#FFFFFF',
-					'--classic-close-border': t.classicCloseBorder || t.xpCloseBorder || '#A02010',
-					'--classic-glyph-color': t.classicGlyphColor || t.xpGlyphColor || '#FFFFFF',
-					'--classic-frame': t.classicFrame || t.xpFrame || '#0054E3',
-					'--classic-header-radius': t.classicHeaderRadius || t.xpHeaderRadius || '6px',
-					'--classic-btn-size': t.classicBtnSize || t.xpBtnSize || '21px',
+					'--win-classic-header': t.winClassicHeader || t.xpHeader || `linear-gradient(180deg, ${hs} 0%, color-mix(in srgb, ${hs} 60%, #ffffff) 3%, ${hs} 40%, ${he} 95%, color-mix(in srgb, ${he} 85%, #000000) 100%)`,
+					'--win-classic-header-inactive': t.winClassicHeaderInactive || t.xpHeaderInactive || `linear-gradient(180deg, ${his} 0%, ${hie} 100%)`,
+					'--win-classic-btn': `linear-gradient(180deg, ${bs} 0%, color-mix(in srgb, ${bs} 45%, ${be}) 50%, ${be} 100%)`,
+					'--win-classic-btn-hover': `linear-gradient(180deg, ${bhs} 0%, color-mix(in srgb, ${bhs} 45%, ${bhe}) 50%, ${bhe} 100%)`,
+					'--win-classic-btn-active': `linear-gradient(180deg, ${be} 0%, color-mix(in srgb, ${be} 80%, #000000) 100%)`,
+					'--win-classic-close': `linear-gradient(180deg, ${cs} 0%, color-mix(in srgb, ${cs} 45%, ${ce}) 50%, ${ce} 100%)`,
+					'--win-classic-close-hover': `linear-gradient(180deg, ${chs} 0%, color-mix(in srgb, ${chs} 45%, ${che}) 50%, ${che} 100%)`,
+					'--win-classic-btn-border': t.winClassicBtnBorder || t.xpBtnBorder || '#FFFFFF',
+					'--win-classic-close-border': t.winClassicCloseBorder || t.xpCloseBorder || '#A02010',
+					'--win-classic-glyph-color': t.winClassicGlyphColor || t.xpGlyphColor || '#FFFFFF',
+					'--win-classic-frame': t.winClassicFrame || t.xpFrame || '#0054E3',
+					'--win-classic-header-radius': t.winClassicHeaderRadius || t.xpHeaderRadius || '6px',
+					'--win-classic-btn-size': t.winClassicBtnSize || t.xpBtnSize || '21px',
 				};
 			},
 			headerBarStyle() {
@@ -256,12 +160,6 @@
 		mounted() {
 			this.checkMobile();
 			window.addEventListener('resize', this.checkMobile);
-			document.addEventListener('mousemove', this.onDragging);
-			document.addEventListener('mouseup', this.stopDrag);
-			document.addEventListener('mousemove', this.onResizing);
-			document.addEventListener('mouseup', this.stopResize);
-			document.addEventListener('touchmove', this.onDragging, { passive: false });
-			document.addEventListener('touchend', this.stopDrag);
 			// macOS 窗口打开动画
 			if (this.isMacOS && this.$refs.windowEl) {
 				this.animateOpen();
@@ -269,12 +167,9 @@
 		},
 		beforeUnmount() {
 			window.removeEventListener('resize', this.checkMobile);
-			document.removeEventListener('mousemove', this.onDragging);
-			document.removeEventListener('mouseup', this.stopDrag);
-			document.removeEventListener('mousemove', this.onResizing);
-			document.removeEventListener('mouseup', this.stopResize);
-			document.removeEventListener('touchmove', this.onDragging);
-			document.removeEventListener('touchend', this.stopDrag);
+			// 兜底：若卸载时仍处于拖拽/缩放中，移除按需注册的 document 监听器
+			this.unbindDragListeners();
+			this.unbindResizeListeners();
 		},
 		methods: {
 			checkMobile() { this.isMobile = window.innerWidth <= 768; },
@@ -286,21 +181,20 @@
 			onThemePreview(theme) { this.$emit('theme-preview', theme); },
 			onSaveSettings(config) { this.$emit('save-settings', config); },
 		getComponent(code, component) {
-			if (!this.componentCache[code]) {
-				this.componentCache[code] = markRaw(this.resolveComponent(code, component));
+			if (!componentCache.has(code)) {
+				componentCache.set(code, markRaw(this.resolveComponent(code, component)));
 			}
-			return this.componentCache[code];
+			return componentCache.get(code);
 		},
 			resolveComponent(code, component) {
-				const modules = import.meta.glob('@/views/**/*.vue');
 				const paths = [`@/views/${component}.vue`, `@/views/${component}/index.vue`];
 				for (const path of paths) {
-					if (modules[path]) return defineAsyncComponent(modules[path]);
+					if (viewModules[path]) return defineAsyncComponent(viewModules[path]);
 				}
-				const moduleKeys = Object.keys(modules);
+				const moduleKeys = Object.keys(viewModules);
 				for (const key of moduleKeys) {
 					if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
-						return defineAsyncComponent(modules[key]);
+						return defineAsyncComponent(viewModules[key]);
 					}
 				}
 				return LoadingComponent;
@@ -310,6 +204,8 @@
 				const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 				const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 				this.dragData = { isDragging: true, startX: clientX, startY: clientY, initialX: this.window.x, initialY: this.window.y };
+				// 按需注册 document 监听器（仅拖拽期间存在，避免每窗口常驻多个全局监听器）
+				this.bindDragListeners();
 			},
 			onDragging(e) {
 				if (!this.dragData.isDragging) return;
@@ -320,7 +216,7 @@
 				this.window.x = Math.max(-this.window.width + 100, Math.min(this.dragData.initialX + dx, window.innerWidth - 100));
 				this.window.y = Math.max(0, Math.min(this.dragData.initialY + dy, window.innerHeight - 40));
 			},
-			stopDrag() { this.dragData.isDragging = false; },
+			stopDrag() { this.dragData.isDragging = false; this.unbindDragListeners(); },
 			startResize(e) {
 				if (this.currentAnimation) return;
 				this.resizeData = {
@@ -328,6 +224,8 @@
 					width: this.window.width, height: this.window.height,
 					left: this.window.x, top: this.window.y,
 				};
+				// 按需注册 document 监听器（仅缩放期间存在）
+				this.bindResizeListeners();
 			},
 			onResizing(e) {
 				if (!this.resizeData.isResizing) return;
@@ -337,7 +235,29 @@
 				this.window.width = Math.max(minW, this.resizeData.width + dx);
 				this.window.height = Math.max(minH, this.resizeData.height + dy);
 			},
-			stopResize() { this.resizeData.isResizing = false; },
+			stopResize() { this.resizeData.isResizing = false; this.unbindResizeListeners(); },
+			// 拖拽监听器按需注册/移除：仅拖拽期间挂载 document 监听，空闲时零开销
+			bindDragListeners() {
+				document.addEventListener('mousemove', this.onDragging);
+				document.addEventListener('mouseup', this.stopDrag);
+				document.addEventListener('touchmove', this.onDragging, { passive: false });
+				document.addEventListener('touchend', this.stopDrag);
+			},
+			unbindDragListeners() {
+				document.removeEventListener('mousemove', this.onDragging);
+				document.removeEventListener('mouseup', this.stopDrag);
+				document.removeEventListener('touchmove', this.onDragging);
+				document.removeEventListener('touchend', this.stopDrag);
+			},
+			// 缩放监听器按需注册/移除
+			bindResizeListeners() {
+				document.addEventListener('mousemove', this.onResizing);
+				document.addEventListener('mouseup', this.stopResize);
+			},
+			unbindResizeListeners() {
+				document.removeEventListener('mousemove', this.onResizing);
+				document.removeEventListener('mouseup', this.stopResize);
+			},
 
 			/* ================================================================
 			   macOS Web Animations API 动画系统
@@ -534,7 +454,7 @@
 	};
 </script>
 
-<style scoped>
+<style>
 	.window-wrapper {
 		position: absolute;
 		pointer-events: auto;
@@ -749,9 +669,9 @@
 		opacity: 1;
 	}
 
-	/* === 经典窗口风格（颜色全部走 --classic-* 变量，可被主题定制） === */
+	/* === 经典窗口风格（颜色全部走 --win-classic-* 变量，可被主题定制） === */
 	.style-classic .window {
-		border: 2px solid var(--classic-frame);
+		border: 2px solid var(--win-classic-frame);
 		border-top: none;
 		border-radius: var(--win-border-radius);
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
@@ -762,17 +682,17 @@
 		border-radius: 0;
 	}
 
-	.winxp-header {
-		background: var(--classic-header) !important;
+	.win-xp-header {
+		background: var(--win-classic-header) !important;
 		padding: 0 4px 0 8px !important;
 		justify-content: space-between !important;
-		border-radius: var(--classic-header-radius) var(--classic-header-radius) 0 0;
+		border-radius: var(--win-classic-header-radius) var(--win-classic-header-radius) 0 0;
 		margin: -2px -2px 0 -2px;
 		height: var(--win-title-height) !important;
 		line-height: var(--win-title-height) !important;
 	}
 
-	.style-classic .window.maximized .winxp-header {
+	.style-classic .window.maximized .win-xp-header {
 		border-radius: 0;
 		margin: 0;
 	}
@@ -781,13 +701,13 @@
 		opacity: 1;
 	}
 
-	.style-classic .window:not(.focused) .winxp-header {
-		background: var(--classic-header-inactive) !important;
+	.style-classic .window:not(.focused) .win-xp-header {
+		background: var(--win-classic-header-inactive) !important;
 	}
 
-	.winxp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
+	.win-xp-title-left { margin-right: 4px; flex-shrink: 0; display: flex; align-items: center; }
 
-	.winxp-title-text {
+	.win-xp-title-text {
 		color: var(--win-title-color) !important;
 		font-size: 12px;
 		font-weight: bold;
@@ -798,11 +718,11 @@
 		text-overflow: ellipsis;
 	}
 
-	.window:not(.focused) .winxp-title-text {
+	.window:not(.focused) .win-xp-title-text {
 		color: var(--win-title-color-inactive) !important;
 	}
 
-	.winxp-buttons {
+	.win-xp-buttons {
 		display: flex;
 		align-items: center;
 		height: 100%;
@@ -810,27 +730,27 @@
 		-webkit-app-region: no-drag;
 	}
 
-	.winxp-btn {
-		width: var(--classic-btn-size);
-		height: var(--classic-btn-size);
-		border: 1px solid var(--classic-btn-border);
+	.win-xp-btn {
+		width: var(--win-classic-btn-size);
+		height: var(--win-classic-btn-size);
+		border: 1px solid var(--win-classic-btn-border);
 		border-radius: 3px;
-		background: var(--classic-btn);
-		color: var(--classic-glyph-color);
+		background: var(--win-classic-btn);
+		color: var(--win-classic-glyph-color);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
-	.winxp-btn:hover { background: var(--classic-btn-hover); }
-	.winxp-btn:active { background: var(--classic-btn-active); }
-	.winxp-btn.close-btn {
-		background: var(--classic-close) !important;
-		border-color: var(--classic-close-border);
+	.win-xp-btn:hover { background: var(--win-classic-btn-hover); }
+	.win-xp-btn:active { background: var(--win-classic-btn-active); }
+	.win-xp-btn.close-btn {
+		background: var(--win-classic-close) !important;
+		border-color: var(--win-classic-close-border);
 		margin-left: 2px;
 	}
-	.winxp-btn.close-btn:hover { background: var(--classic-close-hover) !important; }
+	.win-xp-btn.close-btn:hover { background: var(--win-classic-close-hover) !important; }
 
 	/* === 窗口内容 === */
 	.window-content {

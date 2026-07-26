@@ -192,6 +192,12 @@ export default {
 		reset: 'リセット',
 		saveSuccess: '設定を保存しました',
 		resetSuccess: '設定をデフォルトにリセットしました',
+		// ウィンドウボタン
+		winClose: '閉じる',
+		winMinimize: '最小化',
+		winMaximize: '最大化',
+		winZoom: 'ズーム',
+		winCollapse: 'しまう',
 		// XP スタートメニュー
 		allPrograms: 'すべてのプログラム',
 		pinned: 'ピン留め',

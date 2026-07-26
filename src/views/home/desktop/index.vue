@@ -49,281 +49,61 @@
 		</div>
 
 		<!-- macOS Dock -->
-		<div v-if="hasDock" class="mac-dock">
-			<div class="mac-dock-item" title="Launchpad" @click="toggleLaunchpad">
-				<sc-icon name="ms-apps" :size="40" />
-			</div>
-			<div class="mac-dock-separator"></div>
-			<div v-for="item in macDockItems" :key="item.key" class="mac-dock-item" :class="{ running: item.running }"
-				:title="dockItemTitle(item)" @click="onDockClick(item)">
-				<img v-if="dockIcon(item)" :src="dockIcon(item)" alt="" draggable="false" />
-				<sc-icon v-else :name="dockIconName(item)" :size="42" />
-				<span v-if="item.running" class="mac-dock-dot"></span>
-			</div>
-		</div>
+		<MacDock v-if="hasDock" :items="macDockItems" :icons-path="iconsPath"
+			@toggle-launchpad="toggleLaunchpad" @dock-click="onDockClick" />
 
-		<!-- macOS 菜单-->
-		<div v-if="isMacTheme" class="mac-menubar">
-			<div class="mac-menubar-left">
-				<div class="mac-menu-apple" @click="toggleStartMenu">
-					<img v-if="startLogo" :src="startLogo" class="mac-apple-icon" alt="" draggable="false" />
-					<sc-icon v-else :name="taskbarStartIcon" :size="24" />
-				</div>
-				<span class="mac-menu-appname">{{ macFocusedTitle }}</span>
-			</div>
-			<div class="mac-menubar-right">
-				<el-tooltip :content="currentDateTime" placement="bottom">
-					<span class="mac-menu-clock" @dblclick="openCalendar">{{ currentTime }}</span>
-				</el-tooltip>
-			</div>
-		</div>
+		<!-- macOS 菜单栏 -->
+		<MacMenubar v-if="isMacTheme" :start-logo="startLogo" :start-icon="taskbarStartIcon"
+			:focused-title="macFocusedTitle" :date-time="currentDateTime" :time="currentTime"
+			@toggle-start-menu="toggleStartMenu" @open-calendar="openCalendar" />
 
-		<!-- macOS Launchpad 启动-->
-		<div v-if="showLaunchpad && isMacTheme" class="mac-launchpad" @click.self="showLaunchpad = false">
-			<div class="launchpad-search" @click.stop>
-				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-			</div>
-			<div class="launchpad-grid">
-				<div v-for="app in filteredFlatApps" :key="app.id" class="launchpad-item" @click="openApp(app)">
-					<div class="launchpad-icon">
-						<img v-if="getThemeIcon(app.meta.icon)" :src="getThemeIcon(app.meta.icon)" alt=""
-							draggable="false" />
-						<sc-icon v-else :name="app.meta.icon" :size="56" />
-					</div>
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<!-- macOS Launchpad -->
+		<MacLaunchpad v-if="showLaunchpad && isMacTheme" :apps="filteredFlatApps" :icons-path="iconsPath"
+			v-model="menuSearch" @open-app="openApp" @close="showLaunchpad = false" />
 
 		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
-		<div v-else-if="showStartMenu && isClassicTheme" class="start-menu classic-start-menu">
-			<div class="classic-menu-banner"><span>{{ classicMenuTitle }}</span></div>
-			<div class="classic-menu-body">
-				<div v-for="app in menuApps" :key="app.id" class="classic-menu-item"
-					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-					<div class="classic-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" :size="24" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-					</div>
-				</div>
-				<div class="classic-menu-divider"></div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="openSettings">
-						<sc-icon name="ms-settings" :size="24" />
-						<span>{{ $t('desktop.settings') }}</span>
-					</div>
-				</div>
-				<div class="classic-menu-item">
-					<div class="classic-menu-app" @click="logout">
-						<sc-icon name="ms-exit_to_app" :size="24" />
-						<span>{{ $t('desktop.logoff') }}</span>
-					</div>
-				</div>
-			</div>
-		</div>
+		<WinClassicMenu v-else-if="showStartMenu && isWinClassicTheme" :apps="menuApps" :title="winClassicMenuTitle"
+			@open-app="openApp" @open-settings="openSettings" @logout="logout"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
-		<div v-else-if="showStartMenu && isXpTheme" class="start-menu xp-start-menu">
-			<div class="xp-menu-header" @click="openProfile">
-				<div class="xp-menu-avatar">
-					<sc-icon name="ms-account_circle" :size="30" color="#3B6BD4" />
-				</div>
-				<span class="xp-menu-username">{{ user.userName || 'User' }}</span>
-			</div>
-			<div class="xp-menu-body">
-				<div class="xp-menu-left">
-					<div class="xp-menu-caption">{{ $t('desktop.allPrograms') }}</div>
-					<div v-for="app in menuApps" :key="app.id" class="xp-menu-item"
-						:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
-						@mouseleave="hideSubmenu">
-						<div class="xp-menu-app" @click="app.children ? null : openApp(app)">
-							<sc-icon :name="app.meta.icon" :size="22" />
-							<span>{{ app.name }}</span>
-							<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-						</div>
-					</div>
-				</div>
-				<div class="xp-menu-right">
-					<div v-for="link in xpQuickLinks" :key="link.key" class="xp-right-item"
-						@click="openQuickLink(link)">
-						<sc-icon :name="link.icon" :size="18" />
-						<span>{{ link.name }}</span>
-					</div>
-				</div>
-			</div>
-			<div class="xp-menu-footer">
-				<div class="xp-footer-btn" @click="logout">
-					<span class="xp-footer-icon xp-icon-logoff">
-						<sc-icon name="ms-logout" :size="13" color="#ffffff" />
-					</span>
-					<span>{{ $t('desktop.logoff') }}</span>
-				</div>
-				<div class="xp-footer-btn" @click="shutdown">
-					<span class="xp-footer-icon xp-icon-shutdown">
-						<sc-icon name="ms-power_settings_new" :size="13" color="#ffffff" />
-					</span>
-					<span>{{ $t('desktop.shutdown') }}</span>
-				</div>
-			</div>
-		</div>
+		<WinXpMenu v-else-if="showStartMenu && isWinXpTheme" :apps="menuApps" :quick-links="winXpQuickLinks"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
-		<div v-else-if="showStartMenu && isAeroTheme" class="start-menu aero-start-menu">
-			<div class="aero-menu-body">
-				<div class="aero-menu-left">
-					<div class="aero-menu-apps">
-						<div v-for="app in filteredMenuApps" :key="app.id" class="aero-app-item"
-							@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-							<div class="aero-app-link" @click="app.children ? null : openApp(app)">
-								<sc-icon :name="app.meta.icon" :size="24" />
-								<span>{{ app.name }}</span>
-								<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-							</div>
-						</div>
-					</div>
-					<div class="aero-menu-search">
-						<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-					</div>
-				</div>
-				<div class="aero-menu-right">
-					<div class="aero-menu-avatar" @click="openProfile">
-						<sc-icon name="ms-account_circle" :size="40" color="#3B6BD4" />
-					</div>
-					<div v-for="link in xpQuickLinks" :key="link.key" class="aero-right-item"
-						@click="openQuickLink(link)">
-						<span>{{ link.name }}</span>
-					</div>
-					<div class="aero-right-divider"></div>
-					<div class="aero-right-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
-					<div class="aero-right-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
-				</div>
-			</div>
-		</div>
+		<WinAeroMenu v-else-if="showStartMenu && isWinAeroTheme" :apps="filteredMenuApps" :quick-links="winXpQuickLinks"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile"
+			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始屏幕（Windows 8 全屏磁贴复刻）-->
-		<div v-else-if="showStartMenu && currentTheme === 'win8'" class="win8-start-screen"
-			@click.self="toggleStartMenu">
-			<div class="win8-screen-header">
-				<span class="win8-screen-title">{{ $t('desktop.start') }}</span>
-				<div class="win8-screen-user" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="28" />
-					<span>{{ user.userName || 'User' }}</span>
-				</div>
-			</div>
-			<div class="win8-tiles">
-				<div v-for="app in flatMenuApps" :key="app.id" class="win8-tile"
-					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="36" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<Win8Screen v-else-if="showStartMenu && currentTheme === 'win8'" :apps="flatMenuApps"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@close="toggleStartMenu" />
 
 		<!-- 开始菜单（Windows 10 磁贴复刻）-->
-		<div v-else-if="showStartMenu && isWin10LikeTheme" class="start-menu win10-start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor }">
-			<div class="win10-menu-rail">
-				<div class="win10-rail-item" :title="user.userName || 'User'" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="20" />
-				</div>
-				<div class="win10-rail-spacer"></div>
-				<div class="win10-rail-item" :title="$t('desktop.settings')" @click="openSettings">
-					<sc-icon name="ms-settings" :size="20" />
-				</div>
-				<div class="win10-rail-item" :title="$t('desktop.exit')" @click="logout">
-					<sc-icon name="ms-power_settings_new" :size="20" />
-				</div>
-			</div>
-			<div class="win10-menu-apps">
-				<div class="win10-menu-search">
-					<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-				</div>
-				<div v-for="app in filteredMenuApps" :key="app.id" class="win10-app-item"
-					@mouseenter="showSubmenu($event, app)" @mouseleave="hideSubmenu">
-					<div class="win10-app-link" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" :size="18" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="14" />
-					</div>
-				</div>
-			</div>
-			<div class="win10-menu-tiles">
-				<div v-for="app in tileApps" :key="app.id" class="win10-tile"
-					:style="{ backgroundColor: tileColor(app) }" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="26" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-		</div>
+		<Win10Menu v-else-if="showStartMenu && isWin10LikeTheme" :apps="filteredMenuApps" :tiles="win10TileApps"
+			:menu-color="menuColor" :menu-text-color="menuTextColor" :user-name="user.userName || 'User'"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @open-settings="openSettings"
+			@logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows 11 居中网格复刻）-->
-		<div v-else-if="showStartMenu && currentTheme === 'win11'" class="start-menu win11-start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor }">
-			<div class="win11-menu-search">
-				<input v-model="menuSearch" type="text" :placeholder="$t('desktop.search')" />
-			</div>
-			<div class="win11-menu-section">{{ $t('desktop.pinned') }}</div>
-			<div class="win11-menu-grid">
-				<div v-for="app in filteredFlatApps" :key="app.id" class="win11-grid-item" @click="openApp(app)">
-					<sc-icon :name="app.meta.icon" :size="28" />
-					<span>{{ app.name }}</span>
-				</div>
-			</div>
-			<div class="win11-menu-footer">
-				<div class="win11-footer-user" @click="openProfile">
-					<sc-icon name="ms-account_circle" :size="24" />
-					<span>{{ user.userName || 'User' }}</span>
-				</div>
-				<div class="win11-footer-power" :title="$t('desktop.exit')" @click="logout">
-					<sc-icon name="ms-power_settings_new" :size="18" />
-				</div>
-			</div>
-		</div>
+		<Win11Menu v-else-if="showStartMenu && currentTheme === 'win11'" :apps="filteredFlatApps"
+			:menu-color="menuColor" :menu-text-color="menuTextColor" :user-name="user.userName || 'User'"
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @logout="logout" />
 
 		<!-- macOS 苹果系统菜单 -->
-		<div v-else-if="showStartMenu && isMacTheme" class="start-menu mac-apple-menu">
-			<div class="apple-menu-item" @click="openProfile"><span>{{ $t('desktop.aboutMac') }}</span></div>
-			<div class="apple-menu-item" @click="openSettings"><span>{{ $t('desktop.systemSettings') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="toggleLaunchpad"><span>{{ $t('desktop.launchpad') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="forceQuitFocused"><span>{{ $t('desktop.forceQuit') }}</span></div>
-			<div class="apple-menu-divider"></div>
-			<div class="apple-menu-item" @click="shutdown"><span>{{ $t('desktop.shutdown') }}</span></div>
-			<div class="apple-menu-item" @click="logout"><span>{{ $t('desktop.logoff') }}</span></div>
-		</div>
+		<MacAppleMenu v-else-if="showStartMenu && isMacTheme" @open-profile="openProfile"
+			@open-settings="openSettings" @toggle-launchpad="toggleLaunchpad" @force-quit="forceQuitFocused"
+			@shutdown="shutdown" @logout="logout" />
 
 		<!-- 开始菜单（通用）-->
-		<div v-else-if="showStartMenu" class="start-menu"
-			:style="{ backgroundColor: menuColor, color: menuTextColor, borderRadius: menuBorderRadius }"
-			:class="{ 'menu-glass': menuGlass }">
-			<div class="start-menu-header" @click="openProfile">
-				<sc-icon name="ms-account_circle" :size="32" />
-				<span>{{ user.userName || 'User' }}</span>
-			</div>
-			<div class="start-menu-apps">
-				<div v-for="app in menuApps" :key="app.id" class="start-menu-item"
-					:class="{ 'has-children': app.children }" @mouseenter="showSubmenu($event, app)"
-					@mouseleave="hideSubmenu">
-					<div class="start-menu-app" @click="app.children ? null : openApp(app)">
-						<sc-icon :name="app.meta.icon" />
-						<span>{{ app.name }}</span>
-						<sc-icon v-if="app.children" name="ms-arrow_forward" class="arrow" :size="16" />
-					</div>
-				</div>
-			</div>
-			<div class="start-menu-footer">
-				<div class="start-menu-action" @click="openSettings">
-					<sc-icon name="ms-settings" />
-					<span>{{ $t('desktop.settings') }}</span>
-				</div>
-				<div class="start-menu-action" @click="logout">
-					<sc-icon name="ms-exit_to_app" />
-					<span>{{ $t('desktop.exit') }}</span>
-				</div>
-			</div>
-		</div>
+		<GenericMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor"
+			:menu-text-color="menuTextColor" :menu-border-radius="menuBorderRadius" :menu-glass="menuGlass"
+			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
+			@open-settings="openSettings" @logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 子菜单 -->
 		<div v-if="activeSubmenu" class="submenu"
@@ -343,19 +123,19 @@
 				<span>{{ $t('desktop.refresh') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item" @click="openSettings">
-				<sc-icon name="ms-settings" :size="16" />
-				<span>{{ $t('desktop.desktopSettings') }}</span>
+			<div class="context-menu-item"
+				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+				<sc-icon name="ms-terminal" :size="16" />
+				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
 			<div class="context-menu-item" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="16" />
 				<span>{{ $t('desktop.profile') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item"
-				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
-				<sc-icon name="ms-terminal" :size="16" />
-				<span>{{ $t('desktop.openTerminal') }}</span>
+			<div class="context-menu-item" @click="openSettings">
+				<sc-icon name="ms-settings" :size="16" />
+				<span>{{ $t('desktop.desktopSettings') }}</span>
 			</div>
 			<div class="context-menu-item"
 				@click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
@@ -369,12 +149,52 @@
 <script>
 import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
+import { themes } from './themes.js';
+import MacDock from './components/menus/MacDock.vue';
+import MacMenubar from './components/menus/MacMenubar.vue';
+import MacLaunchpad from './components/menus/MacLaunchpad.vue';
+import WinClassicMenu from './components/menus/WinClassicMenu.vue';
+import WinXpMenu from './components/menus/WinXpMenu.vue';
+import WinAeroMenu from './components/menus/WinAeroMenu.vue';
+import Win8Screen from './components/menus/Win8Screen.vue';
+import Win10Menu from './components/menus/Win10Menu.vue';
+import Win11Menu from './components/menus/Win11Menu.vue';
+import MacAppleMenu from './components/menus/MacAppleMenu.vue';
+import GenericMenu from './components/menus/GenericMenu.vue';
+
+// 后端菜单码 → 应用角色（settings 刻意不覆盖，始终使用本地配置）
+const CODE_TO_ROLE = {
+	'app-profile': 'profile',
+	'app-calendar': 'calendar',
+	'app-image': 'image',
+	'app-audio': 'audio',
+	'app-video': 'video',
+	'app-textpad': 'text',
+};
+// 文件类型 → 应用角色（openNasFileWithApp 用）
+const KIND_TO_ROLE = {
+	text: 'text',
+	image: 'image',
+	audio: 'audio',
+	video: 'video',
+};
 
 export default {
 	name: 'Desktop',
 	components: {
 		Window,
 		scIcon,
+		MacDock,
+		MacMenubar,
+		MacLaunchpad,
+		WinClassicMenu,
+		WinXpMenu,
+		WinAeroMenu,
+		Win8Screen,
+		Win10Menu,
+		Win11Menu,
+		MacAppleMenu,
+		GenericMenu,
 	},
 	data() {
 		return {
@@ -387,6 +207,7 @@ export default {
 				style: {},
 			},
 			currentTime: '',
+			currentDateTime: '',
 			windows: [],
 			windowIdCounter: 0,
 			activeSubmenu: null,
@@ -446,1241 +267,89 @@ export default {
 				minBtnHover: 'rgba(0, 0, 0, 0.1)',
 				maxBtnHover: 'rgba(0, 0, 0, 0.1)'
 			},
-			settingsApp: {
-				id: '1',
-				code: 'app-settings',
-				name: '设置',
-				component: 'Settings',
-				meta: {
-					icon: 'ms-settings',
-					width: 900,
-					height: 620,
-					resizable: true,
-				}
+			// 应用配置表（以逻辑角色为键；登录后 addDeskIcon 用后端菜单覆盖，settings 除外）
+			appMap: {
+				settings: {
+					id: '1',
+					code: 'app-settings',
+					name: '设置',
+					component: 'Settings',
+					meta: {
+						icon: 'ms-settings',
+						width: 900,
+						height: 620,
+						resizable: true,
+					}
+				},
+				profile: {
+					id: '2',
+					code: 'app-profile',
+					name: '个人信息',
+					component: 'Profile',
+					meta: {
+						icon: 'ms-account_circle',
+						width: 460,
+						height: 680,
+						resizable: false,
+					}
+				},
+				calendar: {
+					id: '3',
+					code: 'app-calendar',
+					name: '日历',
+					component: 'Calendar',
+					meta: {
+						icon: 'ms-calendar_month',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				image: {
+					id: '11',
+					code: 'app-image',
+					name: '图像',
+					component: 'Image',
+					meta: {
+						icon: 'ms-photo_library',
+						width: 900,
+						height: 700
+					}
+				},
+				audio: {
+					id: '12',
+					code: 'app-audio',
+					name: '音频',
+					component: 'Audio',
+					meta: {
+						icon: 'ms-music_note',
+						width: 500,
+						height: 600
+					}
+				},
+				video: {
+					id: '13',
+					code: 'app-video',
+					name: '视频',
+					component: 'Video',
+					meta: {
+						icon: 'ms-videocam',
+						width: 900,
+						height: 600
+					}
+				},
+				text: {
+					id: '14',
+					code: 'app-textpad',
+					name: '记事本',
+					component: 'Textpad',
+					meta: {
+						icon: 'ms-article',
+						width: 800,
+						height: 600
+					}
+				},
 			},
-			profileApp: {
-				id: '2',
-				code: 'app-profile',
-				name: '个人信息',
-				component: 'Profile',
-				meta: {
-					icon: 'ms-account_circle',
-					width: 460,
-					height: 680,
-					resizable: false,
-				}
-			},
-			calendarApp: {
-				id: '3',
-				code: 'app-calendar',
-				name: '日历',
-				component: 'Calendar',
-				meta: {
-					icon: 'ms-calendar_month',
-					width: 320,
-					height: 460,
-					resizable: false
-				}
-			},
-			imageApp: {
-				id: '11',
-				code: 'app-image',
-				name: '图像',
-				component: 'Image',
-				meta: {
-					icon: 'ms-photo_library',
-					width: 900,
-					height: 700
-				}
-			},
-			audioApp: {
-				id: '12',
-				code: 'app-audio',
-				name: '音频',
-				component: 'Audio',
-				meta: {
-					icon: 'ms-music_note',
-					width: 500,
-					height: 600
-				}
-			},
-			videoApp: {
-				id: '13',
-				code: 'app-video',
-				name: '视频',
-				component: 'Video',
-				meta: {
-					icon: 'ms-videocam',
-					width: 900,
-					height: 600
-				}
-			},
-			textApp: {
-				id: '14',
-				code: 'app-text',
-				name: '记事本',
-				component: 'Textpad',
-				meta: {
-					icon: 'ms-article',
-					width: 800,
-					height: 600
-				}
-			},
-			themes: [
-				{
-					name: 'default',
-					style: 'system',
-					backgroundType: 'color',
-					backgroundColor: '#0078d4',
-					taskbarColor: 'rgba(0, 60, 90, 0.75)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(0, 60, 90, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: '#f8f9fa',
-						headerBg: '#f8f9fa',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(0, 120, 212, 0.15)',
-						borderRadius: '6px'
-					},
-					previewStyle: { backgroundColor: '#0078d4' }
-				},
-				{
-					name: 'dark',
-					style: 'system',
-					backgroundType: 'color',
-					backgroundColor: '#0d1117',
-					taskbarColor: 'rgba(13, 17, 23, 0.92)',
-					taskbarTextColor: '#e6edf3',
-					menuColor: 'rgba(22, 27, 34, 0.95)',
-					menuTextColor: '#e6edf3',
-					iconColor: '#e6edf3',
-					windowTheme: {
-						bg: '#161b22',
-						headerBg: '#161b22',
-						titleColor: '#e6edf3',
-						titleColorInactive: '#7d8590',
-						border: 'rgba(48, 54, 61, 0.8)',
-						borderRadius: '6px'
-					},
-					previewStyle: { backgroundColor: '#0d1117' }
-				},
-				{
-					name: 'light',
-					style: 'system',
-					backgroundType: 'color',
-					backgroundColor: '#f5f7fa',
-					taskbarColor: 'rgba(255, 255, 255, 0.85)',
-					taskbarTextColor: '#24292f',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#24292f',
-					iconColor: '#24292f',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#ffffff',
-						titleColor: '#24292f',
-						titleColorInactive: '#57606a',
-						border: 'rgba(27, 31, 36, 0.12)',
-						borderRadius: '6px'
-					},
-					previewStyle: { backgroundColor: '#f5f7fa' }
-				},
-				{
-					name: 'aurora',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#00c6ff',
-					gradientColor2: '#0072ff',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(0, 114, 255, 0.75)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(0, 114, 255, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(0, 198, 255, 0.12)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(0, 198, 255, 0.25)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #00c6ff, #0072ff)' }
-				},
-				{
-					name: 'midnight',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#0f0c29',
-					gradientColor2: '#302b63',
-					gradientDirection: 'to bottom',
-					taskbarColor: 'rgba(15, 12, 41, 0.88)',
-					taskbarTextColor: '#e8e8f0',
-					menuColor: 'rgba(30, 25, 60, 0.95)',
-					menuTextColor: '#e8e8f0',
-					iconColor: '#e8e8f0',
-					windowTheme: {
-						bg: 'rgba(25, 22, 45, 0.96)',
-						headerBg: 'rgba(30, 27, 55, 0.96)',
-						titleColor: '#e8e8f0',
-						titleColorInactive: '#8b8ba0',
-						border: 'rgba(80, 70, 120, 0.35)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom, #0f0c29, #302b63)' }
-				},
-				{
-					name: 'ocean',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#1e3c72',
-					gradientColor2: '#2a5298',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(30, 60, 114, 0.8)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(30, 60, 114, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(42, 82, 152, 0.12)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(42, 82, 152, 0.25)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #1e3c72, #2a5298)' }
-				},
-				{
-					name: 'forest',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#134e5e',
-					gradientColor2: '#71b280',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(19, 78, 94, 0.78)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(19, 78, 94, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(113, 178, 128, 0.15)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(113, 178, 128, 0.3)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #134e5e, #71b280)' }
-				},
-				{
-					name: 'rose',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#ee9ca7',
-					gradientColor2: '#ffdde1',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(238, 156, 167, 0.8)',
-					taskbarTextColor: '#4a3f44',
-					menuColor: 'rgba(238, 156, 167, 0.92)',
-					menuTextColor: '#4a3f44',
-					iconColor: '#4a3f44',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.98)',
-						headerBg: 'rgba(238, 156, 167, 0.18)',
-						titleColor: '#4a3f44',
-						titleColorInactive: '#8a7a80',
-						border: 'rgba(238, 156, 167, 0.4)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #ee9ca7, #ffdde1)' }
-				},
-				{
-					name: 'amber',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#f12711',
-					gradientColor2: '#f5af19',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(241, 39, 17, 0.75)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(200, 100, 20, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(245, 175, 25, 0.15)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(245, 175, 25, 0.35)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #f12711, #f5af19)' }
-				},
-				{
-					name: 'mint',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#11998e',
-					gradientColor2: '#38ef7d',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(17, 153, 142, 0.78)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(17, 153, 142, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(56, 239, 125, 0.12)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(56, 239, 125, 0.3)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #11998e, #38ef7d)' }
-				},
-				{
-					name: 'purple',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#654ea3',
-					gradientColor2: '#eaafc8',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(101, 78, 163, 0.78)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(101, 78, 163, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(101, 78, 163, 0.12)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(101, 78, 163, 0.25)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #654ea3, #eaafc8)' }
-				},
-				{
-					name: 'chinesePurple',
-					style: 'system',
-					backgroundType: 'gradient',
-					gradientColor1: '#5D3F6A',
-					gradientColor2: '#8B4789',
-					gradientDirection: 'to bottom right',
-					taskbarColor: 'rgba(93, 63, 106, 0.78)',
-					taskbarTextColor: '#ffffff',
-					menuColor: 'rgba(93, 63, 106, 0.92)',
-					menuTextColor: '#ffffff',
-					iconColor: '#ffffff',
-					windowTheme: {
-						bg: 'rgba(255, 255, 255, 0.96)',
-						headerBg: 'rgba(139, 71, 137, 0.15)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#6c757d',
-						border: 'rgba(139, 71, 137, 0.3)',
-						borderRadius: '6px'
-					},
-					previewStyle: { background: 'linear-gradient(to bottom right, #5D3F6A, #8B4789)' }
-				},
-				{
-					name: 'win11',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-11/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-11/',
-					startLogo: 'http://www.c-scm.net/images/windows-11/logo.png',
-					taskbarColor: 'rgba(32, 32, 32, 0.85)',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '12px',
-					taskbarGlass: true,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(32, 32, 32, 0.98)',
-					menuTextColor: '#f0f0f0',
-					menuBorderRadius: '16px',
-					menuGlass: true,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4))',
-					iconSize: 48,
-					iconBgColor: 'rgba(255, 255, 255, 0.1)',
-					iconBgRadius: '12px',
-					iconBgSize: '80px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f8f9fa',
-						titleColor: '#212529',
-						titleColorInactive: '#adb5bd',
-						border: 'rgba(0, 0, 0, 0.08)',
-						borderRadius: '8px',
-						shadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08)',
-						closeBtnHover: '#e81123',
-						minBtnHover: 'rgba(0, 0, 0, 0.08)',
-						maxBtnHover: 'rgba(0, 0, 0, 0.08)',
-						titleHeight: '32px',
-						buttonWidth: '46px',
-						style: 'win11'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-11/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win10',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-10/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-10/',
-					startLogo: 'http://www.c-scm.net/images/windows-10/logo.svg',
-					taskbarColor: 'rgba(24, 24, 24, 0.98)',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(32, 32, 32, 0.98)',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					iconSize: 48,
-					iconBgColor: 'transparent',
-					iconBgRadius: '0px',
-					iconBgSize: '0px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#ffffff',
-						titleColor: '#000000',
-						titleColorInactive: '#808080',
-						border: '#E5E5E5',
-						borderRadius: '0px',
-						shadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: 'rgba(0, 0, 0, 0.1)',
-						maxBtnHover: 'rgba(0, 0, 0, 0.1)',
-						titleHeight: '32px',
-						buttonWidth: '46px',
-						style: 'win10'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-10/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win8',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-8/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-8/',
-					startLogo: 'http://www.c-scm.net/images/windows-8/logo.svg',
-					taskbarColor: 'rgba(20, 20, 40, 0.92)',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(30, 30, 50, 0.95)',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					iconSize: 48,
-					iconBgColor: 'rgba(0, 120, 215, 0.8)',
-					iconBgRadius: '0px',
-					iconBgSize: '70px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#0078D7',
-						titleColor: '#ffffff',
-						titleColorInactive: '#cccccc',
-						border: '#0078D7',
-						borderRadius: '0px',
-						shadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: 'rgba(0,0,0,0.1)',
-						maxBtnHover: 'rgba(0,0,0,0.1)',
-						titleHeight: '32px',
-						buttonWidth: '46px',
-						style: 'win10'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-8/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win7',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-7/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-7/',
-					startLogo: 'http://www.c-scm.net/images/windows-7/logo.svg',
-					taskbarColor: '#1A1A1A',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: true,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#2D2D2D',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: true,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))',
-					iconSize: 48,
-					iconBgColor: 'rgba(255, 255, 255, 0.05)',
-					iconBgRadius: '4px',
-					iconBgSize: '70px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(200,210,220,0.6) 50%, rgba(170,180,200,0.6) 100%)',
-						titleColor: '#000066',
-						titleColorInactive: '#808080',
-						border: '#808080',
-						borderRadius: '0px',
-						shadow: '0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0,0,0,0.2)',
-						closeBtnHover: '#e81123',
-						minBtnHover: 'rgba(255,255,255,0.3)',
-						maxBtnHover: 'rgba(255,255,255,0.3)',
-						titleHeight: '32px',
-						buttonWidth: '28px',
-						style: 'win7'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-7/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'winVista',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-vista/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-vista/',
-					startLogo: 'http://www.c-scm.net/images/windows-vista/logo.svg',
-					taskbarColor: 'rgba(0, 0, 0, 0.7)',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: true,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: 'rgba(30, 30, 30, 0.9)',
-					menuTextColor: '#ffffff',
-					menuBorderRadius: '0px',
-					menuGlass: true,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5))',
-					iconSize: 48,
-					iconBgColor: 'rgba(31, 156, 216, 0.3)',
-					iconBgRadius: '4px',
-					iconBgSize: '70px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: 'linear-gradient(180deg, rgba(220,230,245,0.9) 0%, rgba(185,200,220,0.9) 50%, rgba(150,170,200,0.9) 100%)',
-						titleColor: '#003366',
-						titleColorInactive: '#808080',
-						border: '#7A9EC4',
-						borderRadius: '6px',
-						shadow: '0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0,0,0,0.15)',
-						closeBtnHover: '#e81123',
-						minBtnHover: 'rgba(255,255,255,0.4)',
-						maxBtnHover: 'rgba(255,255,255,0.4)',
-						titleHeight: '32px',
-						buttonWidth: '30px',
-						style: 'win7'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-vista/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'winXP',
-					style: 'windows',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/windows-xp/background.jpg',
-					iconsPath: 'http://www.c-scm.net/images/windows-xp/',
-					startLogo: 'http://www.c-scm.net/images/windows-xp/logo.svg',
-					taskbarColor: '#245edb',
-					taskbarTextColor: '#ffffff',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#ffffff',
-					menuTextColor: '#1a1a1a',
-					menuBorderRadius: '8px 8px 8px 0',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))',
-					iconSize: 48,
-					iconBgColor: 'rgba(255, 255, 255, 0.12)',
-					iconBgRadius: '4px',
-					iconBgSize: '70px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: 'linear-gradient(180deg, #0058ee 0%, #0054e3 50%, #0047cc 100%)',
-						titleColor: '#ffffff',
-						titleColorInactive: '#c0c0c0',
-						border: '#0054e3',
-						borderRadius: '8px 8px 0 0',
-						shadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c42b1c',
-						minBtnHover: '#1e90ff',
-						maxBtnHover: '#1e90ff',
-						titleHeight: '28px',
-						buttonWidth: '22px',
-						style: 'classic',
-						classicHeaderStart: '#0058ee',
-						classicHeaderEnd: '#0047cc',
-						classicHeaderInactiveStart: '#7a96df',
-						classicHeaderInactiveEnd: '#5e7eb5',
-						classicBtnStart: '#3c8cff',
-						classicBtnEnd: '#0054e3',
-						classicBtnHoverStart: '#5ca0ff',
-						classicBtnHoverEnd: '#1e6fe0',
-						classicCloseStart: '#ff6b4a',
-						classicCloseEnd: '#c1352e',
-						classicCloseHoverStart: '#ff8b6a',
-						classicCloseHoverEnd: '#d0453e'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-xp/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win2000',
-					style: 'windows',
-					backgroundType: 'color',
-					backgroundColor: '#3A6EA5',
-					backgroundImage: 'http://www.c-scm.net/images/windows-2000/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-2000/',
-					startLogo: 'http://www.c-scm.net/images/windows-2000/logo.png',
-					taskbarColor: '#C0C0C0',
-					taskbarTextColor: '#000000',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#C0C0C0',
-					menuTextColor: '#000000',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-					// iconSize: 32,
-					iconBgColor: 'rgba(0, 0, 128, 0.15)',
-					iconBgRadius: '0px',
-					iconBgSize: '56px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#000080',
-						// titleHeight: '28px',
-						titleColor: '#ffffff',
-						titleColorInactive: '#C0C0C0',
-						border: '#808080',
-						borderRadius: '0px',
-						shadow: '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c00000',
-						minBtnHover: '#808080',
-						maxBtnHover: '#808080',
-						buttonWidth: '18px',
-						style: 'classic',
-						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
-						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
-						classicBtnStart: '#D4D0C8',
-						classicBtnEnd: '#C0C0C0',
-						classicBtnHoverStart: '#E4E0DC',
-						classicBtnHoverEnd: '#D4D0C8',
-						classicCloseStart: '#D4D0C8',
-						classicCloseEnd: '#C0C0C0',
-						classicCloseHoverStart: '#E4E0DC',
-						classicCloseHoverEnd: '#D4D0C8',
-						classicBtnBorder: '#808080',
-						classicCloseBorder: '#808080',
-						classicGlyphColor: '#000000',
-						classicFrame: '#C0C0C0',
-						classicHeaderRadius: '0px',
-						classicBtnSize: '18px'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-2000/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'winMe',
-					style: 'windows',
-					backgroundType: 'color',
-					backgroundColor: '#3A6EA5',
-					backgroundImage: 'http://www.c-scm.net/images/windows-me/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-98/',
-					startLogo: 'http://www.c-scm.net/images/windows-me/logo.png',
-					taskbarColor: '#C0C0C0',
-					taskbarTextColor: '#000000',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#C0C0C0',
-					menuTextColor: '#000000',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))',
-					// iconSize: 32,
-					iconBgColor: 'rgba(0, 128, 128, 0.2)',
-					iconBgRadius: '0px',
-					iconBgSize: '56px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#000080',
-						// titleHeight: '24px',
-						titleColor: '#ffffff',
-						titleColorInactive: '#C0C0C0',
-						border: '#808080',
-						borderRadius: '0px',
-						shadow: '0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c00000',
-						minBtnHover: '#808080',
-						maxBtnHover: '#808080',
-						buttonWidth: '16px',
-						style: 'classic',
-						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
-						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
-						classicBtnStart: '#D4D0C8',
-						classicBtnEnd: '#C0C0C0',
-						classicBtnHoverStart: '#E4E0DC',
-						classicBtnHoverEnd: '#D4D0C8',
-						classicCloseStart: '#D4D0C8',
-						classicCloseEnd: '#C0C0C0',
-						classicCloseHoverStart: '#E4E0DC',
-						classicCloseHoverEnd: '#D4D0C8',
-						classicBtnBorder: '#808080',
-						classicCloseBorder: '#808080',
-						classicGlyphColor: '#000000',
-						classicFrame: '#C0C0C0',
-						classicHeaderRadius: '0px',
-						classicBtnSize: '16px'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-me/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win98',
-					style: 'windows',
-					backgroundType: 'color',
-					backgroundColor: '#008080',
-					backgroundImage: 'http://www.c-scm.net/images/windows-98/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-98/',
-					startLogo: 'http://www.c-scm.net/images/windows-98/logo.png',
-					taskbarColor: '#C0C0C0',
-					taskbarTextColor: '#000000',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#C0C0C0',
-					menuTextColor: '#000000',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))',
-					// iconSize: 32,
-					iconBgColor: 'rgba(0, 128, 128, 0.2)',
-					iconBgRadius: '0px',
-					iconBgSize: '56px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#000080',
-						// titleHeight: '24px',
-						titleColor: '#ffffff',
-						titleColorInactive: '#C0C0C0',
-						border: '#808080',
-						borderRadius: '0px',
-						shadow: '0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)',
-						closeBtnHover: '#c00000',
-						minBtnHover: '#808080',
-						maxBtnHover: '#808080',
-						buttonWidth: '16px',
-						style: 'classic',
-						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
-						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
-						classicBtnStart: '#D4D0C8',
-						classicBtnEnd: '#C0C0C0',
-						classicBtnHoverStart: '#E4E0DC',
-						classicBtnHoverEnd: '#D4D0C8',
-						classicCloseStart: '#D4D0C8',
-						classicCloseEnd: '#C0C0C0',
-						classicCloseHoverStart: '#E4E0DC',
-						classicCloseHoverEnd: '#D4D0C8',
-						classicBtnBorder: '#808080',
-						classicCloseBorder: '#808080',
-						classicGlyphColor: '#000000',
-						classicFrame: '#C0C0C0',
-						classicHeaderRadius: '0px',
-						classicBtnSize: '16px'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-98/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'win95',
-					style: 'windows',
-					backgroundType: 'color',
-					backgroundColor: '#008080',
-					backgroundImage: 'http://www.c-scm.net/images/windows-95/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/windows-95/',
-					startLogo: 'http://www.c-scm.net/images/windows-95/logo.png',
-					taskbarColor: '#C0C0C0',
-					taskbarTextColor: '#000000',
-					taskbarBorderRadius: '0px',
-					taskbarGlass: false,
-					taskbarStartIcon: 'ms-grid_view',
-					menuColor: '#C0C0C0',
-					menuTextColor: '#000000',
-					menuBorderRadius: '0px',
-					menuGlass: false,
-					iconColor: '#ffffff',
-					iconShadow: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))',
-					// iconSize: 32,
-					iconBgColor: 'rgba(0, 128, 128, 0.2)',
-					iconBgRadius: '0px',
-					iconBgSize: '56px',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#000080',
-						// titleHeight: '22px',
-						titleColor: '#ffffff',
-						titleColorInactive: '#C0C0C0',
-						border: '#808080',
-						borderRadius: '0px',
-						shadow: '0 3px 8px rgba(0, 0, 0, 0.15)',
-						closeBtnHover: '#c00000',
-						minBtnHover: '#808080',
-						maxBtnHover: '#808080',
-						buttonWidth: '16px',
-						style: 'classic',
-						classicHeader: 'linear-gradient(180deg, #000080 0%, #1084D0 100%)',
-						classicHeaderInactive: 'linear-gradient(180deg, #808080 0%, #B5B5B5 100%)',
-						classicBtnStart: '#D4D0C8',
-						classicBtnEnd: '#C0C0C0',
-						classicBtnHoverStart: '#E4E0DC',
-						classicBtnHoverEnd: '#D4D0C8',
-						classicCloseStart: '#D4D0C8',
-						classicCloseEnd: '#C0C0C0',
-						classicCloseHoverStart: '#E4E0DC',
-						classicCloseHoverEnd: '#D4D0C8',
-						classicBtnBorder: '#808080',
-						classicCloseBorder: '#808080',
-						classicGlyphColor: '#000000',
-						classicFrame: '#C0C0C0',
-						classicHeaderRadius: '0px',
-						classicBtnSize: '16px'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/windows-95/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSTahoe',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-26-tahoe/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-26-tahoe/',
-					startLogo: 'http://www.c-scm.net/images/macos-26-tahoe/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.78)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',// #1a1a1a
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f8f8f8',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.05)',
-						borderRadius: '12px',
-						shadow: '0 15px 60px rgba(0, 0, 0, 0.25)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-26-tahoe/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSSequoia',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-15-sequoia/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-15-sequoia/',
-					startLogo: 'http://www.c-scm.net/images/macos-15-sequoia/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.75)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',// #1a1a1a
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f5f5f5',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.05)',
-						borderRadius: '12px',
-						shadow: '0 15px 60px rgba(0, 0, 0, 0.25)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-15-sequoia/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSSonoma',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-14-sonoma/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-14-sonoma/',
-					startLogo: 'http://www.c-scm.net/images/macos-14-sonoma/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.6)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.9)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',
-					iconSize: 48,
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f8f8f8',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.05)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-14-sonoma/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSVentura',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-13-ventura/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-13-ventura/',
-					startLogo: 'http://www.c-scm.net/images/macos-13-ventura/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.82)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',// #1a1a1a
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#fafafa',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#bbbbbb',
-						border: 'rgba(0, 0, 0, 0.04)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-13-ventura/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSMonterey',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-12-monterey/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-12-monterey/',
-					startLogo: 'http://www.c-scm.net/images/macos-12-monterey/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.78)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',// #1a1a1a
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f8f8f8',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#aaaaaa',
-						border: 'rgba(0, 0, 0, 0.05)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-12-monterey/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSBigSur',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-11-big-sur/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-11-big-sur/',
-					startLogo: 'http://www.c-scm.net/images/macos-11-big-sur/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.8)',
-					taskbarTextColor: '#000000',
-					menuColor: 'rgba(255, 255, 255, 0.95)',
-					menuTextColor: '#000000',
-					iconColor: '#000000',
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#f5f5f5',
-						titleColor: '#000000',
-						titleColorInactive: '#999999',
-						border: 'rgba(0, 0, 0, 0.06)',
-						borderRadius: '10px',
-						shadow: '0 10px 50px rgba(0, 0, 0, 0.2)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '40px',
-						buttonWidth: '48px',
-						style: 'macos',
-						animations: {
-							open: 'scale(0.92) translateY(10px) opacity(0)',
-							openEnd: 'scale(1) translateY(0) opacity(1)',
-							openDuration: '0.35s',
-							openTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							close: 'scale(1) translateY(0) opacity(1)',
-							closeEnd: 'scale(0.92) translateY(10px) opacity(0)',
-							closeDuration: '0.3s',
-							closeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							minimize: 'scale(1) translateY(0)',
-							minimizeEnd: 'scale(0.1) translateY(100%)',
-							minimizeDuration: '0.4s',
-							minimizeTiming: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-							maximize: 'scale(1)',
-							maximizeEnd: 'scale(1)',
-							maximizeDuration: '0.3s',
-							maximizeTiming: 'cubic-bezier(0.16, 1, 0.3, 1)',
-							focus: 'scale(1)',
-							focusEnd: 'scale(1)',
-							focusDuration: '0.2s',
-							focusTiming: 'cubic-bezier(0.16, 1, 0.3, 1)'
-						}
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-11-big-sur/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSYosemite',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-10.10-yosemite/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-10.10-yosemite/',
-					startLogo: 'http://www.c-scm.net/images/macos-10.10-yosemite/logo.svg',
-					taskbarColor: 'rgba(255, 255, 255, 0.6)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(255, 255, 255, 0.9)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',
-					iconSize: 48,
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: '#F6F6F6',
-						titleColor: '#3a3a3c',
-						titleColorInactive: '#b0b0b5',
-						border: 'rgba(0, 0, 0, 0.08)',
-						borderRadius: '6px',
-						shadow: '0 12px 44px rgba(0, 0, 0, 0.25)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '24px',
-						buttonWidth: '46px',
-						style: 'macos'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.10-yosemite/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSLion',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-10.7-lion/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-10.7-lion/',
-					startLogo: 'http://www.c-scm.net/images/macos-10.7-lion/logo.svg',
-					taskbarColor: 'rgba(240, 240, 242, 0.75)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(250, 250, 250, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',// #3a3a3c
-					iconSize: 48,
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: 'linear-gradient(180deg, #E9E9E9 0%, #D3D3D3 100%)',
-						titleColor: '#3a3a3c',
-						titleColorInactive: '#9a9aa0',
-						border: 'rgba(0, 0, 0, 0.12)',
-						borderRadius: '6px',
-						shadow: '0 10px 36px rgba(0, 0, 0, 0.28)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '22px',
-						buttonWidth: '46px',
-						style: 'macos'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.7-lion/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOSLeopard',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-10.5-leopard/background.jpg',
-					// iconsPath: 'http://www.c-scm.net/images/macos-10.5-leopard/',
-					startLogo: 'http://www.c-scm.net/images/macos-10.5-leopard/logo.svg',
-					taskbarColor: 'rgba(230, 230, 235, 0.7)',
-					taskbarTextColor: '#1a1a1a',
-					menuColor: 'rgba(245, 245, 247, 0.95)',
-					menuTextColor: '#1a1a1a',
-					iconColor: '#ffffff',
-					iconSize: 48,
-					windowTheme: {
-						bg: '#ffffff',
-						headerBg: 'linear-gradient(180deg, #EDEDED 0%, #CFCFCF 100%)',
-						titleColor: '#1a1a1a',
-						titleColorInactive: '#8a8a8a',
-						border: 'rgba(0, 0, 0, 0.15)',
-						borderRadius: '6px',
-						shadow: '0 12px 40px rgba(0, 0, 0, 0.35)',
-						closeBtnHover: '#ff5f57',
-						minBtnHover: '#ffbd2e',
-						maxBtnHover: '#28c840',
-						titleHeight: '24px',
-						buttonWidth: '46px',
-						style: 'macos'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-10.5-leopard/preview.jpg)', backgroundSize: 'cover' }
-				},
-				{
-					name: 'macOS9',
-					style: 'macos',
-					backgroundType: 'image',
-					backgroundImage: 'http://www.c-scm.net/images/macos-9/background.jpg',
-					// iconsPath: '',
-					startLogo: 'http://www.c-scm.net/images/macos-9/logo.svg',
-					taskbarColor: '#FFFFFF',
-					taskbarTextColor: '#000000',
-					menuColor: '#FFFFFF',
-					menuTextColor: '#000000',
-					iconColor: '#000000',
-					iconShadow: 'none',
-					iconSize: 32,
-					windowTheme: {
-						bg: '#FFFFFF',
-						headerBg: 'repeating-linear-gradient(180deg, #EFEFEF 0px, #EFEFEF 2px, #DADADA 2px, #DADADA 3px)',
-						titleColor: '#000000',
-						titleColorInactive: '#777777',
-						border: '#5A5A5A',
-						borderRadius: '4px 4px 0 0',
-						shadow: '2px 2px 10px rgba(0, 0, 0, 0.4)',
-						titleHeight: '20px',
-						buttonWidth: '16px',
-						style: 'mac9'
-					},
-					previewStyle: { backgroundImage: 'url(http://www.c-scm.net/images/macos-9/preview.jpg)', backgroundSize: 'cover' }
-				},
-			]
 		};
 	},
 	computed: {
@@ -1700,34 +369,19 @@ export default {
 				};
 			}
 		},
-		currentDateTime() {
-			const now = new Date();
-			const dateStr = now.toLocaleDateString('zh-CN', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric',
-				weekday: 'long'
-			});
-			const timeStr = now.toLocaleTimeString('zh-CN', {
-				hour: '2-digit',
-				minute: '2-digit',
-				second: '2-digit'
-			});
-			return `${dateStr} ${timeStr}`;
-		},
 		themeClass() {
 			return this.currentTheme ? `theme-${this.currentTheme}` : '';
 		},
 		// Windows XP 主题
-		isXpTheme() {
+		isWinXpTheme() {
 			return this.currentTheme === 'winXP';
 		},
 		// Windows 95/98/2000 经典主题
-		isClassicTheme() {
-			return ['win95', 'win98', 'win2000'].includes(this.currentTheme);
+		isWinClassicTheme() {
+			return ['win95', 'win98', 'win2000', 'winMe'].includes(this.currentTheme);
 		},
 		// Windows 7/Vista Aero 主题
-		isAeroTheme() {
+		isWinAeroTheme() {
 			return ['win7', 'winVista'].includes(this.currentTheme);
 		},
 		// macOS 系列主题
@@ -1744,19 +398,19 @@ export default {
 		},
 		// 开始按钮显示 Windows 旗帜（XP/经典/Aero）
 		showFlagStart() {
-			return this.isXpTheme || this.isClassicTheme || this.isAeroTheme;
+			return this.isWinXpTheme || this.isWinClassicTheme || this.isWinAeroTheme;
 		},
 		// 操作系统家族根类（供 grouped CSS 覆盖）
 		osFamilyClass() {
 			if (this.isMacTheme) return 'os-macos';
-			if (this.isClassicTheme) return 'os-classic';
-			if (this.isAeroTheme) return 'os-aero';
+			if (this.isWinClassicTheme) return 'os-win-classic';
+			if (this.isWinAeroTheme) return 'os-win-aero';
 			if (['win8', 'win10', 'win11', 'winDark'].includes(this.currentTheme)) return 'os-winflat';
 			return '';
 		},
 		// 经典开始菜单侧栏标题
-		classicMenuTitle() {
-			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000' };
+		winClassicMenuTitle() {
+			const titles = { win95: 'Windows 95', win98: 'Windows 98', win2000: 'Windows 2000', winMe: 'Windows ME' };
 			return titles[this.currentTheme] || 'Windows';
 		},
 		// macOS 菜单栏应用名（聚焦窗口标题）
@@ -1807,11 +461,11 @@ export default {
 			return this.flatMenuApps.filter(a => (a.name || '').toLowerCase().includes(kw));
 		},
 		// Win10 磁贴应用（前 12 个叶子）
-		tileApps() {
+		win10TileApps() {
 			return this.flatMenuApps.slice(0, 12);
 		},
 		// XP 开始菜单右栏快捷链
-		xpQuickLinks() {
+		winXpQuickLinks() {
 			return [
 				{ key: 'computer', icon: 'ms-computer', name: this.$t('desktop.myComputer') },
 				{ key: 'settings', icon: 'ms-settings', name: this.$t('desktop.controlPanel') },
@@ -1848,6 +502,14 @@ export default {
 				minute: '2-digit',
 				second: '2-digit',
 			});
+			// 同步完整日期时间：原 computed 无响应式依赖会被永久缓存（日期冻结），
+			// 改为由每秒执行的定时器驱动更新
+			this.currentDateTime = `${now.toLocaleDateString('zh-CN', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				weekday: 'long',
+			})} ${this.currentTime}`;
 		},
 		selectApp(appId) {
 			this.selectedApp = appId;
@@ -1886,7 +548,6 @@ export default {
 		refreshDesktop() {
 			this.hideContextMenu();
 			this.listApp();
-			//this.$message.success('桌面已刷�?);
 		},
 		async listApp() {
 			this.menuApps = [];
@@ -1924,33 +585,12 @@ export default {
 						this.deskApps.push(child);
 					}
 					this.addDeskIcon(child);
-					if (child.code == 'app-calendar') {
-						this.calendarApp = child;
-					}
-					if (child.code == 'app-profile') {
-						this.profileApp = child;
-					}
-					if (child.code == 'app-settings') {
-						//this.settingsApp = child;
-					}
-					if (child.code == 'app-image') {
-						this.imageApp = child;
-					}
-					if (child.code == 'app-audio') {
-						this.audioApp = child;
-					}
-					if (child.code == 'app-video') {
-						this.videoApp = child;
-					}
-					if (child.code == 'app-textpad') {
-						this.textApp = child;
+					const role = CODE_TO_ROLE[child.code];
+					if (role) {
+						this.appMap[role] = child;
 					}
 				});
 			}
-		},
-		getSubMenu(list, pid) {
-			var menu = list.filter((item) => item.pid == pid);
-			return menu || [];
 		},
 		openApp(app) {
 			const meta = app.meta || {};
@@ -2124,20 +764,20 @@ export default {
 		openSettings() {
 			this.showStartMenu = false;
 			this.hideContextMenu();
-			this.settingsApp.props = {
+			this.appMap.settings.props = {
 				config: this.getCurrentConfig(),
-				themes: this.themes,
+				themes: themes,
 				colorList: this.colorList,
 				presetImages: this.presetImages,
 			};
-			this.openApp(this.settingsApp);
+			this.openApp(this.appMap.settings);
 		},
 		openCalendar() {
-			this.openApp(this.calendarApp);
+			this.openApp(this.appMap.calendar);
 		},
 		openProfile() {
 			this.hideContextMenu();
-			this.openApp(this.profileApp);
+			this.openApp(this.appMap.profile);
 		},
 		// XP 开始菜单右栏快捷链接
 		openQuickLink(link) {
@@ -2257,7 +897,7 @@ export default {
 			this.iconBgColor = config.iconBgColor || 'transparent';
 			this.iconBgRadius = config.iconBgRadius || '0px';
 			this.iconBgSize = config.iconBgSize || '0px';
-			const themeDef = this.themes.find(t => t.name === config.currentTheme);
+			const themeDef = themes.find(t => t.name === config.currentTheme);
 			this.iconsPath = (themeDef && themeDef.iconsPath) ? themeDef.iconsPath : (config.iconsPath || '');
 			this.startLogo = (themeDef && themeDef.startLogo) ? themeDef.startLogo : (config.startLogo || '');
 			this.menuColor = config.menuColor;
@@ -2306,7 +946,7 @@ export default {
 			const style = await this.$SCM.read_cfg("desktop_style", 'system');
 			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 			
-			const theme = this.themes.find(t => t.name === themeName);
+			const theme = themes.find(t => t.name === themeName);
 			if (theme) {
 				this.applyTheme(theme);
 			}
@@ -2384,14 +1024,14 @@ export default {
 		loadTheme() {
 			const savedTheme = localStorage.getItem('desktop_theme');
 			if (savedTheme) {
-				const theme = this.themes.find(t => t.name === savedTheme);
+				const theme = themes.find(t => t.name === savedTheme);
 				if (theme) {
 					this.applyTheme(theme);
 					return;
 				}
 			}
-			if (this.themes.length > 0) {
-				this.applyTheme(this.themes[0]);
+			if (themes.length > 0) {
+				this.applyTheme(themes[0]);
 			}
 			const savedIconColor = localStorage.getItem('desktop_icon_color');
 			if (savedIconColor) {
@@ -2440,16 +1080,8 @@ export default {
 		openNasFileWithApp(kind, files, index) {
 			if (!files || files.length === 0) return;
 
-			let appConfig = null;
-			if (kind === 'text') {
-				appConfig = this.textApp;
-			} else if (kind === 'image') {
-				appConfig = this.imageApp;
-			} else if (kind === 'audio') {
-				appConfig = this.audioApp;
-			} else if (kind === 'video') {
-				appConfig = this.videoApp;
-			} else {
+			const appConfig = this.appMap[KIND_TO_ROLE[kind]];
+			if (!appConfig) {
 				this.$message.info(this.$t('desktop.cannotOpenFile'));
 				return;
 			}
@@ -2505,7 +1137,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .desktop {
 	--taskbar-height: 48px;
 	position: relative;
@@ -2951,7 +1583,7 @@ export default {
 }
 
 /* --- XP 开始菜单 --- */
-.xp-start-menu {
+.win-xp-start-menu {
 	left: 0;
 	bottom: var(--taskbar-height);
 	width: 400px;
@@ -2962,7 +1594,7 @@ export default {
 	box-shadow: 4px -2px 12px rgba(0, 0, 0, 0.35);
 }
 
-.xp-menu-header {
+.win-xp-menu-header {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -2971,11 +1603,11 @@ export default {
 	cursor: pointer;
 }
 
-.xp-menu-header:hover {
+.win-xp-menu-header:hover {
 	filter: brightness(1.08);
 }
 
-.xp-menu-avatar {
+.win-xp-menu-avatar {
 	width: 40px;
 	height: 40px;
 	background: #FFFFFF;
@@ -2988,7 +1620,7 @@ export default {
 	flex-shrink: 0;
 }
 
-.xp-menu-username {
+.win-xp-menu-username {
 	color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
@@ -2998,12 +1630,12 @@ export default {
 	text-overflow: ellipsis;
 }
 
-.xp-menu-body {
+.win-xp-menu-body {
 	display: flex;
 	min-height: 260px;
 }
 
-.xp-menu-left {
+.win-xp-menu-left {
 	flex: 1;
 	background: #FFFFFF;
 	padding: 4px;
@@ -3011,18 +1643,18 @@ export default {
 	overflow-y: auto;
 }
 
-.xp-menu-caption {
+.win-xp-menu-caption {
 	padding: 4px 8px;
 	font-size: 10px;
 	letter-spacing: 1px;
 	color: #808080;
 }
 
-.xp-menu-item {
+.win-xp-menu-item {
 	position: relative;
 }
 
-.xp-menu-app {
+.win-xp-menu-app {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -3032,16 +1664,16 @@ export default {
 	color: #1A1A1A;
 }
 
-.xp-menu-app:hover {
+.win-xp-menu-app:hover {
 	background-color: #316AC5;
 	color: #FFFFFF;
 }
 
-.xp-menu-app .arrow {
+.win-xp-menu-app .arrow {
 	margin-left: auto;
 }
 
-.xp-menu-right {
+.win-xp-menu-right {
 	width: 150px;
 	flex-shrink: 0;
 	background: #D9E8FB;
@@ -3049,7 +1681,7 @@ export default {
 	padding: 4px;
 }
 
-.xp-right-item {
+.win-xp-right-item {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -3060,12 +1692,12 @@ export default {
 	color: #0B326E;
 }
 
-.xp-right-item:hover {
+.win-xp-right-item:hover {
 	background-color: #316AC5;
 	color: #FFFFFF;
 }
 
-.xp-menu-footer {
+.win-xp-menu-footer {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
@@ -3074,7 +1706,7 @@ export default {
 	background: linear-gradient(180deg, #2463D8 0%, #1C50B0 100%);
 }
 
-.xp-footer-btn {
+.win-xp-footer-btn {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -3085,11 +1717,11 @@ export default {
 	font-size: 11px;
 }
 
-.xp-footer-btn:hover {
+.win-xp-footer-btn:hover {
 	background: rgba(255, 255, 255, 0.15);
 }
 
-.xp-footer-icon {
+.win-xp-footer-icon {
 	width: 20px;
 	height: 20px;
 	border-radius: 4px;
@@ -3099,28 +1731,28 @@ export default {
 	box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.xp-icon-logoff {
+.win-xp-icon-logoff {
 	background: linear-gradient(180deg, #F5A623 0%, #D97B00 100%);
 }
 
-.xp-icon-shutdown {
+.win-xp-icon-shutdown {
 	background: linear-gradient(180deg, #E85D4A 0%, #C1352E 100%);
 }
 
 /* ================= Windows 95/98/2000 经典主题复刻 ================= */
-.os-classic {
+.os-win-classic {
 	--taskbar-height: 28px;
 	font-family: Tahoma, 'Microsoft YaHei', 'Segoe UI', sans-serif;
 }
 
-.os-classic .taskbar {
+.os-win-classic .taskbar {
 	padding: 2px;
 	background: #C0C0C0 !important;
 	border-top: 1px solid #FFFFFF;
 	box-shadow: inset 0 1px 0 #DFDFDF;
 }
 
-.os-classic .taskbar-start {
+.os-win-classic .taskbar-start {
 	height: 22px;
 	margin: 1px 2px;
 	padding: 0 6px;
@@ -3134,26 +1766,26 @@ export default {
 	font-weight: bold;
 }
 
-.os-classic .taskbar-start:hover {
+.os-win-classic .taskbar-start:hover {
 	background: #C0C0C0;
 }
 
-.os-classic .taskbar-start:active {
+.os-win-classic .taskbar-start:active {
 	border-color: #000000 #FFFFFF #FFFFFF #000000;
 	box-shadow: inset 1px 1px 0 #808080;
 }
 
-.os-classic .taskbar-start .xp-start-flag {
+.os-win-classic .taskbar-start .win-xp-start-flag {
 	width: 16px;
 	height: 16px;
 }
 
-.os-classic .taskbar-apps {
+.os-win-classic .taskbar-apps {
 	gap: 2px;
 	margin-left: 2px;
 }
 
-.os-classic .taskbar-app {
+.os-win-classic .taskbar-app {
 	height: 22px;
 	min-width: 110px;
 	max-width: 150px;
@@ -3167,27 +1799,27 @@ export default {
 	font-size: 11px;
 }
 
-.os-classic .taskbar-app span {
+.os-win-classic .taskbar-app span {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.os-classic .taskbar-app:hover {
+.os-win-classic .taskbar-app:hover {
 	background: #C0C0C0;
 }
 
-.os-classic .taskbar-app.active {
+.os-win-classic .taskbar-app.active {
 	background: #E0E0E0;
 	border-color: #000000 #FFFFFF #FFFFFF #000000;
 	box-shadow: inset 1px 1px 0 #808080;
 }
 
-.os-classic .taskbar-app.minimized {
+.os-win-classic .taskbar-app.minimized {
 	opacity: 0.75;
 }
 
-.os-classic .taskbar-tray {
+.os-win-classic .taskbar-tray {
 	align-self: center;
 	height: 22px;
 	margin: 1px 2px 1px 0;
@@ -3197,28 +1829,28 @@ export default {
 	border-color: #808080 #FFFFFF #FFFFFF #808080;
 }
 
-.os-classic .taskbar-tray .time {
+.os-win-classic .taskbar-tray .time {
 	font-size: 11px;
 }
 
-.os-classic .desktop-icon:hover,
-.os-classic .desktop-icon.selected {
+.os-win-classic .desktop-icon:hover,
+.os-win-classic .desktop-icon.selected {
 	background-color: transparent;
 	border-color: transparent;
 	box-shadow: none;
 }
 
-.os-classic .desktop-icon.selected .icon-text {
+.os-win-classic .desktop-icon.selected .icon-text {
 	background-color: #000080;
 }
 
-.os-classic .icon-text {
+.os-win-classic .icon-text {
 	padding: 1px 2px;
 	font-size: 11px;
 }
 
-.os-classic .context-menu,
-.os-classic .submenu {
+.os-win-classic .context-menu,
+.os-win-classic .submenu {
 	background-color: #C0C0C0 !important;
 	color: #000000 !important;
 	border: 1px solid;
@@ -3229,19 +1861,19 @@ export default {
 	box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
 }
 
-.os-classic .context-menu-item,
-.os-classic .submenu-item {
+.os-win-classic .context-menu-item,
+.os-win-classic .submenu-item {
 	padding: 5px 16px;
 	font-size: 11px;
 }
 
-.os-classic .context-menu-item:hover,
-.os-classic .submenu-item:hover {
+.os-win-classic .context-menu-item:hover,
+.os-win-classic .submenu-item:hover {
 	background-color: #000080;
 	color: #FFFFFF;
 }
 
-.os-classic .context-menu-divider {
+.os-win-classic .context-menu-divider {
 	height: 0;
 	background: none;
 	border-top: 1px solid #808080;
@@ -3249,8 +1881,8 @@ export default {
 	margin: 2px;
 }
 
-/* 经典开始菜�?*/
-.classic-start-menu {
+/* 经典开始菜单侧栏标题*/
+.win-classic-start-menu {
 	left: 2px;
 	bottom: var(--taskbar-height);
 	width: 250px;
@@ -3263,7 +1895,7 @@ export default {
 	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.classic-menu-banner {
+.win-classic-menu-banner {
 	width: 26px;
 	flex-shrink: 0;
 	display: flex;
@@ -3273,7 +1905,7 @@ export default {
 	background: linear-gradient(180deg, #1084D0 0%, #000080 100%);
 }
 
-.classic-menu-banner span {
+.win-classic-menu-banner span {
 	writing-mode: vertical-rl;
 	transform: rotate(180deg);
 	color: #FFFFFF;
@@ -3283,17 +1915,17 @@ export default {
 	white-space: nowrap;
 }
 
-.classic-menu-body {
+.win-classic-menu-body {
 	flex: 1;
 	min-width: 0;
 	padding: 2px;
 }
 
-.classic-menu-item {
+.win-classic-menu-item {
 	position: relative;
 }
 
-.classic-menu-app {
+.win-classic-menu-app {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -3303,16 +1935,16 @@ export default {
 	color: #000000;
 }
 
-.classic-menu-app:hover {
+.win-classic-menu-app:hover {
 	background-color: #000080;
 	color: #FFFFFF;
 }
 
-.classic-menu-app .arrow {
+.win-classic-menu-app .arrow {
 	margin-left: auto;
 }
 
-.classic-menu-divider {
+.win-classic-menu-divider {
 	height: 0;
 	border-top: 1px solid #808080;
 	border-bottom: 1px solid #FFFFFF;
@@ -3320,18 +1952,18 @@ export default {
 }
 
 /* ================= Windows 7 / Vista Aero 主题复刻 ================= */
-.os-aero {
+.os-win-aero {
 	--taskbar-height: 40px;
 }
 
-.os-aero .taskbar {
+.os-win-aero .taskbar {
 	padding: 0 8px;
 	background: linear-gradient(180deg, rgba(80, 80, 80, 0.5) 0%, rgba(30, 30, 30, 0.6) 50%, rgba(0, 0, 0, 0.7) 100%) !important;
 	border-top: 1px solid rgba(255, 255, 255, 0.25);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.os-aero .taskbar-start {
+.os-win-aero .taskbar-start {
 	width: 44px;
 	height: 44px;
 	margin: -8px 6px 0 2px;
@@ -3343,25 +1975,25 @@ export default {
 	box-shadow: 0 0 10px rgba(90, 160, 230, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.5);
 }
 
-.os-aero .taskbar-start span {
+.os-win-aero .taskbar-start span {
 	display: none;
 }
 
-.os-aero .taskbar-start:hover {
+.os-win-aero .taskbar-start:hover {
 	background: radial-gradient(circle at 50% 32%, #ACD0F2 0%, #64A0DA 45%, #32649E 100%);
 	box-shadow: 0 0 14px rgba(120, 190, 255, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.6);
 }
 
-.os-aero .taskbar-start:active {
+.os-win-aero .taskbar-start:active {
 	background: radial-gradient(circle at 50% 32%, #4B86C8 0%, #24568F 100%);
 }
 
-.os-aero .taskbar-apps {
+.os-win-aero .taskbar-apps {
 	gap: 4px;
 	margin-left: 4px;
 }
 
-.os-aero .taskbar-app {
+.os-win-aero .taskbar-app {
 	height: 30px;
 	min-width: 56px;
 	max-width: 160px;
@@ -3373,33 +2005,33 @@ export default {
 	font-size: 12px;
 }
 
-.os-aero .taskbar-app span {
+.os-win-aero .taskbar-app span {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.os-aero .taskbar-app:hover {
+.os-win-aero .taskbar-app:hover {
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.14) 100%);
 	box-shadow: 0 0 8px rgba(130, 195, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.os-aero .taskbar-app.active {
+.os-win-aero .taskbar-app.active {
 	background: linear-gradient(180deg, rgba(130, 195, 255, 0.4) 0%, rgba(70, 135, 205, 0.3) 100%);
 	border-color: rgba(0, 0, 0, 0.55);
 	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.os-aero .taskbar-app.minimized {
+.os-win-aero .taskbar-app.minimized {
 	opacity: 0.7;
 }
 
-.os-aero .taskbar-tray .time {
+.os-win-aero .taskbar-tray .time {
 	font-size: 12px;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.os-aero .start-menu {
+.os-win-aero .start-menu {
 	background: linear-gradient(180deg, rgba(246, 249, 253, 0.96) 0%, rgba(222, 232, 244, 0.96) 100%) !important;
 	color: #1A1A1A !important;
 	border: 1px solid rgba(0, 0, 0, 0.4);
@@ -3407,36 +2039,36 @@ export default {
 	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 
-.os-aero .start-menu-header {
+.os-win-aero .start-menu-header {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.os-aero .start-menu-header:hover,
-.os-aero .start-menu-app:hover,
-.os-aero .start-menu-action:hover {
+.os-win-aero .start-menu-header:hover,
+.os-win-aero .start-menu-app:hover,
+.os-win-aero .start-menu-action:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 	color: #1A1A1A;
 }
 
-.os-aero .start-menu-footer {
+.os-win-aero .start-menu-footer {
 	border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.os-aero .submenu,
-.os-aero .context-menu {
+.os-win-aero .submenu,
+.os-win-aero .context-menu {
 	background: rgba(246, 249, 253, 0.97) !important;
 	color: #1A1A1A !important;
 	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 4px;
 }
 
-.os-aero .submenu-item:hover,
-.os-aero .context-menu-item:hover {
+.os-win-aero .submenu-item:hover,
+.os-win-aero .context-menu-item:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 	color: #1A1A1A;
 }
 
-.os-aero .context-menu-divider {
+.os-win-aero .context-menu-divider {
 	background-color: rgba(0, 0, 0, 0.12);
 }
 
@@ -3495,7 +2127,7 @@ export default {
 	border-radius: 0 !important;
 }
 
-/* ================= Windows 11 居中任务�?================= */
+/* ================= Windows 11 居中任务栏 ================= */
 .theme-win11 {
 	--taskbar-height: 48px;
 }
@@ -3865,37 +2497,37 @@ export default {
 	max-width: 100%;
 }
 
-/* --- Aero 开始菜单（Vista/7 双栏�?--- */
-.aero-start-menu {
+/* --- Aero 开始菜单（Vista/7 双栏菜单）--- */
+.win-aero-start-menu {
 	left: 8px;
 	width: 430px;
 	overflow: visible;
 }
 
-.aero-menu-body {
+.win-aero-menu-body {
 	display: flex;
 	min-height: 320px;
 }
 
-.aero-menu-left {
+.win-aero-menu-left {
 	flex: 1;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
 }
 
-.aero-menu-apps {
+.win-aero-menu-apps {
 	flex: 1;
 	padding: 6px;
 	max-height: 380px;
 	overflow-y: auto;
 }
 
-.aero-app-item {
+.win-aero-app-item {
 	position: relative;
 }
 
-.aero-app-link {
+.win-aero-app-link {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -3906,20 +2538,20 @@ export default {
 	color: #1A1A1A;
 }
 
-.aero-app-link:hover {
+.win-aero-app-link:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 }
 
-.aero-app-link .arrow {
+.win-aero-app-link .arrow {
 	margin-left: auto;
 }
 
-.aero-menu-search {
+.win-aero-menu-search {
 	padding: 8px;
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.aero-menu-search input {
+.win-aero-menu-search input {
 	width: 100%;
 	padding: 4px 8px;
 	border: 1px solid #9FB6CC;
@@ -3928,7 +2560,7 @@ export default {
 	font-size: 12px;
 }
 
-.aero-menu-right {
+.win-aero-menu-right {
 	position: relative;
 	width: 170px;
 	flex-shrink: 0;
@@ -3938,7 +2570,7 @@ export default {
 	border-radius: 0 6px 6px 0;
 }
 
-.aero-menu-avatar {
+.win-aero-menu-avatar {
 	position: absolute;
 	top: -22px;
 	right: 12px;
@@ -3954,7 +2586,7 @@ export default {
 	cursor: pointer;
 }
 
-.aero-right-item {
+.win-aero-right-item {
 	padding: 6px 10px;
 	border-radius: 3px;
 	cursor: pointer;
@@ -3963,11 +2595,11 @@ export default {
 	color: #1A1A1A;
 }
 
-.aero-right-item:hover {
+.win-aero-right-item:hover {
 	background: linear-gradient(180deg, #DCEBFB 0%, #BBD9F5 100%);
 }
 
-.aero-right-divider {
+.win-aero-right-divider {
 	height: 1px;
 	background: rgba(0, 0, 0, 0.12);
 	margin: 6px 8px;

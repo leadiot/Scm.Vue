@@ -192,6 +192,12 @@ export default {
 		reset: "重置",
 		saveSuccess: "设置已保存",
 		resetSuccess: "已恢复默认设置",
+		// 窗口按钮
+		winClose: "关闭",
+		winMinimize: "最小化",
+		winMaximize: "最大化",
+		winZoom: "缩放",
+		winCollapse: "收起",
 		// XP 开始菜单
 		allPrograms: "所有程序",
 		pinned: "已固定",
