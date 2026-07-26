@@ -26,7 +26,8 @@
 				</div>
 				<div class="win-aero-right-divider"></div>
 				<div class="win-aero-right-item" @click="$emit('logout')"><span>{{ $t('desktop.logoff') }}</span></div>
-				<div class="win-aero-right-item" @click="$emit('shutdown')"><span>{{ $t('desktop.shutdown') }}</span></div>
+				<div class="win-aero-right-item" @click="$emit('shutdown')"><span>{{ $t('desktop.shutdown') }}</span>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -26,8 +26,8 @@
 			</div>
 		</div>
 		<div class="win10-menu-tiles">
-			<div v-for="app in tiles" :key="app.id" class="win10-tile"
-				:style="{ backgroundColor: tileColor(app) }" @click="$emit('open-app', app)">
+			<div v-for="app in tiles" :key="app.id" class="win10-tile" :style="{ backgroundColor: tileColor(app) }"
+				@click="$emit('open-app', app)">
 				<sc-icon :name="app.meta.icon" :size="26" />
 				<span>{{ app.name }}</span>
 			</div>

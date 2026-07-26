@@ -6,8 +6,7 @@
 		<div class="launchpad-grid">
 			<div v-for="app in apps" :key="app.id" class="launchpad-item" @click="$emit('open-app', app)">
 				<div class="launchpad-icon">
-					<img v-if="themeIcon(app.meta.icon)" :src="themeIcon(app.meta.icon)" alt=""
-						draggable="false" />
+					<img v-if="themeIcon(app.meta.icon)" :src="themeIcon(app.meta.icon)" alt="" draggable="false" />
 					<sc-icon v-else :name="app.meta.icon" :size="56" />
 				</div>
 				<span>{{ app.name }}</span>

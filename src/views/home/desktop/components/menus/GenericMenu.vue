@@ -7,9 +7,8 @@
 			<span>{{ userName }}</span>
 		</div>
 		<div class="start-menu-apps">
-			<div v-for="app in apps" :key="app.id" class="start-menu-item"
-				:class="{ 'has-children': app.children }" @mouseenter="$emit('show-submenu', $event, app)"
-				@mouseleave="$emit('hide-submenu')">
+			<div v-for="app in apps" :key="app.id" class="start-menu-item" :class="{ 'has-children': app.children }"
+				@mouseenter="$emit('show-submenu', $event, app)" @mouseleave="$emit('hide-submenu')">
 				<div class="start-menu-app" @click="app.children ? null : $emit('open-app', app)">
 					<sc-icon :name="app.meta.icon" />
 					<span>{{ app.name }}</span>
