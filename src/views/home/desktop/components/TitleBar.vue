@@ -11,14 +11,14 @@
 							class="close-x" />
 					</svg>
 				</div>
-				<div class="traffic-btn min-btn" @click.stop="$emit('minimize')">
+				<div v-if="window.minimizable !== false && !isMobile" class="traffic-btn min-btn" @click.stop="$emit('minimize')">
 					<svg width="12" height="12" viewBox="0 0 12 12">
 						<circle cx="6" cy="6" r="6" fill="#ffbd2e" />
 						<line x1="3" y1="6" x2="9" y2="6" stroke="#995900" stroke-width="1" opacity="0"
 							class="min-line" />
 					</svg>
 				</div>
-				<div class="traffic-btn max-btn" @click.stop="$emit('maximize')">
+				<div v-if="window.resizable !== false && !isMobile" class="traffic-btn max-btn" @click.stop="$emit('maximize')">
 					<svg width="12" height="12" viewBox="0 0 12 12">
 						<circle cx="6" cy="6" r="6" fill="#28c840" />
 						<path d="M4,3 L4,9 M4,3 L3,3 L3,9 L9,9 L9,8 M4,3 L9,3 L9,9" stroke="#006600" stroke-width="1"
@@ -43,10 +43,10 @@
 			</button>
 			<span class="mac9-title">{{ window.title }}</span>
 			<div class="mac9-buttons">
-				<button class="mac9-btn" :title="$t('desktop.winZoom')" @click.stop="$emit('maximize')">
+				<button v-if="window.resizable !== false && !isMobile" class="mac9-btn" :title="$t('desktop.winZoom')" @click.stop="$emit('maximize')">
 					<span class="mac9-glyph">+</span>
 				</button>
-				<button class="mac9-btn" :title="$t('desktop.winCollapse')" @click.stop="$emit('minimize')">
+				<button v-if="window.minimizable !== false && !isMobile" class="mac9-btn" :title="$t('desktop.winCollapse')" @click.stop="$emit('minimize')">
 					<span class="mac9-glyph">–</span>
 				</button>
 			</div>
@@ -62,12 +62,12 @@
 			</div>
 			<span class="win-xp-title-text">{{ window.title }}</span>
 			<div class="win-xp-buttons">
-				<button class="win-xp-btn min-btn" :title="$t('desktop.winMinimize')" @click.stop="$emit('minimize')">
+				<button v-if="window.minimizable !== false && !isMobile" class="win-xp-btn min-btn" :title="$t('desktop.winMinimize')" @click.stop="$emit('minimize')">
 					<svg width="8" height="8" viewBox="0 0 8 8">
 						<rect x="0.5" y="3.5" width="7" height="1.5" rx="0.5" fill="currentColor" />
 					</svg>
 				</button>
-				<button class="win-xp-btn max-btn" :title="$t('desktop.winMaximize')" @click.stop="$emit('maximize')">
+				<button v-if="window.resizable !== false && !isMobile" class="win-xp-btn max-btn" :title="$t('desktop.winMaximize')" @click.stop="$emit('maximize')">
 					<svg width="9" height="9" viewBox="0 0 9 9" v-if="!window.maximized">
 						<rect x="0.5" y="0.5" width="8" height="8" rx="0.5" fill="none" stroke="currentColor"
 							stroke-width="1.2" />
@@ -96,7 +96,7 @@
 				<span>{{ window.title }}</span>
 			</div>
 			<div class="window-controls">
-				<button class="control-btn minimize" @click.stop="$emit('minimize')">
+				<button v-if="window.minimizable !== false && !isMobile" class="control-btn minimize" @click.stop="$emit('minimize')">
 					<svg width="12" height="12" viewBox="0 0 12 12">
 						<rect x="2" y="5.5" width="8" height="1" fill="none" stroke="currentColor" stroke-width="1" />
 					</svg>

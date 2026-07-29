@@ -616,6 +616,7 @@ export default {
 				maximized: false,
 				focused: true,
 				resizable: meta.resizable,
+				minimizable: meta.minimizable !== false,
 				centered: meta.center !== false,
 				zIndex: ++this.windowZCounter,
 				x: 100 + (windowId % 5) * 30,
