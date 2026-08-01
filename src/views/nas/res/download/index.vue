@@ -52,7 +52,7 @@ export default {
 	data() {
 		return {
 			tableName: 'nas_res_file',
-			apiObj: this.$API.nasresdownload.page,
+			apiObj: this.$API.nasappdownload.page,
 			param: {
 				dir_id: '0',
 				row_status: this.$SCM.DEF_STATUS,
@@ -86,13 +86,13 @@ export default {
 			this.$SCM.status_item(this, this.$API.nasressecret.status, row, row.row_status);
 		},
 		status_list(status) {
-			this.$SCM.status_list(this, this.$API.nasresdownload.status, this.selection, status);
+			this.$SCM.status_list(this, this.$API.nasappdownload.status, this.selection, status);
 		},
 		async delete_item(row) {
-			this.$SCM.delete_item(this, this.$API.nasresdownload.delete, row);
+			this.$SCM.delete_item(this, this.$API.nasappdownload.delete, row);
 		},
 		delete_list() {
-			this.$SCM.delete_list(this, this.$API.nasresdownload.delete, this.selection);
+			this.$SCM.delete_list(this, this.$API.nasappdownload.delete, this.selection);
 		},
 		show_search() {
 			this.$refs.search.open(this.param.key);
