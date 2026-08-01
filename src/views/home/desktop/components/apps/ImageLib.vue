@@ -82,8 +82,9 @@
 							<div class="grid-color-badge" :style="{ backgroundColor: item.color }" />
 						</div>
 						<div class="grid-info">
-							<span class="grid-name">{{ item.name }}</span>
+							<span class="grid-name" :title="item.name">{{ item.name }}</span>
 							<span class="grid-meta">{{ formatSize(item.size) }} · {{ item.width }}×{{ item.height }}</span>
+							<span class="grid-date">{{ item.shootDate }} · {{ item.category }}</span>
 						</div>
 					</div>
 				</div>
@@ -189,8 +190,12 @@
 
 				<div class="filter-section">
 					<div class="filter-title">日期范围</div>
+					<el-select v-model="dateRangePreset" size="small" style="width: 100%; margin-bottom: 8px;" @change="handleDatePresetChange">
+						<el-option v-for="opt in datePresetOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+					</el-select>
 					<el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期"
-						end-placeholder="结束日期" size="small" style="width: 100%;" value-format="YYYY-MM-DD" />
+						end-placeholder="结束日期" size="small" style="width: 100%;" value-format="YYYY-MM-DD"
+						:disabled="dateRangePreset !== 'custom'" />
 				</div>
 
 				<div class="filter-section">
@@ -294,6 +299,16 @@ export default {
 				{ value: 'gif', label: 'GIF' },
 				{ value: 'webp', label: 'WebP' },
 			],
+			dateRangePreset: '30days',
+			datePresetOptions: [
+				{ value: '', label: '不限' },
+				{ value: 'today', label: '今天' },
+				{ value: '3days', label: '近3天' },
+				{ value: '7days', label: '近7天' },
+				{ value: '30days', label: '近30天' },
+				{ value: 'year', label: '今年' },
+				{ value: 'custom', label: '自定义' },
+			],
 			dateRange: null,
 			currentPage: 1,
 			pageSize: 40,
@@ -305,6 +320,44 @@ export default {
 		};
 	},
 	computed: {
+		computedDateRange() {
+			if (this.dateRangePreset === 'custom') {
+				return (this.dateRange && this.dateRange.length === 2) ? this.dateRange : null;
+			}
+			if (!this.dateRangePreset) return null;
+			const now = new Date();
+			const end = this.formatDate(now);
+			let start;
+			switch (this.dateRangePreset) {
+				case 'today':
+					start = end;
+					break;
+				case '3days': {
+					const d = new Date(now);
+					d.setDate(d.getDate() - 2);
+					start = this.formatDate(d);
+					break;
+				}
+				case '7days': {
+					const d = new Date(now);
+					d.setDate(d.getDate() - 6);
+					start = this.formatDate(d);
+					break;
+				}
+				case '30days': {
+					const d = new Date(now);
+					d.setDate(d.getDate() - 29);
+					start = this.formatDate(d);
+					break;
+				}
+				case 'year':
+					start = `${now.getFullYear()}-01-01`;
+					break;
+				default:
+					return null;
+			}
+			return [start, end];
+		},
 		filteredImages() {
 			let list = this.images.slice();
 
@@ -350,8 +403,9 @@ export default {
 			}
 
 			// 日期范围过滤
-			if (this.dateRange && this.dateRange.length === 2) {
-				const [start, end] = this.dateRange;
+			const computedRange = this.computedDateRange;
+			if (computedRange) {
+				const [start, end] = computedRange;
 				list = list.filter(item => item.createdAt >= start && item.createdAt <= end);
 			}
 
@@ -499,10 +553,16 @@ export default {
 				this.selectedColors.push(color);
 			}
 		},
+		handleDatePresetChange(val) {
+			if (val !== 'custom') {
+				this.dateRange = null;
+			}
+		},
 		resetFilters() {
 			this.selectedColors = [];
 			this.selectedSizes = [];
 			this.selectedTypes = [];
+			this.dateRangePreset = '';
 			this.dateRange = null;
 			this.param.key = '';
 			this.selectedCategory = 'all';
@@ -925,6 +985,12 @@ export default {
 .grid-meta {
 	font-size: 11px;
 	color: var(--color-text-tertiary);
+}
+
+.grid-date {
+	font-size: 11px;
+	color: var(--color-text-tertiary);
+	opacity: 0.8;
 }
 
 /* 表格视图 */
