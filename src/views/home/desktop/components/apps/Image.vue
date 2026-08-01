@@ -90,7 +90,7 @@
 				</el-button>
 			</div>
 
-			<div v-if="pictures.length <= 100" class="preview-thumbnails" :class="{ hidden: controlsHidden }">
+			<div v-if="pictures.length <= 20" class="preview-thumbnails" :class="{ hidden: controlsHidden }">
 				<div v-for="(picture, index) in pictures" :key="picture.id" class="thumbnail-item"
 					:class="{ active: index === currentIndex }" @click="goToPicture(index)">
 					<img :src="picture.url" :alt="picture.name" />

@@ -4,7 +4,7 @@
 		<div class="app-toolbar image-toolbar">
 			<div class="toolbar-left">
 				<span class="app-header-title">图库</span>
-				<span class="image-count">{{ filteredImages.length }} 张照片</span>
+				<span class="image-count">{{ total }} 张照片</span>
 			</div>
 			<div class="toolbar-center">
 				<el-input v-model="param.key" placeholder="搜索照片、文件夹或标签…" size="small" clearable class="gallery-search">
@@ -20,7 +20,7 @@
 						<sc-icon :name="v.icon" :size="18" />
 					</button>
 				</div>
-				<el-select v-model="sortField" size="small" class="sort-select">
+				<el-select v-model="param.prop" size="small" class="sort-select">
 					<el-option v-for="s in sortOptions" :key="s.value" :label="s.label" :value="s.value" />
 				</el-select>
 				<el-button type="primary" size="small" @click="openUploadDialog">
@@ -93,7 +93,7 @@
 				<!-- 表格视图 -->
 				<div v-else-if="viewMode === 'table'" class="view-table">
 					<el-table :data="images" style="width: 100%;" height="100%" @row-click="handleRowClick"
-						@selection-change="handleSelectionChange">
+						@selection-change="handleSelectionChange" @sort-change="sortChange">
 						<el-table-column type="selection" width="45" />
 						<el-table-column label="缩略图" width="80">
 							<template #default="{ row }">
@@ -113,8 +113,8 @@
 								{{ formatSize(row.size) }}
 							</template>
 						</el-table-column>
-						<el-table-column prop="shootDate" label="拍摄日期" width="140" sortable />
-						<el-table-column prop="createdAt" label="创建日期" width="140" sortable />
+						<el-table-column prop="shootDate" label="拍摄日期" width="140" sortable="custom" />
+						<el-table-column prop="createdAt" label="创建日期" width="140" sortable="custom" />
 						<el-table-column label="主色调" width="80">
 							<template #default="{ row }">
 								<div class="table-color-dot" :style="{ backgroundColor: row.color }" />
@@ -135,15 +135,17 @@
 
 				<!-- 瀑布流视图 -->
 				<div v-else-if="viewMode === 'waterfall'" class="view-waterfall">
-					<div v-for="item in images" :key="item.id" class="waterfall-item"
-						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
-						@dblclick="previewImage(item)">
-						<div class="waterfall-thumb" :style="{ paddingBottom: (item.height / item.width * 100) + '%' }">
-							<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
-						</div>
-						<div class="waterfall-info">
-							<span class="waterfall-name">{{ item.name }}</span>
-							<span class="waterfall-meta">{{ formatSize(item.size) }}</span>
+					<div class="waterfall-columns">
+						<div v-for="item in images" :key="item.id" class="waterfall-item"
+							:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+							@dblclick="previewImage(item)">
+							<div class="waterfall-thumb" :style="{ paddingBottom: (item.height / item.width * 100) + '%' }">
+								<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
+							</div>
+							<div class="waterfall-info">
+								<span class="waterfall-name">{{ item.name }}</span>
+								<span class="waterfall-meta">{{ formatSize(item.size) }}</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -181,7 +183,7 @@
 				<div class="filter-section">
 					<div class="filter-title">尺寸</div>
 					<div class="size-filter">
-						<el-checkbox-group v-model="selectedSizes">
+						<el-checkbox-group v-model="param.sizes">
 							<el-checkbox v-for="s in sizeFilters" :key="s.value" :value="s.value">{{ s.label
 							}}</el-checkbox>
 						</el-checkbox-group>
@@ -202,7 +204,7 @@
 
 				<div class="filter-section">
 					<div class="filter-title">文件类型</div>
-					<el-checkbox-group v-model="selectedTypes">
+					<el-checkbox-group v-model="param.types">
 						<el-checkbox v-for="t in typeFilters" :key="t.value" :value="t.value">{{ t.label
 						}}</el-checkbox>
 					</el-checkbox-group>
@@ -217,7 +219,7 @@
 
 		<!-- 底部状态栏 -->
 		<div class="app-statusbar">
-			<span>{{ filteredImages.length }} 张照片</span>
+			<span>{{ total }} 张照片</span>
 			<span v-if="selectedItems.length > 0">· 已选择 {{ selectedItems.length }} 张</span>
 		</div>
 
@@ -264,14 +266,20 @@ export default {
 				key: '',
 				cat_id: 'all',
 				colors: [],
+				sizes: [],
+				types: [],
+				start_date: '',
+				end_date: '',
+				prop: 'createdAt',
+				order: 'descending',
 			},
+			loadTimer: null,
 			viewMode: 'grid',
 			viewModes: [
 				{ value: 'grid', label: '网格', icon: 'ms-grid_view' },
 				{ value: 'table', label: '表格', icon: 'ms-table_rows' },
 				{ value: 'waterfall', label: '瀑布流', icon: 'ms-view_week' },
 			],
-			sortField: 'createdAt',
 			sortOptions: [
 				{ value: 'createdAt', label: '按创建日期' },
 				{ value: 'shootDate', label: '按拍摄日期' },
@@ -292,13 +300,11 @@ export default {
 				{ value: '#ec4899', label: '粉' },
 				{ value: '#64748b', label: '灰' },
 			],
-			selectedSizes: [],
 			sizeFilters: [
 				{ value: 'small', label: '小 (< 1MB)' },
 				{ value: 'medium', label: '中 (1MB - 5MB)' },
 				{ value: 'large', label: '大 (> 5MB)' },
 			],
-			selectedTypes: [],
 			typeFilters: [
 				{ value: 'jpg', label: 'JPG' },
 				{ value: 'png', label: 'PNG' },
@@ -362,55 +368,6 @@ export default {
 			}
 			return [start, end];
 		},
-		filteredImages() {
-			let list = this.images.slice();
-
-			// 搜索过滤
-			const keyword = this.param.key.trim().toLowerCase();
-			if (keyword) {
-				list = list.filter(item => item.name.toLowerCase().includes(keyword));
-			}
-
-			// 尺寸过滤
-			if (this.selectedSizes.length > 0) {
-				list = list.filter(item => {
-					const mb = item.size / (1024 * 1024);
-					return this.selectedSizes.some(size => {
-						if (size === 'small') return mb < 1;
-						if (size === 'medium') return mb >= 1 && mb <= 5;
-						if (size === 'large') return mb > 5;
-						return false;
-					});
-				});
-			}
-
-			// 日期范围过滤
-			const computedRange = this.computedDateRange;
-			if (computedRange) {
-				const [start, end] = computedRange;
-				list = list.filter(item => item.createdAt >= start && item.createdAt <= end);
-			}
-
-			// 文件类型过滤
-			if (this.selectedTypes.length > 0) {
-				list = list.filter(item => this.selectedTypes.includes(item.type));
-			}
-
-			// 排序
-			list.sort((a, b) => {
-				let va = a[this.sortField];
-				let vb = b[this.sortField];
-				if (this.sortField === 'size') {
-					return vb - va;
-				}
-				if (typeof va === 'string') {
-					return vb.localeCompare(va);
-				}
-				return vb - va;
-			});
-
-			return list;
-		},
 	},
 	watch: {
 		'param.cat_id'() {
@@ -425,12 +382,44 @@ export default {
 			},
 			deep: true,
 		},
+		'param.sizes': {
+			handler() {
+				this.param.page = 1;
+				this.loadData();
+			},
+			deep: true,
+		},
+		'param.types': {
+			handler() {
+				this.param.page = 1;
+				this.loadData();
+			},
+			deep: true,
+		},
+		'param.key'() {
+			this.param.page = 1;
+			this.loadData();
+		},
+		'param.prop'() {
+			this.param.page = 1;
+			this.loadData();
+		},
+		computedDateRange() {
+			this.applyDateRange();
+			this.param.page = 1;
+			this.loadData();
+		},
 	},
 	mounted() {
+		this.applyDateRange();
 		this.loadData();
 	},
 	methods: {
-		async loadData() {
+		loadData() {
+			clearTimeout(this.loadTimer);
+			this.loadTimer = setTimeout(this.fetchImages, 150);
+		},
+		async fetchImages() {
 			var res = await this.$API.nasdocimage.page.get(this.param);
 			if (res.code === 200) {
 				if (res.data.items) {
@@ -443,12 +432,28 @@ export default {
 				this.buildCategories();
 			}
 		},
+		applyDateRange() {
+			const range = this.computedDateRange;
+			this.param.start_date = range ? range[0] : '';
+			this.param.end_date = range ? range[1] : '';
+		},
 		paginationChange(page) {
 			this.param.page = page;
 			this.loadData();
 		},
 		paginationSizeChange(size) {
 			this.param.limit = size;
+			this.param.page = 1;
+			this.loadData();
+		},
+		sortChange({ prop, order }) {
+			if (prop && order) {
+				this.param.prop = prop;
+				this.param.order = order;
+			} else {
+				this.param.prop = 'createdAt';
+				this.param.order = 'descending';
+			}
 			this.param.page = 1;
 			this.loadData();
 		},
@@ -552,12 +557,14 @@ export default {
 		},
 		resetFilters() {
 			this.param.colors = [];
-			this.selectedSizes = [];
-			this.selectedTypes = [];
-			this.dateRangePreset = '';
-			this.dateRange = null;
+			this.param.sizes = [];
+			this.param.types = [];
 			this.param.key = '';
 			this.param.cat_id = 'all';
+			this.param.prop = 'createdAt';
+			this.param.order = 'descending';
+			this.dateRangePreset = '30days';
+			this.dateRange = null;
 		},
 		handleItemClick(event, item) {
 			if (event.ctrlKey || event.metaKey) {
@@ -1034,6 +1041,9 @@ export default {
 	flex: 1;
 	overflow-y: auto;
 	padding: 16px;
+}
+
+.waterfall-columns {
 	column-count: 4;
 	column-gap: 16px;
 }
@@ -1138,7 +1148,7 @@ export default {
 
 /* 响应式 */
 @media (max-width: 1200px) {
-	.view-waterfall {
+	.waterfall-columns {
 		column-count: 3;
 	}
 }
@@ -1152,7 +1162,7 @@ export default {
 		width: 180px;
 	}
 
-	.view-waterfall {
+	.waterfall-columns {
 		column-count: 2;
 	}
 }
