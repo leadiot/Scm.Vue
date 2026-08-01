@@ -7,8 +7,7 @@
 				<span class="image-count">{{ filteredImages.length }} 张照片</span>
 			</div>
 			<div class="toolbar-center">
-				<el-input v-model="param.key" placeholder="搜索照片、文件夹或标签…" size="small" clearable
-					class="gallery-search">
+				<el-input v-model="param.key" placeholder="搜索照片、文件夹或标签…" size="small" clearable class="gallery-search">
 					<template #prefix>
 						<sc-icon name="ms-search" :size="16" />
 					</template>
@@ -41,15 +40,15 @@
 					</div>
 					<div class="category-list">
 						<div v-for="cat in categoryTree" :key="cat.id" class="category-group">
-							<div class="category-item" :class="{ active: selectedCategory === cat.id }"
+							<div class="category-item" :class="{ active: param.cat_id === cat.id }"
 								@click="selectCategory(cat.id)">
 								<sc-icon :name="cat.icon" :size="16" />
 								<span class="category-label">{{ cat.name }}</span>
 								<span v-if="cat.count" class="category-count">{{ cat.count }}</span>
 							</div>
 							<div v-if="cat.children" class="category-children">
-								<div v-for="child in cat.children" :key="child.id"
-									class="category-child" :class="{ active: selectedCategory === child.id }"
+								<div v-for="child in cat.children" :key="child.id" class="category-child"
+									:class="{ active: param.cat_id === child.id }"
 									@click.stop="selectCategory(child.id)">
 									<span class="category-label">{{ child.name }}</span>
 									<span v-if="child.count" class="category-count">{{ child.count }}</span>
@@ -64,11 +63,11 @@
 			<div class="main-content gallery-main" @click.self="clearSelection">
 				<!-- 网格视图 -->
 				<div v-if="viewMode === 'grid'" class="view-grid">
-					<div v-for="item in pagedImages" :key="item.id" class="grid-item"
-						:class="{ selected: selectedItems.includes(item.id) }"
-						@click="handleItemClick($event, item)" @dblclick="previewImage(item)">
+					<div v-for="item in images" :key="item.id" class="grid-item"
+						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+						@dblclick="previewImage(item)">
 						<div class="grid-thumb">
-							<img :src="item.url" :alt="item.name" loading="lazy" />
+							<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
 							<div class="grid-overlay">
 								<div class="grid-actions">
 									<el-button text size="small" @click.stop="previewImage(item)">
@@ -83,45 +82,45 @@
 						</div>
 						<div class="grid-info">
 							<span class="grid-name" :title="item.name">{{ item.name }}</span>
-							<span class="grid-meta">{{ formatSize(item.size) }} · {{ item.width }}×{{ item.height }}</span>
-							<span class="grid-date">{{ item.shootDate }} · {{ item.category }}</span>
+							<div class="grid-subrow">
+								<span class="grid-meta">{{ formatSize(item.size) }}</span>
+								<span class="grid-date">{{ getShootDate(item.shoot_time) }}</span>
+							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- 表格视图 -->
 				<div v-else-if="viewMode === 'table'" class="view-table">
-					<el-table :data="pagedImages" style="width: 100%;" height="100%" @row-click="handleRowClick"
+					<el-table :data="images" style="width: 100%;" height="100%" @row-click="handleRowClick"
 						@selection-change="handleSelectionChange">
 						<el-table-column type="selection" width="45" />
 						<el-table-column label="缩略图" width="80">
 							<template #default="{ row }">
 								<div class="table-thumb">
-									<img :src="row.url" :alt="row.name" />
+									<img :src="getImageUrl(row)" :alt="row.name" />
 								</div>
 							</template>
 						</el-table-column>
 						<el-table-column prop="name" label="文件名" min-width="160" show-overflow-tooltip />
-						<el-table-column prop="folder" label="目录" width="120" show-overflow-tooltip />
-						<el-table-column prop="category" label="分类" width="100" />
-						<el-table-column label="尺寸" width="120">
+						<el-table-column label="尺寸" width="120" align="center">
 							<template #default="{ row }">
 								{{ row.width }}×{{ row.height }}
 							</template>
 						</el-table-column>
-						<el-table-column label="大小" width="100">
+						<el-table-column label="大小" width="100" align="right">
 							<template #default="{ row }">
 								{{ formatSize(row.size) }}
 							</template>
 						</el-table-column>
-						<el-table-column prop="shootDate" label="拍摄日期" width="120" sortable />
-						<el-table-column prop="createdAt" label="创建日期" width="120" sortable />
+						<el-table-column prop="shootDate" label="拍摄日期" width="140" sortable />
+						<el-table-column prop="createdAt" label="创建日期" width="140" sortable />
 						<el-table-column label="主色调" width="80">
 							<template #default="{ row }">
 								<div class="table-color-dot" :style="{ backgroundColor: row.color }" />
 							</template>
 						</el-table-column>
-						<el-table-column label="操作" width="100" fixed="right">
+						<el-table-column label="操作" width="120" fixed="right">
 							<template #default="{ row }">
 								<el-button text size="small" @click.stop="previewImage(row)">
 									<sc-icon name="ms-remove_red_eye" :size="16" />
@@ -136,11 +135,11 @@
 
 				<!-- 瀑布流视图 -->
 				<div v-else-if="viewMode === 'waterfall'" class="view-waterfall">
-					<div v-for="item in pagedImages" :key="item.id" class="waterfall-item"
-						:class="{ selected: selectedItems.includes(item.id) }"
-						@click="handleItemClick($event, item)" @dblclick="previewImage(item)">
+					<div v-for="item in images" :key="item.id" class="waterfall-item"
+						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+						@dblclick="previewImage(item)">
 						<div class="waterfall-thumb" :style="{ paddingBottom: (item.height / item.width * 100) + '%' }">
-							<img :src="item.url" :alt="item.name" loading="lazy" />
+							<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
 						</div>
 						<div class="waterfall-info">
 							<span class="waterfall-name">{{ item.name }}</span>
@@ -150,7 +149,7 @@
 				</div>
 
 				<!-- 空状态 -->
-				<div v-if="pagedImages.length === 0" class="empty-state">
+				<div v-if="images.length === 0" class="empty-state">
 					<sc-icon :name="param.key ? 'ms-search_off' : 'ms-image'" :size="64" />
 					<p v-if="param.key">未找到匹配 "{{ param.key }}" 的照片</p>
 					<p v-else>图库为空</p>
@@ -161,10 +160,10 @@
 				</div>
 
 				<!-- 分页 -->
-				<div v-if="filteredImages.length > 0" class="gallery-pagination">
-					<el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
-						:page-sizes="[20, 40, 80, 120]" :total="filteredImages.length" layout="total, sizes, prev, pager, next"
-						background />
+				<div v-if="images.length > 0" class="gallery-pagination">
+					<el-pagination v-model:current-page="param.page" v-model:page-size="param.limit"
+						:page-sizes="[20, 40, 80, 120]" :total="total" layout="total, sizes, prev, pager, next"
+						background @current-change="paginationChange" @size-change="paginationSizeChange" />
 				</div>
 			</div>
 
@@ -174,7 +173,7 @@
 					<div class="filter-title">主色调</div>
 					<div class="color-filter">
 						<div v-for="c in colorFilters" :key="c.value" class="color-dot"
-							:class="{ active: selectedColors.includes(c.value) }" :style="{ backgroundColor: c.value }"
+							:class="{ active: param.colors.includes(c.value) }" :style="{ backgroundColor: c.value }"
 							:title="c.label" @click="toggleColor(c.value)" />
 					</div>
 				</div>
@@ -183,15 +182,18 @@
 					<div class="filter-title">尺寸</div>
 					<div class="size-filter">
 						<el-checkbox-group v-model="selectedSizes">
-							<el-checkbox v-for="s in sizeFilters" :key="s.value" :label="s.value">{{ s.label }}</el-checkbox>
+							<el-checkbox v-for="s in sizeFilters" :key="s.value" :value="s.value">{{ s.label
+							}}</el-checkbox>
 						</el-checkbox-group>
 					</div>
 				</div>
 
 				<div class="filter-section">
 					<div class="filter-title">日期范围</div>
-					<el-select v-model="dateRangePreset" size="small" style="width: 100%; margin-bottom: 8px;" @change="handleDatePresetChange">
-						<el-option v-for="opt in datePresetOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+					<el-select v-model="dateRangePreset" size="small" style="width: 100%; margin-bottom: 8px;"
+						@change="handleDatePresetChange">
+						<el-option v-for="opt in datePresetOptions" :key="opt.value" :label="opt.label"
+							:value="opt.value" />
 					</el-select>
 					<el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期"
 						end-placeholder="结束日期" size="small" style="width: 100%;" value-format="YYYY-MM-DD"
@@ -201,7 +203,8 @@
 				<div class="filter-section">
 					<div class="filter-title">文件类型</div>
 					<el-checkbox-group v-model="selectedTypes">
-						<el-checkbox v-for="t in typeFilters" :key="t.value" :label="t.value">{{ t.label }}</el-checkbox>
+						<el-checkbox v-for="t in typeFilters" :key="t.value" :value="t.value">{{ t.label
+						}}</el-checkbox>
 					</el-checkbox-group>
 				</div>
 
@@ -256,7 +259,11 @@ export default {
 	data() {
 		return {
 			param: {
+				page: 1,
+				limit: 20,
 				key: '',
+				cat_id: 'all',
+				colors: [],
 			},
 			viewMode: 'grid',
 			viewModes: [
@@ -271,11 +278,10 @@ export default {
 				{ value: 'name', label: '按文件名' },
 				{ value: 'size', label: '按文件大小' },
 			],
-			selectedCategory: 'all',
 			categoryTree: [],
 			images: [],
+			total: 0,
 			selectedItems: [],
-			selectedColors: [],
 			colorFilters: [
 				{ value: '#ef4444', label: '红' },
 				{ value: '#f97316', label: '橙' },
@@ -310,8 +316,6 @@ export default {
 				{ value: 'custom', label: '自定义' },
 			],
 			dateRange: null,
-			currentPage: 1,
-			pageSize: 40,
 			imageViewerVisible: false,
 			previewImages: [],
 			previewIndex: 0,
@@ -367,28 +371,6 @@ export default {
 				list = list.filter(item => item.name.toLowerCase().includes(keyword));
 			}
 
-			// 分类过滤
-			if (this.selectedCategory !== 'all') {
-				if (this.selectedCategory.startsWith('date-')) {
-					const year = this.selectedCategory.replace('date-', '');
-					list = list.filter(item => item.createdAt && item.createdAt.startsWith(year));
-				} else if (this.selectedCategory.startsWith('folder-')) {
-					const folder = this.selectedCategory.replace('folder-', '');
-					list = list.filter(item => item.folder === folder);
-				} else if (this.selectedCategory.startsWith('category-')) {
-					const cat = this.selectedCategory.replace('category-', '');
-					list = list.filter(item => item.category === cat);
-				} else if (this.selectedCategory.startsWith('shoot-')) {
-					const month = this.selectedCategory.replace('shoot-', '');
-					list = list.filter(item => item.shootDate && item.shootDate.startsWith(month));
-				}
-			}
-
-			// 颜色过滤
-			if (this.selectedColors.length > 0) {
-				list = list.filter(item => this.selectedColors.includes(item.color));
-			}
-
 			// 尺寸过滤
 			if (this.selectedSizes.length > 0) {
 				list = list.filter(item => {
@@ -429,42 +411,52 @@ export default {
 
 			return list;
 		},
-		pagedImages() {
-			const start = (this.currentPage - 1) * this.pageSize;
-			return this.filteredImages.slice(start, start + this.pageSize);
-		},
 	},
 	watch: {
-		filteredImages() {
-			this.currentPage = 1;
-		},
-		selectedCategory() {
+		'param.cat_id'() {
 			this.selectedItems = [];
+			this.param.page = 1;
+			this.loadData();
+		},
+		'param.colors': {
+			handler() {
+				this.param.page = 1;
+				this.loadData();
+			},
+			deep: true,
 		},
 	},
 	mounted() {
-		this.loadDemoData();
-		this.buildCategories();
+		this.loadData();
 	},
 	methods: {
-		loadDemoData() {
-			const demos = [
-				{ id: 1, name: '海边日落.jpg', width: 1920, height: 1080, size: 2.4 * 1024 * 1024, type: 'jpg', color: '#f97316', folder: '/旅行', category: '风景', shootDate: '2024-06-12', createdAt: '2024-06-15' },
-				{ id: 2, name: '山间晨雾.jpg', width: 1600, height: 2400, size: 3.1 * 1024 * 1024, type: 'jpg', color: '#22c55e', folder: '/旅行', category: '风景', shootDate: '2024-05-20', createdAt: '2024-05-22' },
-				{ id: 3, name: '城市夜景.png', width: 2048, height: 1365, size: 4.5 * 1024 * 1024, type: 'png', color: '#3b82f6', folder: '/街拍', category: '城市', shootDate: '2024-04-08', createdAt: '2024-04-10' },
-				{ id: 4, name: '猫咪特写.jpg', width: 1200, height: 1600, size: 0.8 * 1024 * 1024, type: 'jpg', color: '#64748b', folder: '/宠物', category: '动物', shootDate: '2024-07-01', createdAt: '2024-07-02' },
-				{ id: 5, name: '樱花季.webp', width: 1800, height: 1200, size: 1.2 * 1024 * 1024, type: 'webp', color: '#ec4899', folder: '/旅行', category: '风景', shootDate: '2024-03-25', createdAt: '2024-03-28' },
-				{ id: 6, name: '美食记录.jpg', width: 1500, height: 1500, size: 1.6 * 1024 * 1024, type: 'jpg', color: '#eab308', folder: '/生活', category: '美食', shootDate: '2024-06-30', createdAt: '2024-07-01' },
-				{ id: 7, name: '雪山风光.jpg', width: 2400, height: 1600, size: 5.8 * 1024 * 1024, type: 'jpg', color: '#3b82f6', folder: '/旅行', category: '风景', shootDate: '2024-02-14', createdAt: '2024-02-16' },
-				{ id: 8, name: '工作会议.jpg', width: 1920, height: 1080, size: 1.1 * 1024 * 1024, type: 'jpg', color: '#8b5cf6', folder: '/工作', category: '文档', shootDate: '2024-07-10', createdAt: '2024-07-10' },
-				{ id: 9, name: '儿童节.gif', width: 600, height: 600, size: 0.5 * 1024 * 1024, type: 'gif', color: '#ef4444', folder: '/生活', category: '节日', shootDate: '2024-06-01', createdAt: '2024-06-01' },
-				{ id: 10, name: '建筑线条.jpg', width: 1600, height: 2400, size: 2.9 * 1024 * 1024, type: 'jpg', color: '#64748b', folder: '/街拍', category: '城市', shootDate: '2024-01-20', createdAt: '2024-01-22' },
-			];
-			this.images = demos.map(item => ({
-				...item,
-				url: `https://picsum.photos/id/${30 + item.id}/${Math.min(item.width, 800)}/${Math.min(item.height, 600)}`,
-			}));
-			this.imageIdCounter = this.images.length + 1;
+		async loadData() {
+			var res = await this.$API.nasdocimage.page.get(this.param);
+			if (res.code === 200) {
+				if (res.data.items) {
+					this.images = res.data.items;
+					this.total = parseInt(res.data.totalItems);
+				} else {
+					this.images = res.data;
+					this.total = res.data.length;
+				}
+				this.buildCategories();
+			}
+		},
+		paginationChange(page) {
+			this.param.page = page;
+			this.loadData();
+		},
+		paginationSizeChange(size) {
+			this.param.limit = size;
+			this.param.page = 1;
+			this.loadData();
+		},
+		getImageUrl(item) {
+			return this.$SCM.getApiUrl('/Nas/Vs/' + item.res_id);
+		},
+		getShootDate(time) {
+			return this.$TOOL.dateFormat(time);
 		},
 		buildCategories() {
 			const years = {};
@@ -539,18 +531,18 @@ export default {
 			];
 		},
 		selectCategory(id) {
-			this.selectedCategory = id;
+			this.param.cat_id = id;
 		},
 		changeViewMode(mode) {
 			this.viewMode = mode;
 			this.selectedItems = [];
 		},
 		toggleColor(color) {
-			const index = this.selectedColors.indexOf(color);
+			const index = this.param.colors.indexOf(color);
 			if (index > -1) {
-				this.selectedColors.splice(index, 1);
+				this.param.colors.splice(index, 1);
 			} else {
-				this.selectedColors.push(color);
+				this.param.colors.push(color);
 			}
 		},
 		handleDatePresetChange(val) {
@@ -559,13 +551,13 @@ export default {
 			}
 		},
 		resetFilters() {
-			this.selectedColors = [];
+			this.param.colors = [];
 			this.selectedSizes = [];
 			this.selectedTypes = [];
 			this.dateRangePreset = '';
 			this.dateRange = null;
 			this.param.key = '';
-			this.selectedCategory = 'all';
+			this.param.cat_id = 'all';
 		},
 		handleItemClick(event, item) {
 			if (event.ctrlKey || event.metaKey) {
@@ -589,8 +581,8 @@ export default {
 			this.selectedItems = [];
 		},
 		previewImage(item) {
-			this.previewImages = this.filteredImages.map(i => i.url);
-			this.previewIndex = this.filteredImages.findIndex(i => i.id === item.id);
+			this.previewImages = this.images.map(i => this.getImageUrl(i.res_id));
+			this.previewIndex = this.images.findIndex(i => i.id === item.id);
 			this.imageViewerVisible = true;
 		},
 		deleteImage(item) {
@@ -900,11 +892,15 @@ export default {
 	background-color: #fff;
 	border: 1px solid var(--color-border-light);
 	transition: box-shadow 0.2s, transform 0.2s;
+	position: relative;
+	min-width: 180px;
+	min-height: 218px;
 }
 
 .grid-item:hover {
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 	transform: translateY(-2px);
+	z-index: 2;
 }
 
 .grid-item.selected {
@@ -985,12 +981,24 @@ export default {
 .grid-meta {
 	font-size: 11px;
 	color: var(--color-text-tertiary);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.grid-subrow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
 }
 
 .grid-date {
 	font-size: 11px;
 	color: var(--color-text-tertiary);
 	opacity: 0.8;
+	white-space: nowrap;
+	flex-shrink: 0;
 }
 
 /* 表格视图 */

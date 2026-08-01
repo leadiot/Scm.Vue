@@ -256,10 +256,12 @@ tool.objCopy = function (obj) {
  * @param {*} date 日期对象
  * @returns 日期字符串
  */
-tool.dateFormat = function (date) {
-	if (!date) {
-		date = new Date();
+tool.dateFormat = function (time) {
+	if (!time) {
+		return '';
 	}
+
+	var date = new Date(time);
 	var y = date.getFullYear();
 	var m = date.getMonth() + 1;
 	var d = date.getDate();
@@ -271,10 +273,12 @@ tool.dateFormat = function (date) {
  * @param {*} date 日期对象
  * @returns 时间字符串
  */
-tool.timeFormat = function (date) {
-	if (!date) {
-		date = new Date();
+tool.timeFormat = function (time) {
+	if (!time) {
+		return '';
 	}
+
+	var date = new Date(time);
 	var h = date.getHours();
 	var m = date.getMinutes();
 	var s = date.getSeconds();
