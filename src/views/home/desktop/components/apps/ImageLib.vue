@@ -20,10 +20,10 @@
 						<sc-icon :name="v.icon" :size="18" />
 					</button>
 				</div>
-				<el-select v-model="param.prop" size="small" class="sort-select">
+				<el-select v-model="param.prop" class="sort-select">
 					<el-option v-for="s in sortOptions" :key="s.value" :label="s.label" :value="s.value" />
 				</el-select>
-				<el-button type="primary" size="small" @click="openUploadDialog">
+				<el-button type="primary" @click="openUploadDialog">
 					<sc-icon name="ms-upload" :size="16" style="margin-right: 4px;" />
 					上传
 				</el-button>
@@ -67,7 +67,7 @@
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
 						@dblclick="previewImage(item)">
 						<div class="grid-thumb">
-							<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
+							<img :src="getThumbUrl(item)" :alt="item.name" loading="lazy" />
 							<div class="grid-overlay">
 								<div class="grid-actions">
 									<el-button text size="small" @click.stop="previewImage(item)">
@@ -98,7 +98,7 @@
 						<el-table-column label="缩略图" width="80">
 							<template #default="{ row }">
 								<div class="table-thumb">
-									<img :src="getImageUrl(row)" :alt="row.name" />
+									<img :src="getThumbUrl(row)" :alt="row.name" />
 								</div>
 							</template>
 						</el-table-column>
@@ -137,10 +137,11 @@
 				<div v-else-if="viewMode === 'waterfall'" class="view-waterfall">
 					<div class="waterfall-columns">
 						<div v-for="item in images" :key="item.id" class="waterfall-item"
-							:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
-							@dblclick="previewImage(item)">
-							<div class="waterfall-thumb" :style="{ paddingBottom: (item.height / item.width * 100) + '%' }">
-								<img :src="getImageUrl(item)" :alt="item.name" loading="lazy" />
+							:class="{ selected: selectedItems.includes(item.id) }"
+							@click="handleItemClick($event, item)" @dblclick="previewImage(item)">
+							<div class="waterfall-thumb"
+								:style="{ paddingBottom: (item.height / item.width * 100) + '%' }">
+								<img :src="getThumbUrl(item)" :alt="item.name" loading="lazy" />
 							</div>
 							<div class="waterfall-info">
 								<span class="waterfall-name">{{ item.name }}</span>
@@ -457,6 +458,9 @@ export default {
 			this.param.page = 1;
 			this.loadData();
 		},
+		getThumbUrl(item) {
+			return this.$SCM.getDataUrl('/Nas/thumbs/' + item.res_id + '.png');
+		},
 		getImageUrl(item) {
 			return this.$SCM.getApiUrl('/Nas/Vs/' + item.res_id);
 		},
@@ -712,7 +716,7 @@ export default {
 
 .view-btn {
 	width: 32px;
-	height: 28px;
+	height: 30px;
 	border: none;
 	background: transparent;
 	cursor: pointer;
