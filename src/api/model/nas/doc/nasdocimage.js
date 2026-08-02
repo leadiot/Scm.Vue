@@ -63,5 +63,12 @@ export default {
 		delete: async function (data) {
 			return await http.delete(this.url, data);
 		}
+	},
+	listcat: {
+		url: `${config.API_URL}/nasdocimage/listcat`,
+		name: "列表分类",
+		get: async function () {
+			return await http.get(this.url);
+		}
 	}
 }

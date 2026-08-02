@@ -20,7 +20,7 @@
 						<sc-icon :name="v.icon" :size="18" />
 					</button>
 				</div>
-				<el-select v-model="param.prop" class="sort-select">
+				<el-select v-model="param.field" class="sort-select">
 					<el-option v-for="s in sortOptions" :key="s.value" :label="s.label" :value="s.value" />
 				</el-select>
 				<el-button type="primary" @click="openUploadDialog">
@@ -40,15 +40,14 @@
 					<div class="category-list">
 						<div v-for="cat in categoryTree" :key="cat.id" class="category-group">
 							<div class="category-item" :class="{ active: param.cat_id === cat.id }"
-								@click="selectCategory(cat.id)">
+								@click="selectCategory(cat)">
 								<sc-icon :name="cat.icon" :size="16" />
 								<span class="category-label">{{ cat.name }}</span>
 								<span v-if="cat.count" class="category-count">{{ cat.count }}</span>
 							</div>
 							<div v-if="cat.children" class="category-children">
 								<div v-for="child in cat.children" :key="child.id" class="category-child"
-									:class="{ active: param.cat_id === child.id }"
-									@click.stop="selectCategory(child.id)">
+									:class="{ active: param.cat_id === child.id }" @click.stop="selectCategory(child)">
 									<span class="category-label">{{ child.name }}</span>
 									<span v-if="child.count" class="category-count">{{ child.count }}</span>
 								</div>
@@ -92,7 +91,7 @@
 				<!-- 表格视图 -->
 				<div v-else-if="viewMode === 'table'" class="view-table">
 					<el-table :data="images" style="width: 100%;" height="100%" @row-click="handleRowClick"
-						@selection-change="handleSelectionChange" @sort-change="sortChange">
+						@selection-change="handleSelectionChange">
 						<el-table-column type="selection" width="45" />
 						<el-table-column label="缩略图" width="80">
 							<template #default="{ row }">
@@ -272,6 +271,7 @@ export default {
 				page: 1,
 				limit: 20,
 				key: '',
+				cat: 'all',
 				cat_id: '0',
 				colors: [],
 				ratios: [],
@@ -280,8 +280,15 @@ export default {
 				end_date: '',
 				from_size: 0,
 				to_size: 0,
-				prop: 'createdAt',
-				order: 'descending',
+				field: 'createdAt',
+				order: '1',
+			},
+			rootCat: {
+				id: '0',
+				code: 'all',
+				name: '全部照片',
+				icon: 'ms-image',
+				count: 0,
 			},
 			loadTimer: null,
 			viewMode: 'grid',
@@ -348,7 +355,7 @@ export default {
 			}
 			if (!this.datePreset) return null;
 			const now = new Date();
-			const end = this.formatDate(now);
+			const end = '';//this.formatDate(now);
 			let start;
 			switch (this.datePreset) {
 				case 'today':
@@ -412,7 +419,7 @@ export default {
 			this.param.page = 1;
 			this.loadData();
 		},
-		'param.prop'() {
+		'param.field'() {
 			this.param.page = 1;
 			this.loadData();
 		},
@@ -424,9 +431,20 @@ export default {
 	},
 	mounted() {
 		this.applyDateRange();
+		this.listcat();
 		this.loadData();
 	},
 	methods: {
+		async listcat() {
+			var res = await this.$API.nasdocimage.listcat.get();
+			if (res.code === 200) {
+				this.categoryTree = [this.rootCat, ...res.data];
+				console.log(this.categoryTree);
+				return;
+			}
+			this.categoryTree = [this.rootCat];
+			console.log(this.categoryTree);
+		},
 		loadData() {
 			clearTimeout(this.loadTimer);
 			this.loadTimer = setTimeout(this.fetchImages, 150);
@@ -460,11 +478,11 @@ export default {
 		},
 		sortChange({ prop, order }) {
 			if (prop && order) {
-				this.param.prop = prop;
+				this.param.field = prop;
 				this.param.order = order;
 			} else {
-				this.param.prop = 'createdAt';
-				this.param.order = 'descending';
+				this.param.field = 'createdAt';
+				this.param.order = '1';
 			}
 			this.param.page = 1;
 			this.loadData();
@@ -479,79 +497,12 @@ export default {
 			return this.$TOOL.dateFormat(time);
 		},
 		buildCategories() {
-			const years = {};
-			const folders = {};
-			const categories = {};
-			const shootMonths = {};
-
-			this.images.forEach(item => {
-				if (item.createdAt) {
-					const year = item.createdAt.slice(0, 4);
-					years[year] = (years[year] || 0) + 1;
-				}
-				if (item.folder) {
-					folders[item.folder] = (folders[item.folder] || 0) + 1;
-				}
-				if (item.category) {
-					categories[item.category] = (categories[item.category] || 0) + 1;
-				}
-				if (item.shootDate) {
-					const month = item.shootDate.slice(0, 7);
-					shootMonths[month] = (shootMonths[month] || 0) + 1;
-				}
-			});
-
-			this.categoryTree = [
-				{
-					id: 'all',
-					name: '全部照片',
-					icon: 'ms-image',
-					count: this.images.length,
-				},
-				{
-					id: 'date',
-					name: '创建日期',
-					icon: 'ms-calendar_today',
-					children: Object.keys(years).sort((a, b) => b - a).map(year => ({
-						id: `date-${year}`,
-						name: `${year}年`,
-						count: years[year],
-					})),
-				},
-				{
-					id: 'shoot',
-					name: '拍摄日志',
-					icon: 'ms-camera',
-					children: Object.keys(shootMonths).sort((a, b) => b.localeCompare(a)).map(month => ({
-						id: `shoot-${month}`,
-						name: month,
-						count: shootMonths[month],
-					})),
-				},
-				{
-					id: 'folder',
-					name: '目录',
-					icon: 'ms-folder',
-					children: Object.keys(folders).sort().map(folder => ({
-						id: `folder-${folder}`,
-						name: folder,
-						count: folders[folder],
-					})),
-				},
-				{
-					id: 'custom',
-					name: '自定义分类',
-					icon: 'ms-label',
-					children: Object.keys(categories).sort().map(cat => ({
-						id: `category-${cat}`,
-						name: cat,
-						count: categories[cat],
-					})),
-				},
-			];
+			this.rootCat.qty = this.images.length;
 		},
-		selectCategory(id) {
-			this.param.cat_id = id;
+		selectCategory(cat) {
+			console.log(cat)
+			this.param.cat = cat.code;
+			this.param.cat_id = cat.id;
 		},
 		changeViewMode(mode) {
 			this.viewMode = mode;
@@ -576,8 +527,8 @@ export default {
 			this.param.formats = [];
 			this.param.key = '';
 			this.param.cat_id = 'all';
-			this.param.prop = 'createdAt';
-			this.param.order = 'descending';
+			this.param.field = 'createdAt';
+			this.param.order = '1';
 			this.datePreset = '30days';
 			this.dateRange = null;
 		},
