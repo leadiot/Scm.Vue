@@ -180,10 +180,33 @@
 				</div>
 
 				<div class="filter-section">
-					<div class="filter-title">尺寸</div>
+					<div class="filter-title">日期范围</div>
+					<el-select v-model="datePreset" size="small" style="width: 100%; margin-bottom: 8px;"
+						@change="handleDatePresetChange">
+						<el-option v-for="opt in datePresetOptions" :key="opt.value" :label="opt.label"
+							:value="opt.value" />
+					</el-select>
+					<el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期"
+						end-placeholder="结束日期" size="small" style="width: 100%;" value-format="YYYY-MM-DD"
+						:disabled="datePreset !== 'custom'" />
+				</div>
+
+				<div class="filter-section">
+					<div class="filter-title">文件大小(Mb)</div>
 					<div class="size-filter">
-						<el-checkbox-group v-model="param.sizes">
-							<el-checkbox v-for="s in sizeFilters" :key="s.value" :value="s.value">
+						<el-input-number v-model="param.from_size" placeholder="文件大小" size="small" :min="0"
+							style="width: 100%;" />
+						<el-input-number v-model="param.to_size" placeholder="文件大小" size="small" :min="0"
+							style="width: 100%;" />
+					</div>
+				</div>
+
+
+				<div class="filter-section">
+					<div class="filter-title">图像比例</div>
+					<div class="size-filter">
+						<el-checkbox-group v-model="param.ratios">
+							<el-checkbox v-for="s in ratioFilters" :key="s.value" :value="s.value">
 								{{ s.label }}
 							</el-checkbox>
 						</el-checkbox-group>
@@ -191,21 +214,9 @@
 				</div>
 
 				<div class="filter-section">
-					<div class="filter-title">日期范围</div>
-					<el-select v-model="dateRangePreset" size="small" style="width: 100%; margin-bottom: 8px;"
-						@change="handleDatePresetChange">
-						<el-option v-for="opt in datePresetOptions" :key="opt.value" :label="opt.label"
-							:value="opt.value" />
-					</el-select>
-					<el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期"
-						end-placeholder="结束日期" size="small" style="width: 100%;" value-format="YYYY-MM-DD"
-						:disabled="dateRangePreset !== 'custom'" />
-				</div>
-
-				<div class="filter-section">
 					<div class="filter-title">文件类型</div>
 					<el-checkbox-group v-model="param.formats">
-						<el-checkbox v-for="t in typeFilters" :key="t.value" :value="t.value">
+						<el-checkbox v-for="t in formatFilters" :key="t.value" :value="t.value">
 							{{ t.label }}
 						</el-checkbox>
 					</el-checkbox-group>
@@ -263,10 +274,12 @@ export default {
 				key: '',
 				cat_id: '0',
 				colors: [],
-				sizes: [],
+				ratios: [],
 				formats: [],
 				start_date: '',
 				end_date: '',
+				from_size: 0,
+				to_size: 0,
 				prop: 'createdAt',
 				order: 'descending',
 			},
@@ -297,18 +310,19 @@ export default {
 				{ value: '#ec4899', label: '粉' },
 				{ value: '#64748b', label: '灰' },
 			],
-			sizeFilters: [
-				{ value: 'small', label: '小 (< 1MB)' },
-				{ value: 'medium', label: '中 (1MB - 5MB)' },
-				{ value: 'large', label: '大 (> 5MB)' },
+			ratioFilters: [
+				{ value: '1', label: '方图' },
+				{ value: '2', label: '宽图' },
+				{ value: '3', label: '长图' },
+				{ value: '4', label: '超宽图' },
+				{ value: '5', label: '超长图' },
 			],
-			typeFilters: [
+			formatFilters: [
 				{ value: 'jpg', label: 'JPG' },
 				{ value: 'png', label: 'PNG' },
 				{ value: 'gif', label: 'GIF' },
 				{ value: 'webp', label: 'WebP' },
 			],
-			dateRangePreset: '30days',
 			datePresetOptions: [
 				{ value: '', label: '不限' },
 				{ value: 'today', label: '今天' },
@@ -318,6 +332,7 @@ export default {
 				{ value: 'year', label: '今年' },
 				{ value: 'custom', label: '自定义' },
 			],
+			datePreset: '30days',
 			dateRange: null,
 			imageViewerVisible: false,
 			previewImages: [],
@@ -328,14 +343,14 @@ export default {
 	},
 	computed: {
 		computedDateRange() {
-			if (this.dateRangePreset === 'custom') {
+			if (this.datePreset === 'custom') {
 				return (this.dateRange && this.dateRange.length === 2) ? this.dateRange : null;
 			}
-			if (!this.dateRangePreset) return null;
+			if (!this.datePreset) return null;
 			const now = new Date();
 			const end = this.formatDate(now);
 			let start;
-			switch (this.dateRangePreset) {
+			switch (this.datePreset) {
 				case 'today':
 					start = end;
 					break;
@@ -379,7 +394,7 @@ export default {
 			},
 			deep: true,
 		},
-		'param.sizes': {
+		'param.ratios': {
 			handler() {
 				this.param.page = 1;
 				this.loadData();
@@ -557,13 +572,13 @@ export default {
 		},
 		resetFilters() {
 			this.param.colors = [];
-			this.param.sizes = [];
+			this.param.ratios = [];
 			this.param.formats = [];
 			this.param.key = '';
 			this.param.cat_id = 'all';
 			this.param.prop = 'createdAt';
 			this.param.order = 'descending';
-			this.dateRangePreset = '30days';
+			this.datePreset = '30days';
 			this.dateRange = null;
 		},
 		handleItemClick(event, item) {
