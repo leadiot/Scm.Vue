@@ -24,8 +24,7 @@
 					<el-option v-for="s in sortOptions" :key="s.value" :label="s.label" :value="s.value" />
 				</el-select>
 				<el-button type="primary" @click="openUploadDialog">
-					<sc-icon name="ms-upload" :size="16" style="margin-right: 4px;" />
-					上传
+					<sc-icon name="ms-upload" :size="16" style="margin-right: 4px;" />上传
 				</el-button>
 			</div>
 		</div>
@@ -157,8 +156,7 @@
 					<p v-if="param.key">未找到匹配 "{{ param.key }}" 的照片</p>
 					<p v-else>图库为空</p>
 					<el-button v-if="!param.key" type="primary" size="small" @click="openUploadDialog">
-						<sc-icon name="ms-upload" :size="16" style="margin-right: 4px;" />
-						上传照片
+						<sc-icon name="ms-upload" :size="16" style="margin-right: 4px;" />上传照片
 					</el-button>
 				</div>
 
@@ -185,8 +183,9 @@
 					<div class="filter-title">尺寸</div>
 					<div class="size-filter">
 						<el-checkbox-group v-model="param.sizes">
-							<el-checkbox v-for="s in sizeFilters" :key="s.value" :value="s.value">{{ s.label
-							}}</el-checkbox>
+							<el-checkbox v-for="s in sizeFilters" :key="s.value" :value="s.value">
+								{{ s.label }}
+							</el-checkbox>
 						</el-checkbox-group>
 					</div>
 				</div>
@@ -205,15 +204,15 @@
 
 				<div class="filter-section">
 					<div class="filter-title">文件类型</div>
-					<el-checkbox-group v-model="param.types">
-						<el-checkbox v-for="t in typeFilters" :key="t.value" :value="t.value">{{ t.label
-						}}</el-checkbox>
+					<el-checkbox-group v-model="param.formats">
+						<el-checkbox v-for="t in typeFilters" :key="t.value" :value="t.value">
+							{{ t.label }}
+						</el-checkbox>
 					</el-checkbox-group>
 				</div>
 
 				<el-button text size="small" class="filter-reset" @click="resetFilters">
-					<sc-icon name="ms-refresh" :size="14" style="margin-right: 4px;" />
-					重置过滤
+					<sc-icon name="ms-refresh" :size="14" style="margin-right: 4px;" />重置过滤
 				</el-button>
 			</div>
 		</div>
@@ -256,19 +255,16 @@ export default {
 	components: {
 		scIcon,
 	},
-	props: {
-		files: { type: Array, default: () => [] }
-	},
 	data() {
 		return {
 			param: {
 				page: 1,
 				limit: 20,
 				key: '',
-				cat_id: 'all',
+				cat_id: '0',
 				colors: [],
 				sizes: [],
-				types: [],
+				formats: [],
 				start_date: '',
 				end_date: '',
 				prop: 'createdAt',
@@ -390,7 +386,7 @@ export default {
 			},
 			deep: true,
 		},
-		'param.types': {
+		'param.formats': {
 			handler() {
 				this.param.page = 1;
 				this.loadData();
@@ -461,8 +457,8 @@ export default {
 		getThumbUrl(item) {
 			return this.$SCM.getDataUrl('/Nas/thumbs/' + item.res_id + '.png');
 		},
-		getImageUrl(item) {
-			return this.$SCM.getApiUrl('/Nas/Vs/' + item.res_id);
+		getImageUrl(id) {
+			return this.$SCM.getApiUrl('/Nas/Vs/' + id);
 		},
 		getShootDate(time) {
 			return this.$TOOL.dateFormat(time);
@@ -562,7 +558,7 @@ export default {
 		resetFilters() {
 			this.param.colors = [];
 			this.param.sizes = [];
-			this.param.types = [];
+			this.param.formats = [];
 			this.param.key = '';
 			this.param.cat_id = 'all';
 			this.param.prop = 'createdAt';
@@ -592,6 +588,7 @@ export default {
 			this.selectedItems = [];
 		},
 		previewImage(item) {
+			console.log(this.images)
 			this.previewImages = this.images.map(i => this.getImageUrl(i.res_id));
 			this.previewIndex = this.images.findIndex(i => i.id === item.id);
 			this.imageViewerVisible = true;
