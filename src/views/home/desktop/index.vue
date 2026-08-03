@@ -49,8 +49,8 @@
 		</div>
 
 		<!-- macOS Dock -->
-		<MacDock v-if="hasDock" :items="macDockItems" :icons-path="iconsPath"
-			@toggle-launchpad="toggleLaunchpad" @dock-click="onDockClick" />
+		<MacDock v-if="hasDock" :items="macDockItems" :icons-path="iconsPath" @toggle-launchpad="toggleLaunchpad"
+			@dock-click="onDockClick" />
 
 		<!-- macOS 菜单栏 -->
 		<MacMenubar v-if="isMacTheme" :start-logo="startLogo" :start-icon="taskbarStartIcon"
@@ -63,20 +63,19 @@
 
 		<!-- 开始菜单（Windows 95/98/2000 经典复刻）-->
 		<WinClassicMenu v-else-if="showStartMenu && isWinClassicTheme" :apps="menuApps" :title="winClassicMenuTitle"
-			@open-app="openApp" @open-settings="openSettings" @logout="logout"
-			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
+			@open-app="openApp" @open-settings="openSettings" @logout="logout" @show-submenu="showSubmenu"
+			@hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows XP 双栏复刻）-->
 		<WinXpMenu v-else-if="showStartMenu && isWinXpTheme" :apps="menuApps" :quick-links="winXpQuickLinks"
 			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
-			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
-			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
+			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown" @show-submenu="showSubmenu"
+			@hide-submenu="hideSubmenu" />
 
 		<!-- 开始菜单（Windows Vista/7 Aero 双栏复刻）-->
 		<WinAeroMenu v-else-if="showStartMenu && isWinAeroTheme" :apps="filteredMenuApps" :quick-links="winXpQuickLinks"
-			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile"
-			@open-quick-link="openQuickLink" @logout="logout" @shutdown="shutdown"
-			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
+			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @open-quick-link="openQuickLink"
+			@logout="logout" @shutdown="shutdown" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 开始屏幕（Windows 8 全屏磁贴复刻）-->
 		<Win8Screen v-else-if="showStartMenu && currentTheme === 'win8'" :apps="flatMenuApps"
@@ -95,15 +94,14 @@
 			v-model="menuSearch" @open-app="openApp" @open-profile="openProfile" @logout="logout" />
 
 		<!-- macOS 苹果系统菜单 -->
-		<MacAppleMenu v-else-if="showStartMenu && isMacTheme" @open-profile="openProfile"
-			@open-settings="openSettings" @toggle-launchpad="toggleLaunchpad" @force-quit="forceQuitFocused"
-			@shutdown="shutdown" @logout="logout" />
+		<MacAppleMenu v-else-if="showStartMenu && isMacTheme" @open-profile="openProfile" @open-settings="openSettings"
+			@toggle-launchpad="toggleLaunchpad" @force-quit="forceQuitFocused" @shutdown="shutdown" @logout="logout" />
 
 		<!-- 开始菜单（通用）-->
-		<GenericMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor"
-			:menu-text-color="menuTextColor" :menu-border-radius="menuBorderRadius" :menu-glass="menuGlass"
-			:user-name="user.userName || 'User'" @open-app="openApp" @open-profile="openProfile"
-			@open-settings="openSettings" @logout="logout" @show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
+		<GenericMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor" :menu-text-color="menuTextColor"
+			:menu-border-radius="menuBorderRadius" :menu-glass="menuGlass" :user-name="user.userName || 'User'"
+			@open-app="openApp" @open-profile="openProfile" @open-settings="openSettings" @logout="logout"
+			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
 
 		<!-- 子菜单 -->
 		<div v-if="activeSubmenu" class="submenu"
@@ -210,6 +208,8 @@ export default {
 			currentDateTime: '',
 			windows: [],
 			windowIdCounter: 0,
+			// 窗口 z-index 自增计数器：每次聚焦递增，保证最新聚焦窗口位于最上层
+			windowZCounter: 0,
 			activeSubmenu: null,
 			submenuStyle: {},
 			submenuTimeout: null,
@@ -616,7 +616,9 @@ export default {
 				maximized: false,
 				focused: true,
 				resizable: meta.resizable,
+				minimizable: meta.minimizable !== false,
 				centered: meta.center !== false,
+				zIndex: ++this.windowZCounter,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
 				width: meta.width || app.width || 800,
@@ -695,6 +697,8 @@ export default {
 						w.minimized = false;
 						w.focused = true;
 					}
+					// 提升到最上层：zIndex 持续递增，避免数值碰撞
+					w.zIndex = ++this.windowZCounter;
 				} else {
 					w.focused = false;
 				}
@@ -938,7 +942,7 @@ export default {
 
 			const style = await this.$SCM.read_cfg("desktop_style", 'system');
 			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
-			
+
 			const theme = themes.find(t => t.name === themeName);
 			if (theme) {
 				this.applyTheme(theme);

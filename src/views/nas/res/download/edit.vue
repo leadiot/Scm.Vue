@@ -54,7 +54,7 @@ export default {
 				this.formData.dir_id = dir_id;
 			} else {
 				this.mode = "edit";
-				var res = await this.$API.nasresdownload.edit.get(row.id);
+				var res = await this.$API.nasappdownload.edit.get(row.id);
 				this.formData = res.data;
 			}
 			this.visible = true;
@@ -68,9 +68,9 @@ export default {
 				this.isSaveing = true;
 				let res = null;
 				if (this.$SCM.is_valid_id(this.formData.id)) {
-					res = await this.$API.nasresdownload.update.put(this.formData);
+					res = await this.$API.nasappdownload.update.put(this.formData);
 				} else {
-					res = await this.$API.nasresdownload.add.post(this.formData);
+					res = await this.$API.nasappdownload.add.post(this.formData);
 				}
 				this.isSaveing = false;
 

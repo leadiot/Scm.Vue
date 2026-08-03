@@ -1,0 +1,186 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "图库 - 网格视图",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 965,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a132864e",
+          "measuredAt": 1785509697971
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-table",
+      "title": "图库 - 表格视图",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 400,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1230,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-0b2779d1",
+          "measuredAt": 1785509697971
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/table.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-waterfall",
+      "title": "图库 - 瀑布流视图",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 800,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1450,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-9d0cab34",
+          "measuredAt": 1785509697971
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/waterfall.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "thumb-01",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 0,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-01.jpg"
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "thumb-02",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 140,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-02.jpg"
+      }
+    },
+    {
+      "id": "image-003",
+      "title": "thumb-03",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 280,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-03.jpg"
+      }
+    },
+    {
+      "id": "image-004",
+      "title": "thumb-04",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 420,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-04.jpg"
+      }
+    },
+    {
+      "id": "image-005",
+      "title": "thumb-05",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 560,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-05.jpg"
+      }
+    },
+    {
+      "id": "image-006",
+      "title": "thumb-06",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1751385152000,
+      "canvasData": {
+        "x": 700,
+        "y": 300,
+        "naturalSize": {
+          "width": 2240,
+          "height": 1680
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/thumb-06.jpg"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "图库工具"
+  }
+}

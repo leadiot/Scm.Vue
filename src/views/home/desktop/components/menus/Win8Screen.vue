@@ -8,8 +8,8 @@
 			</div>
 		</div>
 		<div class="win8-tiles">
-			<div v-for="app in apps" :key="app.id" class="win8-tile"
-				:style="{ backgroundColor: tileColor(app) }" @click="$emit('open-app', app)">
+			<div v-for="app in apps" :key="app.id" class="win8-tile" :style="{ backgroundColor: tileColor(app) }"
+				@click="$emit('open-app', app)">
 				<sc-icon :name="app.meta.icon" :size="36" />
 				<span>{{ app.name }}</span>
 			</div>

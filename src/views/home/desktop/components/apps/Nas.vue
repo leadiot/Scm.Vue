@@ -941,7 +941,7 @@ export default {
 }
 
 .col-size {
-	width: 80px;
+	width: 60px;
 	text-align: right;
 	margin: 0 6px;
 }
