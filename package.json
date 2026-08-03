@@ -20,6 +20,7 @@
     "element-plus": "^2.14.3",
     "highlight.js": "^11.11.1",
     "jsencrypt": "^3.3.2",
+    "marked": "^18.0.7",
     "nprogress-esm": "^0.2.6",
     "pinia": "^4.0.2",
     "pinyin-pro": "^3.28.2",
