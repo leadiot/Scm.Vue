@@ -1,5 +1,5 @@
 <template>
-	<sc-dialog v-model="visible" show-fullscreen :title="titleMap[mode]" width="700px" @close="close">
+	<sc-dialog v-model="visible" show-fullscreen :title="titleMap[mode]" width="520px" @close="close">
 		<el-form ref="formRef" label-width="100px" :model="formData" :rules="rules">
 			<el-form-item label="书籍类型" prop="types">
 				<sc-select v-model="formData.types" placeholder="请选择书籍类型" :data="types_list" />
@@ -39,8 +39,10 @@ export default {
 			titleMap: { add: "新增", edit: "编辑" },
 			visible: false,
 			isSaveing: false,
+			types_list:[],
 			formData: {
 				id: this.$SCM.DEF_ID,
+				types: 0,
 				codec: '',
 				namec: '',
 				names: '',
@@ -48,6 +50,10 @@ export default {
 				remark: ''
 			},
 			rules: {
+				types:[
+					{ required: true, trigger: "blur", message: "请选择书籍类型", },
+					{ required: true, message: "无效的书籍类型", pattern: this.$SCM.REGEX_INT,  },
+				],
 				codec: [
 					{ required: true, trigger: "blur", message: "书籍编码不能为空", },
 					{ required: true, pattern: /^[a-zA-Z0-9]{4,32}$/, message: "无效的书籍编码", },
@@ -59,6 +65,7 @@ export default {
 		};
 	},
 	mounted() {
+		this.$SCM.list_dic(this.types_list, 'samples_book_types', false);
 	},
 	methods: {
 		async open(row) {

@@ -273,6 +273,9 @@ export default {
 		getTotal() {
 			return this.total;
 		},
+		getTableData(){
+			return this.tableData;
+		},
 		//刷新数据
 		refresh() {
 			if (!this.apiObj) {

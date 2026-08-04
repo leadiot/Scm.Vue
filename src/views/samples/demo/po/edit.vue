@@ -4,22 +4,19 @@
 			<div>
 				<el-row>
 					<el-col :span="8">
-						123:{{ header.codes }}
+						采购类型：{{ header.types }}
 					</el-col>
 					<el-col :span="8">
-						123
+						采购单号：{{ header.codec }}
 					</el-col>
 					<el-col :span="8">
-						123
+						创建时间：{{ header.create_times }}
 					</el-col>
 					<el-col :span="8">
-						123
+						更新时间：{{ header.update_times }}
 					</el-col>
 					<el-col :span="8">
-						123
-					</el-col>
-					<el-col :span="8">
-						123
+						创建人员：{{ header.create_names }}
 					</el-col>
 				</el-row>
 			</div>
@@ -65,6 +62,7 @@
 		</el-main>
 	</el-container>
 	<bookSelector ref="bookSelector" @complete="complete" />
+	<editDetail ref="editDetail" @complete="complete" />
 </template>
 <script>
 import { defineAsyncComponent } from "vue";
@@ -74,6 +72,7 @@ export default {
 	name: 'samples_po_detail',
 	components: {
 		bookSelector: defineAsyncComponent(() => import("../book/selector")),
+		editDetail: defineAsyncComponent(() => import("./editDetail")),	
 	},
 	data() {
 		return {
@@ -139,8 +138,8 @@ export default {
 		delete_list() {
 			this.$SCM.delete_list(this, this.$API.samplespodetail.delete, this.selection);
 		},
-		open_dialog() {
-			this.$refs.bookSelector.open(this.param.id, this.$API.samplespodetail.batch);
+		open_dialog(row) {
+			this.$refs.editDetail.open(row);
 		},
 		selectionChange(selection) {
 			this.selection = selection;
@@ -160,10 +159,10 @@ export default {
 			}
 		},
 		open_selector() {
-			this.$refs.bookSelector.open(this.param.id, this.$API.samplespodetail.batch);
+			this.$refs.bookSelector.open(this.param.id, this.$API.samplespodetail.batchappend);
 		},
 		async save() {
-			var tableData = this.$refs.table.getData();
+			var tableData = this.$refs.table.getTableData();
 			if (!tableData || tableData.length < 1) {
 				return;
 			}

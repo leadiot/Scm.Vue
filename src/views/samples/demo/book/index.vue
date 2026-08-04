@@ -93,17 +93,16 @@ export default {
 			selection: [],
 			column: [
 				{ label: "id", prop: "id", hide: true },
-				{ prop: 'codes', label: '系统代码', width: 140 },
+				{ prop: 'codes', label: '系统代码', width: 100 },
 				{ prop: 'codec', label: '书籍编码', width: 100 },
 				{ prop: 'names', label: '系统简称', width: 160 },
 				{ prop: 'namec', label: '书籍全称', minWidth: 200, align: 'left' },
 				{ prop: 'barcode', label: '条码', width: 100 },
-				{ prop: 'remark', label: '备注', width: 200 },
-				{ prop: 'wfa_status', label: '审批状态', width: 80 },
+				{ prop: 'remark', label: '备注', minWidth: 200, align:'left' },
 				{ prop: 'row_status', label: '数据状态', width: 80 },
-				{ prop: 'update_time', label: '更新时间', width: 160 },
+				{ prop: 'update_times', label: '更新时间', width: 160 },
 				{ prop: 'update_names', label: '更新人员', width: 100 },
-				{ prop: 'create_time', label: '创建时间', width: 160 },
+				{ prop: 'create_times', label: '创建时间', width: 160 },
 				{ prop: 'create_names', label: '创建人员', width: 100 },
 			],
 			option_list: [this.$SCM.OPTION_ALL],
@@ -111,6 +110,7 @@ export default {
 		};
 	},
 	mounted() {
+		this.$SCM.list_dic(this.types_list, 'samples_book_types', true);
 	},
 	methods: {
 		complete() {
