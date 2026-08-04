@@ -9,6 +9,7 @@
 			<el-form-item :label="$t('user.language')">
 				<el-select v-model="lang">
 					<el-option label="简体中文" value="zh-cn"></el-option>
+					<el-option label="繁體中文" value="zh-tw"></el-option>
 					<el-option label="English" value="en"></el-option>
 				</el-select>
 				<div class="el-form-item-msg">{{ $t('user.language_msg') }}</div>

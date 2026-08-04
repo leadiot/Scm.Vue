@@ -3,6 +3,7 @@
 		<el-form-item :label="$t('user.language')">
 			<el-select v-model="lang">
 				<el-option :label="$t('common.chinese')" value="zh-cn"></el-option>
+				<el-option :label="$t('common.traditionalChinese')" value="zh-tw"></el-option>
 				<el-option :label="$t('common.english')" value="en"></el-option>
 				<el-option :label="$t('common.japanese')" value="ja"></el-option>
 			</el-select>

@@ -51,6 +51,7 @@ export default {
 		optionalDescription: "可选描述",
 		currentLanguage: "当前语言",
 		chinese: "简体中文",
+		traditionalChinese: "繁體中文",
 		english: "English",
 		japanese: "日本語",
 	},
