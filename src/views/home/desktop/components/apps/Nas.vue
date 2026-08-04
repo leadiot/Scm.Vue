@@ -176,7 +176,7 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	name: 'Files',
+	name: 'Nas',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],
 	data() {
