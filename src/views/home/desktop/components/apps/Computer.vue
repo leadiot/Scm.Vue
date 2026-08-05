@@ -45,8 +45,8 @@
 				</div>
 				<div class="path-bar">
 					<span class="path-root" @click="goToRoot">
-						<sc-icon name="ms-cloud" :size="16" />
-						<span>{{ $t('desktop.cloudSpace') }}</span>
+						<sc-icon name="ms-desktop_windows" :size="16" />
+						<span>{{ $t('desktop.myComputer') }}</span>
 					</span>
 					<span v-for="(item, index) in visiblePath" :key="index" class="path-segment">
 						<sc-icon name="ms-chevron_right" :size="16" />
@@ -106,7 +106,7 @@
 					</div>
 				</div>
 				<div class="sidebar-section">
-					<div class="sidebar-title">{{ $t('desktop.myDevices') }}</div>
+					<div class="sidebar-title">{{ $t('desktop.myComputer') }}</div>
 					<div v-for="item in deviceList" :key="item.name" class="sidebar-item"
 						:class="{ active: currentFolder?.name === item.name }" @click="openDevice(item)">
 						<sc-icon name="ms-devices" :size="18" />
@@ -376,15 +376,13 @@ import tool from '@/utils/tool.js';
 export default {
 	name: 'Computer',
 	components: { scIcon },
-	inject: ['openNasFileWithApp'],
 	data() {
 		return {
 			param: {
-				dir_id: '0',
-				kind: 0,
 				key: '',
+				path: '',
 				page: 1,
-				limit: 50,
+				limit: 20,
 			},
 			viewMode: 'details',
 			sortField: 'name',
@@ -637,7 +635,7 @@ export default {
 			}
 		},
 		saveParam(item) {
-			this.param.key = item.path || '';
+			this.param.path = item.path || '';
 			this.param.page = 1;
 			this.param.limit = 100;
 		},
@@ -697,11 +695,6 @@ export default {
 			window.open(fileUrl, '_blank');
 		},
 		openDoc(item) {
-			if (!this.openNasFileWithApp) {
-				this.openDocWithWeb(item);
-				return;
-			}
-
 			var kind = '';
 			if (item.kind == 30) {
 				kind = 'text';
@@ -726,9 +719,6 @@ export default {
 				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.name),
 				size: f.size || 0,
 			}));
-
-			const index = files.findIndex(f => f.name === item.name);
-			this.openNasFileWithApp(kind, files, index);
 		},
 		clearSelection() {
 			this.selectedItems = [];
@@ -799,8 +789,7 @@ export default {
 				return;
 			}
 
-			this.param.dir_id = this.currentFolder.param.dir_id;
-			this.param.kind = this.currentFolder.param.kind;
+			this.param.path = this.currentFolder.path || '';
 			this.listFile();
 		},
 		sortBy(field) {
@@ -938,23 +927,23 @@ export default {
 			if (!this.canPaste) {
 				return;
 			}
-			this.pasteInto(this.param.dir_id);
+			this.pasteInto(this.param.path);
 		},
-		async pasteInto(dirId) {
+		async pasteInto(path) {
 			if (this.clipboard.items.length === 0) {
 				return;
 			}
 			// 不允许将文件夹粘贴到自身
-			if (this.clipboard.items.some(i => i.name === dirId)) {
+			if (this.clipboard.items.some(i => i.name === path)) {
 				this.$message.warning(this.$t('desktop.operationFailed'));
 				return;
 			}
-			const ids = this.clipboard.items.map(i => i.name);
+			const srcList = this.clipboard.items.map(i => i.path);
 			const isCut = this.clipboard.op === 'cut';
 			const api = isCut ? this.$API.scmsyscomputer.move : this.$API.scmsyscomputer.copy;
 			this.busy = true;
 			try {
-				var res = await api.post({ ids: ids, dir_id: dirId });
+				var res = await api.post({ src: srcList, dst: path });
 				if (res.code == 200) {
 					this.$message.success(isCut ? this.$t('desktop.moveSuccess') : this.$t('desktop.copySuccess'));
 					if (isCut) {
@@ -985,8 +974,8 @@ export default {
 			}).then(async () => {
 				this.busy = true;
 				try {
-					const ids = items.map(i => i.name).join(',');
-					var res = await this.$API.scmsyscomputer.delete.delete(ids);
+					const path = items.map(i => i.path);
+					var res = await this.$API.scmsyscomputer.delete.post({ path: path });
 					if (res.code == 200) {
 						this.$message.success(this.$t('desktop.deleteSuccess'));
 						this.selectedItems = [];
@@ -1031,7 +1020,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmsyscomputer.mkdir.post({ dir_id: this.param.dir_id, name: name });
+				var res = await this.$API.scmsyscomputer.mkdir.post({ path: this.param.path, name: name });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.createSuccess'));
 					this.newFolderVisible = false;
@@ -1064,17 +1053,11 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmsyscomputer.edit.get(this.renameItem.name);
-				if (res.code == 200 && res.data) {
-					res.data.name = name;
-					var save = await this.$API.scmsyscomputer.update.put(res.data);
-					if (save.code == 200) {
-						this.$message.success(this.$t('desktop.renameSuccess'));
-						this.renameVisible = false;
-						this.listFile();
-					} else {
-						this.$message.error(save.message || this.$t('desktop.operationFailed'));
-					}
+				var res = await this.$API.scmsyscomputer.rename.post({ src: this.renameItem.path, name: name });
+				if (res.code == 200) {
+					this.$message.success(this.$t('desktop.renameSuccess'));
+					this.renameVisible = false;
+					this.listFile();
 				} else {
 					this.$message.error(this.$t('desktop.operationFailed'));
 				}
@@ -1146,7 +1129,7 @@ export default {
 			data.append('file', file);
 			data.append('name', file.name);
 			data.append('size', file.size);
-			data.append('dir_id', this.param.dir_id);
+			data.append('path', this.param.path);
 			const config = {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				timeout: 300000,
@@ -1218,7 +1201,7 @@ export default {
 			}
 			try {
 				var res = await this.$API.scmsyscomputer.page.get({
-					dir_id: node.data.name, kind: 0, key: '', page: 1, limit: 500,
+					key: node.data.name, page: 1, limit: 500,
 				});
 				if (res.code == 200) {
 					const dirs = (res.data.items || [])
@@ -1235,14 +1218,14 @@ export default {
 				return;
 			}
 			const items = this.getSelectedItems();
-			const targetId = this.moveToTarget.name;
-			if (items.some(i => i.name === targetId)) {
+			const targetPath = this.moveToTarget.name;
+			if (items.some(i => i.name === targetPath)) {
 				this.$message.warning(this.$t('desktop.operationFailed'));
 				return;
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmsyscomputer.move.post({ ids: items.map(i => i.name), dir_id: targetId });
+				var res = await this.$API.scmsyscomputer.move.post({ ids: items.map(i => i.name), path: targetPath });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.moveSuccess'));
 					this.moveToVisible = false;

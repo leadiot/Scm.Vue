@@ -60,8 +60,8 @@ export default {
 	delete: {
 		url: `${config.API_URL}/scmsyscomputer`,
 		name: "删除",
-		delete: async function (data) {
-			return await http.delete(this.url, data);
+		post: async function (data) {
+			return await http.post(this.url, data);
 		}
 	},
 	option: {
@@ -72,7 +72,7 @@ export default {
 		}
 	},
 	mkdir: {
-		url: `${config.API_URL}/scmsyscomputer/mkdir`,
+		url: `${config.API_URL}/scmsyscomputer/CreateDir`,
 		name: "新建文件夹",
 		post: async function (data) {
 			return await http.post(this.url, data);
@@ -88,6 +88,13 @@ export default {
 	move: {
 		url: `${config.API_URL}/scmsyscomputer/move`,
 		name: "移动",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
+	rename: {
+		url: `${config.API_URL}/scmsyscomputer/rename`,
+		name: "重命名",
 		post: async function (data) {
 			return await http.post(this.url, data);
 		}
