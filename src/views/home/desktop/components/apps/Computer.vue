@@ -15,25 +15,31 @@
 					<sc-icon name="ms-refresh" :size="18" />
 				</button>
 				<div class="action-buttons">
-					<button class="toolbar-btn" :title="$t('desktop.newFolder')" :disabled="!canOperate" @click="openNewFolderDialog">
+					<button class="toolbar-btn" :title="$t('desktop.newFolder')" :disabled="!canOperate"
+						@click="openNewFolderDialog">
 						<sc-icon name="ms-create_new_folder" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.uploadFile')" :disabled="!canOperate" @click="openUploadDialog">
+					<button class="toolbar-btn" :title="$t('desktop.uploadFile')" :disabled="!canOperate"
+						@click="openUploadDialog">
 						<sc-icon name="ms-upload" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.cut')" :disabled="selectedItems.length === 0" @click="cutSelected">
+					<button class="toolbar-btn" :title="$t('desktop.cut')" :disabled="selectedItems.length === 0"
+						@click="cutSelected">
 						<sc-icon name="ms-content_cut" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.copy')" :disabled="selectedItems.length === 0" @click="copySelected">
+					<button class="toolbar-btn" :title="$t('desktop.copy')" :disabled="selectedItems.length === 0"
+						@click="copySelected">
 						<sc-icon name="ms-content_copy" :size="18" />
 					</button>
 					<button class="toolbar-btn" :title="$t('desktop.paste')" :disabled="!canPaste" @click="pasteHere">
 						<sc-icon name="ms-content_paste" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.download')" :disabled="!hasSelectedFile" @click="downloadSelected">
+					<button class="toolbar-btn" :title="$t('desktop.download')" :disabled="!hasSelectedFile"
+						@click="downloadSelected">
 						<sc-icon name="ms-download" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.delete')" :disabled="selectedItems.length === 0" @click="deleteSelected">
+					<button class="toolbar-btn" :title="$t('desktop.delete')" :disabled="selectedItems.length === 0"
+						@click="deleteSelected">
 						<sc-icon name="ms-delete" :size="18" />
 					</button>
 				</div>
@@ -70,8 +76,8 @@
 				</div>
 			</div>
 			<div class="toolbar-right">
-				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search" size="small"
-					class="search-input" />
+				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search"
+					size="small" class="search-input" />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
 						:class="{ active: viewMode === v.value }" :title="v.label" @click="changeViewMode(v.value)">
@@ -85,34 +91,26 @@
 			<div class="sidebar">
 				<div class="sidebar-section">
 					<div class="sidebar-title">{{ $t('desktop.cloudSpace') }}</div>
-					<div v-for="item in stores" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
+					<div v-for="item in stores" :key="item.name" class="sidebar-item"
+						:class="{ active: currentFolder?.name === item.name }" @click="openFolder(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
 				<div class="sidebar-section">
 					<div class="sidebar-title">{{ $t('desktop.quickAccess') }}</div>
-					<div v-for="item in libs" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openLib(item)">
+					<div v-for="item in libs" :key="item.name" class="sidebar-item"
+						:class="{ active: currentFolder?.name === item.name }" @click="openLib(item)">
 						<sc-icon :name="item.icon" :size="18" />
 						<span>{{ item.name }}</span>
 					</div>
 				</div>
 				<div class="sidebar-section">
 					<div class="sidebar-title">{{ $t('desktop.myDevices') }}</div>
-					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openDevice(item)">
+					<div v-for="item in deviceList" :key="item.name" class="sidebar-item"
+						:class="{ active: currentFolder?.name === item.name }" @click="openDevice(item)">
 						<sc-icon name="ms-devices" :size="18" />
 						<span>{{ item.names }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">{{ $t('desktop.mySync') }}</div>
-					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-folder" :size="18" />
-						<span>{{ item.name }}</span>
 					</div>
 				</div>
 			</div>
@@ -121,8 +119,8 @@
 				@scroll="handleScroll" @contextmenu.prevent="showBlankContextMenu($event)"
 				@dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="handleFileDrop">
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
-					<div v-for="item in fileList" :key="item.id" class="tile-item"
-						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+					<div v-for="item in fileList" :key="item.name" class="tile-item"
+						:class="{ selected: selectedItems.includes(item.name) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)" @contextmenu.prevent.stop="showContextMenu($event, item)">
 						<div class="tile-icon">
 							<sc-icon :name="getFileIcon(item)" :size="48" />
@@ -132,8 +130,8 @@
 				</div>
 
 				<div v-else-if="viewMode === 'list'" class="view-list">
-					<div v-for="item in fileList" :key="item.id" class="list-item"
-						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
+					<div v-for="item in fileList" :key="item.name" class="list-item"
+						:class="{ selected: selectedItems.includes(item.name) }" @click="handleItemClick($event, item)"
 						@dblclick="handleItemDblClick(item)" @contextmenu.prevent.stop="showContextMenu($event, item)">
 						<sc-icon :name="getFileIcon(item)" :size="20" />
 						<span class="list-name">{{ item.name }}</span>
@@ -164,16 +162,17 @@
 						</div>
 					</div>
 					<div class="details-body">
-						<div v-for="item in fileList" :key="item.id" class="details-row"
-							:class="{ selected: selectedItems.includes(item.id) }"
+						<div v-for="item in fileList" :key="item.name" class="details-row"
+							:class="{ selected: selectedItems.includes(item.name) }"
 							@click="handleItemClick($event, item)" @dblclick="handleItemDblClick(item)"
 							@contextmenu.prevent.stop="showContextMenu($event, item)">
 							<div class="col-name">
 								<sc-icon :name="getFileIcon(item)" :size="18" />
 								<span>{{ item.name }}</span>
 							</div>
-							<div class="col-date">{{ item.modify_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? $t('desktop.directory') : $t('desktop.file')) }}</div>
+							<div class="col-date">{{ item.change_time }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? $t('desktop.directory') :
+								$t('desktop.file')) }}</div>
 							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
@@ -183,7 +182,7 @@
 					<span class="load-more-icon"><sc-icon name="ms-refresh" :size="16" /></span>
 					<span>{{ $t('desktop.loading') }}</span>
 				</div>
-				
+
 				<div v-if="fileList.length === 0 && !loading" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
 					<p>{{ $t('desktop.folderEmpty') }}</p>
@@ -200,8 +199,11 @@
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{ $t('desktop.items') }}</span>
-			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
+			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{
+				$t('desktop.items')
+			}}</span>
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length)
+			}}</span>
 		</div>
 
 		<!-- 条目右键菜单 -->
@@ -223,7 +225,8 @@
 				<sc-icon name="ms-content_copy" :size="16" />
 				<span>{{ $t('desktop.copy') }}</span>
 			</div>
-			<div v-if="contextMenu.item && contextMenu.item.type === 10 && canPaste" class="context-item" @click="menuPasteInto">
+			<div v-if="contextMenu.item && contextMenu.item.type === 10 && canPaste" class="context-item"
+				@click="menuPasteInto">
 				<sc-icon name="ms-content_paste" :size="16" />
 				<span>{{ $t('desktop.paste') }}</span>
 			</div>
@@ -233,7 +236,7 @@
 			</div>
 			<div class="context-divider"></div>
 			<div class="context-item" @click="menuRename">
-				<sc-icon name="ms-drive_file_rename" :size="16" />
+				<sc-icon name="ms-edit" :size="16" />
 				<span>{{ $t('desktop.rename') }}</span>
 			</div>
 			<div class="context-item context-danger" @click="menuDelete">
@@ -268,21 +271,25 @@
 		</div>
 
 		<!-- 新建文件夹对话框 -->
-		<el-dialog v-model="newFolderVisible" :title="$t('desktop.newFolder')" width="400px" append-to-body @opened="focusNameInput">
+		<el-dialog v-model="newFolderVisible" :title="$t('desktop.newFolder')" width="400px" append-to-body
+			@opened="focusNameInput">
 			<el-form @submit.prevent>
 				<el-form-item :label="$t('desktop.folderNameLabel')">
-					<el-input ref="nameInputRef" v-model="newFolderName" :placeholder="$t('desktop.folderNamePlaceholder')"
-						maxlength="250" clearable @keyup.enter="createNewFolder" />
+					<el-input ref="nameInputRef" v-model="newFolderName"
+						:placeholder="$t('desktop.folderNamePlaceholder')" maxlength="250" clearable
+						@keyup.enter="createNewFolder" />
 				</el-form-item>
 			</el-form>
 			<template #footer>
 				<el-button @click="newFolderVisible = false">{{ $t('desktop.cancel') }}</el-button>
-				<el-button type="primary" :loading="busy" @click="createNewFolder">{{ $t('desktop.confirm') }}</el-button>
+				<el-button type="primary" :loading="busy" @click="createNewFolder">{{ $t('desktop.confirm')
+				}}</el-button>
 			</template>
 		</el-dialog>
 
 		<!-- 重命名对话框 -->
-		<el-dialog v-model="renameVisible" :title="$t('desktop.renameTitle')" width="400px" append-to-body @opened="focusRenameInput">
+		<el-dialog v-model="renameVisible" :title="$t('desktop.renameTitle')" width="400px" append-to-body
+			@opened="focusRenameInput">
 			<el-form @submit.prevent>
 				<el-form-item :label="$t('desktop.nameLabel')">
 					<el-input ref="renameInputRef" v-model="renameName" :placeholder="$t('desktop.namePlaceholder')"
@@ -297,7 +304,8 @@
 
 		<!-- 上传对话框 -->
 		<el-dialog v-model="uploadVisible" :title="$t('desktop.uploadFile')" width="500px" append-to-body>
-			<el-upload ref="uploadRef" class="upload-demo" drag multiple :auto-upload="false" :http-request="uploadRequest">
+			<el-upload ref="uploadRef" class="upload-demo" drag multiple :auto-upload="false"
+				:http-request="uploadRequest">
 				<sc-icon name="ms-cloud_upload" :size="48" />
 				<div class="upload-text">
 					<p>{{ $t('desktop.uploadDragHint') }}</p>
@@ -306,7 +314,8 @@
 			</el-upload>
 			<template #footer>
 				<el-button @click="uploadVisible = false">{{ $t('desktop.cancel') }}</el-button>
-				<el-button type="primary" :loading="busy" @click="submitUpload">{{ $t('desktop.startUpload') }}</el-button>
+				<el-button type="primary" :loading="busy" @click="submitUpload">{{ $t('desktop.startUpload')
+				}}</el-button>
 			</template>
 		</el-dialog>
 
@@ -324,7 +333,8 @@
 			</el-tree>
 			<template #footer>
 				<el-button @click="moveToVisible = false">{{ $t('desktop.cancel') }}</el-button>
-				<el-button type="primary" :disabled="!moveToTarget" :loading="busy" @click="confirmMoveTo">{{ $t('desktop.confirm') }}</el-button>
+				<el-button type="primary" :disabled="!moveToTarget" :loading="busy" @click="confirmMoveTo">{{
+					$t('desktop.confirm') }}</el-button>
 			</template>
 		</el-dialog>
 
@@ -349,7 +359,7 @@
 				</div>
 				<div class="props-row">
 					<span class="props-label">{{ $t('desktop.modifiedDate') }}</span>
-					<span>{{ propsDetail.modify_times || propsItem.modify_times }}</span>
+					<span>{{ propsDetail.change_time || propsItem.change_time }}</span>
 				</div>
 			</div>
 			<template #footer>
@@ -391,21 +401,19 @@ export default {
 				{ value: 'details', label: '详细信息', icon: 'ms-table_rows' },
 			],
 			stores: [
-				{ id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
+				{ id: 'home', name: '主目录', icon: 'ms-home', type: 'folder', path: "~home" },
+				{ id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder', path: "~desk" },
 			],
 			libs: [
-				// { id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
-				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder', kind: 30 },
-				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder', kind: 41 },
-				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
-				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
-				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
-				{ id: 'archives', name: '归档', icon: 'ms-archive', type: 'folder', kind: 60 },
+				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder', path: '~documents' },
+				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder', path: '~image' },
+				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', path: '~audio' },
+				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', path: '~video' },
+				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', path: '~office' },
+				{ id: 'archives', name: '归档', icon: 'ms-archive', type: 'folder', path: '~archives' },
+				{ id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder', path: '~download' },
 			],
 			deviceList: [],
-			folderList: [],
 			fileList: [],
 			total: 0,
 			loading: false,
@@ -475,7 +483,7 @@ export default {
 			return this.clipboard.items.length > 0 && this.canOperate;
 		},
 		hasSelectedFile() {
-			return this.fileList.some(f => this.selectedItems.includes(f.id) && f.type !== 10);
+			return this.fileList.some(f => this.selectedItems.includes(f.name) && f.type !== 10);
 		},
 		propsLocation() {
 			const names = this.currentPath.map(p => p.names || p.name).filter(n => !!n);
@@ -495,7 +503,6 @@ export default {
 	},
 	mounted() {
 		this.loadCfg();
-		this.listFolder();
 		this.listRoot();
 		window.addEventListener('keydown', this.handleKeyDown);
 		window.addEventListener('click', this.handleWindowClick);
@@ -509,28 +516,12 @@ export default {
 	},
 	methods: {
 		async listRoot() {
-			var res = await this.$API.scmcomputer.root.get("");
+			var res = await this.$API.scmsyscomputer.root.get();
 			if (res.code !== 200) {
 				this.deviceList = [];
 				return;
 			}
 			this.deviceList = res.data || [];
-		},
-		async listHome() {
-			var res = await this.$API.scmcomputer.home.get("");
-			if (res.code !== 200) {
-				this.deviceList = [];
-				return;
-			}
-			this.deviceList = res.data || [];
-		},
-		async listFolder() {
-			var res = await this.$API.scmcomputer.list.get("");
-			if (res.code !== 200) {
-				this.folderList = [];
-				return;
-			}
-			this.folderList = res.data || [];
 		},
 		async listFile() {
 			// 分页加载：重置到第一页并清空已有数据
@@ -554,7 +545,7 @@ export default {
 				this.loadingMore = true;
 			}
 
-			var res = await this.$API.scmcomputer.page.get(this.param);
+			var res = await this.$API.scmsyscomputer.page.get(this.param);
 
 			this.loading = false;
 			this.loadingMore = false;
@@ -586,7 +577,7 @@ export default {
 			}
 		},
 		async loadCfg() {
-			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
+			// this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
 		},
 		getFileIcon(item) {
 			if (item.type === 10) {
@@ -621,22 +612,22 @@ export default {
 		handleItemClick(event, item) {
 			this.hideMenus();
 			if (event.ctrlKey || event.metaKey) {
-				const index = this.selectedItems.indexOf(item.id);
+				const index = this.selectedItems.indexOf(item.name);
 				if (index > -1) {
 					this.selectedItems.splice(index, 1);
 				} else {
-					this.selectedItems.push(item.id);
+					this.selectedItems.push(item.name);
 				}
 			} else if (event.shiftKey && this.selectedItems.length > 0) {
 				const items = this.fileList;
 				const lastSelected = this.selectedItems[this.selectedItems.length - 1];
-				const lastIndex = items.findIndex(i => i.id === lastSelected);
-				const currentIndex = items.findIndex(i => i.id === item.id);
+				const lastIndex = items.findIndex(i => i.name === lastSelected);
+				const currentIndex = items.findIndex(i => i.name === item.name);
 				const start = Math.min(lastIndex, currentIndex);
 				const end = Math.max(lastIndex, currentIndex);
-				this.selectedItems = items.slice(start, end + 1).map(i => i.id);
+				this.selectedItems = items.slice(start, end + 1).map(i => i.name);
 			} else {
-				this.selectedItems = [item.id];
+				this.selectedItems = [item.name];
 			}
 		},
 		handleItemDblClick(item) {
@@ -646,11 +637,10 @@ export default {
 				this.openDoc(item);
 			}
 		},
-		saveParam(item, param) {
-			item.param = param;
-			this.param.opt = param.opt;
-			this.param.dir_id = param.dir_id;
-			this.param.kind = param.kind;
+		saveParam(item) {
+			this.param.key = item.path;
+			this.param.page = 1;
+			this.param.limit = 100;
 		},
 		async openLib(item) {
 			this.currentPath = [];
@@ -673,7 +663,7 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.saveParam(item);
 			this.listFile();
 		},
 		async openDevice(item) {
@@ -696,7 +686,7 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.saveParam(item, { opt: '1', dir_id: item.id, kind: 0 });
+			this.saveParam(item, { opt: '1', dir_id: item.name, kind: 0 });
 			this.listFile();
 		},
 		/**
@@ -704,7 +694,7 @@ export default {
 		 * @param item 文档项
 		 */
 		openDocWithWeb(item) {
-			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.id);
+			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.name);
 			window.open(fileUrl, '_blank');
 		},
 		/**
@@ -739,13 +729,12 @@ export default {
 			const files = this.fileList.filter(f => {
 				return f.kind === item.kind;
 			}).map(f => ({
-				id: f.id,
 				name: f.name,
-				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.id),
+				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.name),
 				size: f.size || 0,
 			}));
 
-			const index = files.findIndex(f => f.id === item.id);
+			const index = files.findIndex(f => f.name === item.name);
 			this.openNasFileWithApp(kind, files, index);
 		},
 		clearSelection() {
@@ -832,12 +821,11 @@ export default {
 		},
 		async refresh() {
 			this.hideMenus();
-			await this.listFolder();
 			await this.listRoot();
 			await this.listFile();
 		},
 		getSelectedItems() {
-			return this.fileList.filter(f => this.selectedItems.includes(f.id));
+			return this.fileList.filter(f => this.selectedItems.includes(f.name));
 		},
 		hideMenus() {
 			this.contextMenu.visible = false;
@@ -864,8 +852,8 @@ export default {
 			return { left: left + 'px', top: top + 'px' };
 		},
 		showContextMenu(event, item) {
-			if (!this.selectedItems.includes(item.id)) {
-				this.selectedItems = [item.id];
+			if (!this.selectedItems.includes(item.name)) {
+				this.selectedItems = [item.name];
 			}
 			this.contextMenu.item = item;
 			this.contextMenu.style = this.menuStyle(event);
@@ -902,7 +890,7 @@ export default {
 			const item = this.contextMenu.item;
 			this.hideMenus();
 			if (item && item.type === 10) {
-				this.pasteInto(item.id);
+				this.pasteInto(item.name);
 			}
 		},
 		menuMoveTo() {
@@ -965,13 +953,13 @@ export default {
 				return;
 			}
 			// 不允许将文件夹粘贴到自身
-			if (this.clipboard.items.some(i => i.id === dirId)) {
+			if (this.clipboard.items.some(i => i.name === dirId)) {
 				this.$message.warning(this.$t('desktop.operationFailed'));
 				return;
 			}
-			const ids = this.clipboard.items.map(i => i.id);
+			const ids = this.clipboard.items.map(i => i.name);
 			const isCut = this.clipboard.op === 'cut';
-			const api = isCut ? this.$API.scmcomputer.move : this.$API.scmcomputer.copy;
+			const api = isCut ? this.$API.scmsyscomputer.move : this.$API.scmsyscomputer.copy;
 			this.busy = true;
 			try {
 				var res = await api.post({ ids: ids, dir_id: dirId });
@@ -1005,8 +993,8 @@ export default {
 			}).then(async () => {
 				this.busy = true;
 				try {
-					const ids = items.map(i => i.id).join(',');
-					var res = await this.$API.scmcomputer.delete.delete(ids);
+					const ids = items.map(i => i.name).join(',');
+					var res = await this.$API.scmsyscomputer.delete.delete(ids);
 					if (res.code == 200) {
 						this.$message.success(this.$t('desktop.deleteSuccess'));
 						this.selectedItems = [];
@@ -1051,7 +1039,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.mkdir.post({ dir_id: this.param.dir_id, name: name });
+				var res = await this.$API.scmsyscomputer.mkdir.post({ dir_id: this.param.dir_id, name: name });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.createSuccess'));
 					this.newFolderVisible = false;
@@ -1084,10 +1072,10 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.edit.get(this.renameItem.id);
+				var res = await this.$API.scmsyscomputer.edit.get(this.renameItem.name);
 				if (res.code == 200 && res.data) {
 					res.data.name = name;
-					var save = await this.$API.scmcomputer.update.put(res.data);
+					var save = await this.$API.scmsyscomputer.update.put(res.data);
 					if (save.code == 200) {
 						this.$message.success(this.$t('desktop.renameSuccess'));
 						this.renameVisible = false;
@@ -1108,7 +1096,7 @@ export default {
 			if (!item || item.type === 10) {
 				return;
 			}
-			const url = this.$SCM.getApiUrl('/Nas/Dl/' + item.id);
+			const url = this.$SCM.getApiUrl('/Nas/Dl/' + item.name);
 			tool.downloadFile(url, item.name);
 		},
 		downloadSelected() {
@@ -1171,7 +1159,7 @@ export default {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				timeout: 300000,
 			};
-			var res = await this.$API.scmcomputer.upload.post(data, config);
+			var res = await this.$API.scmsyscomputer.upload.post(data, config);
 			if (res.code != 200) {
 				throw new Error(res.message || 'upload failed');
 			}
@@ -1232,19 +1220,18 @@ export default {
 		async loadMoveTree(node, resolve) {
 			if (node.level === 0) {
 				const roots = [];
-				this.deviceList.forEach(d => roots.push({ id: d.res_id || d.id, name: d.names || d.name, leaf: false }));
-				this.folderList.forEach(f => roots.push({ id: f.res_id || f.id, name: f.name, leaf: false }));
+				this.deviceList.forEach(d => roots.push({ id: d.res_id || d.name, name: d.names || d.name, leaf: false }));
 				resolve(roots);
 				return;
 			}
 			try {
-				var res = await this.$API.scmcomputer.page.get({
-					opt: '1', dir_id: node.data.id, kind: 0, key: '', page: 1, limit: 500,
+				var res = await this.$API.scmsyscomputer.page.get({
+					opt: '1', dir_id: node.data.name, kind: 0, key: '', page: 1, limit: 500,
 				});
 				if (res.code == 200) {
 					const dirs = (res.data.items || [])
-						.filter(i => i.type === 10 && !this.selectedItems.includes(i.id))
-						.map(i => ({ id: i.id, name: i.name, leaf: false }));
+						.filter(i => i.type === 10 && !this.selectedItems.includes(i.name))
+						.map(i => ({ id: i.name, name: i.name, leaf: false }));
 					resolve(dirs);
 					return;
 				}
@@ -1256,14 +1243,14 @@ export default {
 				return;
 			}
 			const items = this.getSelectedItems();
-			const targetId = this.moveToTarget.id;
-			if (items.some(i => i.id === targetId)) {
+			const targetId = this.moveToTarget.name;
+			if (items.some(i => i.name === targetId)) {
 				this.$message.warning(this.$t('desktop.operationFailed'));
 				return;
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.move.post({ ids: items.map(i => i.id), dir_id: targetId });
+				var res = await this.$API.scmsyscomputer.move.post({ ids: items.map(i => i.name), dir_id: targetId });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.moveSuccess'));
 					this.moveToVisible = false;
@@ -1286,7 +1273,7 @@ export default {
 			this.propsDetail = {};
 			this.propsVisible = true;
 			try {
-				var res = await this.$API.scmcomputer.view.get(item.id);
+				var res = await this.$API.scmsyscomputer.view.get(item.name);
 				if (res.code == 200 && res.data) {
 					this.propsDetail = res.data;
 				}
@@ -1723,8 +1710,13 @@ export default {
 }
 
 @keyframes nas-spin {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .empty-state {

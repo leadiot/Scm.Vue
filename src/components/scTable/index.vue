@@ -273,7 +273,7 @@ export default {
 		getTotal() {
 			return this.total;
 		},
-		getTableData(){
+		getTableData() {
 			return this.tableData;
 		},
 		//刷新数据
