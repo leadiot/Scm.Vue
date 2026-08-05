@@ -15,4 +15,53 @@ export default {
 			return await http.get(this.url + params);
 		}
 	},
+	edit: {
+		url: `${config.API_URL}/samplestemperature/edit/`,
+		name: "编辑",
+		get: async function (params) {
+			return await http.get(this.url + params);
+		}
+	},
+	add: {
+		url: `${config.API_URL}/samplestemperature`,
+		name: "添加",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
+	save: {
+		url: `${config.API_URL}/samplestemperature`,
+		name: "保存",
+		put: async function (data) {
+			return await http.put(this.url, data);
+		}
+	},
+	status: {
+		url: `${config.API_URL}/samplestemperature/status`,
+		name: "状态",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
+	delete: {
+		url: `${config.API_URL}/samplestemperature`,
+		name: "删除",
+		delete: async function (data) {
+			return await http.delete(this.url, data);
+		}
+	},
+	upload: {
+		url: `${config.API_URL}/samplestemperature/upload`,
+		name: "上传",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
+	import: {
+		url: `${config.API_URL}/samplestemperature/import`,
+		name: "导入",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
 }

@@ -12,7 +12,7 @@ export default {
 		url: `${config.API_URL}/scmsyscomputer/listroot`,
 		name: "列表",
 		get: async function () {
-			return await http.get(this.ur);
+			return await http.get(this.url);
 		}
 	},
 	list: {

@@ -110,7 +110,7 @@
 					<div v-for="item in deviceList" :key="item.name" class="sidebar-item"
 						:class="{ active: currentFolder?.name === item.name }" @click="openDevice(item)">
 						<sc-icon name="ms-devices" :size="18" />
-						<span>{{ item.names }}</span>
+						<span>{{ item.name }}</span>
 					</div>
 				</div>
 			</div>
@@ -321,7 +321,7 @@
 
 		<!-- 移动到对话框 -->
 		<el-dialog v-model="moveToVisible" :title="$t('desktop.selectTargetFolder')" width="420px" append-to-body>
-			<el-tree ref="moveTreeRef" class="move-tree" lazy node-key="id" :load="loadMoveTree"
+			<el-tree class="move-tree" lazy node-key="id" :load="loadMoveTree"
 				:props="{ label: 'name', isLeaf: 'leaf' }" highlight-current :expand-on-click-node="false"
 				@node-click="handleMoveTreeClick">
 				<template #default="{ data }">
@@ -380,7 +380,6 @@ export default {
 	data() {
 		return {
 			param: {
-				opt: '1',// 0：不限制, 1: 按目录, 2: 按类别
 				dir_id: '0',
 				kind: 0,
 				key: '',
@@ -477,7 +476,7 @@ export default {
 		},
 		// 当前是否处于目录视图（可执行新建/上传/粘贴等操作）
 		canOperate() {
-			return this.param.opt === '1' && this.currentFolder != null;
+			return this.currentFolder != null;
 		},
 		canPaste() {
 			return this.clipboard.items.length > 0 && this.canOperate;
@@ -486,7 +485,7 @@ export default {
 			return this.fileList.some(f => this.selectedItems.includes(f.name) && f.type !== 10);
 		},
 		propsLocation() {
-			const names = this.currentPath.map(p => p.names || p.name).filter(n => !!n);
+			const names = this.currentPath.map(p => p.name).filter(n => !!n);
 			return names.length > 0 ? names.join(' / ') : '/';
 		},
 	},
@@ -577,7 +576,7 @@ export default {
 			}
 		},
 		async loadCfg() {
-			// this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
+			this.viewMode = await this.$SCM.read_cfg("desktop_files_view_mode", 'details');
 		},
 		getFileIcon(item) {
 			if (item.type === 10) {
@@ -638,7 +637,7 @@ export default {
 			}
 		},
 		saveParam(item) {
-			this.param.key = item.path;
+			this.param.key = item.path || '';
 			this.param.page = 1;
 			this.param.limit = 100;
 		},
@@ -651,7 +650,7 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.saveParam(item, { opt: '2', dir_id: '0', kind: item.kind });
+			this.saveParam(item);
 			this.listFile();
 		},
 		async openFolder(item) {
@@ -675,7 +674,7 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.saveParam(item);
 			this.listFile();
 		},
 		async openDir(item) {
@@ -686,7 +685,7 @@ export default {
 			this.history.push({ folder: item, path: [...this.currentPath] });
 			this.historyIndex = this.history.length - 1;
 
-			this.saveParam(item, { opt: '1', dir_id: item.name, kind: 0 });
+			this.saveParam(item);
 			this.listFile();
 		},
 		/**
@@ -696,12 +695,6 @@ export default {
 		openDocWithWeb(item) {
 			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.name);
 			window.open(fileUrl, '_blank');
-		},
-		/**
-		 * 打开文档
-		 * @param item 文档项	
-		 */
-		openDocWithApp(item) {
 		},
 		openDoc(item) {
 			if (!this.openNasFileWithApp) {
@@ -806,7 +799,6 @@ export default {
 				return;
 			}
 
-			this.param.opt = this.currentFolder.param.opt;
 			this.param.dir_id = this.currentFolder.param.dir_id;
 			this.param.kind = this.currentFolder.param.kind;
 			this.listFile();
@@ -972,7 +964,7 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch (e) {
+			} catch {
 				this.$message.error(this.$t('desktop.operationFailed'));
 			}
 			this.busy = false;
@@ -1002,7 +994,7 @@ export default {
 					} else {
 						this.$message.error(res.message || this.$t('desktop.operationFailed'));
 					}
-				} catch (e) {
+				} catch {
 					this.$message.error(this.$t('desktop.operationFailed'));
 				}
 				this.busy = false;
@@ -1047,7 +1039,7 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch (e) {
+			} catch {
 				this.$message.error(this.$t('desktop.operationFailed'));
 			}
 			this.busy = false;
@@ -1086,7 +1078,7 @@ export default {
 				} else {
 					this.$message.error(this.$t('desktop.operationFailed'));
 				}
-			} catch (e) {
+			} catch {
 				this.$message.error(this.$t('desktop.operationFailed'));
 			}
 			this.busy = false;
@@ -1193,7 +1185,7 @@ export default {
 			for (const file of files) {
 				try {
 					await this.uploadOne(file);
-				} catch (err) {
+				} catch {
 					failed = true;
 				}
 			}
@@ -1220,13 +1212,13 @@ export default {
 		async loadMoveTree(node, resolve) {
 			if (node.level === 0) {
 				const roots = [];
-				this.deviceList.forEach(d => roots.push({ id: d.res_id || d.name, name: d.names || d.name, leaf: false }));
+				this.deviceList.forEach(d => roots.push({ id: d.res_id || d.name, name: d.name, leaf: false }));
 				resolve(roots);
 				return;
 			}
 			try {
 				var res = await this.$API.scmsyscomputer.page.get({
-					opt: '1', dir_id: node.data.name, kind: 0, key: '', page: 1, limit: 500,
+					dir_id: node.data.name, kind: 0, key: '', page: 1, limit: 500,
 				});
 				if (res.code == 200) {
 					const dirs = (res.data.items || [])
@@ -1235,7 +1227,7 @@ export default {
 					resolve(dirs);
 					return;
 				}
-			} catch (e) { }
+			} catch { }
 			resolve([]);
 		},
 		async confirmMoveTo() {
@@ -1259,7 +1251,7 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch (e) {
+			} catch {
 				this.$message.error(this.$t('desktop.operationFailed'));
 			}
 			this.busy = false;
@@ -1277,7 +1269,7 @@ export default {
 				if (res.code == 200 && res.data) {
 					this.propsDetail = res.data;
 				}
-			} catch (e) { }
+			} catch { }
 		},
 		// ===== 快捷键 =====
 		handleKeyDown(e) {
