@@ -237,6 +237,7 @@ export default {
 		monitor: '大画面',
 		// コンテキストメニュー
 		openTerminal: 'ターミナルを開く',
+		openComputer: 'コンピュータを開く',
 		openCloudSpace: 'クラウドスペースを開く',
 		// アプリ名
 		terminal: 'ターミナル',

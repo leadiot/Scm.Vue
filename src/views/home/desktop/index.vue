@@ -121,8 +121,7 @@
 				<span>{{ $t('desktop.refresh') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
-			<div class="context-menu-item"
-				@click="openApp({ name: $t('desktop.terminal'), icon: 'ms-terminal', component: 'Terminal', width: 800, height: 560 })">
+			<div class="context-menu-item" @click="openTerminal">
 				<sc-icon name="ms-terminal" :size="16" />
 				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
@@ -135,10 +134,9 @@
 				<sc-icon name="ms-settings" :size="16" />
 				<span>{{ $t('desktop.desktopSettings') }}</span>
 			</div>
-			<div class="context-menu-item"
-				@click="openApp({ name: $t('desktop.cloudSpace'), icon: 'ms-folder', component: 'Files' })">
-				<sc-icon name="ms-folder" :size="16" />
-				<span>{{ $t('desktop.openCloudSpace') }}</span>
+			<div class="context-menu-item" @click="openComputer">
+				<sc-icon name="ms-computer" :size="16" />
+				<span>{{ $t('desktop.openComputer') }}</span>
 			</div>
 		</div>
 	</div>
@@ -162,6 +160,8 @@ import GenericMenu from './components/menus/GenericMenu.vue';
 
 // 后端菜单码 → 应用角色（settings 刻意不覆盖，始终使用本地配置）
 const CODE_TO_ROLE = {
+	'app-computer': 'computer',
+	'app-terminal': 'terminal',
 	'app-profile': 'profile',
 	'app-calendar': 'calendar',
 	'app-image': 'image',
@@ -269,8 +269,20 @@ export default {
 			},
 			// 应用配置表（以逻辑角色为键；登录后 addDeskIcon 用后端菜单覆盖，settings 除外）
 			appMap: {
-				settings: {
+				computer: {
 					id: '1',
+					code: 'app-computer',
+					name: '计算机',
+					component: 'Computer',
+					meta: {
+						icon: 'ms-computer',
+						width: 900,
+						height: 620,
+						resizable: true,
+					}
+				},
+				settings: {
+					id: '2',
 					code: 'app-settings',
 					name: '设置',
 					component: 'Settings',
@@ -282,7 +294,7 @@ export default {
 					}
 				},
 				profile: {
-					id: '2',
+					id: '3',
 					code: 'app-profile',
 					name: '个人信息',
 					component: 'Profile',
@@ -293,8 +305,19 @@ export default {
 						resizable: false,
 					}
 				},
+				terminal: {
+					id: '4',
+					code: 'app-terminal',
+					name: '终端',
+					component: 'Terminal',
+					meta: {
+						icon: 'ms-terminal',
+						width: 800,
+						height: 600
+					}
+				},
 				calendar: {
-					id: '3',
+					id: '5',
 					code: 'app-calendar',
 					name: '日历',
 					component: 'Calendar',
@@ -758,6 +781,11 @@ export default {
 				this.closeWindow(win.id);
 			}
 		},
+		openComputer() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.computer);
+		},
 		openSettings() {
 			this.showStartMenu = false;
 			this.hideContextMenu();
@@ -769,22 +797,25 @@ export default {
 			};
 			this.openApp(this.appMap.settings);
 		},
+		openTerminal() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.terminal);
+		},
 		openCalendar() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
 			this.openApp(this.appMap.calendar);
 		},
 		openProfile() {
+			this.showStartMenu = false;
 			this.hideContextMenu();
 			this.openApp(this.appMap.profile);
 		},
 		// XP 开始菜单右栏快捷链接
 		openQuickLink(link) {
 			if (link.key === 'computer') {
-				this.openApp({
-					code: 'app-files',
-					name: link.name,
-					component: 'Files',
-					meta: { icon: link.icon, width: 960, height: 620, resizable: true },
-				});
+				this.openComputer();
 			} else if (link.key === 'settings') {
 				this.openSettings();
 			} else if (link.key === 'profile') {

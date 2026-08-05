@@ -239,6 +239,7 @@ export default {
 		monitor: "Monitor",
 		// Context Menu
 		openTerminal: "Open Terminal",
+		openComputer: "Open Computer",
 		openCloudSpace: "Open Cloud Space",
 		// App Names
 		terminal: "Terminal",

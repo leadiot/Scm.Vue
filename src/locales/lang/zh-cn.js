@@ -237,6 +237,7 @@ export default {
 		monitor: "大屏幕",
 		// 右键菜单
 		openTerminal: "打开终端",
+		openComputer: "打开计算机",
 		openCloudSpace: "打开云空间",
 		// 应用名称
 		terminal: "终端",

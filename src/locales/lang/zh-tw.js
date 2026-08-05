@@ -237,6 +237,7 @@ export default {
 		monitor: "大螢幕",
 		// 右鍵選單
 		openTerminal: "開啟終端機",
+		openComputer: "開啟計算機",
 		openCloudSpace: "開啟雲端空間",
 		// 應用程式名稱
 		terminal: "終端機",

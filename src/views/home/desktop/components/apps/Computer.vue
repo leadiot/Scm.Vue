@@ -23,17 +23,6 @@
 						@click="openUploadDialog">
 						<sc-icon name="ms-upload" :size="18" />
 					</button>
-					<button class="toolbar-btn" :title="$t('desktop.cut')" :disabled="selectedItems.length === 0"
-						@click="cutSelected">
-						<sc-icon name="ms-content_cut" :size="18" />
-					</button>
-					<button class="toolbar-btn" :title="$t('desktop.copy')" :disabled="selectedItems.length === 0"
-						@click="copySelected">
-						<sc-icon name="ms-content_copy" :size="18" />
-					</button>
-					<button class="toolbar-btn" :title="$t('desktop.paste')" :disabled="!canPaste" @click="pasteHere">
-						<sc-icon name="ms-content_paste" :size="18" />
-					</button>
 					<button class="toolbar-btn" :title="$t('desktop.download')" :disabled="!hasSelectedFile"
 						@click="downloadSelected">
 						<sc-icon name="ms-download" :size="18" />
