@@ -304,7 +304,7 @@
 
 		<!-- 上传对话框 -->
 		<el-dialog v-model="uploadVisible" :title="$t('desktop.uploadFile')" width="500px" append-to-body>
-			<el-upload ref="uploadRef" class="upload-demo" drag multiple :auto-upload="false"
+			<el-upload ref="uploadRef" class="upload-demo" drag multiple :auto-upload="false" v-model:file-list="uploadList"
 				:http-request="uploadRequest">
 				<sc-icon name="ms-cloud_upload" :size="48" />
 				<div class="upload-text">
@@ -314,8 +314,9 @@
 			</el-upload>
 			<template #footer>
 				<el-button @click="uploadVisible = false">{{ $t('desktop.cancel') }}</el-button>
-				<el-button type="primary" :loading="busy" @click="submitUpload">{{ $t('desktop.startUpload')
-				}}</el-button>
+				<el-button type="primary" :loading="busy" @click="submitUpload">
+					{{ $t('desktop.startUpload') }}
+				</el-button>
 			</template>
 		</el-dialog>
 
@@ -433,6 +434,7 @@ export default {
 			uploadVisible: false,
 			uploadPending: 0,
 			uploadFailed: false,
+			uploadList: [],
 			// 移动到
 			moveToVisible: false,
 			moveToTarget: null,
@@ -1082,16 +1084,11 @@ export default {
 			if (!this.canOperate) {
 				return;
 			}
-			if (this.$refs.uploadRef) {
-				this.$refs.uploadRef.clearFiles();
-			}
+			this.uploadList = [];
 			this.uploadVisible = true;
 		},
 		submitUpload() {
-			if (!this.$refs.uploadRef) {
-				return;
-			}
-			const files = (this.$refs.uploadRef.uploadFiles || []).filter(f => f.status === 'ready');
+			const files = (this.uploadList || []).filter(f => f.status === 'ready');
 			if (files.length === 0) {
 				return;
 			}
@@ -1126,6 +1123,7 @@ export default {
 		},
 		async uploadOne(file) {
 			const data = new FormData();
+			data.append('type', 1);
 			data.append('file', file);
 			data.append('name', file.name);
 			data.append('size', file.size);
