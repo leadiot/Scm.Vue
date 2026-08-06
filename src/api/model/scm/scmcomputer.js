@@ -43,11 +43,11 @@ export default {
 			return await http.get(this.url);
 		}
 	},
-	view: {
-		url: `${config.API_URL}/computer/view/`,
+	info: {
+		url: `${config.API_URL}/computer/info`,
 		name: "查看",
 		get: async function (params) {
-			return await http.get(this.url + params);
+			return await http.get(this.url, params);
 		}
 	},
 	createDir: {
@@ -95,8 +95,8 @@ export default {
 	download: {
 		url: `${config.API_URL}/computer/download`,
 		name: "下载",
-		get: async function (params) {
-			return await http.get(this.url, params);
+		get: function (params) {
+			return this.url + "?path=" + params;
 		}
 	},
 }

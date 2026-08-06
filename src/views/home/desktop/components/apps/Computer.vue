@@ -349,7 +349,7 @@
 				</div>
 				<div class="props-row">
 					<span class="props-label">{{ $t('desktop.modifiedDate') }}</span>
-					<span>{{ propsDetail.change_time || propsItem.change_time }}</span>
+					<span>{{ $TOOL.dateFormat(propsDetail.modify_time || propsItem.modify_time) }}</span>
 				</div>
 			</div>
 			<template #footer>
@@ -1062,7 +1062,7 @@ export default {
 			if (!item || item.type === 10) {
 				return;
 			}
-			const url = this.$SCM.getApiUrl('/Nas/Dl/' + item.name);
+			const url = this.$API.scmcomputer.download.get(item.path);
 			tool.downloadFile(url, item.name);
 		},
 		downloadSelected() {
@@ -1212,7 +1212,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.move.post({ files: items.map(i => i.path), path: targetPath });
+				var res = await this.$API.scmcomputer.move.post({ files: items.map(i => i.path), path: targetPath, overwrite: true });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.moveSuccess'));
 					this.moveToVisible = false;
@@ -1235,7 +1235,7 @@ export default {
 			this.propsDetail = {};
 			this.propsVisible = true;
 			try {
-				var res = await this.$API.scmcomputer.view.get(item.name);
+				var res = await this.$API.scmcomputer.info.get({ path: item.path });
 				if (res.code == 200 && res.data) {
 					this.propsDetail = res.data;
 				}
