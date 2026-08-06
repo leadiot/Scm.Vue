@@ -681,35 +681,9 @@ export default {
 		 * 打开文档
 		 * @param item 文档项
 		 */
-		openDocWithWeb(item) {
+		openDoc(item) {
 			const url = this.$API.computer.view.get({ path: item.path });
 			window.open(url, '_blank');
-		},
-		openDoc(item) {
-			var kind = '';
-			if (item.kind == 30) {
-				kind = 'text';
-			}
-			else if (item.kind == 41) {
-				kind = 'image';
-			}
-			else if (item.kind == 42) {
-				kind = 'audio';
-			}
-			else if (item.kind == 43) {
-				kind = 'video';
-			} else {
-				this.openDocWithWeb(item);
-				return;
-			}
-
-			const files = this.fileList.filter(f => {
-				return f.kind === item.kind;
-			}).map(f => ({
-				name: f.name,
-				url: this.$SCM.getApiUrl('/Nas/Vs/' + f.name),
-				size: f.size || 0,
-			}));
 		},
 		clearSelection() {
 			this.selectedItems = [];

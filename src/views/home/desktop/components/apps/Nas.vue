@@ -464,7 +464,7 @@ export default {
 		 * @param item 文档项
 		 */
 		openDocWithWeb(item) {
-			const fileUrl = this.$SCM.getApiUrl('/Nas/Vf/' + item.id);
+			const fileUrl = this.$SCM.getApiUrl('/NasFile/Vf/' + item.id);
 			window.open(fileUrl, '_blank');
 		},
 		/**
@@ -501,7 +501,7 @@ export default {
 			}).map(f => ({
 				id: f.id,
 				name: f.name,
-				url: this.$SCM.getApiUrl('/Nas/Vf/' + f.id),
+				url: this.$SCM.getApiUrl('/NasFile/Vf/' + f.id),
 				size: f.size || 0,
 			}));
 

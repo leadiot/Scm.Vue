@@ -491,7 +491,7 @@ export default {
 			return this.$SCM.getDataUrl('/Nas/thumbs/' + item.res_id + '.png');
 		},
 		getImageUrl(id) {
-			return this.$SCM.getApiUrl('/Nas/Vf/' + id);
+			return this.$SCM.getApiUrl('/NasFile/Vf/' + id);
 		},
 		getShootDate(time) {
 			return this.$TOOL.dateFormat(time);

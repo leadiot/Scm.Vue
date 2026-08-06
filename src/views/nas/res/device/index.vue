@@ -131,7 +131,8 @@ export default {
 				return;
 			}
 
-			window.open('/api/nas/vf/' + row.id);
+			var url = this.$SCM.getApiUrl('/NasFile/Vf/' + row.id);
+			window.open(url);
 		},
 		changeDir(item) {
 			if (!item) {
