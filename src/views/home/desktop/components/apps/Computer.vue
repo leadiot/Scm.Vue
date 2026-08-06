@@ -504,7 +504,7 @@ export default {
 	},
 	methods: {
 		async listRoot() {
-			var res = await this.$API.scmcomputer.root.get();
+			var res = await this.$API.computer.root.get();
 			if (res.code !== 200) {
 				this.deviceList = [];
 				return;
@@ -533,7 +533,7 @@ export default {
 				this.loadingMore = true;
 			}
 
-			var res = await this.$API.scmcomputer.list.get(this.param);
+			var res = await this.$API.computer.list.get(this.param);
 
 			this.loading = false;
 			this.loadingMore = false;
@@ -931,7 +931,7 @@ export default {
 			}
 			const srcList = this.clipboard.items.map(i => i.path);
 			const isCut = this.clipboard.op === 'cut';
-			const api = isCut ? this.$API.scmcomputer.move : this.$API.scmcomputer.copy;
+			const api = isCut ? this.$API.computer.move : this.$API.computer.copy;
 			this.busy = true;
 			try {
 				var res = await api.post({ files: srcList, path: path, overwrite: true });
@@ -966,7 +966,7 @@ export default {
 				this.busy = true;
 				try {
 					const path = items.map(i => i.path);
-					var res = await this.$API.scmcomputer.delete.post({ files: path });
+					var res = await this.$API.computer.delete.post({ files: path });
 					if (res.code == 200) {
 						this.$message.success(this.$t('desktop.deleteSuccess'));
 						this.selectedItems = [];
@@ -1011,7 +1011,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.createDir.post({ path: this.param.path, name: name });
+				var res = await this.$API.computer.createDir.post({ path: this.param.path, name: name });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.createSuccess'));
 					this.newFolderVisible = false;
@@ -1044,7 +1044,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.rename.post({ file: this.renameItem.path, name: name });
+				var res = await this.$API.computer.rename.post({ file: this.renameItem.path, name: name });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.renameSuccess'));
 					this.renameVisible = false;
@@ -1062,7 +1062,7 @@ export default {
 			if (!item || item.type === 10) {
 				return;
 			}
-			const url = this.$API.scmcomputer.download.get(item.path);
+			const url = this.$API.computer.download.get(item.path);
 			tool.downloadFile(url, item.name);
 		},
 		downloadSelected() {
@@ -1121,7 +1121,7 @@ export default {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				timeout: 300000,
 			};
-			var res = await this.$API.scmcomputer.upload.post(data, config);
+			var res = await this.$API.computer.upload.post(data, config);
 			if (res.code != 200) {
 				throw new Error(res.message || 'upload failed');
 			}
@@ -1187,7 +1187,7 @@ export default {
 				return;
 			}
 			try {
-				var res = await this.$API.scmcomputer.list.get({
+				var res = await this.$API.computer.list.get({
 					path: node.data.path, page: 1, limit: 500,
 				});
 				if (res.code == 200) {
@@ -1212,7 +1212,7 @@ export default {
 			}
 			this.busy = true;
 			try {
-				var res = await this.$API.scmcomputer.move.post({ files: items.map(i => i.path), path: targetPath, overwrite: true });
+				var res = await this.$API.computer.move.post({ files: items.map(i => i.path), path: targetPath, overwrite: true });
 				if (res.code == 200) {
 					this.$message.success(this.$t('desktop.moveSuccess'));
 					this.moveToVisible = false;
@@ -1235,7 +1235,7 @@ export default {
 			this.propsDetail = {};
 			this.propsVisible = true;
 			try {
-				var res = await this.$API.scmcomputer.info.get({ path: item.path });
+				var res = await this.$API.computer.info.get({ path: item.path });
 				if (res.code == 200 && res.data) {
 					this.propsDetail = res.data;
 				}
