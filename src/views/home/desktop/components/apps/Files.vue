@@ -143,8 +143,8 @@
 
 		<div class="app-statusbar">
 			<span>{{ filteredFileList.length }} {{ $t('desktop.items') }}</span>
-			<span v-if="param.key && filteredFileList.length < fileList.length">· {{ $t('desktop.totalFiltered').replace('{0}', fileList.length).replace('{1}', filteredFileList.length) }}</span>
-			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
+			<span v-if="param.key && filteredFileList.length < fileList.length">· {{ $t('desktop.totalFiltered', [fileList.length, filteredFileList.length]) }}</span>
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems', [selectedItems.length]) }}</span>
 		</div>
 
 		<!-- 右键菜单 -->

@@ -191,7 +191,7 @@
 			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{
 				$t('desktop.items')
 			}}</span>
-			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length)
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems', [selectedItems.length])
 			}}</span>
 		</div>
 
@@ -956,8 +956,8 @@ export default {
 				return;
 			}
 			const msg = items.length === 1
-				? this.$t('desktop.confirmDeleteSingle').replace('{0}', items[0].name)
-				: this.$t('desktop.confirmDelete').replace('{0}', items.length);
+				? this.$t('desktop.confirmDeleteSingle', [items[0].name])
+				: this.$t('desktop.confirmDelete', [items.length]);
 			this.$confirm(msg, this.$t('desktop.tip'), {
 				type: 'warning',
 				confirmButtonText: this.$t('desktop.confirm'),

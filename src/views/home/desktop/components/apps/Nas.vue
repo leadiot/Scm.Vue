@@ -167,7 +167,7 @@
 
 		<div class="app-statusbar">
 			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{ $t('desktop.items') }}</span>
-			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems').replace('{0}', selectedItems.length) }}</span>
+			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems', [selectedItems.length]) }}</span>
 		</div>
 	</div>
 </template>

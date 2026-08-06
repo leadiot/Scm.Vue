@@ -78,6 +78,13 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	delete: {
+		url: `${config.API_URL}/computer/delete`,
+		name: "删除",
+		post: async function (data) {
+			return await http.post(this.url, data);
+		}
+	},
 	upload: {
 		url: `${config.API_URL}/computer/upload`,
 		name: "上传",
