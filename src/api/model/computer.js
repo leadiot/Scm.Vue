@@ -50,6 +50,13 @@ export default {
 			return await http.get(this.url, params);
 		}
 	},
+	view: {
+		url: `${config.API_URL}/computer/view`,
+		name: "查看",
+		get: function (params) {
+			return this.url + "?path=" + params.path;
+		}
+	},
 	createDir: {
 		url: `${config.API_URL}/computer/CreateDir`,
 		name: "新建文件夹",
@@ -96,7 +103,7 @@ export default {
 		url: `${config.API_URL}/computer/download`,
 		name: "下载",
 		get: function (params) {
-			return this.url + "?path=" + params;
+			return this.url + "?path=" + params.path;
 		}
 	},
 }

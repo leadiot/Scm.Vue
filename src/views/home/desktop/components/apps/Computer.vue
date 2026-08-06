@@ -682,8 +682,8 @@ export default {
 		 * @param item 文档项
 		 */
 		openDocWithWeb(item) {
-			const fileUrl = this.$SCM.getApiUrl('/Nas/Vs/' + item.name);
-			window.open(fileUrl, '_blank');
+			const url = this.$API.computer.view.get({ path: item.path });
+			window.open(url, '_blank');
 		},
 		openDoc(item) {
 			var kind = '';
@@ -1062,7 +1062,7 @@ export default {
 			if (!item || item.type === 10) {
 				return;
 			}
-			const url = this.$API.computer.download.get(item.path);
+			const url = this.$API.computer.download.get({ path: item.path });
 			tool.downloadFile(url, item.name);
 		},
 		downloadSelected() {
