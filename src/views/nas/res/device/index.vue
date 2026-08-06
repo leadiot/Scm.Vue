@@ -131,7 +131,7 @@ export default {
 				return;
 			}
 
-			window.open('/api/nas/vs/' + row.id);
+			window.open('/api/nas/vf/' + row.id);
 		},
 		changeDir(item) {
 			if (!item) {
