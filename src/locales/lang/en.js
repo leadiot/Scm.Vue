@@ -238,6 +238,10 @@ export default {
 		cloudDesktop: "Cloud Desktop",
 		monitor: "Monitor",
 		// Context Menu
+		openNotes: "Open Notes",
+		openTextpad: "Open Textpad",
+		openGtd: "Open GTD",
+		openCalculator: "Open Calculator",
 		openTerminal: "Open Terminal",
 		openComputer: "Open Computer",
 		openCloudSpace: "Open Cloud Space",

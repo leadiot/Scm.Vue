@@ -236,6 +236,10 @@ export default {
 		cloudDesktop: "云桌面",
 		monitor: "大屏幕",
 		// 右键菜单
+		openNotes: "打开便签",
+		openTextpad: "打开记事",
+		openGtd: "打开待办",
+		openCalculator: "打开计算器",
 		openTerminal: "打开终端",
 		openComputer: "打开计算机",
 		openCloudSpace: "打开云空间",

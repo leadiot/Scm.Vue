@@ -236,6 +236,10 @@ export default {
 		cloudDesktop: 'クラウドデスクトップ',
 		monitor: '大画面',
 		// コンテキストメニュー
+		openNotes: "付箋を開く",
+		openTextpad: "メモ帳を開く",
+		openGtd: "待办を開く",
+		openCalculator: "計算機を開く",
 		openTerminal: 'ターミナルを開く',
 		openComputer: 'コンピュータを開く',
 		openCloudSpace: 'クラウドスペースを開く',

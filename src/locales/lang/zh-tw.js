@@ -236,6 +236,10 @@ export default {
 		cloudDesktop: "雲端桌面",
 		monitor: "大螢幕",
 		// 右鍵選單
+		openNotes: "開啟便籤",
+		openTextpad: "開啟記事",
+		openGtd: "開啟待办",
+		openCalculator: "開啟計算器",
 		openTerminal: "開啟終端機",
 		openComputer: "開啟計算機",
 		openCloudSpace: "開啟雲端空間",

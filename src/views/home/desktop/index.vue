@@ -121,22 +121,30 @@
 				<span>{{ $t('desktop.refresh') }}</span>
 			</div>
 			<div class="context-menu-divider"></div>
+			<div class="context-menu-item" @click="openNotes">
+				<sc-icon name="ms-sticky_note_2" :size="16" />
+				<span>{{ $t('desktop.openNotes') }}</span>
+			</div>
+			<div class="context-menu-item" @click="openTextpad">
+				<sc-icon name="ms-description" :size="16" />
+				<span>{{ $t('desktop.openTextpad') }}</span>
+			</div>
+			<div class="context-menu-item" @click="openGtd">
+				<sc-icon name="ms-assignment" :size="16" />
+				<span>{{ $t('desktop.openGtd') }}</span>
+			</div>
 			<div class="context-menu-item" @click="openTerminal">
 				<sc-icon name="ms-terminal" :size="16" />
 				<span>{{ $t('desktop.openTerminal') }}</span>
 			</div>
+			<div class="context-menu-divider"></div>
 			<div class="context-menu-item" @click="openProfile">
 				<sc-icon name="ms-account_circle" :size="16" />
 				<span>{{ $t('desktop.profile') }}</span>
 			</div>
-			<div class="context-menu-divider"></div>
 			<div class="context-menu-item" @click="openSettings">
 				<sc-icon name="ms-settings" :size="16" />
 				<span>{{ $t('desktop.desktopSettings') }}</span>
-			</div>
-			<div class="context-menu-item" @click="openComputer">
-				<sc-icon name="ms-computer" :size="16" />
-				<span>{{ $t('desktop.openComputer') }}</span>
 			</div>
 		</div>
 	</div>
@@ -160,14 +168,16 @@ import GenericMenu from './components/menus/GenericMenu.vue';
 
 // 后端菜单码 → 应用角色（settings 刻意不覆盖，始终使用本地配置）
 const CODE_TO_ROLE = {
-	'app-computer': 'computer',
-	'app-terminal': 'terminal',
 	'app-profile': 'profile',
+	'app-notes': 'notes',
+	'app-textpad': 'textpad',
+	'app-gtd': 'gtd',
 	'app-calendar': 'calendar',
+	'app-terminal': 'terminal',
+	'app-computer': 'computer',
 	'app-image': 'image',
 	'app-audio': 'audio',
 	'app-video': 'video',
-	'app-textpad': 'text',
 };
 // 文件类型 → 应用角色（openNasFileWithApp 用）
 const KIND_TO_ROLE = {
@@ -269,20 +279,8 @@ export default {
 			},
 			// 应用配置表（以逻辑角色为键；登录后 addDeskIcon 用后端菜单覆盖，settings 除外）
 			appMap: {
-				computer: {
-					id: '1',
-					code: 'app-computer',
-					name: '计算机',
-					component: 'Computer',
-					meta: {
-						icon: 'ms-computer',
-						width: 900,
-						height: 620,
-						resizable: true,
-					}
-				},
 				settings: {
-					id: '2',
+					id: '1',
 					code: 'app-settings',
 					name: '设置',
 					component: 'Settings',
@@ -294,7 +292,7 @@ export default {
 					}
 				},
 				profile: {
-					id: '3',
+					id: '2',
 					code: 'app-profile',
 					name: '个人信息',
 					component: 'Profile',
@@ -305,8 +303,56 @@ export default {
 						resizable: false,
 					}
 				},
-				terminal: {
+				notes: {
+					id: '3',
+					code: 'app-notes',
+					name: '便签',
+					component: 'Notes',
+					meta: {
+						icon: 'ms-sticky_note_2',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				textpad: {
 					id: '4',
+					code: 'app-textpad',
+					name: '记事本',
+					component: 'Textpad',
+					meta: {
+						icon: 'ms-description',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				gtd: {
+					id: '5',
+					code: 'app-gtd',
+					name: '待办',
+					component: 'Gtd',
+					meta: {
+						icon: 'ms-assignment',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				calendar: {
+					id: '6',
+					code: 'app-calendar',
+					name: '日历',
+					component: 'Calendar',
+					meta: {
+						icon: 'ms-calendar_month',
+						width: 320,
+						height: 460,
+						resizable: false
+					}
+				},
+				terminal: {
+					id: '7',
 					code: 'app-terminal',
 					name: '终端',
 					component: 'Terminal',
@@ -316,16 +362,16 @@ export default {
 						height: 600
 					}
 				},
-				calendar: {
-					id: '5',
-					code: 'app-calendar',
-					name: '日历',
-					component: 'Calendar',
+				computer: {
+					id: '8',
+					code: 'app-computer',
+					name: '计算机',
+					component: 'Computer',
 					meta: {
-						icon: 'ms-calendar_month',
-						width: 320,
-						height: 460,
-						resizable: false
+						icon: 'ms-computer',
+						width: 900,
+						height: 620,
+						resizable: true,
 					}
 				},
 				image: {
@@ -781,6 +827,26 @@ export default {
 				this.closeWindow(win.id);
 			}
 		},
+		openNotes() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.notes);
+		},
+		openTextpad() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.textpad);
+		},
+		openGtd() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.gtd);
+		},
+		openTerminal() {
+			this.showStartMenu = false;
+			this.hideContextMenu();
+			this.openApp(this.appMap.terminal);
+		},
 		openComputer() {
 			this.showStartMenu = false;
 			this.hideContextMenu();
@@ -796,11 +862,6 @@ export default {
 				presetImages: this.presetImages,
 			};
 			this.openApp(this.appMap.settings);
-		},
-		openTerminal() {
-			this.showStartMenu = false;
-			this.hideContextMenu();
-			this.openApp(this.appMap.terminal);
 		},
 		openCalendar() {
 			this.showStartMenu = false;
