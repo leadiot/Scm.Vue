@@ -196,14 +196,42 @@ export default {
 				if (el) el.scrollTop = el.scrollHeight;
 			});
 		},
+		// ---- 打字机效果：网络分片先进缓冲区，再匀速逐字输出 ----
+		startTyping(ai) {
+			if (ai._timer) return;
+			ai._timer = setInterval(() => {
+				const buf = ai._buffer || '';
+				if (!buf) {
+					// 缓冲区排空：已接收完毕则收尾，否则继续等待新分片
+					if (ai._done) this.finishTyping(ai);
+					return;
+				}
+				// 积压越多输出越快，避免后端一次推大段时长时间拖尾
+				const step = Math.max(1, Math.ceil(buf.length / 40));
+				ai.content += buf.slice(0, step);
+				ai._buffer = buf.slice(step);
+				this.scrollBottom();
+			}, 40);
+		},
+		finishTyping(ai) {
+			if (ai._timer) {
+				clearInterval(ai._timer);
+				ai._timer = null;
+			}
+			ai._buffer = '';
+			ai.streaming = false;
+			this.generating = false;
+			this.scrollBottom();
+		},
 		// ---- 智能对话（流式） ----
 		sendChat() {
 			const text = this.chatInput.trim();
 			if (!text || this.generating) return;
 			this.chatInput = '';
 			this.messages.push({ role: 'user', content: text });
-			const ai = { role: 'assistant', content: '', streaming: true };
-			this.messages.push(ai);
+			this.messages.push({ role: 'assistant', content: '', streaming: true });
+			// 必须从 reactive 数组取回代理对象：直接修改原始对象不会触发视图更新
+			const ai = this.messages[this.messages.length - 1];
 			this.generating = true;
 			this.abortController = new AbortController();
 			this.scrollBottom();
@@ -221,17 +249,28 @@ export default {
 				},
 				{
 					onChunk: (t) => {
-						ai.content += t;
-						this.scrollBottom();
+						ai._buffer = (ai._buffer || '') + t;
+						this.startTyping(ai);
 					},
 					onDone: () => {
-						ai.streaming = false;
-						this.generating = false;
-						this.scrollBottom();
+						ai._done = true;
+						if (this.abortController && this.abortController.signal.aborted) {
+							// 用户主动停止：剩余文本直接全部输出
+							ai.content += ai._buffer || '';
+							this.finishTyping(ai);
+						} else if (!ai._buffer) {
+							this.finishTyping(ai);
+						}
+						// 否则等打字机排空缓冲区后自动收尾
 					},
 					onError: (err) => {
-						ai.streaming = false;
+						if (ai._timer) {
+							clearInterval(ai._timer);
+							ai._timer = null;
+						}
+						ai._buffer = '';
 						ai.content = ai.content || this.$t('desktop.aiError');
+						ai.streaming = false;
 						this.generating = false;
 						console.error(err);
 					},
@@ -244,7 +283,11 @@ export default {
 		},
 		clearChat() {
 			if (this.generating) this.stopChat();
+			this.messages.forEach((m) => {
+				if (m._timer) clearInterval(m._timer);
+			});
 			this.messages = [];
+			this.generating = false;
 		},
 		// ---- RAG 知识库问答 ----
 		async askRag() {
@@ -355,6 +398,12 @@ export default {
 		tab(val) {
 			if (val === 'kb' && !this.kbList.length) this.loadKb(1);
 		},
+	},
+	beforeUnmount() {
+		if (this.abortController) this.abortController.abort();
+		this.messages.forEach((m) => {
+			if (m._timer) clearInterval(m._timer);
+		});
 	},
 };
 </script>
