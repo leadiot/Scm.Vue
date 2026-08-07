@@ -87,9 +87,39 @@ export default {
     },
     mounted() {
         //this.getVersionInfo();
-        this.defaultData();
+        this.loadData();
     },
     methods: {
+        async loadData() {
+            try {
+                const url = "http://www.c-scm.net/download/client.js";
+                const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
+
+                let platformList = [];
+                let downloadList = [];
+                if (data) {
+                    if (Array.isArray(data.platforms)) {
+                        platformList = data.platforms;
+                    }
+                    if (Array.isArray(data.downloads)) {
+                        downloadList = data.downloads;
+                    }
+                }
+                this.platformList = platformList;
+                this.platformList.forEach(item => {
+                    item.downloadList = [];
+                });
+
+                this.downloadList = downloadList;
+                this.downloadList.forEach(item => {
+                    this.pushDownloadList(item);
+                });
+            } catch (err) {
+                console.warn('[Client] 远程加载失败，使用本地配置:', err);
+                // 失败时回退到本地默认配置，保证页面可用
+                this.platforms = this.$CONFIG.DOWNLOAD_LIST || [];
+            }
+        },
         /**
          * 获取版本信息
          */
@@ -106,18 +136,6 @@ export default {
             } catch (error) {
                 this.$message.error('获取版本信息失败，请稍后重试。');
             }
-        },
-
-        defaultData() {
-            this.platformList = this.$CONFIG.PLATFORM_LIST || [];
-            this.platformList.forEach(item => {
-                item.downloadList = [];
-            });
-
-            this.downloadList = this.$CONFIG.DOWNLOAD_LIST || [];
-            this.downloadList.forEach(item => {
-                this.pushDownloadList(item);
-            });
         },
 
         pushDownloadList(item) {

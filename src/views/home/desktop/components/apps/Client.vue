@@ -53,15 +53,16 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
+import { loadJS } from '@/utils/load';
 
 export default {
-	name: 'DownloadClient',
+	name: 'Client',
 	components: {
 		scIcon,
 	},
 	data() {
 		return {
-			platforms: this.$CONFIG.DOWNLOAD_LIST,
+			platforms: [],
 			features: [
 				'多平台支持，离线访问',
 				'本地文件快速同步',
@@ -72,7 +73,39 @@ export default {
 			],
 		};
 	},
+	mounted() {
+		this.loadData();
+	},
 	methods: {
+		async loadData() {
+			try {
+				const url = "http://www.c-scm.net/download/client.js";
+				const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
+
+				let list = [];
+				if (data && Array.isArray(data.downloads)) {
+					list = data.downloads;
+				}
+
+				// 数据校验：过滤掉缺少必填字段的条目
+				const validList = list.filter(p =>
+					p
+					&& p.id
+					&& typeof p.name === 'string'
+					&& typeof p.visible !== 'undefined'
+				);
+
+				if (validList.length === 0) {
+					throw new Error('返回数据为空或格式不匹配');
+				}
+
+				this.platforms = validList;
+			} catch (err) {
+				console.warn('[Client] 远程加载失败，使用本地配置:', err);
+				// 失败时回退到本地默认配置，保证页面可用
+				this.platforms = this.$CONFIG.DOWNLOAD_LIST || [];
+			}
+		},
 		downloadPlatform(platform) {
 			if (!platform.available) {
 				this.$message.info(`${platform.name} 版本即将推出，敬请期待！`);
