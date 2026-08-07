@@ -12,7 +12,7 @@ socket.open_wss = function (key, fun) {
 	var connection = window.scm_connection;
 	if (!connection) {
 		connection = new signalR.HubConnectionBuilder()
-			.withUrl(config.SignalR_URL, {
+			.withUrl(config.SIGNALR_URL, {
 				accessTokenFactory: () => token,
 			})
 			.configureLogging(signalR.LogLevel.Error)

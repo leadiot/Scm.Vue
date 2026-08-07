@@ -69,6 +69,7 @@
 <script>
 import { useRoute } from 'vue-router';
 
+import config from "@/config";
 import scQrcode from '@/components/scQrcode';
 import { loadJS } from '@/utils/load';
 
@@ -94,8 +95,7 @@ export default {
     methods: {
         async loadData() {
             try {
-                const url = "http://www.c-scm.net/download/client.js";
-                const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
+                const data = await loadJS(config.DOWNLOAD_URL, 'downloads', null, { force: true, cacheBust: true });
 
                 let platforms = [];
                 let downloads = [];

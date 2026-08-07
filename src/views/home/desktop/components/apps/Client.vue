@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import config from "@/config";
 import scIcon from '@/components/scIcon/index.vue';
 import { loadJS } from '@/utils/load';
 
@@ -79,8 +80,7 @@ export default {
 	methods: {
 		async loadData() {
 			try {
-				const url = "http://www.c-scm.net/download/client.js";
-				const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
+				const data = await loadJS(config.DOWNLOAD_URL, 'downloads', null, { force: true, cacheBust: true });
 
 				let list = [];
 				if (data) {

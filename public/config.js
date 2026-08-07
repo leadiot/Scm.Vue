@@ -6,6 +6,9 @@ const APP_CONFIG = {
 	/** 产品描述，可以根据需要修改 */
 	APP_DESC: "这是应用的简单介绍。",
 
+	/** 默认主题，可以根据需要修改 */
+	THEME: "default",
+
 	/** 用户注册是否开启，可以根据需要修改 */
 	USER_REGISTER_ENABLED: true,
 
@@ -14,6 +17,9 @@ const APP_CONFIG = {
 
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
+
+	/** 客户端下载地址，可以根据需要修改 */
+	DOWNLOAD_URL: "http://www.c-nas.net/download/client.js",
 
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
 	DEF_LOGIN_MODE: [10, 22],
@@ -32,28 +38,4 @@ const APP_CONFIG = {
 	BEIAN_MIIT: "",
 	/** 公安部备案信息，可以使用HTML标签，例如：<a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=粤ICP备2023030233号">粤ICP备2023030233号</a> */
 	BEIAN_MPS: "",
-
-	/** 系统预定义颜色列表，可以根据需要修改 */
-	PREDEFINE_COLORS: [
-		"#ffffff",
-		"#cccccc",
-		"#999999",
-		"#666666",
-		"#333333",
-		"#000000",
-		"#ff0000",
-		"#ff4500",
-		"#ff8c00",
-		"#ffd700",
-		"#00ff00",
-		"#90ee90",
-		"#67c23a",
-		"#00ced1",
-		"#009688",
-		"#1e90ff",
-		"#409eff",
-		"#536dfe",
-		"#0000ff",
-		"#c71585",
-	],
 };

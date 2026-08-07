@@ -17,11 +17,29 @@ const DEFAULT_CONFIG = {
 	// 构建日期
 	APP_BUILD: import.meta.env.VITE_APP_BUILD,
 
+	// 语言
+	LANG: "zh-cn",
+
+	// 颜色，TODO：需要修改为THEME。
+	COLOR: "",
+
+	// 主题
+	THEME: "",
+
+	// 布局类型：none | console | desktop | monitor
+	LAYOUT: "console",
+
+	// Console布局风格：默认：default | 通栏：header | 经典：menu | 功能坞：dock
+	CONSOLE_LAYOUT: "default",
+
 	// 应用Key
 	APP_KEY: "870cb6cfa286ac4cac462bc8e33b1bb5",
 
 	// 参数加密签名Key
 	SIGN_KEY: "ab517f95fab7d57",
+
+	// 首页地址
+	HOME: "/console",
 
 	// 登录地址
 	LOGIN_URL: "/login",
@@ -42,7 +60,10 @@ const DEFAULT_CONFIG = {
 	API_URL: import.meta.env.VITE_API_BASE + "/api",
 
 	// SignalR地址
-	SignalR_URL: import.meta.env.VITE_API_BASE + "/scmhub",
+	SIGNALR_URL: import.meta.env.VITE_API_BASE + "/scmhub",
+
+	// 客户端下载地址
+	DOWNLOAD_URL: "http://www.c-nas.net/download/client.js",
 
 	// 请求超时
 	TIMEOUT: 10000,
@@ -59,12 +80,6 @@ const DEFAULT_CONFIG = {
 	// 请求是否开启缓存
 	REQUEST_CACHE: false,
 
-	// 布局类型：none | console | desktop | monitor
-	LAYOUT: "console",
-
-	// Console布局风格：默认：default | 通栏：header | 经典：menu | 功能坞：dock
-	CONSOLE_LAYOUT: "default",
-
 	// 菜单是否折叠
 	MENU_IS_COLLAPSE: false,
 
@@ -73,15 +88,6 @@ const DEFAULT_CONFIG = {
 
 	// 是否开启多标签
 	LAYOUT_TAGS: true,
-
-	// 语言
-	LANG: "zh-cn",
-
-	// 主题颜色
-	COLOR: "",
-
-	// 首面
-	HOME: "/console",
 
 	//控制台首页默认布局
 	DEFAULT_GRID: {
@@ -144,37 +150,8 @@ const DEFAULT_CONFIG = {
 	],
 
 	// 系统预定义颜色列表，可以根据需要修改
-	PREDEFINE_COLORS: [
-		"#409eff",
-		"#0066cc",
-		"#00bfff",
-		"#c41e3a",
-		"#722ed1",
-		"#52c41a",
-		"#fa8c16",
-		"#eb2f96",
-		"#6b7280",
-		"#1f1f1f",
-		"#ffffff",
-		"#cccccc",
-		"#999999",
-		"#666666",
-		"#333333",
-		"#000000",
-		"#ff0000",
-		"#ff4500",
-		"#ff8c00",
-		"#ffd700",
-		"#00ff00",
-		"#90ee90",
-		"#67c23a",
-		"#00ced1",
-		"#009688",
-		"#1e90ff",
-		"#536dfe",
-		"#0000ff",
-		"#c71585",
-	],
+	PREDEFINE_COLORS: ["#409eff", "#0066cc", "#00bfff", "#c41e3a", "#722ed1", "#52c41a", "#fa8c16", "#eb2f96", "#6b7280", "#1f1f1f", "#ffffff", "#cccccc", "#999999", "#666666",
+		"#333333", "#000000", "#ff0000", "#ff4500", "#ff8c00", "#ffd700", "#00ff00", "#90ee90", "#67c23a", "#00ced1", "#009688", "#1e90ff", "#536dfe", "#0000ff", "#c71585"],
 
 	// 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">粤ICP备2023030233号</a>
 	BEIAN_MIIT: "",
