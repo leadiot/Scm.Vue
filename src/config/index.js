@@ -149,9 +149,13 @@ const DEFAULT_CONFIG = {
 		{ name: "暗夜黑", primary: "#1f1f1f", secondary: "#52525b", accent: "#18181b", surface: "#ffffff", background: "#f5f5f5", error: "#ef4444", onPrimary: "#ffffff", onSecondary: "#ffffff", gradient: "linear-gradient(135deg, #1f1f1f 0%, #141414 100%)", description: "极简黑色系", isCustom: false },
 	],
 
-	// 系统预定义颜色列表，可以根据需要修改
-	PREDEFINE_COLORS: ["#409eff", "#0066cc", "#00bfff", "#c41e3a", "#722ed1", "#52c41a", "#fa8c16", "#eb2f96", "#6b7280", "#1f1f1f", "#ffffff", "#cccccc", "#999999", "#666666",
-		"#333333", "#000000", "#ff0000", "#ff4500", "#ff8c00", "#ffd700", "#00ff00", "#90ee90", "#67c23a", "#00ced1", "#009688", "#1e90ff", "#536dfe", "#0000ff", "#c71585"],
+	// 系统预定义颜色列表，可以根据需要修改（按颜色相近性排序：无彩色 → 红粉 → 橙黄 → 绿 → 青 → 蓝 → 紫）
+	PREDEFINE_COLORS: ["#ffffff", "#cccccc", "#999999", "#666666", "#333333", "#000000",
+		"#ff0000", "#ff4500", "#ff8c00", "#ffd700",
+		"#00ff00", "#90ee90", "#52c41a", "#67c23a",
+		"#00ced1", "#009688",
+		"#00bfff", "#409eff", "#1e90ff", "#0066cc", "#0000ff", "#536dfe",
+		"#722ed1"],
 
 	// 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">粤ICP备2023030233号</a>
 	BEIAN_MIIT: "",

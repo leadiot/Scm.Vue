@@ -107,11 +107,13 @@ export default {
 		return { globalStore }
 	},
 	data() {
+		var theme = themeUtil.getCurrentTheme();
+
 		return {
 			lang: this.$TOOL.session.get('APP_LANG') || this.$CONFIG.LANG,
 			dark: this.$TOOL.session.get('APP_MODE') == 'dark',
-			currentTheme: themeUtil.getCurrentTheme(),
-			currentThemeName: themeUtil.getCurrentTheme().name,
+			currentTheme: theme,
+			currentThemeName: theme.name,
 			createThemeVisible: false,
 			newTheme: this.getDefaultNewTheme(),
 			consoleLayout: this.globalStore.consoleLayout,
@@ -230,7 +232,7 @@ export default {
 		// 调试：确保主题列表已加载
 		if (!this.presetThemeList || this.presetThemeList.length === 0) {
 			console.warn(this.$t('setting.themeListEmpty'))
-			this.presetThemeList = themeUtil.PRESET_THEMES
+			this.presetThemeList = themeUtil.getPresetThemes()
 		}
 	},
 	watch: {

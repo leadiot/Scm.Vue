@@ -14,19 +14,13 @@ import config from '@/config'
 
 // 存储键名
 const STORAGE_KEYS = {
+	THEME_NAME: 'APP_THEME_NAME',
+	THEME_MODE: 'APP_THEME_MODE',
 	PRIMARY_COLOR: 'APP_COLOR',
 	SECONDARY_COLOR: 'APP_COLOR_SECONDARY',
-	THEME_MODE: 'APP_THEME_MODE',
-	THEME_NAME: 'APP_THEME_NAME',
 	CUSTOM_THEMES: 'APP_CUSTOM_THEMES',
 	CURRENT_THEME: 'APP_CURRENT_THEME'
 }
-
-/**
- * 预设主题配置 - 复用 config/index.js 中的 PREDEFINE_THEMES
- * 每个主题包含完整的 Material Design 颜色方案
- */
-export const PRESET_THEMES = config.PREDEFINE_THEMES
 
 /**
  * 计算颜色的相对亮度（0-1）
@@ -185,10 +179,13 @@ export function applyTheme(theme) {
 	if (theme.background) {
 		root.style.setProperty('--color-background', theme.background)
 	}
+
+	// 设置表面色
 	if (theme.surface) {
 		root.style.setProperty('--color-surface', theme.surface)
 	}
 
+	// 记录当前主题名称
 	tool.session.set(STORAGE_KEYS.THEME_NAME, theme.name)
 }
 
@@ -197,16 +194,16 @@ export function applyTheme(theme) {
  * @returns {Object} 当前主题配置
  */
 export function getCurrentTheme() {
-	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
-	const savedName = tool.session.get(STORAGE_KEYS.THEME_NAME)
+	const savedName = tool.session.get(STORAGE_KEYS.THEME_NAME) || config.THEME || '默认';
 
-	// 查找匹配的预设主题
-	let matchedTheme = PRESET_THEMES.find(t => t.primary === savedColor)
-	if (!matchedTheme && savedName) {
-		matchedTheme = PRESET_THEMES.find(t => t.name === savedName)
+	var themes = getAllThemes();
+	var matchedTheme = themes.find(t => t.name === savedName);
+	if (matchedTheme) {
+		return matchedTheme;
 	}
 
-	return matchedTheme || {
+	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || config.COLOR || '#409eff';
+	return {
 		name: '自定义',
 		primary: savedColor,
 		secondary: tool.session.get(STORAGE_KEYS.SECONDARY_COLOR) || '#909399',
@@ -227,19 +224,17 @@ export function isDarkMode() {
  * 初始化主题 - 从本地存储恢复
  */
 export function initTheme() {
-	const themeName = tool.session.get(STORAGE_KEYS.THEME_NAME);
-	const theme = getTheme(themeName) || getCurrentTheme();
+	const name = tool.session.get(STORAGE_KEYS.THEME_NAME);
+	const theme = getTheme(name) || getCurrentTheme();
 	applyTheme(theme);
 
 	// 主题模式
-	const themeMode = tool.session.get(STORAGE_KEYS.THEME_MODE);
-	if (themeMode === 'dark') {
-		setDarkMode(true)
-	}
+	const mode = tool.session.get(STORAGE_KEYS.THEME_MODE);
+	setDarkMode(mode === 'dark')
 }
 
 export function getTheme(themeName) {
-	return PRESET_THEMES.find(t => t.name === themeName);
+	return config.PREDEFINE_THEMES.find(t => t.name === themeName);
 }
 
 /**
@@ -247,7 +242,7 @@ export function getTheme(themeName) {
  * @returns {Array}
  */
 export function getPresetThemes() {
-	return PRESET_THEMES
+	return config.PREDEFINE_THEMES
 }
 
 /**
@@ -307,7 +302,7 @@ export function deleteCustomTheme(themeName) {
  */
 export function getAllThemes() {
 	const customThemes = getCustomThemes()
-	return [...PRESET_THEMES, ...customThemes]
+	return [...config.PREDEFINE_THEMES, ...customThemes]
 }
 
 /**
@@ -333,28 +328,6 @@ export function createCustomTheme(themeConfig) {
 	return theme
 }
 
-/**
- * 预定义颜色列表
- */
-export const PREDEFINE_COLORS = [
-	'#409eff',
-	'#0066cc',
-	'#00bfff',
-	'#c41e3a',
-	'#722ed1',
-	'#52c41a',
-	'#fa8c16',
-	'#eb2f96',
-	'#595959',
-	'#1f1f1f',
-	'#ffffff',
-	'#cccccc',
-	'#999999',
-	'#666666',
-	'#333333',
-	'#000000'
-]
-
 // 默认导出
 export default {
 	setPrimaryColor,
@@ -370,7 +343,5 @@ export default {
 	saveCustomTheme,
 	deleteCustomTheme,
 	getAllThemes,
-	createCustomTheme,
-	PRESET_THEMES,
-	PREDEFINE_COLORS
+	createCustomTheme
 }

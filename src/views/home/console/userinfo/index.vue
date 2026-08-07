@@ -46,7 +46,6 @@ export default {
 	name: "home_user",
 	components: {
 		account: defineAsyncComponent(() => import("./components/account")),
-		userSettings: defineAsyncComponent(() => import("./components/userSettings")),
 		pushSettings: defineAsyncComponent(() => import("./components/pushSettings")),
 		password: defineAsyncComponent(() => import("./components/password")),
 		space: defineAsyncComponent(() => import("./components/space")),

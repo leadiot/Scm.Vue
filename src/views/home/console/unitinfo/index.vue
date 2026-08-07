@@ -48,7 +48,6 @@ export default {
 	name: "home_unit",
 	components: {
 		account: defineAsyncComponent(() => import("./components/account")),
-		unitSetings: defineAsyncComponent(() => import("./components/unitSetings")),
 		pushSettings: defineAsyncComponent(() => import("./components/pushSettings")),
 		password: defineAsyncComponent(() => import("./components/password")),
 		space: defineAsyncComponent(() => import("./components/space")),
