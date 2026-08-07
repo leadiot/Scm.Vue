@@ -209,8 +209,8 @@ export default {
 			this.scrollBottom();
 
 			const history = this.messages
-				.filter((m) => !m.streaming || m === ai)
 				.slice(0, -1)
+				.filter((m) => !m.streaming)
 				.map((m) => ({ role: m.role, content: m.content }));
 
 			this.$API.scmaichat.stream.post(
