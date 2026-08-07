@@ -14,7 +14,7 @@
 					<div class="platform-card" v-if="download.visible" :class="{ 'coming-soon': !download.available }"
 						@click="downloadPlatform(download)">
 						<div class="platform-icon">
-                            <el-avatar :size="40" :src="download.icon" />
+							<el-avatar :size="40" :src="download.icon" />
 						</div>
 						<div class="platform-info">
 							<div class="platform-name">{{ download.name }}</div>
@@ -83,8 +83,13 @@ export default {
 				const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
 
 				let list = [];
-				if (data && Array.isArray(data.downloads)) {
-					list = data.downloads;
+				if (data) {
+					if (Array.isArray(data.downloads)) {
+						list = data.downloads;
+					}
+					if (Array.isArray(data.features)) {
+						this.features = data.features;
+					}
 				}
 
 				// 数据校验：过滤掉缺少必填字段的条目
