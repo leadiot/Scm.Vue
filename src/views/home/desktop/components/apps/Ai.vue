@@ -8,9 +8,9 @@
 				<el-radio-button value="kb">{{ $t('desktop.aiKb') }}</el-radio-button>
 			</el-radio-group>
 			<template v-if="tab !== 'kb'">
-				<el-select v-model="provider" size="small" style="width: 130px">
-					<el-option label="DeepSeek" value="deepseek" />
-					<el-option label="通义千问" value="qwen" />
+				<el-select v-model="provider" size="small" style="width: 130px" :loading="providerLoading">
+					<el-option v-for="p in providers" :key="p.value" :label="p.label" :value="p.value"
+						:disabled="p.disabled" />
 				</el-select>
 				<el-input v-model="model" size="small" style="width: 150px"
 					:placeholder="$t('desktop.aiModelDefault')" clearable />
@@ -158,7 +158,9 @@ export default {
 	data() {
 		return {
 			tab: 'chat',
-			provider: 'deepseek',
+			provider: '',
+			providers: [],
+			providerLoading: false,
 			model: '',
 			// 对话
 			messages: [],
@@ -182,6 +184,27 @@ export default {
 		};
 	},
 	methods: {
+		// 加载可用的AI服务商列表
+		async loadProviders() {
+			this.providerLoading = true;
+			try {
+				const res = await this.$API.scmaichat.provider.get();
+				if (res && res.code == 200) {
+					this.providers = (res.data || []).map((p) => ({
+						label: p.label,
+						value: String(p.value),
+						disabled: !!p.disabled,
+					}));
+					// 当前选中项不在列表中时，回退到第一个可用项（为空时后端会用默认服务）
+					if (!this.providers.some((p) => p.value === this.provider)) {
+						const first = this.providers.find((p) => !p.disabled);
+						this.provider = first ? first.value : '';
+					}
+				}
+			} finally {
+				this.providerLoading = false;
+			}
+		},
 		renderMd(text) {
 			if (!text) return '';
 			try {
@@ -398,6 +421,9 @@ export default {
 		tab(val) {
 			if (val === 'kb' && !this.kbList.length) this.loadKb(1);
 		},
+	},
+	mounted() {
+		this.loadProviders();
 	},
 	beforeUnmount() {
 		if (this.abortController) this.abortController.abort();

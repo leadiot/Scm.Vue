@@ -22,6 +22,13 @@ export default {
 			return await http.post(this.url, data, { timeout: AI_TIMEOUT });
 		},
 	},
+	provider: {
+		url: `${config.API_URL}/scmaichat/provider`,
+		name: "提供者",
+		get: async function () {
+			return await http.get(this.url);
+		},
+	},
 	stream: {
 		url: `${config.API_URL}/scmaichat/chatstream`,
 		name: "流式问答",
