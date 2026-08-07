@@ -10,26 +10,26 @@
 				<p>下载适用于您设备的客户端应用</p>
 			</div>
 			<div class="platform-grid">
-				<div v-for="platform in platforms" :key="platform.id">
-					<div class="platform-card" v-if="platform.visible" :class="{ 'coming-soon': !platform.available }"
-						@click="downloadPlatform(platform)">
+				<div v-for="download in downloads" :key="download.id">
+					<div class="platform-card" v-if="download.visible" :class="{ 'coming-soon': !download.available }"
+						@click="downloadPlatform(download)">
 						<div class="platform-icon">
-							<sc-icon :name="getPlatformIcon(platform)" :size="40" />
+                            <el-avatar :size="40" :src="download.icon" />
 						</div>
 						<div class="platform-info">
-							<div class="platform-name">{{ platform.name }}</div>
-							<div class="platform-version" v-if="platform.available">
-								版本 {{ platform.version }} | {{ platform.size }}
+							<div class="platform-name">{{ download.name }}</div>
+							<div class="platform-version" v-if="download.available">
+								版本 {{ download.version }} | {{ download.size }}
 							</div>
 							<div class="platform-status" v-else>
 								即将推出
 							</div>
 						</div>
-						<div class="platform-download" v-if="platform.available">
+						<div class="platform-download" v-if="download.available">
 							<sc-icon name="ms-download" :size="20" />
 						</div>
-						<div class="platform-badge" v-if="platform.badge">
-							{{ platform.badge }}
+						<div class="platform-badge" v-if="download.badge">
+							{{ download.badge }}
 						</div>
 					</div>
 				</div>
@@ -62,7 +62,7 @@ export default {
 	},
 	data() {
 		return {
-			platforms: [],
+			downloads: [],
 			features: [
 				'多平台支持，离线访问',
 				'本地文件快速同步',
@@ -99,27 +99,25 @@ export default {
 					throw new Error('返回数据为空或格式不匹配');
 				}
 
-				this.platforms = validList;
+				this.downloads = validList;
 			} catch (err) {
 				console.warn('[Client] 远程加载失败，使用本地配置:', err);
-				// 失败时回退到本地默认配置，保证页面可用
-				this.platforms = this.$CONFIG.DOWNLOAD_LIST || [];
 			}
 		},
-		downloadPlatform(platform) {
-			if (!platform.available) {
-				this.$message.info(`${platform.name} 版本即将推出，敬请期待！`);
+		downloadPlatform(download) {
+			if (!download.available) {
+				this.$message.info(`${download.name} 版本即将推出，敬请期待！`);
 				return;
 			}
-			if (platform.platform === 'web') {
+			if (download.platform === 'web') {
 				this.$message.success('您正在使用Web版！');
 				return;
 			}
-			this.$message.success(`正在下载 ${platform.name} 客户端...`);
-			this.downFile(platform);
+			this.$message.success(`正在下载 ${download.name} 客户端...`);
+			this.downFile(download);
 		},
-		getPlatformIcon(platform) {
-			switch (platform.id) {
+		getPlatformIcon(download) {
+			switch (download.id) {
 				case 'windows':
 					return 'ms-desktop_windows';
 				case 'macos':
@@ -183,7 +181,7 @@ export default {
 
 		/**
 		 * 打开应用商店
-		 * @param {string} platform - 平台标识
+		 * @param {string} download - 平台标识
 		 */
 		openAppStore(download) {
 			var url = download.url;

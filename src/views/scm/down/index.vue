@@ -70,6 +70,8 @@
 import { useRoute } from 'vue-router';
 
 import scQrcode from '@/components/scQrcode';
+import { loadJS } from '@/utils/load';
+
 export default {
     components: {
         scQrcode,
@@ -95,29 +97,26 @@ export default {
                 const url = "http://www.c-scm.net/download/client.js";
                 const data = await loadJS(url, 'downloads', null, { force: true, cacheBust: true });
 
-                let platformList = [];
-                let downloadList = [];
+                let platforms = [];
+                let downloads = [];
                 if (data) {
                     if (Array.isArray(data.platforms)) {
-                        platformList = data.platforms;
+                        platforms = data.platforms;
                     }
                     if (Array.isArray(data.downloads)) {
-                        downloadList = data.downloads;
+                        downloads = data.downloads;
                     }
                 }
-                this.platformList = platformList;
+                this.platformList = platforms;
                 this.platformList.forEach(item => {
                     item.downloadList = [];
                 });
 
-                this.downloadList = downloadList;
+                this.downloadList = downloads;
                 this.downloadList.forEach(item => {
                     this.pushDownloadList(item);
                 });
             } catch (err) {
-                console.warn('[Client] 远程加载失败，使用本地配置:', err);
-                // 失败时回退到本地默认配置，保证页面可用
-                this.platforms = this.$CONFIG.DOWNLOAD_LIST || [];
             }
         },
         /**
