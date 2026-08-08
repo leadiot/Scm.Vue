@@ -97,6 +97,7 @@ import oidcForm from "./components/oidcForm";
 import { useViewTagsStore } from "@/stores/viewTags";
 import { useKeepAliveStore } from "@/stores/keepAlive";
 import { useIframeStore } from "@/stores/iframe";
+import { useGlobalStore } from "@/stores/global";
 
 export default {
 	name: 'login',
@@ -111,13 +112,15 @@ export default {
 		const viewTagsStore = useViewTagsStore()
 		const keepAliveStore = useKeepAliveStore()
 		const iframeStore = useIframeStore()
-		return { viewTagsStore, keepAliveStore, iframeStore }
+		const globalStore = useGlobalStore()
+		return { viewTagsStore, keepAliveStore, iframeStore, globalStore }
 	},
 	data() {
-		var lang = this.$TOOL.getCache("APP_LANG") || this.$CONFIG.LANG;
+		// 初始值从 globalStore（统一持久化）读取，而不再直接读碎片化的 cache key
+		var lang = this.globalStore.locale;
 		this.$i18n.locale = lang;
 
-		var dark = this.$TOOL.getCache("APP_THEME") == "dark";
+		var dark = this.globalStore.isDarkMode;
 		if (dark) {
 			document.documentElement.classList.add("dark");
 		} else {
@@ -152,17 +155,18 @@ export default {
 	},
 	watch: {
 		"config.dark"(val) {
+			// 通过 globalStore actions：同步 HTML class + 持久化（一处解决）
+			this.globalStore.SET_themeMode(val ? 'dark' : 'light')
 			if (val) {
 				document.documentElement.classList.add("dark");
-				this.$TOOL.setCache("APP_THEME", "dark");
 			} else {
 				document.documentElement.classList.remove("dark");
-				this.$TOOL.removeCache("APP_THEME");
 			}
 		},
 		"config.lang"(val) {
 			this.$i18n.locale = val;
-			this.$TOOL.setCache("APP_LANG", val);
+			// 统一交给 globalStore 持久化
+			this.globalStore.SET_locale(val)
 		},
 	},
 	created: function () {

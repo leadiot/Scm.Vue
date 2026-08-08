@@ -110,8 +110,9 @@ export default {
 	},
 	data() {
 		return {
-			lang: this.$TOOL.getCache('APP_LANG') || this.$CONFIG.LANG,
-			dark: this.$TOOL.getCache('APP_MODE') == 'dark',
+			// 从 globalStore 取当前值，不再读碎片化 cache key
+			lang: this.globalStore.locale,
+			dark: this.globalStore.isDarkMode,
 			currentTheme: {},
 			currentThemeName: '',
 			createThemeVisible: false,
@@ -216,11 +217,13 @@ export default {
 		},
 		changeTheme() {
 			this.selectTheme(this.currentTheme)
-			this.$SCM.save_cfg([{ key: 'APP_THEME', value: this.currentTheme.name }]);
+			// 已经通过 applyTheme → store.APPLY_theme 持久化，这里仅同步后端 save_cfg（如仍需要）
+			this.$SCM.save_cfg([{ key: 'APP_THEME_NAME', value: this.currentTheme.name }]);
 		},
 		changeMode() {
+			// setDarkMode 同时修改 HTML class + 存 store（store 负责持久化）
 			themeUtil.setDarkMode(!this.dark);
-			this.$SCM.save_cfg([{ key: 'APP_MODE', value: this.dark ? 'dark' : 'light' }]);
+			this.$SCM.save_cfg([{ key: 'APP_THEME_MODE', value: this.dark ? 'dark' : 'light' }]);
 		}
 	},
 	mounted() {
@@ -228,6 +231,7 @@ export default {
 		var theme = themeUtil.getCurrentTheme();
 		this.currentTheme = theme
 		this.currentThemeName = theme.name
+		
 		// 刷新自定义主题列表
 		this.customThemeList = themeUtil.getCustomThemes()
 	},
@@ -246,7 +250,8 @@ export default {
 		},
 		lang(val) {
 			this.$i18n.locale = val
-			this.$TOOL.setCache("APP_LANG", val);
+			// 交给 globalStore 统一持久化
+			this.globalStore.SET_locale(val)
 		}
 	}
 }

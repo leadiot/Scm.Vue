@@ -197,7 +197,6 @@
 </template>
 
 <script>
-import themeUtil from "@/utils/theme";
 import SideM from './components/sideMenu.vue';
 import Topbar from './components/topbar.vue';
 import Tags from './components/tags.vue';
@@ -253,8 +252,8 @@ export default {
 		}
 	},
 	created() {
-		themeUtil.initTheme();
-
+		// 主题初始化已经在 App.vue 中完成（Pinia+I18n 均就绪后执行一次）。
+		// 这里仅保留布局窗口大小监听、菜单组装。
 		this.onLayoutResize();
 		window.addEventListener('resize', this.onLayoutResize);
 		var menu = this.$router.getMenu(1);

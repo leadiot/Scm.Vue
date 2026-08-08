@@ -1,6 +1,6 @@
 import config from "@/config";
 import http from "@/utils/request";
-import tool from "@/utils/tool";
+import { useGlobalStore } from "@/stores/global";
 
 export default {
 	sendOtp: {
@@ -91,7 +91,8 @@ export default {
 				data.client = 10;
 			}
 			if (!data.lang) {
-				data.lang = tool.getCache("APP_LANG") || config.LANG;
+				const store = useGlobalStore();
+				data.lang = store.locale;
 			}
 			return await http.get(this.url, data);
 		},
