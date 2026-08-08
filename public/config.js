@@ -20,9 +20,12 @@ const APP_CONFIG = {
 
 	/** API调用路径(含端口)，可以根据需要修改 */
 	//API_URL: '/api',
+	
+	/** API调用路径(含端口)，可以根据需要修改 */
+	//SIGNALR_URL: '/api',
 
 	/** 客户端下载地址，可以根据需要修改 */
-	DOWNLOAD_URL: "http://www.c-nas.net/download/client.js",
+	DOWNLOAD_URL: "http://www.c-scm.net/download/client.js",
 
 	/** 默认登录模式，可以修改，支持10，20，30，40四种方式 */
 	DEF_LOGIN_MODE: [10, 22],
