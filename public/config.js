@@ -7,7 +7,10 @@ const APP_CONFIG = {
 	APP_DESC: "这是应用的简单介绍。",
 
 	/** 默认主题，可以根据需要修改 */
-	THEME: "default",
+	THEME: "中国蓝",
+
+	/** 默认主色调，可以根据需要修改 */
+	COLOR: "#409eff",
 
 	/** 用户注册是否开启，可以根据需要修改 */
 	USER_REGISTER_ENABLED: true,

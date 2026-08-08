@@ -161,7 +161,6 @@
 
 /* 辅色调应用到次要按钮和标签 */
 .el-button--default {
-	--el-button-text-color: var(--color-secondary, #909399);
 	--el-button-border-color: var(--color-secondary-light-5, #c0c4cc);
 	--el-button-hover-text-color: var(--color-secondary-dark-1, #6b7280);
 	--el-button-hover-border-color: var(--color-secondary-light-3, #d3d4d6);

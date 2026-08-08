@@ -149,7 +149,7 @@ export function setDarkMode(isDark) {
 	}
 
 	// 切换模式后重新计算文字颜色
-	const currentPrimary = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || '#409eff'
+	const currentPrimary = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || config.COLOR || '#409eff'
 	const onPrimaryColor = getOnPrimaryColor(currentPrimary, isDark)
 	root.style.setProperty('--color-on-primary', onPrimaryColor)
 }
@@ -165,8 +165,9 @@ export function applyTheme(theme) {
 	setPrimaryColor(theme.primary, theme.onPrimary)
 
 	// 设置辅色调
+	console.log(theme.secondary)
 	if (theme.secondary) {
-		setSecondaryColor(theme.secondary, theme.onSecondary)
+		//setSecondaryColor(theme.secondary, theme.onSecondary)
 	}
 
 	// 设置强调色
@@ -202,10 +203,13 @@ export function getCurrentTheme() {
 	}
 
 	const savedColor = tool.session.get(STORAGE_KEYS.PRIMARY_COLOR) || config.COLOR || '#409eff';
+	const secondaryColor = tool.session.get(STORAGE_KEYS.SECONDARY_COLOR) || '#909399';
 	return {
 		name: '自定义',
 		primary: savedColor,
-		secondary: tool.session.get(STORAGE_KEYS.SECONDARY_COLOR) || '#909399',
+		secondary: secondaryColor,
+		onPrimary: getOnPrimaryColor(savedColor, isDarkMode()),
+		onSecondary: '#ffffff',
 		gradient: `linear-gradient(135deg, ${colorTool.lighten(savedColor, 0.3)} 0%, ${savedColor} 100%)`
 	}
 }
@@ -223,13 +227,11 @@ export function isDarkMode() {
  * 初始化主题 - 从本地存储恢复
  */
 export function initTheme() {
-	const name = tool.session.get(STORAGE_KEYS.THEME_NAME);
-	const theme = getTheme(name) || getCurrentTheme();
-	applyTheme(theme);
-
-	// 主题模式
+	// 先设置 dark/light 模式
 	const mode = tool.session.get(STORAGE_KEYS.THEME_MODE);
-	setDarkMode(mode === 'dark')
+	setDarkMode(mode === 'dark');
+
+	applyTheme(getCurrentTheme());
 }
 
 export function getTheme(themeName) {

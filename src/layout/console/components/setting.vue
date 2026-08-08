@@ -13,7 +13,8 @@
 			<el-switch v-model="dark"></el-switch>
 		</el-form-item>
 		<el-form-item :label="$t('common.themeSelection')">
-			<el-select v-model="currentThemeName" @change="onThemeChange" :placeholder="$t('setting.selectTheme')" style="width: 100%;">
+			<el-select v-model="currentThemeName" @change="onThemeChange" :placeholder="$t('setting.selectTheme')"
+				style="width: 100%;">
 				<el-option-group :label="$t('common.presetThemes')">
 					<el-option v-for="(theme, index) in presetThemeList" :key="'preset-' + index"
 						:label="theme.name + (theme.description ? ' - ' + theme.description : '')" :value="theme.name">
@@ -39,7 +40,8 @@
 				</el-option-group>
 			</el-select>
 			<div style="margin-top: 10px;">
-				<el-button type="primary" size="small" @click="showCreateThemeDialog">{{ $t('common.createTheme') }}</el-button>
+				<el-button type="primary" size="small" @click="showCreateThemeDialog">{{ $t('common.createTheme')
+					}}</el-button>
 				<el-button v-if="currentTheme && currentTheme.isCustom" type="danger" size="small"
 					@click="deleteCurrentTheme">{{ $t('common.deleteTheme') }}</el-button>
 			</div>
@@ -107,13 +109,11 @@ export default {
 		return { globalStore }
 	},
 	data() {
-		var theme = themeUtil.getCurrentTheme();
-
 		return {
 			lang: this.$TOOL.session.get('APP_LANG') || this.$CONFIG.LANG,
 			dark: this.$TOOL.session.get('APP_MODE') == 'dark',
-			currentTheme: theme,
-			currentThemeName: theme.name,
+			currentTheme: {},
+			currentThemeName: '',
 			createThemeVisible: false,
 			newTheme: this.getDefaultNewTheme(),
 			consoleLayout: this.globalStore.consoleLayout,
@@ -225,15 +225,11 @@ export default {
 	},
 	mounted() {
 		// 初始化主题
-		// themeUtil.initTheme()
-		this.currentTheme = themeUtil.getCurrentTheme()
+		var theme = themeUtil.getCurrentTheme();
+		this.currentTheme = theme
+		this.currentThemeName = theme.name
 		// 刷新自定义主题列表
 		this.customThemeList = themeUtil.getCustomThemes()
-		// 调试：确保主题列表已加载
-		if (!this.presetThemeList || this.presetThemeList.length === 0) {
-			console.warn(this.$t('setting.themeListEmpty'))
-			this.presetThemeList = themeUtil.getPresetThemes()
-		}
 	},
 	watch: {
 		consoleLayout(val) {
