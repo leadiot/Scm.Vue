@@ -41,6 +41,8 @@
     </div>
 </template>
 <script>
+import themeUtil from '@/utils/theme';
+
 export default {
     props: {
         code: { type: String, default: '' }
@@ -140,24 +142,11 @@ export default {
             this.$message.success("Login Success 登录成功");
         },
         async loadCfg() {
+            // 后端 scmsysconfig 为单一事实源：拉取用户级 app_* 配置 → 写入 globalStore（持久化到 localStorage）→ 刷 DOM
             var cfgRes = await this.$API.scmsysconfig.list.get({ 'client': 10 });
-            cfgRes.data.forEach((item) => {
-                if ("app_theme_mode" == item.key) {
-                    if (item.value == "dark") {
-                        document.documentElement.classList.add("dark")
-                    } else {
-                        document.documentElement.classList.remove("dark")
-                    }
-                    return;
-                }
-                if ("app_color" == item.key) {
-                    this.config.colorPrimary = item.val;
-                    return;
-                }
-                if ("app_lang" == item.key) {
-                    this.config.lang = item.value;
-                }
-            });
+            if (cfgRes && cfgRes.code == 200 && Array.isArray(cfgRes.data)) {
+                themeUtil.applyServerConfig(cfgRes.data);
+            }
         },
         async signUp() {
             var data = {

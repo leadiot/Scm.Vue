@@ -4,17 +4,21 @@ import tool from "@/utils/tool"
 import { darken, getOnPrimaryColor } from "@/utils/color"
 
 /**
- * 个性化配置统一持久化键
+ * 个性化配置统一持久化键（使用 localStorage，跨会话保留）
  * - STORAGE_KEY：大 JSON（语言 / 主题名 / 模式 / 颜色 / 布局等）
  * - STORAGE_KEY_CUSTOM_THEMES：自定义主题数组（体积较大，独立保存）
+ *
+ * 事实源优先级：后端 scmsysconfig（app_* 键）> 本地 localStorage 缓存 > config 默认值。
+ * 登录时由 theme.js.applyServerConfig() 拉取后端配置写入 store 并持久化到此；
+ * 未登录 / 离线时用本地缓存兜底。
  */
 export const STORAGE_KEY = "APP_SETTINGS"
 export const STORAGE_KEY_CUSTOM_THEMES = "APP_CUSTOM_THEMES"
 
-/** 从持久化读取所有个性化配置，与默认值合并 */
+/** 从 localStorage 读取所有个性化配置，与默认值合并 */
 function loadPersistent(defaults) {
 	try {
-		const raw = tool.session.get(STORAGE_KEY)
+		const raw = tool.local.get(STORAGE_KEY)
 		if (!raw) return { ...defaults }
 		const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
 		return { ...defaults, ...parsed }
@@ -52,7 +56,7 @@ export const useGlobalStore = defineStore('global', {
 		}
 		const fromStorage = loadPersistent(defaults)
 		try {
-			const raw = tool.session.get(STORAGE_KEY_CUSTOM_THEMES)
+			const raw = tool.local.get(STORAGE_KEY_CUSTOM_THEMES)
 			if (raw) fromStorage.customThemes = typeof raw === 'string' ? JSON.parse(raw) : raw
 		} catch (e) {
 			console.warn('[globalStore] 读取自定义主题失败:', e)
@@ -86,10 +90,10 @@ export const useGlobalStore = defineStore('global', {
 			const { ismobile, customThemes, ...toSave } = { ...this.$state }
 			void ismobile
 			void customThemes
-			tool.session.set(STORAGE_KEY, toSave)
+			tool.local.set(STORAGE_KEY, toSave)
 		},
 		_saveCustomThemes() {
-			tool.session.set(STORAGE_KEY_CUSTOM_THEMES, this.customThemes)
+			tool.local.set(STORAGE_KEY_CUSTOM_THEMES, this.customThemes)
 		},
 
 		// ---------- 布局类 ----------
@@ -176,6 +180,41 @@ export const useGlobalStore = defineStore('global', {
 		},
 		SET_themeName(name) {
 			this.themeName = name || ''
+			this._persist()
+		},
+
+		// ---------- 后端配置同步（后端 scmsysconfig 为单一事实源）----------
+		/**
+		 * 将后端 scmsysconfig 返回的 [{key, value}] 列表应用到 store 并持久化。
+		 * 仅处理用户级 app_* 键，其余键忽略。纯状态变更，不直接操作 DOM
+		 * （DOM 副作用由 theme.js.initTheme() 统一处理）。
+		 * key 统一小写下划线风格：app_lang / app_theme_mode / app_color / app_theme_name / app_home
+		 */
+		APPLY_serverConfig(items) {
+			if (!Array.isArray(items)) return
+			const map = {}
+			items.forEach(it => { if (it && it.key) map[it.key] = it.value })
+
+			// 主题名命中预设 / 自定义主题 → 完整应用（含 primary 等颜色）；否则仅记录主色
+			const allThemes = [...(config.PREDEFINE_THEMES || []), ...this.customThemes]
+			let appliedTheme = null
+			if (map.app_theme_name) {
+				appliedTheme = allThemes.find(t => t.name === map.app_theme_name)
+			}
+			if (appliedTheme) {
+				this.APPLY_theme(appliedTheme)
+			} else {
+				if (map.app_color) this.primaryColor = map.app_color
+				if (map.app_theme_name) this.themeName = map.app_theme_name
+			}
+			if (map.app_theme_mode) {
+				this.themeMode = map.app_theme_mode === 'dark' ? 'dark' : 'light'
+			}
+			if (map.app_lang) this.locale = map.app_lang
+			if (map.app_home) this.home = map.app_home
+
+			// 模式 / 主色变更后重算 onPrimary
+			this.onPrimary = getOnPrimaryColor(this.primaryColor, this.themeMode === 'dark')
 			this._persist()
 		},
 

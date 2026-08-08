@@ -133,8 +133,10 @@ export default {
 		selectTheme(theme) {
 			this.currentTheme = theme
 			this.currentThemeName = theme.name
-			// 应用完整主题
+			// 应用完整主题（store 持久化到 localStorage）
 			themeUtil.applyTheme(theme)
+			// 同步到后端 scmsysconfig（后端为单一事实源，key 统一小写）
+			this.$SCM.save_cfg([{ key: 'app_theme_name', value: theme.name }])
 		},
 		/**
 		 * 切换主题事件
@@ -214,16 +216,6 @@ export default {
 					this.$message.error(this.$t('setting.deleteFailed'))
 				}
 			}).catch(() => { })
-		},
-		changeTheme() {
-			this.selectTheme(this.currentTheme)
-			// 已经通过 applyTheme → store.APPLY_theme 持久化，这里仅同步后端 save_cfg（如仍需要）
-			this.$SCM.save_cfg([{ key: 'APP_THEME_NAME', value: this.currentTheme.name }]);
-		},
-		changeMode() {
-			// setDarkMode 同时修改 HTML class + 存 store（store 负责持久化）
-			themeUtil.setDarkMode(!this.dark);
-			this.$SCM.save_cfg([{ key: 'APP_THEME_MODE', value: this.dark ? 'dark' : 'light' }]);
 		}
 	},
 	mounted() {
@@ -247,11 +239,14 @@ export default {
 		},
 		dark(val) {
 			themeUtil.setDarkMode(val)
+			// 同步到后端 scmsysconfig（后端为单一事实源，key 统一小写）
+			this.$SCM.save_cfg([{ key: 'app_theme_mode', value: val ? 'dark' : 'light' }])
 		},
 		lang(val) {
 			this.$i18n.locale = val
-			// 交给 globalStore 统一持久化
+			// 交给 globalStore 统一持久化 + 同步后端
 			this.globalStore.SET_locale(val)
+			this.$SCM.save_cfg([{ key: 'app_lang', value: val }])
 		}
 	}
 }

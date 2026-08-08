@@ -134,6 +134,19 @@ export function initTheme() {
 	applyTheme(store.currentTheme)
 }
 
+/**
+ * 应用后端 scmsysconfig 返回的用户级配置（后端为单一事实源）。
+ * 写入 store（自动持久化到 localStorage）后，重新 initTheme() 把
+ * 最新状态刷到 DOM（CSS 变量、dark class）。i18n locale 由 App.vue 的
+ * syncI18nWithGlobalStore watchEffect 自动跟随 store.locale。
+ * @param {Array<{key:string, value:string}>} items 后端配置列表
+ */
+export function applyServerConfig(items) {
+	const store = useGlobalStore()
+	store.APPLY_serverConfig(items)
+	initTheme()
+}
+
 /** 预设主题查找（兼容老调用方） */
 export function getTheme(themeName) {
 	return config.PREDEFINE_THEMES.find(t => t.name === themeName)
@@ -195,6 +208,7 @@ export default {
 	getCurrentTheme,
 	isDarkMode,
 	initTheme,
+	applyServerConfig,
 	getTheme,
 	getPresetThemes,
 	getCustomThemes,

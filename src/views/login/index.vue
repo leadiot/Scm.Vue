@@ -98,6 +98,7 @@ import { useViewTagsStore } from "@/stores/viewTags";
 import { useKeepAliveStore } from "@/stores/keepAlive";
 import { useIframeStore } from "@/stores/iframe";
 import { useGlobalStore } from "@/stores/global";
+import themeUtil from "@/utils/theme";
 
 export default {
 	name: 'login',
@@ -239,6 +240,9 @@ export default {
 			this.$TOOL.session.set("PERMISSIONS", []);
 
 			await this.$SCM.list_cfg();
+			// 后端 scmsysconfig 为单一事实源：把用户级 app_* 配置同步到 globalStore（持久化到 localStorage）并刷 DOM
+			const cfgItems = Object.entries(this.$SCM.cache).map(([k, v]) => ({ key: k, value: v }));
+			themeUtil.applyServerConfig(cfgItems);
 			var home = await this.$SCM.read_cfg("app_home", this.$CONFIG.HOME);
 
 			this.$router.replace({ path: home });

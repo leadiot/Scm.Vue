@@ -21,15 +21,15 @@ const messages = {
 };
 
 /**
- * 读取当前语言：从统一持久化 APP_SETTINGS.locale 读取
+ * 读取当前语言：从统一持久化 APP_SETTINGS.locale（localStorage）读取
  * 注意：本模块在 main.js 顶部 import 时即加载，此时 app.use(pinia) 尚未执行，
- * 因此不能在此处调用 useGlobalStore()，只能直接读 session。
+ * 因此不能在此处调用 useGlobalStore()，只能直接读 localStorage。
  * 后续 syncI18nWithGlobalStore()（在 Pinia 就绪后由 App.vue 调用）会把
  * globalStore 的变更同步回 i18n。
  */
 function resolveInitialLocale() {
 	try {
-		const raw = tool.session.get("APP_SETTINGS");
+		const raw = tool.local.get("APP_SETTINGS");
 		const settings = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : null;
 		if (settings && typeof settings.locale === "string" && settings.locale) {
 			return settings.locale;
