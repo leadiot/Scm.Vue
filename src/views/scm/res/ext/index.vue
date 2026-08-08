@@ -66,8 +66,8 @@
 					</template>
 				</el-table-column>
 				<template #row_status="scope">
-					<el-tooltip :content="scope.row.row_status ? '正常' : '停用'" placement="right">
-						<el-switch v-model="scope.row.row_status" :active-value="1" :inactive-value="2"
+					<el-tooltip :content="$SCM.status_text(scope.row.row_status)" placement="right">
+						<el-switch v-model="scope.row.row_status" :active-value="1"
 							@change="status_item($event, scope.row)">
 						</el-switch>
 					</el-tooltip>

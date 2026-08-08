@@ -112,7 +112,7 @@ scm.status_item = async function (dom, http, data, status) {
 		return;
 	}
 
-	let param = { ids: [data.id], status: status };
+	let param = { ids: [data.id], status: status == 1 ? 1 : 2 };
 	var res = await http.post(param);
 	if (res.code == 200) {
 		//dom.$refs.table.refresh();
@@ -135,7 +135,7 @@ scm.status_list = function (dom, http, list, status) {
 			list.forEach((element) => {
 				ids.push(element.id);
 			});
-			let param = { ids: ids, status: status };
+			let param = { ids: ids, status: status == 1 ? 1 : 2 };
 			var res = await http.post(param);
 			if (res.code == 200) {
 				dom.$refs.table.refresh();
@@ -146,6 +146,10 @@ scm.status_list = function (dom, http, list, status) {
 			}
 		})
 		.catch(() => { });
+};
+
+scm.status_text = function (status) {
+	return status == 1 ? "正常" : "停用";
 };
 
 scm.delete_item = async function (dom, http, data) {
