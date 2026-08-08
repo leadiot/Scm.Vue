@@ -86,8 +86,12 @@ export function setDarkMode(isDark) {
 /*                              对外：应用完整主题                              */
 /* -------------------------------------------------------------------------- */
 
-/** 应用主题对象：DOM 写入 + store 状态更新（会自动持久化） */
-export function applyTheme(theme) {
+/**
+ * 应用主题对象：DOM 写入 + store 状态更新（会自动持久化）。
+ * @param persistServer 是否同步后端 scmsysconfig。用户切换传 true（默认）；
+ *        只读场景（initTheme / applyServerConfig）传 false 避免回写后端。
+ */
+export function applyTheme(theme, persistServer = true) {
 	if (!theme) return
 	const store = useGlobalStore()
 	const root = document.documentElement
@@ -98,7 +102,7 @@ export function applyTheme(theme) {
 	if (theme.background) root.style.setProperty('--color-background', theme.background)
 	if (theme.surface) root.style.setProperty('--color-surface', theme.surface)
 
-	store.APPLY_theme(theme)
+	store.APPLY_theme(theme, persistServer)
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,7 +135,7 @@ export function initTheme() {
 		root.setAttribute('data-theme', 'light')
 	}
 
-	applyTheme(store.currentTheme)
+	applyTheme(store.currentTheme, false)  // 仅启动 / 刷新，不同步后端
 }
 
 /**

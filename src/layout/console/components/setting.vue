@@ -133,10 +133,8 @@ export default {
 		selectTheme(theme) {
 			this.currentTheme = theme
 			this.currentThemeName = theme.name
-			// 应用完整主题（store 持久化到 localStorage）
+			// 应用完整主题：store 持久化 localStorage + 同步后端（由 APPLY_theme 统一处理）
 			themeUtil.applyTheme(theme)
-			// 同步到后端 scmsysconfig（后端为单一事实源，key 统一小写）
-			this.$SCM.save_cfg([{ key: 'app_theme_name', value: theme.name }])
 		},
 		/**
 		 * 切换主题事件
@@ -238,15 +236,13 @@ export default {
 			this.globalStore.TOGGLE_layoutTags()
 		},
 		dark(val) {
+			// setDarkMode → store.SET_themeMode（持久化 localStorage + 同步后端）
 			themeUtil.setDarkMode(val)
-			// 同步到后端 scmsysconfig（后端为单一事实源，key 统一小写）
-			this.$SCM.save_cfg([{ key: 'app_theme_mode', value: val ? 'dark' : 'light' }])
 		},
 		lang(val) {
 			this.$i18n.locale = val
-			// 交给 globalStore 统一持久化 + 同步后端
+			// SET_locale：持久化 localStorage + 同步后端（由 store 统一处理）
 			this.globalStore.SET_locale(val)
-			this.$SCM.save_cfg([{ key: 'app_lang', value: val }])
 		}
 	}
 }
