@@ -6,6 +6,9 @@ const APP_CONFIG = {
 	/** 产品描述，可以根据需要修改 */
 	APP_DESC: "这是应用的简单介绍。",
 
+	/** 默认语言，可以根据需要修改 */
+	LANG: "zh-cn",
+
 	/** 默认主题，可以根据需要修改 */
 	THEME: "中国蓝",
 
@@ -40,8 +43,8 @@ const APP_CONFIG = {
 	/** OIDC KEY，可以修改为您的应用KEY */
 	OIDC_KEY: "08dc965832db7248",
 
-	/** 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">粤ICP备2023030233号</a> */
+	/** 商务部备案信息，可以使用HTML标签，例如：<a href="https://www.miitbeian.gov.cn/">沪ICP备2023030233号</a> */
 	BEIAN_MIIT: "",
-	/** 公安部备案信息，可以使用HTML标签，例如：<a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=粤ICP备2023030233号">粤ICP备2023030233号</a> */
+	/** 公安部备案信息，可以使用HTML标签，例如：<a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=沪ICP备2023030233号">沪ICP备2023030233号</a> */
 	BEIAN_MPS: "",
 };
