@@ -99,8 +99,10 @@ export default {
 	user: {
 		info: "個人資訊",
 		settings: "設定",
-		nightmode: "深色模式",
-		nightmode_msg: "適合光線較弱的環境",
+		colorScheme: "顏色模式",
+		colorSchemeAuto: "跟隨系統",
+		colorSchemeLight: "淺色",
+		colorSchemeDark: "深色",
 		language: "語言",
 		language_msg: "目前語言為中文",
 	},

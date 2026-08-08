@@ -9,8 +9,12 @@
 			</el-select>
 		</el-form-item>
 		<el-divider></el-divider>
-		<el-form-item :label="$t('user.nightmode')">
-			<el-switch v-model="dark"></el-switch>
+		<el-form-item :label="$t('user.colorScheme')">
+			<el-select v-model="colorScheme">
+				<el-option :label="$t('user.colorSchemeAuto')" value="auto"></el-option>
+				<el-option :label="$t('user.colorSchemeLight')" value="light"></el-option>
+				<el-option :label="$t('user.colorSchemeDark')" value="dark"></el-option>
+			</el-select>
 		</el-form-item>
 		<el-form-item :label="$t('common.themeSelection')">
 			<el-select v-model="currentThemeName" @change="onThemeChange" :placeholder="$t('setting.selectTheme')"
@@ -112,7 +116,7 @@ export default {
 		return {
 			// 从 globalStore 取当前值，不再读碎片化 cache key
 			lang: this.globalStore.locale,
-			dark: this.globalStore.isDarkMode,
+			colorScheme: this.globalStore.themeMode,
 			currentTheme: {},
 			currentThemeName: '',
 			createThemeVisible: false,
@@ -235,9 +239,9 @@ export default {
 		layoutTags() {
 			this.globalStore.TOGGLE_layoutTags()
 		},
-		dark(val) {
-			// setDarkMode → store.SET_themeMode（持久化 localStorage + 同步后端）
-			themeUtil.setDarkMode(val)
+		colorScheme(val) {
+			// setColorScheme → store.SET_themeMode（持久化 localStorage + 同步后端）
+			themeUtil.setColorScheme(val)
 		},
 		lang(val) {
 			this.$i18n.locale = val

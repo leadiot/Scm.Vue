@@ -101,8 +101,10 @@ export default {
 	user: {
 		info: "User Info",
 		settings: "Settings",
-		nightmode: "night mode",
-		nightmode_msg: "Suitable for low light environment",
+		colorScheme: "Color scheme",
+		colorSchemeAuto: "Follow system",
+		colorSchemeLight: "Light",
+		colorSchemeDark: "Dark",
 		language: "language",
 		language_msg: "Current language is English",
 	},

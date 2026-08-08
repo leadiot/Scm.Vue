@@ -39,7 +39,8 @@ export const useGlobalStore = defineStore('global', {
 			consoleLayout: config.CONSOLE_LAYOUT,
 			// 主题相关
 			themeName: config.THEME || '',
-			themeMode: 'light',
+			themeMode: 'auto',  // 颜色模式：auto（跟随系统）/ light / dark
+			systemDark: false,  // 系统是否偏好深色（运行时，不持久化）
 			primaryColor: config.COLOR || '#409eff',
 			secondaryColor: '#909399',
 			onPrimary: '#ffffff',
@@ -65,7 +66,7 @@ export const useGlobalStore = defineStore('global', {
 		return fromStorage
 	},
 	getters: {
-		isDarkMode: (s) => s.themeMode === 'dark',
+		isDarkMode: (s) => s.themeMode === 'dark' || (s.themeMode === 'auto' && s.systemDark),
 		/** 当前生效的完整主题对象：预设主题命中则返回原配置，否则用当前颜色合成自定义主题 */
 		currentTheme: (s) => {
 			const presetAndCustom = [...(config.PREDEFINE_THEMES || []), ...s.customThemes]
@@ -75,7 +76,7 @@ export const useGlobalStore = defineStore('global', {
 				name: '自定义',
 				primary: s.primaryColor,
 				secondary: s.secondaryColor,
-				onPrimary: s.onPrimary || getOnPrimaryColor(s.primaryColor, s.themeMode === 'dark'),
+				onPrimary: s.onPrimary || getOnPrimaryColor(s.primaryColor, s.themeMode === 'dark' || (s.themeMode === 'auto' && s.systemDark)),
 				onSecondary: s.onSecondary || '#ffffff',
 				accent: s.accentColor,
 				surface: s.surfaceColor,
@@ -158,13 +159,22 @@ export const useGlobalStore = defineStore('global', {
 
 		// ---------- 主题模式 ----------
 		SET_themeMode(mode) {
-			this.themeMode = mode === 'dark' ? 'dark' : 'light'
-			this.onPrimary = getOnPrimaryColor(this.primaryColor, this.themeMode === 'dark')
+			const valid = ['auto', 'light', 'dark'].includes(mode) ? mode : 'auto'
+			this.themeMode = valid
+			this.onPrimary = getOnPrimaryColor(this.primaryColor, this.isDarkMode)
 			this._persist()
-			this._syncToServer('app_theme_mode', this.themeMode)
+			this._syncToServer('app_theme_mode', valid)
 		},
 		TOGGLE_themeMode() {
-			this.SET_themeMode(this.themeMode === 'dark' ? 'light' : 'dark')
+			this.SET_themeMode(this.isDarkMode ? 'light' : 'dark')
+		},
+		// 系统深色偏好变化（运行时状态，不持久化 / 不同步后端）
+		SET_systemDark(val) {
+			this.systemDark = !!val
+			// auto 模式下系统偏好变化 → onPrimary 跟随重算
+			if (this.themeMode === 'auto') {
+				this.onPrimary = getOnPrimaryColor(this.primaryColor, this.isDarkMode)
+			}
 		},
 
 		// ---------- 颜色 ----------
@@ -240,7 +250,8 @@ export const useGlobalStore = defineStore('global', {
 				if (map.app_theme_name) this.themeName = map.app_theme_name
 			}
 			if (map.app_theme_mode) {
-				this.themeMode = map.app_theme_mode === 'dark' ? 'dark' : 'light'
+				const m = map.app_theme_mode
+				this.themeMode = ['auto', 'light', 'dark'].includes(m) ? m : 'auto'
 			}
 			if (map.app_lang) this.locale = map.app_lang
 			if (map.app_home) this.home = map.app_home

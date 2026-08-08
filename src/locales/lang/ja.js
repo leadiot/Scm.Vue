@@ -99,8 +99,10 @@ export default {
 	user: {
 		info: '個人情報',
 		settings: '設定',
-		nightmode: 'ダークモード',
-		nightmode_msg: '光の弱い環境に適しています',
+		colorScheme: 'カラースキーム',
+		colorSchemeAuto: 'システムに従う',
+		colorSchemeLight: 'ライト',
+		colorSchemeDark: 'ダーク',
 		language: '言語',
 		language_msg: "現在の言語は日本語です",
 	},

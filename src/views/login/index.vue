@@ -11,9 +11,17 @@
 					<div class="common-header-title">{{ $t('login.signInTitle') }}</div>
 				</div>
 				<div class="common-header-right">
-					<el-button :icon="config.dark ? 'el-icon-sunny' : 'el-icon-moon'" circle type="info"
-						@click="configDark" :title="$t('login.themeTitle')">
-					</el-button>
+					<el-dropdown trigger="click" placement="bottom-end" @command="configTheme"
+						:title="$t('login.themeTitle')">
+						<el-button circle type="info" :icon="themeIcon"></el-button>
+						<template #dropdown>
+							<el-dropdown-menu>
+								<el-dropdown-item command="auto" :class="{ selected: config.themeMode == 'auto' }">{{ $t('user.colorSchemeAuto') }}</el-dropdown-item>
+								<el-dropdown-item command="light" :class="{ selected: config.themeMode == 'light' }">{{ $t('user.colorSchemeLight') }}</el-dropdown-item>
+								<el-dropdown-item command="dark" :class="{ selected: config.themeMode == 'dark' }">{{ $t('user.colorSchemeDark') }}</el-dropdown-item>
+							</el-dropdown-menu>
+						</template>
+					</el-dropdown>
 					<el-dropdown trigger="click" placement="bottom-end" @command="configLang"
 						:title="$t('login.langTitle')">
 						<el-button circle>
@@ -117,21 +125,14 @@ export default {
 		return { viewTagsStore, keepAliveStore, iframeStore, globalStore }
 	},
 	data() {
-		// 初始值从 globalStore（统一持久化）读取，而不再直接读碎片化的 cache key
+		// 初始值从 globalStore（统一持久化）读取；DOM 由 themeUtil.initTheme() 统一处理
 		var lang = this.globalStore.locale;
 		this.$i18n.locale = lang;
-
-		var dark = this.globalStore.isDarkMode;
-		if (dark) {
-			document.documentElement.classList.add("dark");
-		} else {
-			document.documentElement.classList.remove("dark");
-		}
 
 		return {
 			config: {
 				lang: lang,
-				dark: dark,
+				themeMode: this.globalStore.themeMode,
 			},
 			info: {},
 			theme: {
@@ -154,15 +155,18 @@ export default {
 			],
 		};
 	},
+	computed: {
+		themeIcon() {
+			const m = this.config.themeMode;
+			if (m === 'auto') return 'el-icon-monitor';
+			if (m === 'dark') return 'el-icon-moon';
+			return 'el-icon-sunny';
+		}
+	},
 	watch: {
-		"config.dark"(val) {
-			// 通过 globalStore actions：同步 HTML class + 持久化（一处解决）
-			this.globalStore.SET_themeMode(val ? 'dark' : 'light')
-			if (val) {
-				document.documentElement.classList.add("dark");
-			} else {
-				document.documentElement.classList.remove("dark");
-			}
+		"config.themeMode"(val) {
+			// setColorScheme：刷 DOM + 同步 store（持久化 localStorage + 同步后端）
+			themeUtil.setColorScheme(val)
 		},
 		"config.lang"(val) {
 			this.$i18n.locale = val;
@@ -204,8 +208,8 @@ export default {
 
 			this.theme = res.data;
 		},
-		configDark() {
-			this.config.dark = this.config.dark ? false : true;
+		configTheme(command) {
+			this.config.themeMode = command;
 		},
 		configLang(command) {
 			this.config.lang = command.value;

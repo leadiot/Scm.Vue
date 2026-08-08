@@ -60,17 +60,14 @@ export function setAccentColor(color) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              对外：Light/Dark 模式                          */
+/*                              对外：颜色模式（auto / light / dark）          */
 /* -------------------------------------------------------------------------- */
 
-/**
- * 切换 Light/Dark 模式：改 HTML class + data-theme + 同步 globalStore（自动持久化）
- */
-export function setDarkMode(isDark) {
-	const store = useGlobalStore()
-	const root = document.documentElement
+let _systemDarkMql = null
 
-	isDark = !!isDark
+/** 写入 HTML dark class + data-theme */
+function applyDarkClass(isDark) {
+	const root = document.documentElement
 	if (isDark) {
 		root.classList.add('dark')
 		root.setAttribute('data-theme', 'dark')
@@ -78,8 +75,43 @@ export function setDarkMode(isDark) {
 		root.classList.remove('dark')
 		root.setAttribute('data-theme', 'light')
 	}
+}
 
-	store.SET_themeMode(isDark ? 'dark' : 'light')
+/**
+ * 注册 prefers-color-scheme 监听：系统主题变化时，auto 模式自动跟随。
+ * 全局只注册一次（在 initTheme 中调用）。
+ */
+function initSystemDarkListener() {
+	if (_systemDarkMql || typeof window === 'undefined' || !window.matchMedia) return
+	_systemDarkMql = window.matchMedia('(prefers-color-scheme: dark)')
+	const handler = (e) => {
+		const store = useGlobalStore()
+		store.SET_systemDark(e.matches)
+		// 仅 auto 模式跟随系统刷 DOM；light/dark 是用户显式选择，不受系统影响
+		if (store.themeMode === 'auto') {
+			applyDarkClass(store.isDarkMode)
+			applyTheme(store.currentTheme, false)  // onPrimary 等跟随重算
+		}
+	}
+	if (_systemDarkMql.addEventListener) {
+		_systemDarkMql.addEventListener('change', handler)
+	} else if (_systemDarkMql.addListener) {
+		_systemDarkMql.addListener(handler)  // 旧版 Safari
+	}
+}
+
+/**
+ * 设置颜色模式（auto / light / dark）：刷 DOM + 同步 store（自动持久化 + 同步后端）。
+ */
+export function setColorScheme(mode) {
+	const store = useGlobalStore()
+	store.SET_themeMode(mode)
+	applyDarkClass(store.isDarkMode)
+}
+
+/** 兼容旧调用：布尔深色开关 → 颜色模式 */
+export function setDarkMode(isDark) {
+	setColorScheme(isDark ? 'dark' : 'light')
 }
 
 /* -------------------------------------------------------------------------- */
@@ -124,17 +156,12 @@ export function isDarkMode() {
  */
 export function initTheme() {
 	const store = useGlobalStore()
-	const root = document.documentElement
-
-	const isDark = store.isDarkMode
-	if (isDark) {
-		root.classList.add('dark')
-		root.setAttribute('data-theme', 'dark')
-	} else {
-		root.classList.remove('dark')
-		root.setAttribute('data-theme', 'light')
+	// 初始化系统深色偏好 + 注册监听（auto 模式跟随系统）
+	if (typeof window !== 'undefined' && window.matchMedia) {
+		store.SET_systemDark(window.matchMedia('(prefers-color-scheme: dark)').matches)
 	}
-
+	initSystemDarkListener()
+	applyDarkClass(store.isDarkMode)
 	applyTheme(store.currentTheme, false)  // 仅启动 / 刷新，不同步后端
 }
 
@@ -208,6 +235,7 @@ export default {
 	setSecondaryColor,
 	setAccentColor,
 	setDarkMode,
+	setColorScheme,
 	applyTheme,
 	getCurrentTheme,
 	isDarkMode,
