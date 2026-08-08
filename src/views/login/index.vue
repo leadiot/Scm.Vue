@@ -167,11 +167,11 @@ export default {
 	},
 	created: function () {
 		this.$TOOL.cookie.remove("TOKEN");
-		this.$TOOL.session.remove("USER_INFO");
-		this.$TOOL.session.remove("MENU");
-		this.$TOOL.session.remove("PERMISSIONS");
-		this.$TOOL.session.remove("grid");
-		this.$TOOL.session.remove("ISLONINEND");
+		this.$TOOL.removeCache("USER_INFO");
+		this.$TOOL.removeCache("MENU");
+		this.$TOOL.removeCache("PERMISSIONS");
+		this.$TOOL.removeCache("GRID");
+		this.$TOOL.removeCache("ISLONINEND");
 		this.viewTagsStore.clearViewTags();
 		this.keepAliveStore.clearKeepLive();
 		this.iframeStore.clearIframeList();

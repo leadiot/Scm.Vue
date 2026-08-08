@@ -110,8 +110,8 @@ export default {
 	},
 	data() {
 		return {
-			lang: this.$TOOL.session.get('APP_LANG') || this.$CONFIG.LANG,
-			dark: this.$TOOL.session.get('APP_MODE') == 'dark',
+			lang: this.$TOOL.getCache('APP_LANG') || this.$CONFIG.LANG,
+			dark: this.$TOOL.getCache('APP_MODE') == 'dark',
 			currentTheme: {},
 			currentThemeName: '',
 			createThemeVisible: false,
@@ -246,7 +246,7 @@ export default {
 		},
 		lang(val) {
 			this.$i18n.locale = val
-			this.$TOOL.session.set("APP_LANG", val);
+			this.$TOOL.setCache("APP_LANG", val);
 		}
 	}
 }

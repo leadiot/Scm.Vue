@@ -20,7 +20,7 @@ const DEFAULT_CONFIG = {
 	// 语言
 	LANG: "zh-cn",
 
-	// 颜色，TODO：需要修改为THEME。
+	// 颜色
 	COLOR: "",
 
 	// 主题
@@ -63,7 +63,7 @@ const DEFAULT_CONFIG = {
 	SIGNALR_URL: import.meta.env.VITE_API_BASE + "/scmhub",
 
 	// 客户端下载地址
-	DOWNLOAD_URL: "http://www.c-nas.net/download/client.js",
+	DOWNLOAD_URL: "http://www.c-scm.net/download/client.js",
 
 	// 请求超时
 	TIMEOUT: 10000,

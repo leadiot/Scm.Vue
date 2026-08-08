@@ -22,8 +22,8 @@
 									<div class="widgets-item">
 										<component :is="allComps[element]"></component>
 										<div v-if="customizing" class="customize-overlay">
-											<el-button class="close" type="danger" plain icon="el-icon-close" size="small"
-												@click="remove(element)"></el-button>
+											<el-button class="close" type="danger" plain icon="el-icon-close"
+												size="small" @click="remove(element)"></el-button>
 											<label>
 												<el-icon>
 													<component :is="allComps[element].icon" />
@@ -92,7 +92,8 @@
 								<p>{{ item.description }}</p>
 							</div>
 							<div class="item-actions">
-								<el-button type="primary" icon="el-icon-plus" size="small" @click="push(item)"></el-button>
+								<el-button type="primary" icon="el-icon-plus" size="small"
+									@click="push(item)"></el-button>
 							</div>
 						</div>
 					</div>
@@ -124,7 +125,7 @@ export default {
 		};
 	},
 	created() {
-		this.grid = this.$TOOL.data.get("grid") || JSON.parse(JSON.stringify(this.defaultGrid));
+		this.grid = this.$TOOL.getCache("GRID") || JSON.parse(JSON.stringify(this.defaultGrid));
 	},
 	mounted() {
 		this.$emit("on-mounted");
@@ -205,14 +206,14 @@ export default {
 		save() {
 			this.customizing = false;
 			this.$refs.widgets.style.removeProperty("transform");
-			this.$TOOL.data.set("grid", this.grid);
+			this.$TOOL.setCache("GRID", this.grid);
 		},
 		//恢复默认
 		backDefaul() {
 			this.customizing = false;
 			this.$refs.widgets.style.removeProperty("transform");
 			this.grid = JSON.parse(JSON.stringify(this.defaultGrid));
-			this.$TOOL.data.remove("grid");
+			this.$TOOL.removeCache("GRID");
 		},
 		//关闭
 		close() {
