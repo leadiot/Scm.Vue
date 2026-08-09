@@ -308,6 +308,10 @@ tool.dateTimeFormat = function (time, fmt) {
 		return '';
 	}
 
+	time = Number(time);
+	if (isNaN(time)) {
+		return '';
+	}
 	var date = new Date(time);
 	var y = date.getFullYear();
 	var M = date.getMonth() + 1;

@@ -16,13 +16,16 @@
 						<el-button circle type="info" :icon="themeIcon"></el-button>
 						<template #dropdown>
 							<el-dropdown-menu>
-								<el-dropdown-item command="auto" :class="{ selected: config.themeMode == 'auto' }">{{ $t('user.colorSchemeAuto') }}</el-dropdown-item>
-								<el-dropdown-item command="light" :class="{ selected: config.themeMode == 'light' }">{{ $t('user.colorSchemeLight') }}</el-dropdown-item>
-								<el-dropdown-item command="dark" :class="{ selected: config.themeMode == 'dark' }">{{ $t('user.colorSchemeDark') }}</el-dropdown-item>
+								<el-dropdown-item command="auto" :class="{ selected: config.themeMode == 'auto' }">{{
+									$t('user.colorSchemeAuto') }}</el-dropdown-item>
+								<el-dropdown-item command="light" :class="{ selected: config.themeMode == 'light' }">{{
+									$t('user.colorSchemeLight') }}</el-dropdown-item>
+								<el-dropdown-item command="dark" :class="{ selected: config.themeMode == 'dark' }">{{
+									$t('user.colorSchemeDark') }}</el-dropdown-item>
 							</el-dropdown-menu>
 						</template>
 					</el-dropdown>
-					<el-dropdown trigger="click" placement="bottom-end" @command="configLang"
+					<el-dropdown trigger="click" placement="bottom-end" @command="configLang" style="margin-left: 10px;"
 						:title="$t('login.langTitle')">
 						<el-button circle>
 							<sc-icon name="sc-translate" />
@@ -292,6 +295,7 @@ export default {
 	width: 100%;
 	max-width: 800px;
 	margin: auto;
+	border-radius: 16px;
 }
 
 .login_aside {
