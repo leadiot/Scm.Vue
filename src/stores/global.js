@@ -54,9 +54,10 @@ export const useGlobalStore = defineStore('global', {
 			// 布局相关
 			menuIsCollapse: config.MENU_IS_COLLAPSE,
 			layoutTags: config.LAYOUT_TAGS,
-			// 日志通道（@/utils/logger 消费，生产默认 error+通知，开发默认 debug+不通知）
+			// 日志通道（@/utils/logger 消费，生产默认 error+通知+上报，开发默认 debug+不通知+不上报）
 			logLevel: import.meta.env.PROD ? 'error' : 'debug',
 			logNotify: import.meta.env.PROD ? true : false,
+			logReport: import.meta.env.PROD ? true : false,
 			// 自定义主题（独立持久化）
 			customThemes: [],
 		}
@@ -178,6 +179,15 @@ export const useGlobalStore = defineStore('global', {
 		TOGGLE_logNotify() {
 			this.SET_logNotify(!this.logNotify)
 		},
+		SET_logReport(on) {
+			this.logReport = !!on
+			logger.setReport(!!on)
+			this._persist()
+			this._syncToServer('app_log_report', on ? 'true' : 'false')
+		},
+		TOGGLE_logReport() {
+			this.SET_logReport(!this.logReport)
+		},
 
 		// ---------- 主题模式 ----------
 		SET_themeMode(mode) {
@@ -281,6 +291,9 @@ export const useGlobalStore = defineStore('global', {
 			if (map.app_console_layout) this.consoleLayout = map.app_console_layout
 			if (map.app_menu_is_collapse) this.menuIsCollapse = map.app_menu_is_collapse === 'true'
 			if (map.app_layout_tags) this.layoutTags = map.app_layout_tags === 'true'
+			if (map.app_log_level) this.logLevel = map.app_log_level
+			if (map.app_log_notify) this.logNotify = map.app_log_notify === 'true'
+			if (map.app_log_report) this.logReport = map.app_log_report === 'true'
 
 			// 模式 / 主色变更后重算 onPrimary
 			this.onPrimary = getOnPrimaryColor(this.primaryColor, this.themeMode === 'dark')

@@ -1,6 +1,7 @@
 <template>
 	<el-config-provider :locale="elLocale" :size="config.size" :zIndex="config.zIndex" :button="config.button">
 		<component :is="layoutComponent" />
+		<scLogPanel ref="logPanel" />
 	</el-config-provider>
 </template>
 
@@ -58,6 +59,21 @@ export default {
 				},
 			},
 		};
+	},
+	mounted() {
+		// 全局快捷键 Ctrl+Shift+L 打开日志面板
+		this._logPanelKeyHandler = (e) => {
+			if (e.ctrlKey && e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+				e.preventDefault()
+				this.$refs.logPanel?.open()
+			}
+		}
+		window.addEventListener('keydown', this._logPanelKeyHandler)
+	},
+	beforeUnmount() {
+		if (this._logPanelKeyHandler) {
+			window.removeEventListener('keydown', this._logPanelKeyHandler)
+		}
 	},
 };
 </script>

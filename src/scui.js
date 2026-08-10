@@ -32,6 +32,7 @@ import scUploadFile from "./components/scUpload/file";
 import scUploadMultiple from "./components/scUpload/multiple";
 import scWaterfall from "./components/scWaterfall";
 import scWatermark from "./components/scWatermark";
+import scLogPanel from "./components/scLogPanel";
 
 import auth from "./directives/auth";
 import role from "./directives/role";
@@ -92,6 +93,7 @@ export default {
 		app.component("scList", scList);
 		app.component("scPanel", scPanel);
 		app.component("scSummary", scSummary);
+		app.component("scLogPanel", scLogPanel);
 
 		//注册全局指令
 		app.directive("auth", auth);
