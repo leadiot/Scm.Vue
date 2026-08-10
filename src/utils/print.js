@@ -1,5 +1,6 @@
 // 打印类属性、方法定义
 /* eslint-disable */
+import logger from '@/utils/logger'
 const Print = function(dom, options) {
 	if (!(this instanceof Print)) return new Print(dom, options);
 
@@ -123,7 +124,7 @@ Print.prototype = {
 				frameWindow.close();
 			}, 10);
 		} catch (err) {
-			console.log('err', err);
+			logger.error('打印失败', err);
 		}
 	},
 	isDOM: (typeof HTMLElement === 'object') ?

@@ -3,6 +3,7 @@ import config from "@/config"
 import tool from "@/utils/tool"
 import { darken, getOnPrimaryColor } from "@/utils/color"
 import scm from "@/utils/scm"
+import logger from "@/utils/logger"
 
 /**
  * 个性化配置统一持久化键（使用 localStorage，跨会话保留）
@@ -24,7 +25,7 @@ function loadPersistent(defaults) {
 		const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
 		return { ...defaults, ...parsed }
 	} catch (e) {
-		console.warn('[globalStore] 读取持久化配置失败，使用默认值:', e)
+		logger.warn('[globalStore] 读取持久化配置失败，使用默认值:', e)
 		return { ...defaults }
 	}
 }
@@ -53,6 +54,9 @@ export const useGlobalStore = defineStore('global', {
 			// 布局相关
 			menuIsCollapse: config.MENU_IS_COLLAPSE,
 			layoutTags: config.LAYOUT_TAGS,
+			// 日志通道（@/utils/logger 消费，生产默认 error+通知，开发默认 debug+不通知）
+			logLevel: import.meta.env.PROD ? 'error' : 'debug',
+			logNotify: import.meta.env.PROD ? true : false,
 			// 自定义主题（独立持久化）
 			customThemes: [],
 		}
@@ -61,7 +65,7 @@ export const useGlobalStore = defineStore('global', {
 			const raw = tool.local.get(STORAGE_KEY_CUSTOM_THEMES)
 			if (raw) fromStorage.customThemes = typeof raw === 'string' ? JSON.parse(raw) : raw
 		} catch (e) {
-			console.warn('[globalStore] 读取自定义主题失败:', e)
+			logger.warn('[globalStore] 读取自定义主题失败:', e)
 		}
 		return fromStorage
 	},
@@ -155,6 +159,24 @@ export const useGlobalStore = defineStore('global', {
 			this.layoutTags = !this.layoutTags
 			this._persist()
 			this._syncToServer('app_layout_tags', this.layoutTags)
+		},
+
+		// ---------- 日志通道 ----------
+		SET_logLevel(level) {
+			const valid = ['debug', 'info', 'warn', 'error', 'silent'].includes(level) ? level : (import.meta.env.PROD ? 'error' : 'debug')
+			this.logLevel = valid
+			logger.setLevel(valid)
+			this._persist()
+			this._syncToServer('app_log_level', valid)
+		},
+		SET_logNotify(on) {
+			this.logNotify = !!on
+			logger.setNotify(!!on)
+			this._persist()
+			this._syncToServer('app_log_notify', on ? 'true' : 'false')
+		},
+		TOGGLE_logNotify() {
+			this.SET_logNotify(!this.logNotify)
 		},
 
 		// ---------- 主题模式 ----------

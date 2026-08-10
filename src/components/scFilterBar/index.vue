@@ -252,7 +252,7 @@ export default {
 				try {
 					var data = await item.field.extend.request();
 				} catch (error) {
-					console.log(error);
+					this.$LOG.warn('过滤字段下拉数据加载失败', error);
 				}
 				item.field.extend.data = data;
 				item.selectLoading = false;
@@ -265,7 +265,7 @@ export default {
 				try {
 					var data = await item.field.extend.request(query);
 				} catch (error) {
-					console.log(error);
+					this.$LOG.warn('过滤字段搜索失败', error);
 				}
 				item.field.extend.data = data;
 				item.selectLoading = false;
@@ -324,7 +324,7 @@ export default {
 						);
 					} catch (error) {
 						this.saveLoading = false;
-						console.log(error);
+						this.$LOG.error('保存常用过滤失败', error);
 						return false;
 					}
 					if (!save) {

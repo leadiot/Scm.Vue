@@ -1,9 +1,10 @@
 import axios from "axios";
-import { ElNotification, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import sysConfig from "@/config";
 import tool from "@/utils/tool";
 import crypto from "@/utils/crypto";
 import router from "@/router";
+import logger from "@/utils/logger";
 
 axios.defaults.baseURL = "";
 
@@ -58,52 +59,33 @@ axios.interceptors.response.use(
 		return response;
 	},
 	(error) => {
-		if (error.response) {
-			if (error.response.status == 404) {
-				ElNotification.error({
-					title: "请求错误",
-					message: "Status:404，正在请求不存在的服务器记录！",
-				});
-			} else if (error.response.status == 500) {
-				ElNotification.error({
-					title: "请求错误",
-					message:
-						error.response.data.message ||
-						"Status:500，服务器发生错误！",
-				});
-			} else if (error.response.status == 401) {
-				var isBack = tool.data.get("ISLONINEND");
-				if (!isBack) {
-					tool.data.set("ISLONINEND", "1");
-					ElMessageBox.confirm(
-						"当前用户已被登出或无权限访问当前资源，请尝试重新登录后再操作。",
-						"无权限访问",
-						{
-							type: "error",
-							closeOnClickModal: false,
-							showCancelButton: true,
-							confirmButtonText: "重新登录",
-						}
-					)
-						.then(() => {
-							router.replace({ path: "/login" });
-						})
-						.catch(() => { });
-				}
-			} else {
-				ElNotification.error({
-					title: "请求错误",
-					message: error.response.data.message || `Status:${error.response.status}，未知错误！`,
-				});
+		// 非 401 的状态统一由 logger.httpError 打日志 + 通知
+		const { handled } = logger.httpError(error) || {};
+		void handled
+
+		// 401：保留原有的登出弹窗引导逻辑
+		if (error && error.response && error.response.status === 401) {
+			var isBack = tool.data.get("ISLONINEND");
+			if (!isBack) {
+				tool.data.set("ISLONINEND", "1");
+				ElMessageBox.confirm(
+					"当前用户已被登出或无权限访问当前资源，请尝试重新登录后再操作。",
+					"无权限访问",
+					{
+						type: "error",
+						closeOnClickModal: false,
+						showCancelButton: true,
+						confirmButtonText: "重新登录",
+					}
+				)
+					.then(() => {
+						router.replace({ path: "/login" });
+					})
+					.catch(() => { });
 			}
-		} else {
-			ElNotification.error({
-				title: "请求错误",
-				message: "请求服务器无响应！",
-			});
 		}
 
-		return Promise.reject(error.response);
+		return Promise.reject(error && error.response ? error.response : error);
 	}
 );
 

@@ -205,7 +205,7 @@ export default {
 					this.startPolling();
 				}
 			} catch (error) {
-				console.error('加载下载列表失败:', error);
+				this.$LOG.error('加载下载列表失败', error);
 			}
 		},
 		mapDownloadItem(item) {
@@ -255,7 +255,7 @@ export default {
 					await this.fetchDownloadStatus(id);
 				}
 			} catch (error) {
-				console.error('轮询下载进度失败:', error);
+				this.$LOG.error('轮询下载进度失败', error);
 			}
 		},
 		async fetchDownloadStatus(id) {
@@ -271,7 +271,7 @@ export default {
 					}
 				}
 			} catch (error) {
-				console.error('加载下载状态失败:', error);
+				this.$LOG.error('加载下载状态失败', error);
 				return {};
 			}
 		},

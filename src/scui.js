@@ -4,6 +4,8 @@ import crypto from "./utils/crypto";
 import tool from "./utils/tool";
 import http from "./utils/request";
 import scm from "./utils/scm";
+import logger from "./utils/logger";
+import { useGlobalStore } from "./stores/global";
 import { permission, rolePermission } from "./utils/permission";
 
 import scCat from "./components/scCat";
@@ -42,6 +44,18 @@ import * as elIcons from "@element-plus/icons-vue";
 
 export default {
 	install(app) {
+		// 全局 window 错误 / Promise 未捕获 reject 监听（只注册一次）
+		logger.registerGlobalHandlers();
+
+		// 从 Pinia global store 读取持久化的日志配置并应用
+		try {
+			const gs = useGlobalStore();
+			logger.applyConfig({
+				level: gs.logLevel,
+				notify: gs.logNotify,
+			});
+		} catch { /* 极端 pre-init 保护 */ }
+
 		//挂载全局对象
 		app.config.globalProperties.$CONFIG = config;
 		app.config.globalProperties.$CRYPTO = crypto;
@@ -51,6 +65,7 @@ export default {
 		app.config.globalProperties.$AUTH = permission;
 		app.config.globalProperties.$ROLE = rolePermission;
 		app.config.globalProperties.$SCM = scm;
+		app.config.globalProperties.$LOG = logger;
 
 		//注册全局组件
 		app.component("scComment", scComment);

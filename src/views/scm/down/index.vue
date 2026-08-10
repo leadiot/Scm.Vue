@@ -224,7 +224,7 @@ export default {
                 // 下载开始后显示成功消息
                 this.$message.success(`${this.getPlatformName(download.client)}版本开始下载，请注意保存文件。`);
             } catch (error) {
-                console.error('下载失败:', error);
+                this.$LOG.error('下载失败', error);
                 this.$message.error(`下载失败，请稍后重试。`);
             } finally {
                 // 重置下载状态
@@ -257,7 +257,7 @@ export default {
                     });
                 }
             } catch (error) {
-                console.error('打开应用商店失败:', error);
+                this.$LOG.error('打开应用商店失败', error);
                 this.$message.error('打开应用商店失败，请稍后重试。');
             }
         },

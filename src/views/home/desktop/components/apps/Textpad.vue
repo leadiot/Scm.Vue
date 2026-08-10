@@ -471,7 +471,7 @@ export default {
 				this.historyIndex = 0;
 				this.updateLineInfo();
 			} catch (error) {
-				console.error('加载文件失败:', error);
+				this.$LOG.error('加载文件失败', error);
 				this.$message.error('加载文件失败');
 			}
 		},
@@ -499,7 +499,7 @@ export default {
 					this.fontStyle = data.fontStyle || 'normal';
 					this.fontSize = data.fontSize || 12;
 				} catch (e) {
-					console.error('加载记事本状态失败:', e);
+					this.$LOG.error('加载记事本状态失败', e);
 				}
 			}
 		},

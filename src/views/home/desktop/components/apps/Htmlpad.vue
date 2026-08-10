@@ -429,7 +429,7 @@ export default {
 				note.url = file.url || '';
 				this.notes.push(note);
 			} catch (error) {
-				console.error('加载文件失败:', error);
+				this.$LOG.error('加载文件失败', error);
 				this.$message.error(`无法打开文件: ${file.name}`);
 			}
 		},

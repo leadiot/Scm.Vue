@@ -184,7 +184,7 @@ export default {
 				try {
 					var data = await item.extend.request();
 				} catch (error) {
-					console.log(error);
+					this.$LOG.warn('表格过滤下拉数据加载失败', error);
 				}
 				item.extend.data = data;
 				item.selectLoading = false;
@@ -197,7 +197,7 @@ export default {
 				try {
 					var data = await item.extend.request(query);
 				} catch (error) {
-					console.log(error);
+					this.$LOG.warn('表格过滤搜索失败', error);
 				}
 				item.extend.data = data;
 				item.selectLoading = false;

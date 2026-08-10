@@ -3,6 +3,7 @@ import http from "@/utils/request";
 import tool from "@/utils/tool";
 import crypto from "@/utils/crypto";
 import router from "@/router";
+import logger from "@/utils/logger";
 
 // 大模型响应较慢（后端默认超时300秒），非流式请求显式放大超时
 const AI_TIMEOUT = 300000;
@@ -106,7 +107,7 @@ export default {
 					onDone && onDone();
 					return;
 				}
-				onError ? onError(err) : console.error(err);
+				onError ? onError(err) : logger.error('AI 流式请求失败', err);
 			}
 		},
 	},

@@ -131,6 +131,8 @@ export default [
 		rules: {
 			'no-unused-vars': 'warn',
 			'no-undef': 'error',
+			// 业务代码统一走 $LOG / @/utils/logger，不直接使用 console.*
+			'no-console': 'warn',
 			indent: 'off',
 			'no-tabs': 'off',
 			'no-mixed-spaces-and-tabs': 'off',
@@ -139,6 +141,21 @@ export default [
 			'vue/no-template-key': 'off',
 			'vue/require-v-for-key': 'error',
 			'vue/no-use-v-if-with-v-for': 'error',
+		},
+	},
+	// logger.js 内部可以使用 console（作为统一输出通道自身的底层）
+	// global.js / stores：初始化 logger 前需要使用 console 的基础模块
+	{
+		files: ['**/logger.js', '**/stores/**/*.js'],
+		rules: {
+			'no-console': 'off',
+		},
+	},
+	// scm.js / tool.js / request.js / crypto.js 等底层工具也允许使用 console（按需）
+	{
+		files: ['**/utils/scm.js', '**/utils/tool.js', '**/utils/crypto.js'],
+		rules: {
+			'no-console': 'off',
 		},
 	},
 ];

@@ -444,7 +444,7 @@ export default {
                     this.updateMessage = this.$t('desktop.checkFailed');
                 }
             } catch (error) {
-                console.error('检查更新失败:', error);
+                this.$LOG.error('检查更新失败', error);
                 this.updateStatus = 'error';
                 this.updateMessage = this.$t('desktop.checkFailed');
             }
@@ -495,7 +495,7 @@ export default {
                     this.updateMessage = this.$t('desktop.upgradeFailed');
                 }
             } catch (error) {
-                console.error('升级失败:', error);
+                this.$LOG.error('升级失败', error);
                 this.updateStatus = 'error';
                 this.updateMessage = this.$t('desktop.upgradeFailed');
             }

@@ -325,7 +325,7 @@ export default {
 					const mapData = await response.json();
 					echarts.registerMap('china', mapData);
 				} catch (error) {
-					console.error('加载中国地图数据失败:', error);
+					this.$LOG.error('加载中国地图数据失败', error);
 					return;
 				}
 			}
