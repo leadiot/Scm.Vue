@@ -1,5 +1,5 @@
 <template>
-    <sc-panel :title="title" :remark="remark">
+    <sc-panel :title="title" :description="description">
         <textarea v-model="text" style="height: 100%;width: 100%;" />
         <template #footer>
             <el-card shadow="hover">
@@ -27,7 +27,7 @@ export default {
     data() {
         return {
             title: '字符统计',
-            remark: '这是一个字符统计工具',
+            description: '这是一个字符统计工具',
             text: '',
             cnChar: 0,
             cnSign: 0,

@@ -5,7 +5,6 @@
                 <div class="sc-panel_header">
                     <div class="title-block">
                         <div class="title">{{ title }}</div>
-                        <div v-if="remark" class="remark">{{ remark }}</div>
                     </div>
                     <div>
                         <slot name="header"></slot>
@@ -49,12 +48,11 @@ export default {
     inheritAttrs: false,
     props: {
         title: { type: String, default: '卡片标题' },
-        remark: { type: String, default: '' },
         description: { type: String, default: '这是工具说明！' },
     },
     computed: {
         drawerDesc() {
-            return this.description || this.remark || '这是工具说明！';
+            return this.description || '这是工具说明！';
         }
     },
     data() {
@@ -95,21 +93,18 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
 .sc-panel {
     height: 100%;
     padding: 15px;
     background-color: white;
     flex: 1;
 }
+
 .title-block {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-.remark {
-    font-size: 12px;
-    color: #909399;
-    margin-top: 2px;
 }
 
 .sc-panel_base {

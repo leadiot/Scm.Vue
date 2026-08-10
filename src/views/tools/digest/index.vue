@@ -1,5 +1,5 @@
 <template>
-    <sc-panel :title="title" :remark="remark">
+    <sc-panel :title="title" :description="description">
         <textarea v-model="param.input" style="width: 100%;height:100%;"></textarea>
         <template #footer>
             <el-card shadow="hover">
@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             title: '消息摘要',
-            remark: '这是一个文本摘要工具',
+            description: '这是一个文本摘要工具',
             algList: [
                 { id: 'MD5', label: 'MD5', value: 'MD5' },
                 { id: 'SHA1', label: 'SHA1', value: 'SHA1' },
