@@ -174,6 +174,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import { getCurrentTime, getRandomColor } from './utils.js';
 
 export default {
+	windowOptions: {
+		width: 600,
+		height: 680,
+		resizable: true,
+	},
 	name: 'CallLog',
 	components: {
 		scIcon,

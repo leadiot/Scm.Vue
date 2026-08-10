@@ -176,6 +176,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 960,
+		height: 620,
+		resizable: true,
+	},
 	name: 'Nas',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

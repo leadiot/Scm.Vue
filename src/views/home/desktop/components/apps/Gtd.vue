@@ -101,6 +101,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 360,
+		height: 580,
+		resizable: false,
+	},
 	name: 'Todo',
 	components: {
 		scIcon,

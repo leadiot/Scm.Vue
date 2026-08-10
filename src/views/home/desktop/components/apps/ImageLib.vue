@@ -261,6 +261,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 900,
+		height: 700,
+		resizable: true,
+	},
 	name: 'ImageLib',
 	components: {
 		scIcon,

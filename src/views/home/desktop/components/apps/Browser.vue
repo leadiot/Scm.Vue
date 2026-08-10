@@ -66,6 +66,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 1000,
+		height: 680,
+		resizable: true,
+	},
 	name: 'Browser',
 	components: { scIcon },
 	data() {

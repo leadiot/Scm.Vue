@@ -154,6 +154,7 @@
 import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
 import { themes } from './themes.js';
+import { preloadComponentModule, getWindowOptionsFromModule } from './components/appRegistry.js';
 import MacDock from './components/menus/MacDock.vue';
 import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
@@ -277,146 +278,91 @@ export default {
 				minBtnHover: 'rgba(0, 0, 0, 0.1)',
 				maxBtnHover: 'rgba(0, 0, 0, 0.1)'
 			},
-			// 应用配置表（以逻辑角色为键；登录后 addDeskIcon 用后端菜单覆盖，settings 除外）
+			// 应用配置表（以逻辑角色为键；窗口属性由 appConfig.js 管理，此处仅保留 name/icon/component）
 			appMap: {
 				settings: {
 					id: '1',
 					code: 'app-settings',
 					name: '设置',
 					component: 'Settings',
-					meta: {
-						icon: 'ms-settings',
-						width: 900,
-						height: 620,
-						resizable: true,
-					}
+					meta: { icon: 'ms-settings' }
 				},
 				profile: {
 					id: '2',
 					code: 'app-profile',
 					name: '个人信息',
 					component: 'Profile',
-					meta: {
-						icon: 'ms-account_circle',
-						width: 460,
-						height: 680,
-						resizable: false,
-					}
+					meta: { icon: 'ms-account_circle' }
 				},
 				notes: {
 					id: '3',
 					code: 'app-notes',
 					name: '便签',
 					component: 'Notes',
-					meta: {
-						icon: 'ms-sticky_note_2',
-						width: 320,
-						height: 460,
-						resizable: false
-					}
+					meta: { icon: 'ms-sticky_note_2' }
 				},
 				textpad: {
 					id: '4',
 					code: 'app-textpad',
 					name: '记事本',
 					component: 'Textpad',
-					meta: {
-						icon: 'ms-description',
-						width: 320,
-						height: 460,
-						resizable: false
-					}
+					meta: { icon: 'ms-description' }
 				},
 				gtd: {
 					id: '5',
 					code: 'app-gtd',
 					name: '待办',
 					component: 'Gtd',
-					meta: {
-						icon: 'ms-assignment',
-						width: 320,
-						height: 460,
-						resizable: false
-					}
+					meta: { icon: 'ms-assignment' }
 				},
 				calendar: {
 					id: '6',
 					code: 'app-calendar',
 					name: '日历',
 					component: 'Calendar',
-					meta: {
-						icon: 'ms-calendar_month',
-						width: 320,
-						height: 460,
-						resizable: false
-					}
+					meta: { icon: 'ms-calendar_month' }
 				},
 				terminal: {
 					id: '7',
 					code: 'app-terminal',
 					name: '终端',
 					component: 'Terminal',
-					meta: {
-						icon: 'ms-terminal',
-						width: 800,
-						height: 600
-					}
+					meta: { icon: 'ms-terminal' }
 				},
 				computer: {
 					id: '8',
 					code: 'app-computer',
 					name: '计算机',
 					component: 'Computer',
-					meta: {
-						icon: 'ms-computer',
-						width: 900,
-						height: 620,
-						resizable: true,
-					}
+					meta: { icon: 'ms-computer' }
 				},
 				image: {
 					id: '11',
 					code: 'app-image',
 					name: '图像',
 					component: 'Image',
-					meta: {
-						icon: 'ms-photo_library',
-						width: 900,
-						height: 700
-					}
+					meta: { icon: 'ms-photo_library' }
 				},
 				audio: {
 					id: '12',
 					code: 'app-audio',
 					name: '音频',
 					component: 'Audio',
-					meta: {
-						icon: 'ms-music_note',
-						width: 500,
-						height: 600
-					}
+					meta: { icon: 'ms-music_note' }
 				},
 				video: {
 					id: '13',
 					code: 'app-video',
 					name: '视频',
 					component: 'Video',
-					meta: {
-						icon: 'ms-videocam',
-						width: 900,
-						height: 600
-					}
+					meta: { icon: 'ms-videocam' }
 				},
 				text: {
 					id: '14',
 					code: 'app-textpad',
 					name: '记事本',
 					component: 'Textpad',
-					meta: {
-						icon: 'ms-article',
-						width: 800,
-						height: 600
-					}
+					meta: { icon: 'ms-article' }
 				},
 			},
 		};
@@ -656,12 +602,19 @@ export default {
 					this.addDeskIcon(child);
 					const role = CODE_TO_ROLE[child.code];
 					if (role) {
-						this.appMap[role] = child;
+						// 后端菜单仅补充 name/icon/component/path 等，不覆盖窗口属性
+						const local = this.appMap[role];
+						this.appMap[role] = {
+							...local,
+							...child,
+							// 保留本地 meta 中的窗口属性
+							meta: { ...local.meta, ...child.meta },
+						};
 					}
 				});
 			}
 		},
-		openApp(app) {
+		async openApp(app) {
 			const meta = app.meta || {};
 			if (meta.type === 'link') {
 				this.$router.push({
@@ -673,6 +626,49 @@ export default {
 			this.showStartMenu = false;
 			this.showLaunchpad = false;
 			this.hideContextMenu();
+
+			// 窗口属性优先读取 App 组件自身声明的 windowOptions（export default.windowOptions）
+			// 如果未找到则使用后端 fallback（meta.width/height）+ 默认值
+			let winOpts;
+			if (app.component) {
+				try {
+					const mod = await preloadComponentModule(app.component);
+					winOpts = getWindowOptionsFromModule(mod, {
+						width: meta.width,
+						height: meta.height,
+						resizable: meta.resizable,
+						minimizable: meta.minimizable,
+						closable: meta.closable,
+						maximizable: meta.maximizable,
+						center: meta.center,
+						minWidth: meta.minWidth,
+						minHeight: meta.minHeight,
+						maxWidth: meta.maxWidth,
+						maxHeight: meta.maxHeight,
+					});
+				} catch (e) {
+					winOpts = getWindowOptionsFromModule(null, {
+						width: meta.width || 800,
+						height: meta.height || 600,
+						resizable: meta.resizable,
+						minimizable: meta.minimizable,
+						closable: meta.closable,
+						maximizable: meta.maximizable,
+						center: meta.center,
+					});
+				}
+			} else {
+				winOpts = getWindowOptionsFromModule(null, {
+					width: meta.width || app.width || 800,
+					height: meta.height || app.height || 600,
+					resizable: meta.resizable,
+					minimizable: meta.minimizable,
+					closable: meta.closable,
+					maximizable: meta.maximizable,
+					center: meta.center,
+				});
+			}
+
 			const windowId = ++this.windowIdCounter;
 			this.windows.push({
 				id: windowId,
@@ -684,14 +680,20 @@ export default {
 				minimized: false,
 				maximized: false,
 				focused: true,
-				resizable: meta.resizable,
-				minimizable: meta.minimizable !== false,
-				centered: meta.center !== false,
+				resizable: winOpts.resizable,
+				minimizable: winOpts.minimizable,
+				closable: winOpts.closable,
+				maximizable: winOpts.maximizable,
+				centered: winOpts.center,
+				minWidth: winOpts.minWidth,
+				minHeight: winOpts.minHeight,
+				maxWidth: winOpts.maxWidth,
+				maxHeight: winOpts.maxHeight,
 				zIndex: ++this.windowZCounter,
 				x: 100 + (windowId % 5) * 30,
 				y: 100 + (windowId % 5) * 30,
-				width: meta.width || app.width || 800,
-				height: meta.height || app.height || 600,
+				width: winOpts.width,
+				height: winOpts.height,
 			});
 			this.focusWindow(windowId);
 		},

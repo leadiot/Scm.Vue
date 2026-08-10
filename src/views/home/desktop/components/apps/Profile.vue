@@ -70,6 +70,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import scPasswordStrength from '@/components/scPasswordStrength/index.vue';
 
 export default {
+	windowOptions: {
+		width: 460,
+		height: 680,
+		resizable: false,
+	},
     name: 'Profile',
     components: {
         scIcon,

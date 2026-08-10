@@ -23,10 +23,11 @@
 </template>
 
 <script>
-import { defineAsyncComponent, h, markRaw } from 'vue';
+import { h, defineComponent } from 'vue';
 import scIcon from '@/components/scIcon/index.vue';
 import TitleBar from './TitleBar.vue';
 import i18n from '@/locales';
+import { resolveAppComponent, mergeOptions } from './appRegistry.js';
 
 const LoadingComponent = {
 	name: 'LoadingComponent',
@@ -34,11 +35,6 @@ const LoadingComponent = {
 		return h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', fontSize: '14px' } }, i18n.global.t('desktop.loading'));
 	}
 };
-
-// 模块级：视图组件映射表（构建期一次性求值，避免每个窗口 resolveComponent 时重复调用 import.meta.glob）
-const viewModules = import.meta.glob('@/views/**/*.vue');
-// 模块级：组件缓存（跨窗口共享、非响应式，避免重复解析同一组件）
-const componentCache = new Map();
 
 export default {
 	name: 'AppWindow',
@@ -48,6 +44,14 @@ export default {
 		theme: { type: Object, default: () => ({}) },
 	},
 	emits: ['close', 'minimize', 'maximize', 'focus', 'set-wallpaper', 'profile-updated', 'password-changed', 'theme-preview', 'save-settings', 'animation-complete'],
+	provide() {
+		return {
+			// 允许 App 组件运行时动态更新自身窗口属性
+			updateWindow: (patch) => {
+				Object.assign(this.window, patch);
+			},
+		};
+	},
 	data() {
 		return {
 			dragData: { isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 },
@@ -189,23 +193,28 @@ export default {
 		onThemePreview(theme) { this.$emit('theme-preview', theme); },
 		onSaveSettings(config) { this.$emit('save-settings', config); },
 		getComponent(code, component) {
-			if (!componentCache.has(code)) {
-				componentCache.set(code, markRaw(this.resolveComponent(code, component)));
-			}
-			return componentCache.get(code);
+			return resolveAppComponent(code, component) || LoadingComponent;
 		},
-		resolveComponent(code, component) {
-			const paths = [`@/views/${component}.vue`, `@/views/${component}/index.vue`];
-			for (const path of paths) {
-				if (viewModules[path]) return defineAsyncComponent(viewModules[path]);
+		// 以组件实例的 $options.windowOptions 作为运行时兜底（若组件在 export default 中声明了）
+		applyOptionsFromComponent(comp) {
+			const opts = comp?.constructor?.options?.windowOptions || comp?.windowOptions || null;
+			if (opts) {
+				const merged = mergeOptions(opts);
+				const patch = {
+					width: merged.width,
+					height: merged.height,
+					resizable: merged.resizable,
+					minimizable: merged.minimizable,
+					closable: merged.closable,
+					maximizable: merged.maximizable,
+					centered: merged.center,
+					minWidth: merged.minWidth,
+					minHeight: merged.minHeight,
+					maxWidth: merged.maxWidth,
+					maxHeight: merged.maxHeight,
+				};
+				Object.assign(this.window, patch);
 			}
-			const moduleKeys = Object.keys(viewModules);
-			for (const key of moduleKeys) {
-				if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
-					return defineAsyncComponent(viewModules[key]);
-				}
-			}
-			return LoadingComponent;
 		},
 		startDrag(e) {
 			if (this.window.maximized || this.isMobile || this.currentAnimation) return;

@@ -59,6 +59,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 400,
+		height: 500,
+		resizable: false,
+	},
     name: 'Minesweeper',
     components: {
         scIcon,

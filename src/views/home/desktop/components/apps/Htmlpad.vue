@@ -125,6 +125,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 800,
+		height: 600,
+		resizable: true,
+	},
 	name: 'Notepad',
 	components: {
 		scIcon,

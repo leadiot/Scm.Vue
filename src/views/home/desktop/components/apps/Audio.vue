@@ -89,6 +89,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import { formatDuration } from './utils.js';
 
 export default {
+	windowOptions: {
+		width: 500,
+		height: 600,
+		resizable: true,
+	},
 	name: 'Audio',
 	components: {
 		scIcon,

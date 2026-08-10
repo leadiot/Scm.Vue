@@ -364,6 +364,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import tool from '@/utils/tool.js';
 
 export default {
+	windowOptions: {
+		width: 900,
+		height: 620,
+		resizable: true,
+	},
 	name: 'Computer',
 	components: { scIcon },
 	data() {

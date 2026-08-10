@@ -29,6 +29,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 320,
+		height: 480,
+		resizable: false,
+	},
 	name: 'Calendar',
 	components: {
 		scIcon,

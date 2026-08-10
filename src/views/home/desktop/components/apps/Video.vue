@@ -97,6 +97,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import { formatDuration } from './utils.js';
 
 export default {
+	windowOptions: {
+		width: 900,
+		height: 600,
+		resizable: true,
+	},
 	name: 'Video',
 	components: {
 		scIcon,

@@ -74,6 +74,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 440,
+		height: 600,
+		resizable: false,
+	},
 	name: 'Game2048',
 	components: {
 		scIcon,

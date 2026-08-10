@@ -154,6 +154,11 @@ import { marked } from 'marked';
 marked.setOptions({ breaks: true, gfm: true });
 
 export default {
+	windowOptions: {
+		width: 800,
+		height: 600,
+		resizable: true,
+	},
 	name: 'Ai',
 	data() {
 		return {

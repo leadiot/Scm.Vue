@@ -255,6 +255,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 900,
+		height: 620,
+		resizable: true,
+	},
     name: 'Settings',
     components: { scIcon },
     props: {

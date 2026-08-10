@@ -44,6 +44,11 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
+	windowOptions: {
+		width: 360,
+		height: 560,
+		resizable: false,
+	},
 	name: 'Calculator',
 	components: {
 		scIcon,

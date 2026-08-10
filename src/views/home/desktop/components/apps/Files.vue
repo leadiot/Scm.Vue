@@ -241,6 +241,11 @@ import scIcon from '@/components/scIcon/index.vue';
 import tool from '@/utils/tool.js';
 
 export default {
+	windowOptions: {
+		width: 960,
+		height: 620,
+		resizable: true,
+	},
 	name: 'Files',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

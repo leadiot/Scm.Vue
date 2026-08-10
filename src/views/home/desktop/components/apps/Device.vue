@@ -120,6 +120,11 @@ const DEVICE_COLORS = {
 };
 
 export default {
+	windowOptions: {
+		width: 520,
+		height: 680,
+		resizable: true,
+	},
 	name: 'Device',
 	components: {
 		scIcon,
