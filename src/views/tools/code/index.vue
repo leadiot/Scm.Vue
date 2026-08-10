@@ -35,7 +35,8 @@ hljs.registerLanguage('json', json);
 hljs.registerLanguage('sql', sql);
 hljs.registerLanguage('xml', xml);
 
-import vkbeautify from "vkbeautify";
+import xmlFormat from 'xml-formatter';
+import { format as sqlFormat } from 'sql-formatter';
 
 export default {
     name: 'tools_code',
@@ -87,11 +88,11 @@ export default {
                 if (this.lang == 'json') {
                     temp = this.jsonFormat(temp);
                 } else if (this.lang == 'xml') {
-                    temp = vkbeautify.xml(temp);
+                    temp = xmlFormat(temp);
                 } else if (this.lang == 'sql') {
-                    temp = vkbeautify.sql(temp);
+                    temp = sqlFormat(temp);
                 } else if (this.lang == 'css') {
-                    temp = vkbeautify.css(temp);
+                    temp = this.formatCss(temp);
                 }
             } catch (e) {
                 this.isString = true;
@@ -111,11 +112,27 @@ export default {
             let jsonObj = JSON.parse(json);
             if (typeof jsonObj === "object") {
                 this.isString = false;
-                return vkbeautify.json(jsonTemp);
+                return json;
             } else {
                 this.isString = true;
                 return jsonTemp;
             }
+        },
+        formatCss(css) {
+            css = css.replace(/\s+/g, ' ').trim();
+            css = css.replace(/\s*{\s*/g, ' {\n');
+            css = css.replace(/\s*}\s*/g, '\n}\n');
+            css = css.replace(/\s*;\s*/g, ';\n');
+            css = css.replace(/,\s*/g, ', ');
+            var indent = 0;
+            return css.split('\n').map(function (line) {
+                line = line.trim();
+                if (line === '') return '';
+                if (line === '}') indent--;
+                var result = '  '.repeat(Math.max(0, indent)) + line;
+                if (line.endsWith('{')) indent++;
+                return result;
+            }).filter(function (line) { return line !== ''; }).join('\n');
         }
     }
 }

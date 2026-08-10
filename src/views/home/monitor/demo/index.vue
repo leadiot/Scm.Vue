@@ -169,7 +169,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
-import * as echarts from 'echarts';
+import echarts from '@/utils/echarts';
 
 export default {
 	name: 'MonitorDemo',
