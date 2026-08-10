@@ -123,8 +123,8 @@ import { getCurrentTime, getRandomColor } from './utils.js';
 export default {
 	windowOptions: {
 		icon: 'ms-sms',
-		width: 600,
-		height: 680,
+		width: 800,
+		height: 600,
 		resizable: true,
 	},
 	name: 'SMS',

@@ -326,8 +326,8 @@ import { getRandomColor } from './utils.js';
 export default {
 	windowOptions: {
 		icon: 'ms-contacts',
-		width: 600,
-		height: 680,
+		width: 800,
+		height: 600,
 		resizable: true,
 	},
     name: 'Contacts',
