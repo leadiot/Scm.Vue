@@ -2,18 +2,18 @@
 	<div class="app-container app-light ai-app">
 		<div class="app-toolbar">
 			<div class="header-spacer"></div>
-			<el-radio-group v-model="tab" size="small">
-				<el-radio-button value="chat">{{ $t('desktop.aiChat') }}</el-radio-button>
-				<el-radio-button value="rag">{{ $t('desktop.aiRag') }}</el-radio-button>
-				<el-radio-button value="kb">{{ $t('desktop.aiKb') }}</el-radio-button>
-			</el-radio-group>
+			<el-select v-model="tab" size="small" style="width: 100px">
+				<el-option :label="$t('desktop.aiChat')" value="chat" />
+				<el-option :label="$t('desktop.aiRag')" value="rag" />
+				<el-option :label="$t('desktop.aiKb')" value="kb" />
+			</el-select>
 			<template v-if="tab !== 'kb'">
 				<el-select v-model="provider" size="small" style="width: 130px" :loading="providerLoading">
 					<el-option v-for="p in providers" :key="p.value" :label="p.label" :value="p.value"
 						:disabled="p.disabled" />
 				</el-select>
-				<el-input v-model="model" size="small" style="width: 150px"
-					:placeholder="$t('desktop.aiModelDefault')" clearable />
+				<el-input v-model="model" size="small" style="width: 120px" :placeholder="$t('desktop.aiModelDefault')"
+					clearable />
 			</template>
 		</div>
 
@@ -83,8 +83,8 @@
 				<el-input v-model="ragQuestion" type="textarea" :rows="2" resize="none"
 					:placeholder="$t('desktop.aiRagPh')" @keydown.enter.exact.prevent="askRag" />
 				<div class="ai-input-actions">
-					<el-button size="small" type="primary" :loading="ragLoading"
-						:disabled="!ragQuestion.trim()" @click="askRag">
+					<el-button size="small" type="primary" :loading="ragLoading" :disabled="!ragQuestion.trim()"
+						@click="askRag">
 						<sc-icon name="ms-search" :size="14" />&nbsp;{{ $t('desktop.aiAsk') }}
 					</el-button>
 				</div>
@@ -114,7 +114,8 @@
 			</div>
 			<div class="ai-kb-table">
 				<el-table :data="kbList" height="100%" size="small" v-loading="kbLoading">
-					<el-table-column prop="names" :label="$t('desktop.aiDocName')" min-width="180" show-overflow-tooltip />
+					<el-table-column prop="names" :label="$t('desktop.aiDocName')" min-width="180"
+						show-overflow-tooltip />
 					<el-table-column prop="exts" label="类型" width="70" align="center" />
 					<el-table-column :label="$t('desktop.aiDocSize')" width="90" align="right">
 						<template #default="{ row }">{{ formatSize(row.file_size) }}</template>
@@ -123,9 +124,11 @@
 					<el-table-column :label="$t('desktop.aiKbStatus')" width="110" align="center">
 						<template #default="{ row }">
 							<el-tooltip v-if="row.status === 3" :content="row.remark || ''" placement="top">
-								<el-tag size="small" :type="statusType(row.status)">{{ statusText(row.status) }}</el-tag>
+								<el-tag size="small" :type="statusType(row.status)">{{ statusText(row.status)
+									}}</el-tag>
 							</el-tooltip>
-							<el-tag v-else size="small" :type="statusType(row.status)">{{ statusText(row.status) }}</el-tag>
+							<el-tag v-else size="small" :type="statusType(row.status)">{{ statusText(row.status)
+								}}</el-tag>
 						</template>
 					</el-table-column>
 					<el-table-column :label="$t('desktop.aiDocAction')" width="130" align="center">
@@ -141,8 +144,8 @@
 				</el-table>
 			</div>
 			<div class="ai-kb-pager">
-				<el-pagination background layout="total, prev, pager, next" :total="kbTotal"
-					:page-size="kbLimit" v-model:current-page="kbPage" @current-change="loadKb()" />
+				<el-pagination background layout="total, prev, pager, next" :total="kbTotal" :page-size="kbLimit"
+					v-model:current-page="kbPage" @current-change="loadKb()" />
 			</div>
 		</template>
 	</div>
@@ -155,9 +158,11 @@ marked.setOptions({ breaks: true, gfm: true });
 
 export default {
 	windowOptions: {
-		icon: 'ms-bot',
-		width: 800,
+		icon: 'ms-smart_toy',
+		width: 360,
 		height: 600,
+		minWidth: 360,
+		minHeight: 600,
 		resizable: true,
 	},
 	name: 'Ai',

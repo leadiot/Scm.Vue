@@ -248,9 +248,16 @@ export default {
 			if (!this.resizeData.isResizing) return;
 			const dx = e.clientX - this.resizeData.startX;
 			const dy = e.clientY - this.resizeData.startY;
-			const minW = 300, minH = 200;
-			this.window.width = Math.max(minW, this.resizeData.width + dx);
-			this.window.height = Math.max(minH, this.resizeData.height + dy);
+			const minW = this.window.minWidth || 300;
+			const minH = this.window.minHeight || 200;
+			const maxW = this.window.maxWidth;
+			const maxH = this.window.maxHeight;
+			let newW = Math.max(minW, this.resizeData.width + dx);
+			let newH = Math.max(minH, this.resizeData.height + dy);
+			if (maxW) newW = Math.min(newW, maxW);
+			if (maxH) newH = Math.min(newH, maxH);
+			this.window.width = newW;
+			this.window.height = newH;
 		},
 		stopResize() { this.resizeData.isResizing = false; this.unbindResizeListeners(); },
 		// 拖拽监听器按需注册/移除：仅拖拽期间挂载 document 监听，空闲时零开销

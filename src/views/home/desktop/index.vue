@@ -98,7 +98,7 @@
 			@toggle-launchpad="toggleLaunchpad" @force-quit="forceQuitFocused" @shutdown="shutdown" @logout="logout" />
 
 		<!-- 开始菜单（通用）-->
-		<GenericMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor" :menu-text-color="menuTextColor"
+		<ScmMenu v-else-if="showStartMenu" :apps="menuApps" :menu-color="menuColor" :menu-text-color="menuTextColor"
 			:menu-border-radius="menuBorderRadius" :menu-glass="menuGlass" :user-name="user.userName || 'User'"
 			@open-app="openApp" @open-profile="openProfile" @open-settings="openSettings" @logout="logout"
 			@show-submenu="showSubmenu" @hide-submenu="hideSubmenu" />
@@ -165,7 +165,7 @@ import Win8Screen from './components/menus/Win8Screen.vue';
 import Win10Menu from './components/menus/Win10Menu.vue';
 import Win11Menu from './components/menus/Win11Menu.vue';
 import MacAppleMenu from './components/menus/MacAppleMenu.vue';
-import GenericMenu from './components/menus/GenericMenu.vue';
+import ScmMenu from './components/menus/ScmMenu.vue';
 
 // 后端菜单码 → 应用角色（settings 刻意不覆盖，始终使用本地配置）
 const CODE_TO_ROLE = {
@@ -203,7 +203,7 @@ export default {
 		Win10Menu,
 		Win11Menu,
 		MacAppleMenu,
-		GenericMenu,
+		ScmMenu,
 	},
 	data() {
 		return {

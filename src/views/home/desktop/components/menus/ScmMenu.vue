@@ -31,7 +31,7 @@
 
 <script>
 export default {
-	name: 'GenericMenu',
+	name: 'ScmMenu',
 	props: {
 		apps: { type: Array, default: () => [] },
 		menuColor: { type: String, default: '' },
