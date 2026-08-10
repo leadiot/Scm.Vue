@@ -101,8 +101,8 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	appIcon: 'ms-assignment',
 	windowOptions: {
+		icon: 'ms-assignment',
 		width: 360,
 		height: 580,
 		resizable: false,

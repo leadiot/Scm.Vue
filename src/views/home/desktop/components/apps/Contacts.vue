@@ -325,11 +325,11 @@ import { getRandomColor } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-contacts',
 		width: 600,
 		height: 680,
 		resizable: true,
 	},
-	appIcon: 'ms-people',
     name: 'Contacts',
     components: {
         scIcon,

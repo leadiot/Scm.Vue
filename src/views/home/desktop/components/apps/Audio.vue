@@ -90,11 +90,11 @@ import { formatDuration } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-music_note',
 		width: 500,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-music_note',
 	name: 'Audio',
 	components: {
 		scIcon,

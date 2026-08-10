@@ -122,11 +122,11 @@ import { getCurrentTime, getRandomColor } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-sms',
 		width: 600,
 		height: 680,
 		resizable: true,
 	},
-	appIcon: 'ms-message',
 	name: 'SMS',
 	components: {
 		scIcon,

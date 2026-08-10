@@ -60,11 +60,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
-		width: 400,
-		height: 500,
+		icon: 'ms-flag',
+		width: 640,
+		height: 760,
 		resizable: false,
 	},
-	appIcon: 'ms-gaming',
     name: 'Minesweeper',
     components: {
         scIcon,

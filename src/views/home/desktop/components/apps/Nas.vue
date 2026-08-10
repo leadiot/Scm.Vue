@@ -177,11 +177,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-folder_shared',
 		width: 960,
 		height: 620,
 		resizable: true,
 	},
-	appIcon: 'ms-folder_shared',
 	name: 'Nas',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

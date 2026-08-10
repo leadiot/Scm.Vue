@@ -29,8 +29,8 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	appIcon: 'ms-calendar_month',
 	windowOptions: {
+		icon: 'ms-calendar_month',
 		width: 320,
 		height: 480,
 		resizable: false,

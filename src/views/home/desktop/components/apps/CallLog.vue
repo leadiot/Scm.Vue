@@ -175,11 +175,11 @@ import { getCurrentTime, getRandomColor } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-call_history',
 		width: 600,
 		height: 680,
 		resizable: true,
 	},
-	appIcon: 'ms-call_history',
 	name: 'CallLog',
 	components: {
 		scIcon,

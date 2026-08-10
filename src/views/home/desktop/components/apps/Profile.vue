@@ -71,11 +71,11 @@ import scPasswordStrength from '@/components/scPasswordStrength/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-account_circle',
 		width: 460,
 		height: 680,
 		resizable: false,
 	},
-	appIcon: 'ms-account_circle',
     name: 'Profile',
     components: {
         scIcon,

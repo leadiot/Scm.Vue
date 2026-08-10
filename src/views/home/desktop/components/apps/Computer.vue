@@ -365,11 +365,11 @@ import tool from '@/utils/tool.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-computer',
 		width: 900,
 		height: 620,
 		resizable: true,
 	},
-	appIcon: 'ms-computer',
 	name: 'Computer',
 	components: { scIcon },
 	data() {

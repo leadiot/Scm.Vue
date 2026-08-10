@@ -172,8 +172,8 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	appIcon: 'ms-sticky_note_2',
 	windowOptions: {
+		icon: 'ms-sticky_note_2',
 		width: 800,
 		height: 560,
 		resizable: true,

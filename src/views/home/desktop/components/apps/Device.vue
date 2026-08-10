@@ -120,8 +120,8 @@ const DEVICE_COLORS = {
 };
 
 export default {
-	appIcon: 'ms-devices',
 	windowOptions: {
+		icon: 'ms-devices',
 		width: 520,
 		height: 680,
 		resizable: true,

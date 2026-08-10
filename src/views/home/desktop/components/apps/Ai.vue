@@ -155,11 +155,11 @@ marked.setOptions({ breaks: true, gfm: true });
 
 export default {
 	windowOptions: {
+		icon: 'ms-bot',
 		width: 800,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-bot',
 	name: 'Ai',
 	data() {
 		return {

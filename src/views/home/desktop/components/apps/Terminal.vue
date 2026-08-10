@@ -29,11 +29,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-terminal',
 		width: 800,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-terminal',
 	name: 'Terminal',
 	components: {
 		scIcon,

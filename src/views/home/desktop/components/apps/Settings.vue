@@ -256,11 +256,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-settings',
 		width: 900,
 		height: 620,
 		resizable: true,
 	},
-	appIcon: 'ms-settings',
     name: 'Settings',
     components: { scIcon },
     props: {

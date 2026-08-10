@@ -242,11 +242,11 @@ import tool from '@/utils/tool.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-monitor',
 		width: 960,
 		height: 620,
 		resizable: true,
 	},
-	appIcon: 'ms-folder',
 	name: 'Files',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

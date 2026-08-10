@@ -67,11 +67,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-language',
 		width: 1000,
 		height: 680,
 		resizable: true,
 	},
-	appIcon: 'ms-public',
 	name: 'Browser',
 	components: { scIcon },
 	data() {

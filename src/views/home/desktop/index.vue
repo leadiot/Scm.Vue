@@ -154,7 +154,7 @@
 import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
 import { themes } from './themes.js';
-import { preloadComponentModule, getWindowOptionsFromModule, getAppIconFromModule } from './components/appRegistry.js';
+import { preloadComponentModule, getWindowOptionsFromModule } from './components/appRegistry.js';
 import MacDock from './components/menus/MacDock.vue';
 import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
@@ -555,14 +555,14 @@ export default {
 			this.showLaunchpad = false;
 			this.hideContextMenu();
 
-			// 窗口属性 & 图标优先读取 App 组件自身声明（export default.windowOptions / appIcon）
+			// 窗口属性 & 图标优先读取 App 组件自身声明（export default.windowOptions）
 			// 如果未找到则使用后端 fallback（meta）+ 默认值
 			let winOpts;
-			let appIcon = meta.icon || app.icon || null;
 			if (app.component) {
 				try {
 					const mod = await preloadComponentModule(app.component);
 					winOpts = getWindowOptionsFromModule(mod, {
+						icon: meta.icon || app.icon || null,
 						width: meta.width,
 						height: meta.height,
 						resizable: meta.resizable,
@@ -575,9 +575,9 @@ export default {
 						maxWidth: meta.maxWidth,
 						maxHeight: meta.maxHeight,
 					});
-					appIcon = getAppIconFromModule(mod, appIcon);
 				} catch (e) {
 					winOpts = getWindowOptionsFromModule(null, {
+						icon: meta.icon || app.icon || null,
 						width: meta.width || 800,
 						height: meta.height || 600,
 						resizable: meta.resizable,
@@ -589,6 +589,7 @@ export default {
 				}
 			} else {
 				winOpts = getWindowOptionsFromModule(null, {
+					icon: meta.icon || app.icon || null,
 					width: meta.width || app.width || 800,
 					height: meta.height || app.height || 600,
 					resizable: meta.resizable,
@@ -604,7 +605,7 @@ export default {
 				id: windowId,
 				code: app.code,
 				title: app.name,
-				icon: appIcon,
+				icon: winOpts.icon,
 				component: app.component,
 				props: app.props,
 				minimized: false,

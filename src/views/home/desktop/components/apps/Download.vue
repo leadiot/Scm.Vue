@@ -118,11 +118,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-download',
 		width: 800,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-download',
 	name: 'Download',
 	components: {
 		scIcon,

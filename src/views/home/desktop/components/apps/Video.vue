@@ -98,11 +98,11 @@ import { formatDuration } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-videocam',
 		width: 900,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-videocam',
 	name: 'Video',
 	components: {
 		scIcon,

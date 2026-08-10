@@ -44,8 +44,8 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	appIcon: 'ms-calculate',
 	windowOptions: {
+		icon: 'ms-calculate',
 		width: 360,
 		height: 560,
 		resizable: false,

@@ -262,11 +262,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
+		icon: 'ms-collections',
 		width: 900,
 		height: 700,
 		resizable: true,
 	},
-	appIcon: 'ms-collections',
 	name: 'ImageLib',
 	components: {
 		scIcon,

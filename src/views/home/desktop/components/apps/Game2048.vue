@@ -41,7 +41,6 @@
 						<span class="key">←</span>
 						<span class="key">→</span>
 					</span>
-					<span class="instruction-text">方向键移动方块</span>
 				</div>
 				<div class="instruction-item">
 					<span class="key-group">
@@ -50,7 +49,6 @@
 						<span class="key">S</span>
 						<span class="key">D</span>
 					</span>
-					<span class="instruction-text">WASD移动方块</span>
 				</div>
 			</div>
 			<div class="game-tips">
@@ -75,11 +73,11 @@ import scIcon from '@/components/scIcon/index.vue';
 
 export default {
 	windowOptions: {
-		width: 440,
-		height: 600,
+		icon: 'ms-grid_on',
+		width: 380,
+		height: 640,
 		resizable: false,
 	},
-	appIcon: 'ms-gaming',
 	name: 'Game2048',
 	components: {
 		scIcon,

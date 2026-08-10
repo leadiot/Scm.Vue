@@ -28,6 +28,7 @@ function findModulePath(componentName) {
  * 默认窗口属性（组件未声明 windowOptions 时的兜底）
  */
 const DEFAULT_WIN_OPTIONS = {
+	icon: null,
 	width: 800,
 	height: 600,
 	resizable: true,
@@ -65,18 +66,11 @@ export async function preloadComponentModule(componentName) {
 
 /**
  * 读取组件自身声明的窗口属性（preload 后调用）
+ * 包含 icon、width、height、resizable 等
  */
 export function getWindowOptionsFromModule(mod, fallback = {}) {
 	const opts = mod?.default?.windowOptions || null;
 	return mergeOptions({ ...fallback, ...opts });
-}
-
-/**
- * 读取组件自身声明的应用图标（preload 后调用）
- * 优先级：mod.default.appIcon > fallback
- */
-export function getAppIconFromModule(mod, fallback = null) {
-	return mod?.default?.appIcon || fallback;
 }
 
 /**

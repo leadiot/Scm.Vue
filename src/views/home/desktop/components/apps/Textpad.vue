@@ -145,8 +145,8 @@
 
 <script>
 export default {
-	appIcon: 'ms-description',
 	windowOptions: {
+		icon: 'ms-description',
 		width: 800,
 		height: 560,
 		resizable: true,

@@ -91,11 +91,11 @@ import { getAvatarColor } from './utils.js';
 
 export default {
 	windowOptions: {
+		icon: 'ms-mail',
 		width: 800,
 		height: 600,
 		resizable: true,
 	},
-	appIcon: 'ms-chat',
 	name: 'Message',
 	components: {
 		scIcon,
