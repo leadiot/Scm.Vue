@@ -96,7 +96,7 @@ function scheduleReport() {
 function enqueueReport(entry) {
 	if (!config.report) return
 	reportQueue.push({
-		time: entry.time,
+		time: new Date(entry.time).getTime(),
 		level: entry.level,
 		category: entry.category,
 		message: entry.message,
@@ -300,7 +300,7 @@ const logger = {
 	reportAll() {
 		// 将整个缓冲区一次性上报
 		const batch = buffer.map(e => ({
-			time: e.time,
+			time: new Date(e.time).getTime(),
 			level: e.level,
 			category: e.category,
 			message: e.message,

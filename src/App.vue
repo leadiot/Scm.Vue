@@ -63,17 +63,20 @@ export default {
 	mounted() {
 		// 全局快捷键 Ctrl+Shift+L 打开日志面板
 		this._logPanelKeyHandler = (e) => {
-			if (e.ctrlKey && e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+			if (e.ctrlKey && e.shiftKey && e.code === 'KeyL') {
 				e.preventDefault()
 				this.$refs.logPanel?.open()
 			}
 		}
-		window.addEventListener('keydown', this._logPanelKeyHandler)
+		window.addEventListener('keydown', this._logPanelKeyHandler, true)
+		// 全局方法 fallback：可在控制台调用 openLogPanel() 打开
+		window.openLogPanel = () => this.$refs.logPanel?.open()
 	},
 	beforeUnmount() {
 		if (this._logPanelKeyHandler) {
-			window.removeEventListener('keydown', this._logPanelKeyHandler)
+			window.removeEventListener('keydown', this._logPanelKeyHandler, true)
 		}
+		delete window.openLogPanel
 	},
 };
 </script>

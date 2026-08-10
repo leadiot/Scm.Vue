@@ -5,7 +5,7 @@
         <template #header>
             <div class="log-panel-header">
                 <span class="log-panel-title">
-                    <sc-icon name="sc-terminal" />
+                    <sc-icon name="sc-info" />
                     日志面板
                     <el-tag size="small" type="info">{{ filteredEntries.length }}</el-tag>
                 </span>
@@ -33,18 +33,17 @@
             </el-select>
 
             <!-- 搜索 -->
-            <el-input v-model="searchText" placeholder="搜索日志..." size="small" clearable
-                prefix-icon="sc-icon sc-search" style="flex: 1" />
+            <el-input v-model="searchText" placeholder="搜索日志..." size="small" clearable style="flex: 1" />
 
             <!-- 操作按钮 -->
             <el-button size="small" @click="handleClear" title="清空">
-                <sc-icon name="sc-delete" />
+                <sc-icon name="sc-delete-line" />
             </el-button>
             <el-button size="small" @click="handleExport" title="导出">
-                <sc-icon name="sc-download" />
+                <sc-icon name="sc-file-download-line" />
             </el-button>
             <el-button size="small" @click="handleReport" title="上报" :loading="reportLoading">
-                <sc-icon name="sc-upload" />
+                <sc-icon name="sc-file-upload-line" />
             </el-button>
         </div>
 
@@ -71,7 +70,6 @@
         <!-- 日志列表 -->
         <div ref="logListRef" class="log-panel-list" @scroll="handleScroll">
             <div v-if="filteredEntries.length === 0" class="log-panel-empty">
-                <sc-icon name="sc-inbox" style="font-size: 32px; color: var(--el-text-color-placeholder)" />
                 <p>暂无日志记录</p>
             </div>
             <div v-for="entry in filteredEntries" :key="entry.id"
@@ -87,10 +85,10 @@
                     </el-tag>
                 </div>
                 <div class="log-entry-message">{{ entry.message }}</div>
-                <div v-if="expandedIds.has(entry.id) && entry.stack" class="log-entry-stack">
+                <div v-if="expandedIds.includes(entry.id) && entry.stack" class="log-entry-stack">
                     <pre>{{ entry.stack }}</pre>
                 </div>
-                <div v-if="expandedIds.has(entry.id) && entry.data && entry.data.length"
+                <div v-if="expandedIds.includes(entry.id) && entry.data && entry.data.length"
                     class="log-entry-data">
                     <pre>{{ entry.data.join('\n') }}</pre>
                 </div>
@@ -117,6 +115,7 @@
 
 <script>
 import logger from '@/utils/logger'
+import { useGlobalStore } from '@/stores/global'
 
 export default {
     name: 'scLogPanel',
@@ -128,7 +127,7 @@ export default {
             filterLevel: 'all',
             filterCategory: '',
             searchText: '',
-            expandedIds: new Set(),
+            expandedIds: [],
             autoScroll: true,
             // 配置
             currentLevel: 'debug',
@@ -225,10 +224,11 @@ export default {
             }
         },
         toggleExpand(id) {
-            if (this.expandedIds.has(id)) {
-                this.expandedIds.delete(id)
+            const idx = this.expandedIds.indexOf(id)
+            if (idx >= 0) {
+                this.expandedIds.splice(idx, 1)
             } else {
-                this.expandedIds.add(id)
+                this.expandedIds.push(id)
             }
         },
         handleLevelChange(val) {
@@ -236,17 +236,17 @@ export default {
             this.syncConfigToStore()
         },
         syncConfigToStore() {
-            const gs = this.$pinia?._s?.get('global')
-            if (gs) {
+            try {
+                const gs = useGlobalStore()
                 gs.SET_logLevel(this.currentLevel)
                 gs.SET_logNotify(this.notifyOn)
                 gs.SET_logReport(this.reportOn)
-            }
+            } catch { /* store 未就绪保护 */ }
         },
         handleClear() {
             logger.clearEntries()
             this.entries = []
-            this.expandedIds.clear()
+            this.expandedIds = []
         },
         handleExport() {
             logger.exportLogs()

@@ -12,7 +12,7 @@ export default {
 	},
 	/** 获取服务端日志配置（可强制用户日志级别） */
 	config: {
-		url: `${config.API_URL}/scmlogfe/logConfig`,
+		url: `${config.API_URL}/scmlogfe/config`,
 		name: "日志配置",
 		get: async function () {
 			return await http.get(this.url);
