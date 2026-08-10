@@ -3,13 +3,14 @@
 ################################################################################
 
 # IDE相关文件
-.git/
 .gitcode/
-.gitee/
 .github/
 .qoder/
 .vs/
 .workbuddy/
+
+# 工具/生成产物
+gallery-tool/
 
 # Vue 项目文件
 dist/
