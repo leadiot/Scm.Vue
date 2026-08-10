@@ -104,7 +104,12 @@ export default defineConfig(({ mode }) => {
     },
 
     optimizeDeps: {
-      include: ['vue', 'vue-router', 'pinia', 'axios', 'element-plus']
+      force: true,
+      include: [
+        'vue', 'vue-router', 'pinia', 'axios', 'element-plus',
+        'echarts/core', 'echarts/renderers',
+        'echarts/charts', 'echarts/components',
+      ]
     }
   }
 })
