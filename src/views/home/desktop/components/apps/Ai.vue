@@ -392,9 +392,10 @@ export default {
 					this.$message.error(res?.message || this.$t('desktop.aiError'));
 					param.onError && param.onError();
 				}
-			} catch {
-				this.$message.error(this.$t('desktop.aiError'));
-				param.onError && param.onError();
+			} catch (e) {
+			this.$LOG.error('AI 知识库上传失败', e);
+			this.$message.error(this.$t('desktop.aiError'));
+			param.onError && param.onError();
 			} finally {
 				this.uploading = false;
 			}

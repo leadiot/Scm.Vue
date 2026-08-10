@@ -314,9 +314,10 @@ export default {
 				} else {
 					this.$message.warning(res.message || '暂停失败');
 				}
-			} catch {
-				this.$message.error('暂停失败');
-			}
+			} catch (e) {
+			this.$LOG.error('暂停下载失败', e);
+			this.$message.error('暂停失败');
+		}
 		},
 		async resumeDownload(id) {
 			try {
@@ -326,9 +327,10 @@ export default {
 				} else {
 					this.$message.warning(res.message || '恢复失败');
 				}
-			} catch {
-				this.$message.error('恢复失败');
-			}
+			} catch (e) {
+			this.$LOG.error('恢复下载失败', e);
+			this.$message.error('恢复失败');
+		}
 		},
 		async removeDownload(id) {
 			try {
@@ -338,9 +340,10 @@ export default {
 				} else {
 					this.$message.warning(res.message || '删除失败');
 				}
-			} catch {
-				this.$message.error('删除失败');
-			}
+			} catch (e) {
+			this.$LOG.error('删除下载失败', e);
+			this.$message.error('删除失败');
+		}
 		},
 		openFile(id) {
 			const download = this.downloads.find(d => d.id === id);
@@ -358,9 +361,10 @@ export default {
 				} else {
 					this.$message.warning(res.message || '重试失败');
 				}
-			} catch {
-				this.$message.error('重试失败');
-			}
+			} catch (e) {
+			this.$LOG.error('重试下载失败', e);
+			this.$message.error('重试失败');
+		}
 		},
 		async clearCompleted() {
 			var ids = [];
@@ -399,9 +403,10 @@ export default {
 						} else {
 							this.$message.warning(res.message || '添加失败');
 						}
-					} catch {
-						this.$message.error('添加失败');
-					}
+					} catch (e) {
+					this.$LOG.error('添加下载失败', e);
+					this.$message.error('添加失败');
+				}
 				}
 			});
 		},

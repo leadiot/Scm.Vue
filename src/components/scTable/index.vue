@@ -312,10 +312,11 @@ export default {
 			this.$refs.columnSetting.isSave = true;
 			try {
 				await config.columnSettingSave(this.tableName, userColumn);
-			} catch {
-				this.$message.error("保存失败");
-				this.$refs.columnSetting.isSave = false;
-			}
+			} catch (e) {
+			this.$LOG.error('列设置保存失败', e);
+			this.$message.error("保存失败");
+			this.$refs.columnSetting.isSave = false;
+		}
 			this.$message.success("保存成功");
 			this.$refs.columnSetting.isSave = false;
 		},
@@ -331,10 +332,11 @@ export default {
 				this.$refs.columnSetting.usercolumn = JSON.parse(
 					JSON.stringify(this.userColumn || [])
 				);
-			} catch {
-				this.$message.error("重置失败");
-				this.$refs.columnSetting.isSave = false;
-			}
+			} catch (e) {
+			this.$LOG.error('列设置重置失败', e);
+			this.$message.error("重置失败");
+			this.$refs.columnSetting.isSave = false;
+		}
 			this.$refs.columnSetting.isSave = false;
 		},
 		//排序事件

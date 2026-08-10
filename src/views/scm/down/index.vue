@@ -116,7 +116,8 @@ export default {
                 this.downloadList.forEach(item => {
                     this.pushDownloadList(item);
                 });
-            } catch {
+            } catch (e) {
+                this.$LOG.warn('加载平台下载列表失败', e);
             }
         },
         /**
@@ -132,7 +133,8 @@ export default {
                     return;
                 }
                 this.downloadList = res.data || [];
-            } catch {
+            } catch (e) {
+                this.$LOG.error('获取版本信息失败', e);
                 this.$message.error('获取版本信息失败，请稍后重试。');
             }
         },

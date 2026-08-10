@@ -607,10 +607,11 @@ export default {
 					this.$message.error(res.message || '上传失败');
 					param.onError();
 				}
-			} catch {
-				this.$message.error('上传失败');
-				param.onError();
-			}
+			} catch (e) {
+			this.$LOG.error('文件上传失败', e);
+			this.$message.error('上传失败');
+			param.onError();
+		}
 		},
 		submitUpload() {
 			this.$refs.uploadRef.submit();
@@ -644,9 +645,10 @@ export default {
 				} else {
 					this.$message.error(res.message || '创建失败');
 				}
-			} catch {
-				this.$message.error('创建失败');
-			}
+			} catch (e) {
+			this.$LOG.error('创建文件夹失败', e);
+			this.$message.error('创建失败');
+		}
 		},
 		createFolderInTree() {
 			this.newFolderForm = { name: '', parentId: null };
@@ -688,7 +690,8 @@ export default {
 					} else {
 						this.$message.error(res.message || '删除失败');
 					}
-				} catch {
+				} catch (e) {
+					this.$LOG.error('删除文件夹失败', e);
 					this.$message.error('删除失败');
 				}
 			}).catch(() => { });
@@ -703,9 +706,10 @@ export default {
 			const url = this.$SCM.getDataUrl(fileItem.uri);
 			try {
 				await tool.downloadFile(url, fileItem.name);
-			} catch {
-				this.$message.error('下载失败');
-			}
+			} catch (e) {
+			this.$LOG.error('文件下载失败', e);
+			this.$message.error('下载失败');
+		}
 		},
 		async deleteSelected() {
 			if (this.selectedItems.length === 0) {
@@ -736,12 +740,13 @@ export default {
 					this.$message.success('删除成功');
 					this.selectedItems = [];
 					await this.loadCurrentFolder();
-				} catch {
-					this.$message.error('删除失败');
-				}
-			}).catch(() => { });
-		},
-		async deleteFile(item) {
+				} catch (e) {
+				this.$LOG.error('批量删除失败', e);
+				this.$message.error('删除失败');
+			}
+		}).catch(() => { });
+	},
+	async deleteFile(item) {
 			this.$confirm(
 				`确定删除 "${item.name}"？`,
 				'提示',
@@ -764,12 +769,13 @@ export default {
 					} else {
 						this.$message.error(res.message || '删除失败');
 					}
-				} catch {
-					this.$message.error('删除失败');
-				}
-			}).catch(() => { });
-		},
-		async previewFile(item) {
+				} catch (e) {
+				this.$LOG.error('删除文件失败', e);
+				this.$message.error('删除失败');
+			}
+		}).catch(() => { });
+	},
+	async previewFile(item) {
 			if (!item) {
 				return;
 			}
@@ -788,9 +794,10 @@ export default {
 					const response = await fetch(uri);
 					this.previewText = await response.text();
 					this.textViewerVisible = true;
-				} catch {
-					this.$message.error('预览失败');
-				}
+				} catch (e) {
+				this.$LOG.error('文件预览失败', e);
+				this.$message.error('预览失败');
+			}
 			} else {
 				this.openDocWithWeb(item);
 			}

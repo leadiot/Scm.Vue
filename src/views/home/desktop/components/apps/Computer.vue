@@ -924,12 +924,13 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch {
-				this.$message.error(this.$t('desktop.operationFailed'));
-			}
-			this.busy = false;
-		},
-		// ===== 删除 =====
+			} catch (e) {
+			this.$LOG.error('文件复制/移动失败', e);
+			this.$message.error(this.$t('desktop.operationFailed'));
+		}
+		this.busy = false;
+	},
+	// ===== 删除 =====
 		deleteSelected() {
 			const items = this.getSelectedItems();
 			if (items.length === 0) {
@@ -954,9 +955,10 @@ export default {
 					} else {
 						this.$message.error(res.message || this.$t('desktop.operationFailed'));
 					}
-				} catch {
-					this.$message.error(this.$t('desktop.operationFailed'));
-				}
+				} catch (e) {
+				this.$LOG.error('删除文件失败', e);
+				this.$message.error(this.$t('desktop.operationFailed'));
+			}
 				this.busy = false;
 			}).catch(() => { });
 		},
@@ -999,12 +1001,13 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch {
-				this.$message.error(this.$t('desktop.operationFailed'));
-			}
-			this.busy = false;
-		},
-		// ===== 重命名 =====
+			} catch (e) {
+			this.$LOG.error('新建文件夹失败', e);
+			this.$message.error(this.$t('desktop.operationFailed'));
+		}
+		this.busy = false;
+	},
+	// ===== 重命名 =====
 		openRenameDialog(item) {
 			if (!item) {
 				const items = this.getSelectedItems();
@@ -1032,12 +1035,13 @@ export default {
 				} else {
 					this.$message.error(this.$t('desktop.operationFailed'));
 				}
-			} catch {
-				this.$message.error(this.$t('desktop.operationFailed'));
-			}
-			this.busy = false;
-		},
-		// ===== 下载 =====
+			} catch (e) {
+			this.$LOG.error('重命名失败', e);
+			this.$message.error(this.$t('desktop.operationFailed'));
+		}
+		this.busy = false;
+	},
+	// ===== 下载 =====
 		downloadItem(item) {
 			if (!item || item.type === 10) {
 				return;
@@ -1201,12 +1205,13 @@ export default {
 				} else {
 					this.$message.error(res.message || this.$t('desktop.operationFailed'));
 				}
-			} catch {
-				this.$message.error(this.$t('desktop.operationFailed'));
-			}
-			this.busy = false;
-		},
-		// ===== 属性详情 =====
+			} catch (e) {
+			this.$LOG.error('移动文件失败', e);
+			this.$message.error(this.$t('desktop.operationFailed'));
+		}
+		this.busy = false;
+	},
+	// ===== 属性详情 =====
 		async openProperties(item) {
 			if (!item) {
 				return;
@@ -1219,7 +1224,9 @@ export default {
 				if (res.code == 200 && res.data) {
 					this.propsDetail = res.data;
 				}
-			} catch { }
+			} catch (e) {
+				this.$LOG.warn('获取文件属性失败', e);
+			}
 		},
 		// ===== 快捷键 =====
 		handleKeyDown(e) {
