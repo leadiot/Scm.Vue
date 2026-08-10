@@ -126,6 +126,7 @@ export default {
 		height: 680,
 		resizable: true,
 	},
+	appIcon: 'ms-message',
 	name: 'SMS',
 	components: {
 		scIcon,

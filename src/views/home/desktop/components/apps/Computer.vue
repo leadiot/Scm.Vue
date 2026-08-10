@@ -369,6 +369,7 @@ export default {
 		height: 620,
 		resizable: true,
 	},
+	appIcon: 'ms-computer',
 	name: 'Computer',
 	components: { scIcon },
 	data() {

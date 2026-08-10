@@ -95,6 +95,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-chat',
 	name: 'Message',
 	components: {
 		scIcon,

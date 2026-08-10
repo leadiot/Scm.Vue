@@ -64,6 +64,7 @@ export default {
 		height: 500,
 		resizable: false,
 	},
+	appIcon: 'ms-gaming',
     name: 'Minesweeper',
     components: {
         scIcon,

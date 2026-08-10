@@ -179,6 +179,7 @@ export default {
 		height: 680,
 		resizable: true,
 	},
+	appIcon: 'ms-call_history',
 	name: 'CallLog',
 	components: {
 		scIcon,

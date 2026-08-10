@@ -260,6 +260,7 @@ export default {
 		height: 620,
 		resizable: true,
 	},
+	appIcon: 'ms-settings',
     name: 'Settings',
     components: { scIcon },
     props: {

@@ -329,6 +329,7 @@ export default {
 		height: 680,
 		resizable: true,
 	},
+	appIcon: 'ms-people',
     name: 'Contacts',
     components: {
         scIcon,

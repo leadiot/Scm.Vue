@@ -122,6 +122,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-download',
 	name: 'Download',
 	components: {
 		scIcon,

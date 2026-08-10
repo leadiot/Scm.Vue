@@ -154,7 +154,7 @@
 import scIcon from '@/components/scIcon/index.vue';
 import Window from './components/Window.vue';
 import { themes } from './themes.js';
-import { preloadComponentModule, getWindowOptionsFromModule } from './components/appRegistry.js';
+import { preloadComponentModule, getWindowOptionsFromModule, getAppIconFromModule } from './components/appRegistry.js';
 import MacDock from './components/menus/MacDock.vue';
 import MacMenubar from './components/menus/MacMenubar.vue';
 import MacLaunchpad from './components/menus/MacLaunchpad.vue';
@@ -278,92 +278,20 @@ export default {
 				minBtnHover: 'rgba(0, 0, 0, 0.1)',
 				maxBtnHover: 'rgba(0, 0, 0, 0.1)'
 			},
-			// 应用配置表（以逻辑角色为键；窗口属性由 appConfig.js 管理，此处仅保留 name/icon/component）
+			// 应用配置表（以逻辑角色为键；窗口属性和图标由 App 组件自身声明，此处仅保留 name/component/code）
 			appMap: {
-				settings: {
-					id: '1',
-					code: 'app-settings',
-					name: '设置',
-					component: 'Settings',
-					meta: { icon: 'ms-settings' }
-				},
-				profile: {
-					id: '2',
-					code: 'app-profile',
-					name: '个人信息',
-					component: 'Profile',
-					meta: { icon: 'ms-account_circle' }
-				},
-				notes: {
-					id: '3',
-					code: 'app-notes',
-					name: '便签',
-					component: 'Notes',
-					meta: { icon: 'ms-sticky_note_2' }
-				},
-				textpad: {
-					id: '4',
-					code: 'app-textpad',
-					name: '记事本',
-					component: 'Textpad',
-					meta: { icon: 'ms-description' }
-				},
-				gtd: {
-					id: '5',
-					code: 'app-gtd',
-					name: '待办',
-					component: 'Gtd',
-					meta: { icon: 'ms-assignment' }
-				},
-				calendar: {
-					id: '6',
-					code: 'app-calendar',
-					name: '日历',
-					component: 'Calendar',
-					meta: { icon: 'ms-calendar_month' }
-				},
-				terminal: {
-					id: '7',
-					code: 'app-terminal',
-					name: '终端',
-					component: 'Terminal',
-					meta: { icon: 'ms-terminal' }
-				},
-				computer: {
-					id: '8',
-					code: 'app-computer',
-					name: '计算机',
-					component: 'Computer',
-					meta: { icon: 'ms-computer' }
-				},
-				image: {
-					id: '11',
-					code: 'app-image',
-					name: '图像',
-					component: 'Image',
-					meta: { icon: 'ms-photo_library' }
-				},
-				audio: {
-					id: '12',
-					code: 'app-audio',
-					name: '音频',
-					component: 'Audio',
-					meta: { icon: 'ms-music_note' }
-				},
-				video: {
-					id: '13',
-					code: 'app-video',
-					name: '视频',
-					component: 'Video',
-					meta: { icon: 'ms-videocam' }
-				},
-				text: {
-					id: '14',
-					code: 'app-textpad',
-					name: '记事本',
-					component: 'Textpad',
-					meta: { icon: 'ms-article' }
-				},
+				settings: { id: '1', code: 'app-settings', name: '设置', component: 'Settings', meta: {} },
+				profile: { id: '2', code: 'app-profile', name: '个人信息', component: 'Profile', meta: {} },
+				notes: { id: '3', code: 'app-notes', name: '便签', component: 'Notes', meta: {} },
+				textpad: { id: '4', code: 'app-textpad', name: '记事本', component: 'Textpad', meta: {} },
+				gtd: { id: '5', code: 'app-gtd', name: '待办', component: 'Gtd', meta: {} },
+				calendar: { id: '6', code: 'app-calendar', name: '日历', component: 'Calendar', meta: {} },
+				terminal: { id: '7', code: 'app-terminal', name: '终端', component: 'Terminal', meta: {} },
+				computer: { id: '8', code: 'app-computer', name: '计算机', component: 'Computer', meta: {} },
+				image: { id: '11', code: 'app-image', name: '图像', component: 'Image', meta: {} },
+				audio: { id: '12', code: 'app-audio', name: '音频', component: 'Audio', meta: {} },
+				video: { id: '13', code: 'app-video', name: '视频', component: 'Video', meta: {} },
+				text: { id: '14', code: 'app-textpad', name: '记事本', component: 'Textpad', meta: {} },
 			},
 		};
 	},
@@ -627,9 +555,10 @@ export default {
 			this.showLaunchpad = false;
 			this.hideContextMenu();
 
-			// 窗口属性优先读取 App 组件自身声明的 windowOptions（export default.windowOptions）
-			// 如果未找到则使用后端 fallback（meta.width/height）+ 默认值
+			// 窗口属性 & 图标优先读取 App 组件自身声明（export default.windowOptions / appIcon）
+			// 如果未找到则使用后端 fallback（meta）+ 默认值
 			let winOpts;
+			let appIcon = meta.icon || app.icon || null;
 			if (app.component) {
 				try {
 					const mod = await preloadComponentModule(app.component);
@@ -646,6 +575,7 @@ export default {
 						maxWidth: meta.maxWidth,
 						maxHeight: meta.maxHeight,
 					});
+					appIcon = getAppIconFromModule(mod, appIcon);
 				} catch (e) {
 					winOpts = getWindowOptionsFromModule(null, {
 						width: meta.width || 800,
@@ -674,7 +604,7 @@ export default {
 				id: windowId,
 				code: app.code,
 				title: app.name,
-				icon: meta.icon || app.icon,
+				icon: appIcon,
 				component: app.component,
 				props: app.props,
 				minimized: false,

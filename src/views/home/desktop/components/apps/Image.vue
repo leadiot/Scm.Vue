@@ -109,6 +109,7 @@ export default {
 		height: 700,
 		resizable: true,
 	},
+	appIcon: 'ms-photo_library',
 	name: 'Image',
 	components: {
 		scIcon,

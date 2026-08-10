@@ -159,6 +159,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-bot',
 	name: 'Ai',
 	data() {
 		return {

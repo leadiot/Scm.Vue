@@ -33,6 +33,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-terminal',
 	name: 'Terminal',
 	components: {
 		scIcon,

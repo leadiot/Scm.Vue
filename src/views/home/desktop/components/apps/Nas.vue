@@ -181,6 +181,7 @@ export default {
 		height: 620,
 		resizable: true,
 	},
+	appIcon: 'ms-folder_shared',
 	name: 'Nas',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

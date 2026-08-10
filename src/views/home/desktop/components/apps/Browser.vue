@@ -71,6 +71,7 @@ export default {
 		height: 680,
 		resizable: true,
 	},
+	appIcon: 'ms-public',
 	name: 'Browser',
 	components: { scIcon },
 	data() {

@@ -266,6 +266,7 @@ export default {
 		height: 700,
 		resizable: true,
 	},
+	appIcon: 'ms-collections',
 	name: 'ImageLib',
 	components: {
 		scIcon,

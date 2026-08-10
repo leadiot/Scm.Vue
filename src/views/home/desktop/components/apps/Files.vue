@@ -246,6 +246,7 @@ export default {
 		height: 620,
 		resizable: true,
 	},
+	appIcon: 'ms-folder',
 	name: 'Files',
 	components: { scIcon },
 	inject: ['openNasFileWithApp'],

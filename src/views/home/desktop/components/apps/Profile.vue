@@ -75,6 +75,7 @@ export default {
 		height: 680,
 		resizable: false,
 	},
+	appIcon: 'ms-account_circle',
     name: 'Profile',
     components: {
         scIcon,

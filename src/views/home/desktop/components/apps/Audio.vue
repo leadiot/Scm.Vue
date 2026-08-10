@@ -94,6 +94,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-music_note',
 	name: 'Audio',
 	components: {
 		scIcon,

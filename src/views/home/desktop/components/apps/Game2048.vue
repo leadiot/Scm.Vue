@@ -79,6 +79,7 @@ export default {
 		height: 600,
 		resizable: false,
 	},
+	appIcon: 'ms-gaming',
 	name: 'Game2048',
 	components: {
 		scIcon,

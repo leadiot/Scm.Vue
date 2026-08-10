@@ -102,6 +102,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-videocam',
 	name: 'Video',
 	components: {
 		scIcon,

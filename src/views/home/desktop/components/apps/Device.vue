@@ -120,6 +120,7 @@ const DEVICE_COLORS = {
 };
 
 export default {
+	appIcon: 'ms-devices',
 	windowOptions: {
 		width: 520,
 		height: 680,

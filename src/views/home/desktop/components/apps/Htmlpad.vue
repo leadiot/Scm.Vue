@@ -130,6 +130,7 @@ export default {
 		height: 600,
 		resizable: true,
 	},
+	appIcon: 'ms-code',
 	name: 'Notepad',
 	components: {
 		scIcon,

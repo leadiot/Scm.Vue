@@ -72,6 +72,14 @@ export function getWindowOptionsFromModule(mod, fallback = {}) {
 }
 
 /**
+ * 读取组件自身声明的应用图标（preload 后调用）
+ * 优先级：mod.default.appIcon > fallback
+ */
+export function getAppIconFromModule(mod, fallback = null) {
+	return mod?.default?.appIcon || fallback;
+}
+
+/**
  * 同步接口：获取组件的异步定义组件实例（Window.vue 渲染用）
  * 逻辑与原 Window.vue resolveComponent 保持一致
  */
