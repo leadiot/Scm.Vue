@@ -1,6 +1,6 @@
 【打开方式】
 1、安装Node.js；
-2、安装VScode，或Trae；
+2、安装VScode、Trae或Qoder；
 3、打开文件夹至Scm.Vue目录
 4、运行npm update，更新项目依赖环境；
 5、运行npm run dev，启动服务；
