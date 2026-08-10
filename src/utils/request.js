@@ -234,7 +234,7 @@ var http = {
 				document.getElementsByTagName("head")[0].removeChild(script);
 				try {
 					delete window[name];
-				} catch (e) {
+				} catch {
 					window[name] = undefined;
 				}
 			};

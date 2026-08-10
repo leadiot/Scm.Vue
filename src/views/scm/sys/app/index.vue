@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router';
 
 export default {
     name: 'about',
@@ -28,10 +27,6 @@ export default {
     },
     methods: {
         init() {
-            var route = useRoute();
-            var path = route.path;
-            var idx = path.lastIndexOf('/');
-            var code = idx > 0 ? path.substring(idx + 1) : '';
         },
         async readData() {
             var res = await this.$API.scmabout.model.get({ info: 'index' });

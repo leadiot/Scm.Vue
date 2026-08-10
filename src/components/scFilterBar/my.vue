@@ -61,7 +61,7 @@
 			async closeMyfilter(item, index){
 				try {
 					var del = await config.delMy(this.filterName)
-				}catch (error) {
+				}catch {
 					return false
 				}
 				if(!del){
@@ -75,7 +75,7 @@
 				this.loading = true
 				try {
 					this.myFilter = await config.getMy(this.filterName)
-				}catch (error) {
+				}catch {
 					return false
 				}
 				this.loading = false

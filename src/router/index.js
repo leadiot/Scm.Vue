@@ -1,8 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { ElNotification } from "element-plus";
 import config from "@/config";
-import NProgress from "nprogress-esm";
-import "nprogress-esm/dist/style.css";
+import NProgress from "@/utils/nprogress";
 import tool from "@/utils/tool";
 import systemRouter from "./systemRouter";
 import userRoutes from "@/config/route";

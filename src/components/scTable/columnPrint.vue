@@ -44,13 +44,10 @@
 </template>
 
 <script>
-import Sortable from "sortablejs";
+import { createSortable } from '@/utils/draggable'
 import print from "@/utils/print";
 
 export default {
-	components: {
-		Sortable,
-	},
 	props: {
 		column: { type: Object, default: () => { } },
 		data: { type: Object, default: () => { } },
@@ -69,7 +66,7 @@ export default {
 		rowDrop() {
 			const _this = this;
 			const tbody = this.$refs.list.querySelector("ul");
-			Sortable.create(tbody, {
+			createSortable(tbody, {
 				handle: ".move",
 				animation: 300,
 				ghostClass: "ghost",

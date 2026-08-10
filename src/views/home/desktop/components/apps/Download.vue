@@ -314,7 +314,7 @@ export default {
 				} else {
 					this.$message.warning(res.message || '暂停失败');
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('暂停失败');
 			}
 		},
@@ -326,7 +326,7 @@ export default {
 				} else {
 					this.$message.warning(res.message || '恢复失败');
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('恢复失败');
 			}
 		},
@@ -338,7 +338,7 @@ export default {
 				} else {
 					this.$message.warning(res.message || '删除失败');
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('删除失败');
 			}
 		},
@@ -358,7 +358,7 @@ export default {
 				} else {
 					this.$message.warning(res.message || '重试失败');
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('重试失败');
 			}
 		},
@@ -399,7 +399,7 @@ export default {
 						} else {
 							this.$message.warning(res.message || '添加失败');
 						}
-					} catch (error) {
+					} catch {
 						this.$message.error('添加失败');
 					}
 				}

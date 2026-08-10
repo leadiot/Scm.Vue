@@ -390,7 +390,7 @@ export default {
 						type: 'warning',
 					});
 					await this.saveNote();
-				} catch (action) {
+				} catch {
 					// 用户选择不保存或关闭，继续打开新便签
 				}
 			}
@@ -424,7 +424,7 @@ export default {
 						type: 'warning',
 					});
 					await this.saveNote();
-				} catch (action) {
+				} catch {
 					// 用户选择不保存或关闭，继续创建新便签
 				}
 			}
@@ -502,7 +502,7 @@ export default {
 				} else {
 					this.$message.error(res.message || '删除失败');
 				}
-			} catch (action) {
+			} catch {
 				// 用户取消删除
 			}
 		},

@@ -30,7 +30,7 @@ export function loadJS(src, keyName, callbackName, options = {}) {
 		// 清除旧的全局变量，避免 resolve 到旧数据
 		try {
 			delete window[keyName];
-		} catch (e) {
+		} catch {
 			window[keyName] = undefined;
 		}
 		loadingCache.delete(keyName);

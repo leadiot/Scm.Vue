@@ -6,14 +6,16 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   
   return {
-    plugins: [vue({
-      template: {
-        compilerOptions: {
-          // cropperjs 2.x 是 Web Components，cropper-* 为原生自定义元素
-          isCustomElement: (tag) => tag.startsWith('cropper-')
+    plugins: [
+      vue({
+        template: {
+          compilerOptions: {
+            // cropperjs 2.x 是 Web Components，cropper-* 为原生自定义元素
+            isCustomElement: (tag) => tag.startsWith('cropper-')
+          }
         }
-      }
-    })],
+      }),
+    ],
     
     resolve: {
       alias: {
@@ -104,7 +106,6 @@ export default defineConfig(({ mode }) => {
     },
 
     optimizeDeps: {
-      force: true,
       include: [
         'vue', 'vue-router', 'pinia', 'axios', 'element-plus',
         'echarts/core', 'echarts/renderers',

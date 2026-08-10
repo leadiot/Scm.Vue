@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Sortable from "sortablejs";
+import { createSortable } from '@/utils/draggable'
 import { useViewTagsStore } from "@/stores/viewTags";
 import { useKeepAliveStore } from "@/stores/keepAlive";
 import { useIframeStore } from "@/stores/iframe";
@@ -140,7 +140,7 @@ export default {
 		//标签拖拽排序
 		tagDrop() {
 			const target = this.$refs.tags;
-			Sortable.create(target, {
+			createSortable(target, {
 				draggable: "li",
 				animation: 300,
 			});

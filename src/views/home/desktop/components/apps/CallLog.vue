@@ -171,7 +171,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
-import { getCurrentTime, getRandomColor } from './utils.js';
+import { getCurrentTime } from './utils.js';
 
 export default {
 	windowOptions: {

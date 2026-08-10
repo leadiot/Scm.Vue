@@ -312,7 +312,7 @@ export default {
 			this.$refs.columnSetting.isSave = true;
 			try {
 				await config.columnSettingSave(this.tableName, userColumn);
-			} catch (error) {
+			} catch {
 				this.$message.error("保存失败");
 				this.$refs.columnSetting.isSave = false;
 			}
@@ -331,7 +331,7 @@ export default {
 				this.$refs.columnSetting.usercolumn = JSON.parse(
 					JSON.stringify(this.userColumn || [])
 				);
-			} catch (error) {
+			} catch {
 				this.$message.error("重置失败");
 				this.$refs.columnSetting.isSave = false;
 			}

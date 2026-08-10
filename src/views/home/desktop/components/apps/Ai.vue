@@ -153,7 +153,20 @@
 
 <script>
 import { marked } from 'marked';
+import hljs from 'highlight.js/lib/common';
+import 'highlight.js/styles/stackoverflow-light.css';
 
+// 集成 highlight.js 代码高亮到 marked 渲染
+const renderer = {
+	code({ text, lang }) {
+		const language = lang && hljs.getLanguage(lang) ? lang : null;
+		const highlighted = language
+			? hljs.highlight(text, { language }).value
+			: hljs.highlightAuto(text).value;
+		return `<pre><code class="hljs language-${lang || ''}">${highlighted}</code></pre>`;
+	}
+};
+marked.use({ renderer });
 marked.setOptions({ breaks: true, gfm: true });
 
 export default {
@@ -220,7 +233,7 @@ export default {
 			if (!text) return '';
 			try {
 				return marked.parse(text);
-			} catch (e) {
+			} catch {
 				return text;
 			}
 		},
@@ -342,7 +355,7 @@ export default {
 				} else {
 					this.ragAnswer = this.$t('desktop.aiError');
 				}
-			} catch (e) {
+			} catch {
 				this.ragAnswer = this.$t('desktop.aiError');
 			} finally {
 				this.ragLoading = false;
@@ -379,7 +392,7 @@ export default {
 					this.$message.error(res?.message || this.$t('desktop.aiError'));
 					param.onError && param.onError();
 				}
-			} catch (e) {
+			} catch {
 				this.$message.error(this.$t('desktop.aiError'));
 				param.onError && param.onError();
 			} finally {

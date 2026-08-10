@@ -191,7 +191,6 @@ export default {
 		sendMessage() {
 			if (!this.newMessage.trim()) return;
 			const time = getCurrentTime();
-			const convId = this.selectedConversation.id;
 			if (!this.messages) {
 				this.messages = [];
 			}

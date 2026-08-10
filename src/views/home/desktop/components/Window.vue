@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { h, defineComponent } from 'vue';
+import { h } from 'vue';
 import scIcon from '@/components/scIcon/index.vue';
 import TitleBar from './TitleBar.vue';
 import i18n from '@/locales';

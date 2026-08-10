@@ -58,7 +58,7 @@ tool.data = {
 
 		try {
 			data = JSON.parse(data);
-		} catch (err) {
+		} catch {
 			return def;
 		}
 		return data;
@@ -87,7 +87,7 @@ tool.local = {
 
 		try {
 			data = JSON.parse(data);
-		} catch (err) {
+		} catch {
 			return def;
 		}
 		return data;
@@ -114,7 +114,7 @@ tool.session = {
 
 		try {
 			data = JSON.parse(data);
-		} catch (err) {
+		} catch {
 			return def;
 		}
 		return data;

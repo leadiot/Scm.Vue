@@ -79,12 +79,12 @@ export default {
 						const json = JSON.parse(payload);
 						const text = json.choices?.[0]?.delta?.content;
 						if (text) onChunk && onChunk(text);
-					} catch (e) {
+					} catch {
 						// 忽略无法解析的心跳/注释行
 					}
 					return false;
 				};
-				// eslint-disable-next-line no-constant-condition
+				 
 				while (true) {
 					const { done, value } = await reader.read();
 					if (done) break;

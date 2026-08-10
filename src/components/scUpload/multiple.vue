@@ -37,7 +37,7 @@
 
 <script>
 import config from "@/config/upload";
-import Sortable from "sortablejs";
+import { createSortable } from '@/utils/draggable'
 
 export default {
 	props: {
@@ -151,7 +151,7 @@ export default {
 			const _this = this;
 			const itemBox =
 				this.$refs.uploader.$el.querySelector(".el-upload-list");
-			Sortable.create(itemBox, {
+			createSortable(itemBox, {
 				handle: ".el-upload-list__item",
 				animation: 200,
 				ghostClass: "ghost",

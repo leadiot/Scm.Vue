@@ -175,7 +175,7 @@ export default {
                 }
             });
         },
-        handleAvatarChange(file) {
+        handleAvatarChange() {
             this.$message.info('头像上传功能开发中');
         },
         showPasswordDialog() {

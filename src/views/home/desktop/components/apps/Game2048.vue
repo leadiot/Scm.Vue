@@ -169,7 +169,7 @@ export default {
 			}
 		},
 		move(direction) {
-			const oldGrid = JSON.stringify(this.grid);
+			
 			let moved = false;
 			switch (direction) {
 				case 'up':

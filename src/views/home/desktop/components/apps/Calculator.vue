@@ -105,7 +105,7 @@ export default {
 						: evalResult.toFixed(8).replace(/\.?0+$/, '');
 					this.expression = this.result;
 				}
-			} catch (error) {
+			} catch {
 				this.result = '错误';
 			}
 		},

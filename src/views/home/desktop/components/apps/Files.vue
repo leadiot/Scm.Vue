@@ -607,7 +607,7 @@ export default {
 					this.$message.error(res.message || '上传失败');
 					param.onError();
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('上传失败');
 				param.onError();
 			}
@@ -644,7 +644,7 @@ export default {
 				} else {
 					this.$message.error(res.message || '创建失败');
 				}
-			} catch (error) {
+			} catch {
 				this.$message.error('创建失败');
 			}
 		},
@@ -688,7 +688,7 @@ export default {
 					} else {
 						this.$message.error(res.message || '删除失败');
 					}
-				} catch (error) {
+				} catch {
 					this.$message.error('删除失败');
 				}
 			}).catch(() => { });
@@ -703,7 +703,7 @@ export default {
 			const url = this.$SCM.getDataUrl(fileItem.uri);
 			try {
 				await tool.downloadFile(url, fileItem.name);
-			} catch (error) {
+			} catch {
 				this.$message.error('下载失败');
 			}
 		},
@@ -736,7 +736,7 @@ export default {
 					this.$message.success('删除成功');
 					this.selectedItems = [];
 					await this.loadCurrentFolder();
-				} catch (error) {
+				} catch {
 					this.$message.error('删除失败');
 				}
 			}).catch(() => { });
@@ -764,7 +764,7 @@ export default {
 					} else {
 						this.$message.error(res.message || '删除失败');
 					}
-				} catch (error) {
+				} catch {
 					this.$message.error('删除失败');
 				}
 			}).catch(() => { });
@@ -788,7 +788,7 @@ export default {
 					const response = await fetch(uri);
 					this.previewText = await response.text();
 					this.textViewerVisible = true;
-				} catch (error) {
+				} catch {
 					this.$message.error('预览失败');
 				}
 			} else {

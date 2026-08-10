@@ -1,51 +1,61 @@
 <template>
-    <div ref="scPanel" class="sc-panel">
-        <div class="sc-panel_base panel-default">
-            <div class="sc-panel_header">
-                <div class="title">
-                    {{ title }}
+    <div class="sc-panel-wrap">
+        <div ref="scPanel" class="sc-panel">
+            <div class="sc-panel_base panel-default">
+                <div class="sc-panel_header">
+                    <div class="title-block">
+                        <div class="title">{{ title }}</div>
+                        <div v-if="remark" class="remark">{{ remark }}</div>
+                    </div>
+                    <div>
+                        <slot name="header"></slot>
+                        <el-button type="default" circle @click="showFullPage()" v-show="!fullScreen && !fullPage"
+                            title="全窗口显示">
+                            <sc-icon name="sc-fullscreen" />
+                        </el-button>
+                        <el-button type="default" circle @click="exitFullPage()" v-show="!fullScreen && fullPage"
+                            title="退出全窗口">
+                            <sc-icon name="sc-fullscreen-exit" />
+                        </el-button>
+                        <el-button type="default" circle @click="showFullScreen()" v-show="!fullScreen" title="全屏幕显示">
+                            <sc-icon name="sc-fullpage" />
+                        </el-button>
+                        <el-button type="default" circle @click="exitFullScreen()" v-show="fullScreen" title="退出全屏幕">
+                            <sc-icon name="sc-fullpage-exit" />
+                        </el-button>
+                        <el-button type="default" circle @click="showDrawer()" title="帮助">
+                            <sc-icon name="sc-info" />
+                        </el-button>
+                    </div>
                 </div>
-                <div>
-                    <slot name="header"></slot>
-                    <el-button type="default" circle @click="showFullPage()" v-show="!fullScreen && !fullPage"
-                        title="全窗口显示">
-                        <sc-icon name="sc-fullscreen" />
-                    </el-button>
-                    <el-button type="default" circle @click="exitFullPage()" v-show="!fullScreen && fullPage"
-                        title="退出全窗口">
-                        <sc-icon name="sc-fullscreen-exit" />
-                    </el-button>
-                    <el-button type="default" circle @click="showFullScreen()" v-show="!fullScreen" title="全屏幕显示">
-                        <sc-icon name="sc-fullpage" />
-                    </el-button>
-                    <el-button type="default" circle @click="exitFullScreen()" v-show="fullScreen" title="退出全屏幕">
-                        <sc-icon name="sc-fullpage-exit" />
-                    </el-button>
-                    <el-button type="default" circle @click="showDrawer()" title="帮助">
-                        <sc-icon name="sc-info" />
-                    </el-button>
+                <div class="sc-panel_body">
+                    <slot></slot>
                 </div>
-            </div>
-            <div class="sc-panel_body">
-                <slot></slot>
-            </div>
-            <div class="sc-panel_footer">
-                <slot name="footer"></slot>
+                <div class="sc-panel_footer">
+                    <slot name="footer"></slot>
+                </div>
             </div>
         </div>
+        <el-drawer v-model="drawer" title="提示" direction="btt">
+            <div class="panel-drawer">
+                <span>{{ drawerDesc }}</span>
+            </div>
+        </el-drawer>
     </div>
-    <el-drawer v-model="drawer" title="提示" direction="btt">
-        <div class="panel-drawer">
-            <span>{{ description }}</span>
-        </div>
-    </el-drawer>
 </template>
 <script>
 export default {
     name: "ScPanel",
+    inheritAttrs: false,
     props: {
         title: { type: String, default: '卡片标题' },
+        remark: { type: String, default: '' },
         description: { type: String, default: '这是工具说明！' },
+    },
+    computed: {
+        drawerDesc() {
+            return this.description || this.remark || '这是工具说明！';
+        }
     },
     data() {
         return {
@@ -79,10 +89,27 @@ export default {
 </script>
 
 <style scoped>
+.sc-panel-wrap {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
 .sc-panel {
     height: 100%;
     padding: 15px;
     background-color: white;
+    flex: 1;
+}
+.title-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.remark {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 2px;
 }
 
 .sc-panel_base {

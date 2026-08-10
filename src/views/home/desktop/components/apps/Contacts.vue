@@ -321,7 +321,7 @@
 
 <script>
 import scIcon from '@/components/scIcon/index.vue';
-import { getRandomColor } from './utils.js';
+
 
 export default {
 	windowOptions: {
@@ -470,7 +470,7 @@ export default {
                 return;
             }
             if (!this.$SCM.is_valid_id(this.currData.id)) {
-                this.$API.scmsyscontact.add.post(this.currData).then(res => {
+                this.$API.scmsyscontact.add.post(this.currData).then(() => {
                     this.currData = this.def_data();
                     this.showEditDialog = false;
                     this.$message.success('添加成功');
@@ -479,7 +479,7 @@ export default {
                 return;
             }
 
-            this.$API.scmsyscontact.update.put(this.currData).then(res => {
+            this.$API.scmsyscontact.update.put(this.currData).then(() => {
                 this.showEditDialog = false;
                 this.$message.success('保存成功');
                 this.getContacts();
@@ -491,7 +491,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning',
             }).then(() => {
-                this.$API.scmsyscontact.delete.delete(this.selectedContact.id).then(res => {
+                this.$API.scmsyscontact.delete.delete(this.selectedContact.id).then(() => {
                     this.showEditDialog = false;
                     this.$message.success('删除成功');
                     this.getContacts();

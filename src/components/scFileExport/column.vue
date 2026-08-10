@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
+import { createSortable } from '@/utils/draggable'
 
 export default {
 	emits: ['success'],
@@ -41,7 +41,7 @@ export default {
 		rowDrop() {
 			const _this = this
 			const tbody = this.$refs.table.$el.querySelector('.el-table__body-wrapper tbody')
-			Sortable.create(tbody, {
+			createSortable(tbody, {
 				handle: ".move",
 				animation: 200,
 				ghostClass: "ghost",

@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Sortable from "sortablejs";
+import { createSortable } from '@/utils/draggable'
 
 export default {
 	props: {
@@ -69,7 +69,7 @@ export default {
 			const tbody = this.$refs.table.$el.querySelector(
 				".el-table__body-wrapper tbody"
 			);
-			Sortable.create(tbody, {
+			createSortable(tbody, {
 				handle: ".move",
 				animation: 300,
 				ghostClass: "ghost",

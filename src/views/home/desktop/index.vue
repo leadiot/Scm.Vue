@@ -575,7 +575,7 @@ export default {
 						maxWidth: meta.maxWidth,
 						maxHeight: meta.maxHeight,
 					});
-				} catch (e) {
+				} catch {
 					winOpts = getWindowOptionsFromModule(null, {
 						icon: meta.icon || app.icon || null,
 						width: meta.width || 800,
@@ -965,7 +965,7 @@ export default {
 			// 避免 20+ 次串行 HTTP 请求（页面刷新后内存缓存丢失时尤为明显）
 			await this.$SCM.list_cfg();
 
-			const style = await this.$SCM.read_cfg("desktop_style", 'system');
+			await this.$SCM.read_cfg("desktop_style", 'system');
 			const themeName = await this.$SCM.read_cfg("desktop_theme", this.currentTheme);
 
 			const theme = themes.find(t => t.name === themeName);

@@ -116,7 +116,7 @@ export default {
                 this.downloadList.forEach(item => {
                     this.pushDownloadList(item);
                 });
-            } catch (err) {
+            } catch {
             }
         },
         /**
@@ -132,7 +132,7 @@ export default {
                     return;
                 }
                 this.downloadList = res.data || [];
-            } catch (error) {
+            } catch {
                 this.$message.error('获取版本信息失败，请稍后重试。');
             }
         },

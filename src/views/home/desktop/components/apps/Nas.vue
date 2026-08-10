@@ -477,7 +477,7 @@ export default {
 		 * 打开文档
 		 * @param item 文档项	
 		 */
-		openDocWithApp(item) {
+		openDocWithApp() {
 		},
 		openDoc(item) {
 			if (!this.openNasFileWithApp) {
