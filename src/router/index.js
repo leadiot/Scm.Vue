@@ -34,7 +34,17 @@ const router = createRouter({
 document.title = config.APP_NAME;
 
 //判断是否已加载过动态/静态路由
-var isGetRouter = false;
+let isGetRouter = false;
+
+//根据角色过滤静态路由菜单（beforeEach 与 getMenu 共用）
+function getFilteredUserMenu() {
+	const userInfo = tool.session.get("USER_INFO");
+	return treeFilter(userRoutes, (node) => {
+		return node.meta.role
+			? node.meta.role.filter((item) => userInfo.role.indexOf(item) > -1).length > 0
+			: true;
+	});
+}
 
 router.beforeEach(async (to, from) => {
 	NProgress.start();
@@ -42,14 +52,6 @@ router.beforeEach(async (to, from) => {
 	document.title = to.meta.title
 		? `${to.meta.title} - ${config.APP_NAME}`
 		: `${config.APP_NAME}`;
-
-	//动态布局切换
-	// if (to.meta.layout) {
-	// 	const globalStore = useGlobalStore();
-	// 	if (globalStore.layout !== to.meta.layout) {
-	// 		globalStore.SET_layout(to.meta.layout);
-	// 	}
-	// }
 
 	//登录页直接放行
 	if (to.path === "/login") {
@@ -69,28 +71,17 @@ router.beforeEach(async (to, from) => {
 	}
 
 	//检查token
-	let token = tool.session.get("TOKEN");
+	const token = tool.session.get("TOKEN");
 	if (!token) {
 		return { path: "/login" };
 	}
 
-	//整页路由处理
-	if (to.meta.fullpage) {
-		to.matched = [to.matched[to.matched.length - 1]];
-	}
 	//加载动态/静态路由
 	if (!isGetRouter) {
-		let apiMenu = tool.session.get("MENU") || [];
-		let userInfo = tool.session.get("USER_INFO");
-		let userMenu = treeFilter(userRoutes, (node) => {
-			return node.meta.role
-				? node.meta.role.filter(
-					(item) => userInfo.role.indexOf(item) > -1
-				).length > 0
-				: true;
-		});
-		let menu = [...userMenu, ...apiMenu];
-		var menuRouter = filterAsyncRouter(menu);
+		const apiMenu = tool.session.get("MENU") || [];
+		const userMenu = getFilteredUserMenu();
+		const menu = [...userMenu, ...apiMenu];
+		let menuRouter = filterAsyncRouter(menu);
 		menuRouter = flatAsyncRoutes(menuRouter);
 		menuRouter.forEach((item) => {
 			router.addRoute(item);
@@ -124,15 +115,10 @@ router.getMenu = (layout) => {
 	if (layout == null) {
 		layout = 1;
 	}
-	let userInfo = tool.session.get("USER_INFO");
-	let userMenu = treeFilter(userRoutes, (node) => {
-		return node.meta.role
-			? node.meta.role.filter((item) => userInfo.role.indexOf(item) > -1).length > 0
-			: true;
-	});
-	var menu = [...userMenu];
+	const userMenu = getFilteredUserMenu();
+	const menu = [...userMenu];
 
-	var apiMenu = tool.session.get("MENU") || [];
+	const apiMenu = tool.session.get("MENU") || [];
 	apiMenu.forEach(element => {
 		if (element.meta.layout == layout) {
 			menu.push(element);
@@ -159,18 +145,19 @@ async function recordPv(to) {
 function filterAsyncRouter(routerMap) {
 	const accessedRouters = [];
 	routerMap.forEach((item) => {
-		item.meta = item.meta || {};
+		const meta = { ...(item.meta || {}) };
+		let path = item.path;
 		//处理外部链接特殊路由
-		if (item.meta.type == "iframe" || item.meta.type == "link") {
-			item.meta.url = item.path;
-			item.path = `/i/${item.id}`;
+		if (meta.type == "iframe" || meta.type == "link") {
+			meta.url = path;
+			path = `/i/${item.id}`;
 		}
 		//MAP转路由对象
-		var route = {
+		const route = {
 			id: item.id,
-			path: item.path,
+			path: path,
 			name: item.id,// 此处路由需要使用id作为name，否则会导致路由跳转失败
-			meta: item.meta,
+			meta: meta,
 			redirect: item.redirect,
 			children: item.children ? filterAsyncRouter(item.children) : null,
 			component: loadComponent(item.component),
