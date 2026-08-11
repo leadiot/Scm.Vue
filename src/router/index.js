@@ -85,11 +85,8 @@ router.beforeEach(async (to, from) => {
 		let menu = [...userMenu, ...apiMenu];
 		var menuRouter = filterAsyncRouter(menu);
 		menuRouter = flatAsyncRoutes(menuRouter);
-		const existingPaths = routes.map(r => r.path);
 		menuRouter.forEach((item) => {
-			if (!existingPaths.includes(item.path)) {
-				router.addRoute(item);
-			}
+			router.addRoute(item);
 		});
 		routes_404_r = router.addRoute(routes_404);
 		if (to.matched.length == 0) {
@@ -157,13 +154,13 @@ function filterAsyncRouter(routerMap) {
 		//处理外部链接特殊路由
 		if (item.meta.type == "iframe" || item.meta.type == "link") {
 			item.meta.url = item.path;
-			item.path = `/i/${item.name}`;
+			item.path = `/i/${item.id}`;
 		}
 		//MAP转路由对象
 		var route = {
 			id: item.id,
 			path: item.path,
-			name: item.name,
+			name: item.id,// 此处路由需要使用id作为name，否则会导致路由跳转失败
 			meta: item.meta,
 			redirect: item.redirect,
 			children: item.children ? filterAsyncRouter(item.children) : null,

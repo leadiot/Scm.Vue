@@ -308,7 +308,7 @@ export default {
 				}
 				//处理http
 				if (item.meta.type == 'iframe') {
-					item.path = `/i/${item.name}`;
+					item.path = `/i/${item.id}`;
 				}
 				//递归循环
 				if (item.children && item.children.length > 0) {
