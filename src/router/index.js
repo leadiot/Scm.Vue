@@ -3,10 +3,14 @@ import { ElNotification } from "element-plus";
 import config from "@/config";
 import NProgress from "@/utils/nprogress";
 import tool from "@/utils/tool";
+import logger from "@/utils/logger";
 import systemRouter from "./systemRouter";
 import userRoutes from "@/config/route";
 import { beforeEach, afterEach } from "./scrollBehavior";
 import http from "@/utils/request";
+
+// 视图组件懒加载映射（编译期生成，模块顶层只初始化一次）
+const viewModules = import.meta.glob('@/views/**/*.vue');
 
 //系统路由
 const routes = systemRouter;
@@ -49,8 +53,11 @@ router.beforeEach(async (to, from) => {
 
 	//登录页直接放行
 	if (to.path === "/login") {
-		//删除路由(替换当前layout路由)
-		router.addRoute(routes[1]);
+		//删除路由(替换当前login路由)
+		const loginRoute = routes.find(r => r.path === '/login');
+		if (loginRoute) {
+			router.addRoute(loginRoute);
+		}
 		//删除路由(404)
 		routes_404_r();
 		isGetRouter = false;
@@ -90,7 +97,8 @@ router.beforeEach(async (to, from) => {
 		});
 		routes_404_r = router.addRoute(routes_404);
 		if (to.matched.length == 0) {
-			router.push(to.fullPath);
+			//动态路由刚注册完成，返回路径触发重新匹配，避免在守卫内主动push
+			return to.fullPath;
 		}
 		isGetRouter = true;
 	}
@@ -105,6 +113,7 @@ router.afterEach((to, from) => {
 
 router.onError((error) => {
 	NProgress.done();
+	logger.codeError(error);
 	ElNotification.error({
 		title: "路由错误",
 		message: error.message,
@@ -133,17 +142,17 @@ router.getMenu = (layout) => {
 };
 
 async function recordPv(to) {
-	var url = to.path;
+	const url = to.path;
 	if (url == '/login' || url == '/oauth' || url == '/user_register' || url == '/reset_password') {
 		return;
 	}
 
-	//var title = to.meta.title;
-	// 记录访问信息
-	await http.post(`${config.API_URL}/scmsyspv`, { url: url });
-	// if (!res || res.code != 200) {
-	// 	return;
-	// }
+	// 记录访问信息，失败走统一日志通道
+	try {
+		await http.post(`${config.API_URL}/scmsyspv`, { url: url });
+	} catch (error) {
+		logger.httpError(error);
+	}
 }
 
 //转换
@@ -173,20 +182,19 @@ function filterAsyncRouter(routerMap) {
 
 function loadComponent(component) {
 	if (component) {
-		const modules = import.meta.glob('@/views/**/*.vue');
 		const paths = [
 			`@/views/${component}.vue`,
 			`@/views/${component}/index.vue`
 		];
 		for (const path of paths) {
-			if (modules[path]) {
-				return modules[path];
+			if (viewModules[path]) {
+				return viewModules[path];
 			}
 		}
-		const moduleKeys = Object.keys(modules);
+		const moduleKeys = Object.keys(viewModules);
 		for (const key of moduleKeys) {
 			if (key.includes(`/${component}.vue`) || key.includes(`/${component}/index.vue`)) {
-				return modules[key];
+				return viewModules[key];
 			}
 		}
 	}
