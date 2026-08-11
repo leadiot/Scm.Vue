@@ -440,14 +440,6 @@
 		border-color: $--border-color;
 	}
 
-	/* 深色模式下辅色调次要按钮和标签 */
-	.el-button--default {
-		--el-button-border-color: var(--color-secondary-dark-2, #52525b);
-		--el-button-hover-text-color: var(--color-secondary-light-3, #b0b0b6);
-		--el-button-hover-border-color: var(--color-secondary-light-1, #9e9ea3);
-		--el-button-hover-bg-color: var(--color-secondary-dark-5, #383838);
-	}
-
 	.el-tag {
 		--el-tag-bg-color: var(--color-secondary-dark-5, #383838);
 		--el-tag-border-color: var(--color-secondary-dark-2, #52525b);
@@ -469,72 +461,12 @@
 		border-color: var(--el-button-hover-color);
 	}
 
-	.el-button--default:hover,
-	.el-button--default:focus {
-		background: #383838;
-		border-color: var(--el-color-primary);
-	}
-
-	.el-button--default.is-plain {
-		border-color: var(--el-button-border-color);
-	}
-
-	.el-button--default.is-plain:hover,
-	.el-button--default.is-plain:focus {
-		background: none;
-		border-color: var(--el-border-color-hover);
-	}
-
-	.el-button--default.is-plain:active {
-		background: #383838;
-	}
-
-	.el-button--primary {
-		color: var(--color-on-primary, #fff);
-	}
-
-	.el-button--primary:focus,
-	.el-button--primary:hover {
-		background: var(--el-color-primary-light-2);
-		border-color: var(--el-color-primary-light-2);
-	}
-
-	.el-button--primary:active {
-		background-color: var(--el-color-primary-darken-1, #0d84ff);
-		border-color: var(--el-color-primary-darken-1, #0d84ff);
-		color: var(--color-on-primary, #fff);
-	}
-
-	.el-button--primary.is-plain {
-		border-color: var(--el-color-primary);
-		color: var(--el-color-primary);
-	}
-
-	.el-button--primary.is-plain:focus,
-	.el-button--primary.is-plain:hover {
-		background: none;
-		border-color: var(--el-color-primary);
-		color: var(--el-color-primary-light-2);
-	}
-
-	.el-button--primary.is-plain:active {
-		background: #383838;
-	}
-
 	.el-button.is-disabled,
 	.el-button.is-disabled:hover {
 		background: #383838;
 		border-color: $--border-color;
 		color: var(--el-button-disabled-font-color);
 	}
-
-	.el-button--success,
-	.el-button--info,
-	.el-button--warning,
-	.el-button--danger {
-		color: #fff;
-	}
-
 
 	.el-badge__content {
 		color: #fff;
