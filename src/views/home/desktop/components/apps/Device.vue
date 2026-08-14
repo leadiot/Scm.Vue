@@ -4,6 +4,10 @@
 			<span class="app-header-title">设备</span>
 			<span class="device-count">{{ devices.length }} 台设备</span>
 			<div class="header-spacer"></div>
+			<el-button size="small" :loading="loading" @click="loadDevices">
+				<sc-icon v-if="!loading" name="ms-refresh" style="margin-right: 4px;" />
+				刷新
+			</el-button>
 			<el-button type="primary" size="small" @click="editVisible = true">
 				<sc-icon name="ms-add" style="margin-right: 4px;" />
 				添加设备
@@ -134,6 +138,7 @@ export default {
 	data() {
 		return {
 			devices: [],
+			loading: false,
 			editVisible: false,
 			infoVisible: false,
 			deviceForm: this.def_data(),
@@ -171,9 +176,14 @@ export default {
 			}
 		},
 		async loadDevices() {
-			var res = await this.$API.scmurterminal.list.get();
-			if (res.code === 200) {
-				this.devices = res.data || [];
+			this.loading = true;
+			try {
+				var res = await this.$API.scmurterminal.list.get();
+				if (res.code === 200) {
+					this.devices = res.data || [];
+				}
+			} finally {
+				this.loading = false;
 			}
 		},
 		getDeviceColor(types) {

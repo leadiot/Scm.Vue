@@ -20,10 +20,10 @@ del index_unpkg.html
 
 del report.html
 
-rmdir /s /q "..\..\..\Release\Scm.Net\Scm.Web\wwwroot\static"
+rmdir /s /q ..\..\..\Release\Scm.Net\Scm.Web\wwwroot\static
 
-xcopy /e /y /i * "..\..\..\Release\Scm.Net\Scm.Web\wwwroot\"
+xcopy /e /y /i .\* ..\..\..\Release\Scm.Net\Scm.Web\wwwroot\
 
-rmdir /s /q "..\..\..\Release\Nas.Net\Nas.Web\wwwroot\static"
+rmdir /s /q ..\..\..\Release\Nas.Net\Nas.Web\wwwroot\static
 
-xcopy /e /y /i * "..\..\..\Release\Nas.Net\Nas.Web\wwwroot\"
+xcopy /e /y /i .\* ..\..\..\Release\Nas.Net\Nas.Web\wwwroot\
