@@ -81,7 +81,7 @@ export default {
 		},
 	},
 	authority: {
-		url: `${config.API_URL}/operator/authoritymenu`,
+		url: `${config.API_URL}/menu/authoritymenu`,
 		name: "获得权限",
 		get: async function (data) {
 			if (!data) {
