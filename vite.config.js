@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
     
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src')
+        '@': path.resolve(import.meta.dirname, 'src')
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
     },
