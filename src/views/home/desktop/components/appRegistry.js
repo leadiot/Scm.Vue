@@ -1,7 +1,13 @@
 import { defineAsyncComponent, markRaw } from 'vue';
 
 // 模块级：视图组件映射表（构建期一次性求值，避免每个窗口/调用方重复调用 import.meta.glob）
-const viewModules = import.meta.glob('@/views/**/*.vue');
+// 排除云桌面窗口壳与菜单组件（Window/TitleBar/menus 已被静态导入），避免 INEFFECTIVE_DYNAMIC_IMPORT
+const viewModules = import.meta.glob([
+	'@/views/**/*.vue',
+	'!@/views/home/desktop/components/Window.vue',
+	'!@/views/home/desktop/components/TitleBar.vue',
+	'!@/views/home/desktop/components/menus/**'
+]);
 // 已解析的异步组件缓存（跨窗口共享，非响应式）
 const componentCache = new Map();
 // 已预加载的模块缓存（openApp 读取 windowOptions 用）

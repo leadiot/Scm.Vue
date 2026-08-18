@@ -10,7 +10,8 @@ import { beforeEach, afterEach } from "./scrollBehavior";
 import http from "@/utils/request";
 
 // 视图组件懒加载映射（编译期生成，模块顶层只初始化一次）
-const viewModules = import.meta.glob('@/views/**/*.vue');
+// 排除云桌面内部组件（窗口壳/菜单为静态导入，应用由 appRegistry 负责懒加载），避免 INEFFECTIVE_DYNAMIC_IMPORT
+const viewModules = import.meta.glob(['@/views/**/*.vue', '!@/views/home/desktop/components/**']);
 
 //系统路由
 const routes = systemRouter;

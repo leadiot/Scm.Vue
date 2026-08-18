@@ -15,7 +15,7 @@
 				<div v-for="conv in filteredConversations" :key="conv.id" class="app-list-item"
 					:class="{ active: selectedConversation?.id === conv.id }" @click="selectConversation(conv)">
 					<div class="app-avatar" :style="{ backgroundColor: conv.colors }">
-						{{ conv.name.charAt(0) }}
+						{{ getAvatar(conv) }}
 					</div>
 					<div class="app-info">
 						<div class="app-info-row">
@@ -38,7 +38,7 @@
 				<div class="message-header">
 					<div class="header-left">
 						<div class="app-avatar small" :style="{ backgroundColor: selectedConversation.colors }">
-							{{ selectedConversation.name.charAt(0) }}
+							{{ getAvatar(selectedConversation) }}
 						</div>
 						<div class="header-info">
 							<span class="app-name">{{ selectedConversation.name }}</span>
@@ -81,7 +81,7 @@
 		<el-dialog v-model="showNewSMS" title="新建短信" width="450px">
 			<el-form :model="newSMS" label-width="80px">
 				<el-form-item label="收件人">
-					<el-input v-model="newSMS.phone" placeholder="请输入手机号或选择联系人">
+					<el-input v-model="newSMS.address" placeholder="请输入手机号或选择联系人">
 						<template #append>
 							<el-button @click="selectFromContacts">
 								<sc-icon name="ms-contacts" :size="16" />
@@ -159,7 +159,7 @@ export default {
 	methods: {
 		def_data() {
 			return {
-				phone: '',
+				address: '',
 				body: '',
 				time: '',
 				type: 1,
@@ -188,6 +188,14 @@ export default {
 				}
 			});
 		},
+		getAvatar(conv) {
+			var name = conv.name || conv.address || '';
+			if (name.length < 1) {
+				return '';
+			}
+
+			return name.charAt(0);
+		},
 		sendMessage() {
 			if (!this.newMessage.trim()) return;
 			const time = getCurrentTime();
@@ -196,7 +204,7 @@ export default {
 			}
 
 			var sms = {
-				phone: this.selectedConversation.phone,
+				address: this.selectedConversation.address,
 				body: this.newMessage,
 				time: time,
 				type: 1
@@ -231,7 +239,7 @@ export default {
 			this.showContactPicker = false;
 		},
 		sendNewSMS() {
-			if (!this.newSMS.phone || !this.newSMS.body) {
+			if (!this.newSMS.address || !this.newSMS.body) {
 				this.$message.warning('请填写手机号和内容');
 				return;
 			}

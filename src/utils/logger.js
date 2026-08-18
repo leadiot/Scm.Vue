@@ -24,6 +24,8 @@
  */
 
 import { ElNotification } from 'element-plus'
+// request.js 会反向静态导入 logger，但 logger 仅在上报时才调用 http（非模块初始化期），循环引用安全
+import http from '@/utils/request'
 
 const LEVELS = { debug: 0, info: 1, warn: 2, error: 3, silent: 4 }
 const DEFAULT_CONFIG = {
@@ -80,12 +82,9 @@ function flushReport() {
 	}
 	if (reportQueue.length === 0) return
 	const batch = reportQueue.splice(0)
-	// 延迟 import 避免循环依赖
-	import('@/utils/request').then(({ default: http }) => {
-		http.post(REPORT_ENDPOINT, { logs: batch }).catch(() => {
-			// 上报失败静默丢弃，避免无限递归
-		})
-	}).catch(() => {})
+	http.post(REPORT_ENDPOINT, { logs: batch }).catch(() => {
+		// 上报失败静默丢弃，避免无限递归
+	})
 }
 
 function scheduleReport() {
@@ -308,9 +307,7 @@ const logger = {
 			url: e.url || '',
 		}))
 		if (batch.length === 0) return
-		import('@/utils/request').then(({ default: http }) => {
-			http.post(REPORT_ENDPOINT, { logs: batch }).catch(() => {})
-		}).catch(() => {})
+		http.post(REPORT_ENDPOINT, { logs: batch }).catch(() => {})
 	},
 
 	/* ------- 导出 ------- */
