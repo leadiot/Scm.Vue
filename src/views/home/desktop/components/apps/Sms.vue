@@ -20,7 +20,7 @@
 					<div class="app-info">
 						<div class="app-info-row">
 							<span class="app-name">{{ conv.name }}</span>
-							<span class="app-time">{{ conv.time }}</span>
+							<span class="app-time">{{ $TOOL.dateTimeFormatV1(conv.time) }}</span>
 						</div>
 						<span class="app-preview">{{ conv.lastMessage }}</span>
 					</div>

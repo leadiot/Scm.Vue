@@ -282,14 +282,82 @@ tool.timeFormat = function (time) {
 	var h = date.getHours();
 	var m = date.getMinutes();
 	var s = date.getSeconds();
-	return (
-		tool.lpad(h, 2, "0") +
-		":" +
-		tool.lpad(m, 2, "0") +
-		":" +
-		tool.lpad(s, 2, "0")
-	);
+	return tool.lpad(h, 2, "0") + ":" + tool.lpad(m, 2, "0") + ":" + tool.lpad(s, 2, "0");
 };
+
+/**
+ * 精减后的日期格式化函数
+ * @param {time} time 
+ * @returns 
+ */
+tool.dateTimeFormat = function (time) {
+	if (!time) {
+		return '';
+	}
+
+	var date = new Date(time);
+	var y = date.getFullYear();
+	var M = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var m = date.getMinutes();
+	var s = date.getSeconds();
+
+	var dateStr = y + "-" + tool.lpad(M, 2, "0") + "-" + tool.lpad(d, 2, "0");
+	var timeStr = tool.lpad(h, 2, "0") + ":" + tool.lpad(m, 2, "0") + ":" + tool.lpad(s, 2, "0");
+	return dateStr + " " + timeStr;
+}
+
+/**
+ * 语义化时间格式化
+ * 以当前时间为参照：刚刚 / X分钟前 / X小时前 / X天前；
+ * 超过 3 天（或未来时间、无法解析）保留现有 yyyy-MM-dd HH:mm:ss 格式
+ * @param {time} time 
+ * @returns 
+ */
+tool.dateTimeFormatV1 = function (time) {
+	if (!time) {
+		return '';
+	}
+
+	var date = new Date(time);
+	if (isNaN(date.getTime())) {
+		return '';
+	}
+
+	var diff = Date.now() - date.getTime();
+	// 仅对过去时间做语义化，未来时间直接走标准格式
+	if (diff >= 0) {
+		var minute = 60 * 1000;
+		var hour = 60 * minute;
+		var day = 24 * hour;
+		if (diff < minute) {
+			return '刚刚';
+		}
+		if (diff < hour) {
+			return Math.floor(diff / minute) + '分钟前';
+		}
+		if (diff < day) {
+			return Math.floor(diff / hour) + '小时前';
+		}
+		if (diff <= 3 * day) {
+			// 向上取整：不足一天按一天显示，整 3 天边界可正确显示“3天前”
+			return Math.ceil(diff / day) + '天前';
+		}
+	}
+
+	// 3 天以前保留现有格式
+	var y = date.getFullYear();
+	var M = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var m = date.getMinutes();
+	var s = date.getSeconds();
+
+	var dateStr = y + "-" + tool.lpad(M, 2, "0") + "-" + tool.lpad(d, 2, "0");
+	var timeStr = tool.lpad(h, 2, "0") + ":" + tool.lpad(m, 2, "0") + ":" + tool.lpad(s, 2, "0");
+	return dateStr + " " + timeStr;
+}
 
 /* 日期格式化
  * yyyy:年
@@ -303,7 +371,7 @@ tool.timeFormat = function (time) {
  * S:毫秒
  * E:星期
  */
-tool.dateTimeFormat = function (time, fmt) {
+tool.dateTimeFormatV2 = function (time, fmt) {
 	if (!time) {
 		return '';
 	}
