@@ -47,20 +47,40 @@
 
                 <div class="detail-section">
                     <div class="section-title">基本信息</div>
+                    <div class="info-item" v-if="selectedContact.last_name">
+                        <span class="label">姓:</span>
+                        <span class="value">{{ selectedContact.last_name }}</span>
+                    </div>
+                    <div class="info-item" v-if="selectedContact.first_name">
+                        <span class="label">名:</span>
+                        <span class="value">{{ selectedContact.first_name }}</span>
+                    </div>
+                    <div class="info-item" v-if="selectedContact.name_prefix">
+                        <span class="label">前缀:</span>
+                        <span class="value">{{ selectedContact.name_prefix }}</span>
+                    </div>
+                    <div class="info-item" v-if="selectedContact.name_suffix">
+                        <span class="label">后缀:</span>
+                        <span class="value">{{ selectedContact.name_suffix }}</span>
+                    </div>
                     <div class="info-item" v-if="selectedContact.nickname">
-                        <sc-icon name="ms-star" :size="18" />
                         <span class="label">昵称:</span>
                         <span class="value">{{ selectedContact.nickname }}</span>
+                    </div>
+                    <div class="info-item" v-if="selectedContact.company">
+                        <sc-icon name="ms-apartment" :size="18" />
+                        <span class="label">公司:</span>
+                        <span class="value">{{ selectedContact.company }}</span>
                     </div>
                     <div class="info-item" v-if="selectedContact.department">
                         <sc-icon name="ms-badge" :size="18" />
                         <span class="label">部门:</span>
                         <span class="value">{{ selectedContact.department }}</span>
                     </div>
-                    <div class="info-item" v-if="selectedContact.birthday">
+                    <div class="info-item" v-if="selectedContact.title">
                         <sc-icon name="ms-cake" :size="18" />
-                        <span class="label">生日:</span>
-                        <span class="value">{{ formatDate(selectedContact.birthday) }}</span>
+                        <span class="label">职位:</span>
+                        <span class="value">{{ selectedContact.title }}</span>
                     </div>
                     <div class="info-item" v-if="selectedContact.website">
                         <sc-icon name="ms-language" :size="18" />
@@ -99,6 +119,18 @@
                 </div>
 
                 <div class="detail-section">
+                    <div class="section-title">日期</div>
+                    <div v-for="(date, index) in selectedContact.dates" :key="index" class="info-item">
+                        <sc-icon name="ms-cake" :size="18" />
+                        <span class="label">{{ date.type || '生日' }}:</span>
+                        <span class="value">{{ formatDate(date.date) }}</span>
+                    </div>
+                    <div v-if="selectedContact.dates.length === 0" class="empty-info">
+                        暂无日期
+                    </div>
+                </div>
+
+                <div class="detail-section">
                     <div class="section-title">地址</div>
                     <div v-for="(address, index) in selectedContact.addresses" :key="index" class="info-item">
                         <sc-icon name="ms-location_on" :size="18" />
@@ -111,14 +143,14 @@
                 </div>
 
                 <div class="detail-section">
-                    <div class="section-title">即时通讯</div>
+                    <div class="section-title">社交账号</div>
                     <div v-for="(im, index) in selectedContact.im_addresses" :key="index" class="info-item">
                         <sc-icon name="ms-message" :size="18" />
                         <span class="label">{{ im.type || '微信' }}:</span>
                         <span>{{ im.address }}</span>
                     </div>
                     <div v-if="selectedContact.im_addresses.length === 0" class="empty-info">
-                        暂无即时通讯账号
+                        暂无社交账号
                     </div>
                 </div>
 
@@ -145,171 +177,213 @@
         </div>
 
         <el-dialog v-model="showEditDialog" :title="dialogTitle" width="600px" draggable>
-            <el-form :model="currData">
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="姓名">
-                            <el-input v-model="currData.name" placeholder="请输入姓名" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="昵称">
-                            <el-input v-model="currData.nickname" placeholder="请输入昵称" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="8">
-                        <el-form-item label="前缀">
-                            <el-input v-model="currData.name_prefix" placeholder="先生/女士" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="后缀">
-                            <el-input v-model="currData.name_suffix" placeholder="博士/教授" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="生日">
-                            <el-date-picker v-model="currData.birthday" type="date" placeholder="选择生日" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="公司">
-                            <el-input v-model="currData.company" placeholder="请输入公司" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="职位">
-                            <el-input v-model="currData.title" placeholder="请输入职位" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="部门">
-                            <el-input v-model="currData.department" placeholder="请输入部门" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="网站">
-                            <el-input v-model="currData.website" placeholder="请输入网站" />
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+            <el-form ref="contactForm" :model="currData" :rules="formRules" label-width="80px">
+                <el-tabs v-model="editTab" class="contact-edit-tabs">
+                    <el-tab-pane label="基础" name="base">
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="姓" prop="last_name">
+                                    <el-input v-model="currData.last_name" placeholder="请输入姓" @input="fillFullName" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="名" prop="first_name">
+                                    <el-input v-model="currData.first_name" placeholder="请输入名" @input="fillFullName" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="全称" prop="name">
+                                    <el-input v-model="currData.name" placeholder="请输入全称" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="昵称" prop="nickname">
+                                    <el-input v-model="currData.nickname" placeholder="请输入昵称" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="前缀" prop="name_prefix">
+                                    <el-input v-model="currData.name_prefix" placeholder="先生/女士" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="后缀" prop="name_suffix">
+                                    <el-input v-model="currData.name_suffix" placeholder="博士/教授" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="公司" prop="company">
+                                    <el-input v-model="currData.company" placeholder="请输入公司" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="职位" prop="title">
+                                    <el-input v-model="currData.title" placeholder="请输入职位" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="部门" prop="department">
+                                    <el-input v-model="currData.department" placeholder="请输入部门" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="网站" prop="website">
+                                    <el-input v-model="currData.website" placeholder="请输入网站" />
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
 
-                <el-divider content-position="left">电话</el-divider>
-                <div v-for="(phone, index) in currData.phones" :key="index" class="form-row">
-                    <el-row :gutter="10">
-                        <el-col :span="6">
-                            <el-select v-model="phone.type" placeholder="类型" size="small">
-                                <el-option label="手机" value="手机" />
-                                <el-option label="工作" value="工作" />
-                                <el-option label="家庭" value="家庭" />
-                                <el-option label="传真" value="传真" />
-                            </el-select>
-                        </el-col>
-                        <el-col :span="14">
-                            <el-input v-model="phone.number" placeholder="电话号码" size="small" />
-                        </el-col>
-                        <el-col :span="4">
-                            <el-button text size="small" @click="removePhone(index)">
-                                <sc-icon name="ms-delete" :size="14" />
-                            </el-button>
-                        </el-col>
-                    </el-row>
-                </div>
-                <el-button text size="small" @click="addPhone">
-                    <sc-icon name="ms-add" :size="14" /> 添加电话
-                </el-button>
+                    <el-tab-pane label="日期" name="dates" lazy>
+                        <div v-for="(date, index) in currData.dates" :key="index" class="form-row">
+                            <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <el-select v-model="date.type" placeholder="类型" size="small">
+                                        <el-option label="生日" value="生日" />
+                                        <el-option label="农历生日" value="农历生日" />
+                                        <el-option label="纪念日" value="纪念日" />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="14">
+                                    <el-date-picker v-model="date.date" type="date" placeholder="选择日期" size="small" />
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button text size="small" @click="removeDate(index)">
+                                        <sc-icon name="ms-delete" :size="14" />
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <el-button text size="small" @click="addDate">
+                            <sc-icon name="ms-add" :size="14" /> 添加日期
+                        </el-button>
+                    </el-tab-pane>
 
-                <el-divider content-position="left">邮箱</el-divider>
-                <div v-for="(email, index) in currData.emails" :key="index" class="form-row">
-                    <el-row :gutter="10">
-                        <el-col :span="6">
-                            <el-select v-model="email.type" placeholder="类型" size="small">
-                                <el-option label="工作" value="工作" />
-                                <el-option label="个人" value="个人" />
-                            </el-select>
-                        </el-col>
-                        <el-col :span="14">
-                            <el-input v-model="email.address" placeholder="邮箱地址" size="small" />
-                        </el-col>
-                        <el-col :span="4">
-                            <el-button text size="small" @click="removeEmail(index)">
-                                <sc-icon name="ms-delete" :size="14" />
-                            </el-button>
-                        </el-col>
-                    </el-row>
-                </div>
-                <el-button text size="small" @click="addEmail">
-                    <sc-icon name="ms-add" :size="14" /> 添加邮箱
-                </el-button>
+                    <el-tab-pane label="电话" name="phones" lazy>
+                        <div v-for="(phone, index) in currData.phones" :key="index" class="form-row">
+                            <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <el-select v-model="phone.type" placeholder="类型" size="small">
+                                        <el-option label="手机" value="手机" />
+                                        <el-option label="工作" value="工作" />
+                                        <el-option label="家庭" value="家庭" />
+                                        <el-option label="传真" value="传真" />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="14">
+                                    <el-input v-model="phone.number" placeholder="电话号码" size="small" />
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button text size="small" @click="removePhone(index)">
+                                        <sc-icon name="ms-delete" :size="14" />
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <el-button text size="small" @click="addPhone">
+                            <sc-icon name="ms-add" :size="14" /> 添加电话
+                        </el-button>
+                    </el-tab-pane>
 
-                <el-divider content-position="left">地址</el-divider>
-                <div v-for="(address, index) in currData.addresses" :key="index" class="form-row">
-                    <el-row :gutter="10">
-                        <el-col :span="5">
-                            <el-select v-model="address.type" placeholder="类型" size="small">
-                                <el-option label="工作" value="工作" />
-                                <el-option label="家庭" value="家庭" />
-                            </el-select>
-                        </el-col>
-                        <el-col :span="9">
-                            <el-input v-model="address.street" placeholder="街道地址" size="small" />
-                        </el-col>
-                        <el-col :span="5">
-                            <el-input v-model="address.city" placeholder="城市" size="small" />
-                        </el-col>
-                        <el-col :span="5">
-                            <el-button text size="small" @click="removeAddress(index)">
-                                <sc-icon name="ms-delete" :size="14" />
-                            </el-button>
-                        </el-col>
-                    </el-row>
-                    <el-row :gutter="10" style="margin-top: 8px;">
-                        <el-col :span="10">
-                            <el-input v-model="address.state" placeholder="省/州" size="small" />
-                        </el-col>
-                        <el-col :span="10">
-                            <el-input v-model="address.zip" placeholder="邮编" size="small" />
-                        </el-col>
-                    </el-row>
-                </div>
-                <el-button text size="small" @click="addAddress">
-                    <sc-icon name="ms-add" :size="14" /> 添加地址
-                </el-button>
+                    <el-tab-pane label="邮箱" name="emails" lazy>
+                        <div v-for="(email, index) in currData.emails" :key="index" class="form-row">
+                            <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <el-select v-model="email.type" placeholder="类型" size="small">
+                                        <el-option label="工作" value="工作" />
+                                        <el-option label="个人" value="个人" />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="14">
+                                    <el-input v-model="email.address" placeholder="邮箱地址" size="small" />
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button text size="small" @click="removeEmail(index)">
+                                        <sc-icon name="ms-delete" :size="14" />
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <el-button text size="small" @click="addEmail">
+                            <sc-icon name="ms-add" :size="14" /> 添加邮箱
+                        </el-button>
+                    </el-tab-pane>
 
-                <el-divider content-position="left">即时通讯</el-divider>
-                <div v-for="(im, index) in currData.im_addresses" :key="index" class="form-row">
-                    <el-row :gutter="10">
-                        <el-col :span="6">
-                            <el-select v-model="im.type" placeholder="类型" size="small">
-                                <el-option label="微信" value="微信" />
-                                <el-option label="QQ" value="QQ" />
-                                <el-option label="钉钉" value="钉钉" />
-                                <el-option label="Skype" value="Skype" />
-                            </el-select>
-                        </el-col>
-                        <el-col :span="14">
-                            <el-input v-model="im.address" placeholder="账号" size="small" />
-                        </el-col>
-                        <el-col :span="4">
-                            <el-button text size="small" @click="removeIM(index)">
-                                <sc-icon name="ms-delete" :size="14" />
-                            </el-button>
-                        </el-col>
-                    </el-row>
-                </div>
-                <el-button text size="small" @click="addIM">
-                    <sc-icon name="ms-add" :size="14" /> 添加即时通讯
-                </el-button>
+                    <el-tab-pane label="地址" name="addresses" lazy>
+                        <div v-for="(address, index) in currData.addresses" :key="index" class="form-row">
+                            <el-row :gutter="10">
+                                <el-col :span="5">
+                                    <el-select v-model="address.type" placeholder="类型" size="small">
+                                        <el-option label="工作" value="工作" />
+                                        <el-option label="家庭" value="家庭" />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="9">
+                                    <el-input v-model="address.street" placeholder="街道地址" size="small" />
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-input v-model="address.city" placeholder="城市" size="small" />
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-button text size="small" @click="removeAddress(index)">
+                                        <sc-icon name="ms-delete" :size="14" />
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" style="margin-top: 8px;">
+                                <el-col :span="10">
+                                    <el-input v-model="address.state" placeholder="省/州" size="small" />
+                                </el-col>
+                                <el-col :span="10">
+                                    <el-input v-model="address.zip" placeholder="邮编" size="small" />
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <el-button text size="small" @click="addAddress">
+                            <sc-icon name="ms-add" :size="14" /> 添加地址
+                        </el-button>
+                    </el-tab-pane>
 
-                <el-form-item label="备注">
-                    <el-input v-model="currData.note" type="textarea" :rows="3" placeholder="请输入备注" />
-                </el-form-item>
+                    <el-tab-pane label="社交" name="social" lazy>
+                        <div v-for="(im, index) in currData.im_addresses" :key="index" class="form-row">
+                            <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <el-select v-model="im.type" placeholder="类型" size="small">
+                                        <el-option label="微信" value="微信" />
+                                        <el-option label="QQ" value="QQ" />
+                                        <el-option label="钉钉" value="钉钉" />
+                                        <el-option label="Skype" value="Skype" />
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="14">
+                                    <el-input v-model="im.address" placeholder="账号" size="small" />
+                                </el-col>
+                                <el-col :span="4">
+                                    <el-button text size="small" @click="removeIM(index)">
+                                        <sc-icon name="ms-delete" :size="14" />
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <el-button text size="small" @click="addIM">
+                            <sc-icon name="ms-add" :size="14" /> 添加社交账号
+                        </el-button>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="备注" name="note" lazy>
+                        <el-form-item label="备注" prop="note">
+                            <el-input v-model="currData.note" type="textarea" :rows="8" placeholder="请输入备注" />
+                        </el-form-item>
+                    </el-tab-pane>
+                </el-tabs>
             </el-form>
             <template #footer>
                 <el-button @click="showEditDialog = false">取消</el-button>
@@ -322,14 +396,13 @@
 <script>
 import scIcon from '@/components/scIcon/index.vue';
 
-
 export default {
-	windowOptions: {
-		icon: 'ms-contacts',
-		width: 800,
-		height: 600,
-		resizable: true,
-	},
+    windowOptions: {
+        icon: 'ms-contacts',
+        width: 800,
+        height: 600,
+        resizable: true,
+    },
     name: 'Contacts',
     components: {
         scIcon,
@@ -339,6 +412,10 @@ export default {
             searchQuery: '',
             selectedContact: null,
             showEditDialog: false,
+            editTab: 'base',
+            formRules: {
+                name: [{ required: true, message: '请输入全称', trigger: 'blur' }],
+            },
             currData: this.def_data(),
             contacts: [],
         };
@@ -392,13 +469,13 @@ export default {
                 department: '',
                 website: '',
                 note: '',
-                birthday: '',
                 photo_thumb_uri: '',
                 photo_uri: '',
                 emails: [],
                 phones: [],
                 addresses: [],
-                im_addresses: []
+                im_addresses: [],
+                dates: []
             }
         },
         getContacts() {
@@ -409,6 +486,7 @@ export default {
                     contact.emails = contact.emails || [];
                     contact.addresses = contact.addresses || [];
                     contact.im_addresses = contact.im_addresses || [];
+                    contact.dates = contact.dates || [];
                     contact.color = contact.color || '#000000';
                 });
             });
@@ -449,6 +527,12 @@ export default {
         removeAddress(index) {
             this.currData.addresses.splice(index, 1);
         },
+        addDate() {
+            this.currData.dates.push({ type: '生日', date: '' });
+        },
+        removeDate(index) {
+            this.currData.dates.splice(index, 1);
+        },
         addIM() {
             this.currData.im_addresses.push({ type: '微信', address: '' });
         },
@@ -457,32 +541,45 @@ export default {
         },
         addContact() {
             this.currData = this.def_data();
+            this.editTab = 'base';
             this.showEditDialog = true;
+            this.$nextTick(() => this.$refs.contactForm?.clearValidate());
         },
         editContact() {
             if (!this.selectedContact) return;
             this.currData = this.selectedContact;
+            this.editTab = 'base';
             this.showEditDialog = true;
+            this.$nextTick(() => this.$refs.contactForm?.clearValidate());
+        },
+        fillFullName() {
+            const fullName = `${this.currData.last_name || ''}${this.currData.first_name || ''}`;
+            if (fullName) {
+                this.currData.name = fullName;
+                this.$refs.contactForm?.validateField('name');
+            }
         },
         saveContact() {
-            if (!this.currData.name) {
-                this.$message.warning('请填写姓名');
-                return;
-            }
-            if (!this.$SCM.is_valid_id(this.currData.id)) {
-                this.$API.scmsyscontact.add.post(this.currData).then(() => {
-                    this.currData = this.def_data();
+            this.$refs.contactForm.validate((valid) => {
+                if (!valid) {
+                    this.editTab = 'base';
+                    return;
+                }
+                if (!this.$SCM.is_valid_id(this.currData.id)) {
+                    this.$API.scmsyscontact.add.post(this.currData).then(() => {
+                        this.currData = this.def_data();
+                        this.showEditDialog = false;
+                        this.$message.success('添加成功');
+                        this.getContacts();
+                    });
+                    return;
+                }
+
+                this.$API.scmsyscontact.update.put(this.currData).then(() => {
                     this.showEditDialog = false;
-                    this.$message.success('添加成功');
+                    this.$message.success('保存成功');
                     this.getContacts();
                 });
-                return;
-            }
-
-            this.$API.scmsyscontact.update.put(this.currData).then(() => {
-                this.showEditDialog = false;
-                this.$message.success('保存成功');
-                this.getContacts();
             });
         },
         deleteContact() {
@@ -518,6 +615,11 @@ export default {
 .app-avatar {
     width: 40px;
     height: 40px;
+}
+
+.app-avatar.large {
+    font-size: 24px;
+    font-weight: 600;
 }
 
 .phone {
@@ -634,7 +736,11 @@ export default {
     margin-bottom: 8px;
 }
 
-.el-divider {
-    margin: 16px 0;
+.contact-edit-tabs {
+    min-height: 300px;
+}
+
+.contact-edit-tabs .el-tab-pane {
+    padding-top: 8px;
 }
 </style>
