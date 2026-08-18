@@ -21,7 +21,7 @@
                         </div>
                         <div class="app-info">
                             <span class="app-name">{{ contact.name }}</span>
-                            <span class="phone">{{ contact.phones[0]?.number || '' }}</span>
+                            <span class="phone">{{ contact.phones[0]?.phone || '' }}</span>
                         </div>
                     </div>
                 </div>
@@ -96,8 +96,8 @@
                     <div v-for="(phone, index) in selectedContact.phones" :key="index" class="info-item">
                         <sc-icon name="ms-phone" :size="18" />
                         <span class="label">{{ phone.type || '手机' }}:</span>
-                        <span>{{ phone.number }}</span>
-                        <el-button text size="small" @click="callContact(phone.number)">
+                        <span>{{ phone.phone }}</span>
+                        <el-button text size="small" @click="callContact(phone.phone)">
                             <sc-icon name="ms-call" :size="14" />
                         </el-button>
                     </div>
@@ -246,11 +246,7 @@
                         <div v-for="(date, index) in currData.dates" :key="index" class="form-row">
                             <el-row :gutter="10">
                                 <el-col :span="6">
-                                    <el-select v-model="date.type" placeholder="类型" size="small">
-                                        <el-option label="生日" value="生日" />
-                                        <el-option label="农历生日" value="农历生日" />
-                                        <el-option label="纪念日" value="纪念日" />
-                                    </el-select>
+                                    <sc-select v-model="date.type" placeholder="类型" :data="date_types"></sc-select>
                                 </el-col>
                                 <el-col :span="14">
                                     <el-date-picker v-model="date.date" type="date" placeholder="选择日期" size="small" />
@@ -271,15 +267,10 @@
                         <div v-for="(phone, index) in currData.phones" :key="index" class="form-row">
                             <el-row :gutter="10">
                                 <el-col :span="6">
-                                    <el-select v-model="phone.type" placeholder="类型" size="small">
-                                        <el-option label="手机" value="手机" />
-                                        <el-option label="工作" value="工作" />
-                                        <el-option label="家庭" value="家庭" />
-                                        <el-option label="传真" value="传真" />
-                                    </el-select>
+                                    <sc-select v-model="phone.type" placeholder="类型" :data="phone_types"></sc-select>
                                 </el-col>
                                 <el-col :span="14">
-                                    <el-input v-model="phone.number" placeholder="电话号码" size="small" />
+                                    <el-input v-model="phone.phone" placeholder="电话号码" size="small" />
                                 </el-col>
                                 <el-col :span="4">
                                     <el-button text size="small" @click="removePhone(index)">
@@ -297,10 +288,7 @@
                         <div v-for="(email, index) in currData.emails" :key="index" class="form-row">
                             <el-row :gutter="10">
                                 <el-col :span="6">
-                                    <el-select v-model="email.type" placeholder="类型" size="small">
-                                        <el-option label="工作" value="工作" />
-                                        <el-option label="个人" value="个人" />
-                                    </el-select>
+                                    <sc-select v-model="email.type" placeholder="类型" :data="email_types"></sc-select>
                                 </el-col>
                                 <el-col :span="14">
                                     <el-input v-model="email.address" placeholder="邮箱地址" size="small" />
@@ -321,10 +309,7 @@
                         <div v-for="(address, index) in currData.addresses" :key="index" class="form-row">
                             <el-row :gutter="10">
                                 <el-col :span="5">
-                                    <el-select v-model="address.type" placeholder="类型" size="small">
-                                        <el-option label="工作" value="工作" />
-                                        <el-option label="家庭" value="家庭" />
-                                    </el-select>
+                                    <sc-select v-model="address.type" placeholder="类型" :data="address_types"></sc-select>
                                 </el-col>
                                 <el-col :span="9">
                                     <el-input v-model="address.street" placeholder="街道地址" size="small" />
@@ -356,12 +341,7 @@
                         <div v-for="(im, index) in currData.im_addresses" :key="index" class="form-row">
                             <el-row :gutter="10">
                                 <el-col :span="6">
-                                    <el-select v-model="im.type" placeholder="类型" size="small">
-                                        <el-option label="微信" value="微信" />
-                                        <el-option label="QQ" value="QQ" />
-                                        <el-option label="钉钉" value="钉钉" />
-                                        <el-option label="Skype" value="Skype" />
-                                    </el-select>
+                                    <sc-select v-model="im.type" placeholder="类型" :data="im_types"></sc-select>
                                 </el-col>
                                 <el-col :span="14">
                                     <el-input v-model="im.address" placeholder="账号" size="small" />
@@ -418,6 +398,11 @@ export default {
             },
             currData: this.def_data(),
             contacts: [],
+            date_types: [],
+            phone_types: [],
+            email_types: [],
+            address_types: [],
+            im_types: [],
         };
     },
     computed: {
@@ -425,7 +410,7 @@ export default {
             const filtered = this.searchQuery
                 ? this.contacts.filter((c) =>
                     c.name.includes(this.searchQuery) ||
-                    c.phones.some(p => p.number.includes(this.searchQuery)) ||
+                    c.phones.some(p => p.phone.includes(this.searchQuery)) ||
                     c.emails.some(e => e.address.includes(this.searchQuery))
                 )
                 : this.contacts;
@@ -452,6 +437,13 @@ export default {
     },
     mounted() {
         this.getContacts();
+
+        this.$SCM.list_dic(this.date_types, 'date_type', false);
+        this.$SCM.list_dic(this.phone_types, 'date_type', false);
+        this.$SCM.list_dic(this.phone_types, 'phone_type', false);
+        this.$SCM.list_dic(this.email_types, 'email_type', false);
+        this.$SCM.list_dic(this.address_types, 'address_type', false);
+        this.$SCM.list_dic(this.im_types, 'social_type', false);
     },
     methods: {
         def_data() {
@@ -479,7 +471,7 @@ export default {
             }
         },
         getContacts() {
-            this.$API.scmsyscontact.list.get().then(res => {
+            this.$API.scmsyscontacts.list.get().then(res => {
                 this.contacts = res.data;
                 this.contacts.forEach(contact => {
                     contact.phones = contact.phones || [];
@@ -504,13 +496,13 @@ export default {
         },
         sendSMS() {
             if (this.selectedContact?.phones?.length > 0) {
-                this.$message.info(`打开短信应用发送到 ${this.selectedContact.phones[0].number}...`);
+                this.$message.info(`打开短信应用发送到 ${this.selectedContact.phones[0].phone}...`);
             } else {
                 this.$message.warning('该联系人没有电话号码');
             }
         },
         addPhone() {
-            this.currData.phones.push({ type: '手机', number: '' });
+            this.currData.phones.push({ type: '手机', phone: '' });
         },
         removePhone(index) {
             this.currData.phones.splice(index, 1);
@@ -566,7 +558,7 @@ export default {
                     return;
                 }
                 if (!this.$SCM.is_valid_id(this.currData.id)) {
-                    this.$API.scmsyscontact.add.post(this.currData).then(() => {
+                    this.$API.scmsyscontacts.add.post(this.currData).then(() => {
                         this.currData = this.def_data();
                         this.showEditDialog = false;
                         this.$message.success('添加成功');
@@ -575,7 +567,7 @@ export default {
                     return;
                 }
 
-                this.$API.scmsyscontact.update.put(this.currData).then(() => {
+                this.$API.scmsyscontacts.update.put(this.currData).then(() => {
                     this.showEditDialog = false;
                     this.$message.success('保存成功');
                     this.getContacts();
@@ -588,7 +580,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning',
             }).then(() => {
-                this.$API.scmsyscontact.delete.delete(this.selectedContact.id).then(() => {
+                this.$API.scmsyscontacts.delete.delete(this.selectedContact.id).then(() => {
                     this.showEditDialog = false;
                     this.$message.success('删除成功');
                     this.getContacts();

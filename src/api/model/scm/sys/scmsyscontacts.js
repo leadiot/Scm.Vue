@@ -2,77 +2,77 @@ import config from "@/config";
 import http from "@/utils/request";
 export default {
 	page: {
-		url: `${config.API_URL}/scmsyscontact/pages`,
+		url: `${config.API_URL}/scmsyscontacts/pages`,
 		name: "查询",
 		get: async function (params) {
 			return await http.get(this.url, params);
 		},
 	},
 	list: {
-		url: `${config.API_URL}/scmsyscontact/list`,
+		url: `${config.API_URL}/scmsyscontacts/list`,
 		name: "列表",
 		get: async function (params) {
 			return await http.get(this.url, params);
 		},
 	},
 	model: {
-		url: `${config.API_URL}/scmsyscontact/`,
+		url: `${config.API_URL}/scmsyscontacts/`,
 		name: "列表",
 		get: async function (params) {
 			return await http.get(this.url + params);
 		},
 	},
 	view: {
-		url: `${config.API_URL}/scmsyscontact/view/`,
+		url: `${config.API_URL}/scmsyscontacts/view/`,
 		name: "查看",
 		get: async function (params) {
 			return await http.get(this.url + params);
 		},
 	},
 	edit: {
-		url: `${config.API_URL}/scmsyscontact/edit/`,
+		url: `${config.API_URL}/scmsyscontacts/edit/`,
 		name: "编辑",
 		get: async function (params) {
 			return await http.get(this.url + params);
 		},
 	},
 	add: {
-		url: `${config.API_URL}/scmsyscontact`,
+		url: `${config.API_URL}/scmsyscontacts`,
 		name: "新增",
 		post: async function (data) {
 			return await http.post(this.url, data);
 		},
 	},
 	update: {
-		url: `${config.API_URL}/scmsyscontact`,
+		url: `${config.API_URL}/scmsyscontacts`,
 		name: "更新",
 		put: async function (data) {
 			return await http.put(this.url, data);
 		},
 	},
 	save: {
-		url: `${config.API_URL}/scmsyscontact/save`,
+		url: `${config.API_URL}/scmsyscontacts/save`,
 		name: "保存",
 		post: async function (data) {
 			return await http.post(this.url, data);
 		},
 	},
 	status: {
-		url: `${config.API_URL}/scmsyscontact/status`,
+		url: `${config.API_URL}/scmsyscontacts/status`,
 		name: "状态",
 		post: async function (data) {
 			return await http.post(this.url, data);
 		},
 	},
 	delete: {
-		url: `${config.API_URL}/scmsyscontact`,
+		url: `${config.API_URL}/scmsyscontacts`,
 		name: "删除",
 		delete: async function (data) {
 			return await http.delete(this.url + "?ids=" + data);
 		},
 	},
 	upload: {
-		url: `${config.API_URL}/scmsyscontact/upload`,
+		url: `${config.API_URL}/scmsyscontacts/upload`,
 		name: "上传",
 		post: async function (data) {
 			return await http.post(this.url, data);

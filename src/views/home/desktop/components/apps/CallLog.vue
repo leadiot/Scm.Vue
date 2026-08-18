@@ -266,7 +266,7 @@ export default {
 			});
 		},
 		listContacts() {
-			this.$API.scmsyscontact.list.get().then((res) => {
+			this.$API.scmsyscontacts.list.get().then((res) => {
 				if (res.code === 200) {
 					this.contacts = res.data || [];
 				}
