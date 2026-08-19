@@ -47,6 +47,10 @@
 
                 <div class="detail-section">
                     <div class="section-title">基本信息</div>
+                    <div class="info-item">
+                        <span class="label">来源终端:</span>
+                        <span class="value">{{ selectedContact.terminal_name }}</span>
+                    </div>
                     <div class="info-item" v-if="selectedContact.last_name">
                         <span class="label">姓:</span>
                         <span class="value">{{ selectedContact.last_name }}</span>

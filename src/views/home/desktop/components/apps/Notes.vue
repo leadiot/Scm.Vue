@@ -44,109 +44,18 @@
 		<!-- 右侧编辑区 -->
 		<div class="notes-main">
 			<template v-if="currentNote">
-				<!-- 工具栏 -->
-				<div class="notepad-toolbar">
-					<div class="toolbar-group">
-						<el-dropdown trigger="click" @command="setFontSize" @visible-change="onDropdownVisible">
-							<el-button text size="small">
-								字号 <sc-icon name="ms-arrow_drop_down" :size="16" />
-							</el-button>
-							<template #dropdown>
-								<el-dropdown-menu>
-									<el-dropdown-item v-for="size in fontSizes" :key="size" :command="size">
-										{{ size }}px
-									</el-dropdown-item>
-								</el-dropdown-menu>
-							</template>
-						</el-dropdown>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="execCommand('bold')" title="加粗">
-							<sc-icon name="ms-format_bold" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('italic')" title="斜体">
-							<sc-icon name="ms-format_italic" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('underline')" title="下划线">
-							<sc-icon name="ms-format_underlined" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('strikeThrough')" title="删除线">
-							<sc-icon name="ms-strikethrough_s" :size="18" />
-						</el-button>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<div @mousedown="saveColorRange">
-							<el-color-picker v-model="textColor" size="small" @change="setTextColor" title="文字颜色" />
-						</div>
-						<div @mousedown="saveColorRange">
-							<el-color-picker v-model="bgColor" size="small" @change="setBgColor" title="背景颜色" />
-						</div>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="execCommand('justifyLeft')" title="左对齐">
-							<sc-icon name="ms-format_align_left" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('justifyCenter')" title="居中">
-							<sc-icon name="ms-format_align_center" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('justifyRight')" title="右对齐">
-							<sc-icon name="ms-format_align_right" :size="18" />
-						</el-button>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="execCommand('insertUnorderedList')" title="无序列表">
-							<sc-icon name="ms-format_list_bulleted" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('insertOrderedList')" title="有序列表">
-							<sc-icon name="ms-format_list_numbered" :size="18" />
-						</el-button>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="execCommand('undo')" title="撤销">
-							<sc-icon name="ms-undo" :size="18" />
-						</el-button>
-						<el-button text size="small" @click="execCommand('redo')" title="重做">
-							<sc-icon name="ms-redo" :size="18" />
-						</el-button>
-					</div>
-
-					<div class="toolbar-divider"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="clearFormat" title="清除格式">
-							<sc-icon name="ms-format_clear" :size="18" />
-						</el-button>
-					</div>
-
-					<div class="toolbar-spacer"></div>
-
-					<div class="toolbar-group">
-						<el-button text size="small" @click="saveNote" type="primary" :disabled="!hasChanges">
-							<sc-icon name="ms-save" :size="18" style="margin-right: 4px;" />
-							保存
-						</el-button>
-					</div>
+				<!-- 标题栏 -->
+				<div class="note-title-bar">
+					<el-input v-model="currentNote.title" placeholder="请输入标题" size="small" maxlength="50" clearable />
+					<el-button text size="small" @click="saveNote" type="primary" :disabled="!hasChanges">
+						<sc-icon name="ms-save" :size="18" style="margin-right: 4px;" />
+						保存
+					</el-button>
 				</div>
 
 				<!-- 编辑区 -->
-				<div class="notepad-editor" ref="editorRef" contenteditable="true" @input="onEditorInput"
-					@paste="onPaste">
-				</div>
+				<textarea ref="editorRef" v-model="currentNote.content" class="notepad-editor"
+					placeholder="开始输入内容..."></textarea>
 
 				<!-- 状态栏 -->
 				<div class="notepad-status">
@@ -191,13 +100,8 @@ export default {
 			noteList: [],
 			currentNoteId: null,
 			currentNote: null,
+			originalTitle: '',
 			originalContent: '',
-			bgColor: '#ffff00',
-			textColor: '#333333',
-			fontSizes: [12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72],
-			wordCount: 0,
-			savedRange: null,
-			savedColorRange: null,
 			searchKeyword: '',
 			loading: false,
 		};
@@ -210,150 +114,24 @@ export default {
 			const keyword = this.searchKeyword.toLowerCase();
 			return this.noteList.filter(note => {
 				const title = (note.title || '').toLowerCase();
-				const content = this.getPlainText(note.content).toLowerCase();
+				const content = (note.content || '').toLowerCase();
 				return title.includes(keyword) || content.includes(keyword);
 			});
 		},
 		hasChanges() {
-			return this.currentNote && this.currentNote.content !== this.originalContent;
+			if (!this.currentNote) {
+				return false;
+			}
+			return this.currentNote.title !== this.originalTitle || this.currentNote.content !== this.originalContent;
+		},
+		wordCount() {
+			return this.currentNote ? (this.currentNote.content || '').length : 0;
 		},
 	},
 	methods: {
-		execCommand(command, value = null) {
-			document.execCommand(command, false, value);
-			this.$refs.editorRef?.focus();
-		},
-		onDropdownVisible(visible) {
-			if (visible) {
-				const selection = window.getSelection();
-				if (selection.rangeCount > 0) {
-					this.savedRange = selection.getRangeAt(0).cloneRange();
-				}
-			}
-		},
-		setFontSize(size) {
-			if (!this.savedRange || this.savedRange.collapsed) {
-				this.$message.warning('请先选择要修改字号的文字');
-				return;
-			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedRange);
-
-			const span = document.createElement('span');
-			span.style.fontSize = size + 'px';
-			span.appendChild(this.savedRange.extractContents());
-			this.savedRange.insertNode(span);
-
-			this.savedRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
-		},
-		saveColorRange() {
-			const selection = window.getSelection();
-			if (selection.rangeCount > 0) {
-				this.savedColorRange = selection.getRangeAt(0).cloneRange();
-			}
-		},
-		setTextColor(color) {
-			if (!this.savedColorRange || this.savedColorRange.collapsed) {
-				this.$message.warning('请先选择要修改颜色的文字');
-				return;
-			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedColorRange);
-
-			document.execCommand('foreColor', false, color);
-
-			this.savedColorRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
-		},
-		setBgColor(color) {
-			if (!this.savedColorRange || this.savedColorRange.collapsed) {
-				this.$message.warning('请先选择要修改背景色的文字');
-				return;
-			}
-
-			const selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(this.savedColorRange);
-
-			document.execCommand('hiliteColor', false, color);
-
-			this.savedColorRange = null;
-			this.$refs.editorRef?.focus();
-			this.onEditorInput();
-		},
-		clearFormat() {
-			document.execCommand('removeFormat', false, null);
-		},
-		onEditorInput() {
-			if (this.currentNote && this.$refs.editorRef) {
-				this.currentNote.content = this.$refs.editorRef.innerHTML;
-				this.currentNote.title = this.getTitle(this.currentNote.content);
-				this.wordCount = this.$refs.editorRef.innerText.length;
-			}
-		},
-		onPaste(e) {
-			e.preventDefault();
-			const text = e.clipboardData.getData('text/plain');
-			document.execCommand('insertText', false, text);
-		},
-		getTitle(html) {
-			if (!html) return '未命名';
-			const div = document.createElement('div');
-			div.innerHTML = html;
-
-			let firstLine = '';
-			let currentNode = div.firstChild;
-
-			while (currentNode) {
-				if (currentNode.nodeType === 3) {
-					const text = currentNode.textContent;
-					const newlineIndex = text.indexOf('\n');
-					if (newlineIndex >= 0) {
-						firstLine += text.substring(0, newlineIndex);
-						break;
-					}
-					firstLine += text;
-				} else if (currentNode.nodeType === 1) {
-					const tagName = currentNode.tagName.toLowerCase();
-					if (tagName === 'br') {
-						break;
-					}
-					if (['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'].includes(tagName)) {
-						if (firstLine) {
-							break;
-						}
-					}
-					const childText = currentNode.textContent || '';
-					const newlineIndex = childText.indexOf('\n');
-					if (newlineIndex >= 0) {
-						firstLine += childText.substring(0, newlineIndex);
-						break;
-					}
-					firstLine += childText;
-				}
-				currentNode = currentNode.nextSibling;
-			}
-
-			firstLine = firstLine.trim().substring(0, 20);
-			return firstLine || '未命名';
-		},
-		getPreview(html) {
-			if (!html) return '';
-			const text = this.getPlainText(html);
-			return text.substring(0, 50);
-		},
-		getPlainText(html) {
-			if (!html) return '';
-			const div = document.createElement('div');
-			div.innerHTML = html;
-			return div.textContent || div.innerText || '';
+		getPreview(content) {
+			if (!content) return '';
+			return content.substring(0, 50);
 		},
 		formatDate(date) {
 			if (!date) return '';
@@ -403,14 +181,11 @@ export default {
 			}
 
 			this.currentNote = res.data;
+			this.originalTitle = this.currentNote.title || '';
 			this.originalContent = this.currentNote.content || '';
 
 			this.$nextTick(() => {
-				if (this.$refs.editorRef) {
-					this.$refs.editorRef.innerHTML = this.currentNote.content || '';
-					this.wordCount = this.$refs.editorRef.innerText.length;
-					this.$refs.editorRef.focus();
-				}
+				this.$refs.editorRef?.focus();
 			});
 		},
 		async createNote() {
@@ -453,10 +228,17 @@ export default {
 				return false;
 			}
 
+			const title = (this.currentNote.title || '').trim();
+			if (!title) {
+				this.$message.warning('标题不能为空');
+				return false;
+			}
+			this.currentNote.title = title;
+
 			var data = {
 				id: this.currentNote.id,
 				types: this.currentNote.types || 1,
-				title: this.currentNote.title,
+				title: title,
 				content: this.currentNote.content,
 			};
 
@@ -473,7 +255,8 @@ export default {
 			}
 
 			this.currentNote = { ...this.currentNote, ...res.data };
-			this.originalContent = this.currentNote.content;
+			this.originalTitle = this.currentNote.title || '';
+			this.originalContent = this.currentNote.content || '';
 			this.$message.success('保存成功');
 		},
 		async deleteNote(note) {
@@ -495,6 +278,7 @@ export default {
 					if (this.currentNoteId === note.id) {
 						this.currentNoteId = null;
 						this.currentNote = null;
+						this.originalTitle = '';
 						this.originalContent = '';
 					}
 
@@ -650,48 +434,37 @@ export default {
 	font-size: 16px;
 }
 
-/* 工具栏 */
-.notepad-toolbar {
+/* 标题栏 */
+.note-title-bar {
 	display: flex;
 	align-items: center;
+	gap: 8px;
 	padding: 8px 12px;
 	background-color: var(--color-bg-secondary);
 	border-bottom: 1px solid var(--color-border-light);
-	flex-wrap: wrap;
-	gap: 4px;
 }
 
-.toolbar-group {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-}
-
-.toolbar-divider {
-	width: 1px;
-	height: 20px;
-	background-color: var(--color-border);
-	margin: 0 8px;
-}
-
-.toolbar-spacer {
+.note-title-bar .el-input {
 	flex: 1;
 }
 
 /* 编辑区 */
 .notepad-editor {
 	flex: 1;
+	width: 100%;
 	padding: 20px;
 	overflow-y: auto;
 	outline: none;
+	border: none;
+	resize: none;
+	font-family: inherit;
 	font-size: 14px;
 	line-height: 1.8;
 	color: var(--color-text);
 	background-color: var(--color-bg);
 }
 
-.notepad-editor:empty::before {
-	content: '开始输入内容...';
+.notepad-editor::placeholder {
 	color: var(--color-text-hint);
 }
 
@@ -704,15 +477,5 @@ export default {
 	border-top: 1px solid var(--color-border-light);
 	font-size: 12px;
 	color: var(--color-text-hint);
-}
-
-:deep(.el-color-picker) {
-	vertical-align: middle;
-}
-
-:deep(.el-color-picker__trigger) {
-	width: 24px !important;
-	height: 24px !important;
-	padding: 2px;
 }
 </style>
