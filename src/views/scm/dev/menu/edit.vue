@@ -7,9 +7,6 @@
 			<el-col :lg="12">
 				<h2>{{ form.namec || "新增菜单" }}</h2>
 				<el-form ref="dialogForm" :model="form" :rules="rules" label-width="80px" label-position="left">
-					<el-form-item label="显示语言" prop="lang">
-						<sc-select v-model="form.lang" placeholder="请选择显示语言" :data="lang_list" />
-					</el-form-item>
 					<el-form-item label="终端类型" prop="client">
 						<sc-select v-model="form.client" placeholder="请选择终端类型" :data="client_list" />
 					</el-form-item>
@@ -191,13 +188,9 @@ export default {
 		return {
 			form: this.def_data(),
 			client_list: [this.$SCM.OPTION_ONE_INT],
-			lang_list: [this.$SCM.OPTION_ONE],
 			rules: {
 				client: [
-					{ required: true, trigger: "change", message: "请选择显示语言", pattern: this.$SCM.REGEX_INT },
-				],
-				lang: [
-					{ required: true, trigger: "change", message: "请选择显示语言" },
+					{ required: true, trigger: "change", message: "请选择终端类型", pattern: this.$SCM.REGEX_INT },
 				],
 				types: [
 					{ required: true, trigger: "change", type: 'number', min: 1, message: "菜单类型不能为空" },
@@ -224,14 +217,12 @@ export default {
 	},
 	mounted() {
 		this.$SCM.list_dic(this.client_list, 'client_type', false);
-		this.listLang();
 	},
 	methods: {
 		def_data() {
 			return {
 				id: "0",
 				client: this.$SCM.ID_ONE_INT,
-				lang: "",
 				types: 1,
 				namec: "",
 				codec: "",
@@ -253,13 +244,6 @@ export default {
 				show_in_taskbar: true,
 				api: [],
 			}
-		},
-		async listLang() {
-			var res = await this.$API.scmsyslang.option.get();
-			if (res.code == 200) {
-				this.lang_list = res.data;
-			}
-			this.lang_list = this.$SCM.option_one(this.lang_list);
 		},
 		//保存
 		async save() {
