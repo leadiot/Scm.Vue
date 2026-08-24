@@ -323,7 +323,7 @@ export default {
 		themeMacOSSonoma: 'macOS Sonoma',
 		themeMacOSSequoia: 'macOS Sequoia',
 		themeMacOSTahoe: 'macOS Tahoe',
-		aboutlogan: '迅速な開発フレームワーク、企業に効率的なソリューションを提供',
+		slogan: '迅速な開発フレームワーク、企業に効率的なソリューションを提供',
 		// メッセージ
 		logoutConfirm: '現在のユーザーからログアウトしますか？',
 		tip: 'ヒント',

@@ -333,7 +333,7 @@ export default {
 		themeMacOSSonoma: "macOS Sonoma",
 		themeMacOSSequoia: "macOS Sequoia",
 		themeMacOSTahoe: "macOS Tahoe",
-		aboutlogan: "Rapid development framework, providing efficient solutions for enterprises",
+		slogan: "Rapid development framework, providing efficient solutions for enterprises",
 		// Messages
 		logoutConfirm: "Confirm to logout current user?",
 		tip: "Tip",

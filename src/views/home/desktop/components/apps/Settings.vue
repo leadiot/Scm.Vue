@@ -37,15 +37,15 @@
                             <p class="card-desc">{{ $t('desktop.styleDesc') }}</p>
                             <el-radio-group v-model="localConfig.style" @change="onStyleChange">
                                 <el-radio-button value="system">
-                                    <img src="/public/images/scm.svg"/>
+                                    <img src="/public/images/scm.svg" />
                                     {{ $t('desktop.systemStyle') }}
                                 </el-radio-button>
                                 <el-radio-button value="windows">
-                                    <img src="/public/images/windows.svg"/>
+                                    <img src="/public/images/windows.svg" />
                                     {{ $t('desktop.windowsStyle') }}
                                 </el-radio-button>
                                 <el-radio-button value="macos">
-                                    <img src="/public/images/macos.svg"/>
+                                    <img src="/public/images/macos.svg" />
                                     {{ $t('desktop.macosStyle') }}
                                 </el-radio-button>
                             </el-radio-group>
@@ -181,8 +181,8 @@
                                 <div class="update-status">
                                     <sc-icon v-if="updateStatus === 'checking'" name="ms-refresh" :size="20"
                                         class="spin" />
-                                    <sc-icon v-else-if="updateStatus === 'downloading'" name="ms-cloud_download" :size="20"
-                                        class="spin" />
+                                    <sc-icon v-else-if="updateStatus === 'downloading'" name="ms-cloud_download"
+                                        :size="20" class="spin" />
                                     <sc-icon v-else-if="updateStatus === 'downloaded'" name="ms-check_circle" :size="20"
                                         class="text-success" />
                                     <sc-icon v-else-if="updateStatus === 'upgrading'" name="ms-update" :size="20"
@@ -203,21 +203,20 @@
                                 </div>
 
                                 <div class="update-buttons">
-                                    <el-button v-if="updateStatus === 'idle' || updateStatus === 'latest' || updateStatus === 'error'" 
-                                        :loading="updateStatus === 'checking'"
-                                        type="primary" @click="checkUpdate">
+                                    <el-button
+                                        v-if="updateStatus === 'idle' || updateStatus === 'latest' || updateStatus === 'error'"
+                                        :loading="updateStatus === 'checking'" type="primary" @click="checkUpdate">
                                         {{ $t('desktop.checkUpdate') }}
                                     </el-button>
-                                    <el-button v-if="updateStatus === 'available'" 
-                                        type="success" @click="downloadUpdate">
+                                    <el-button v-if="updateStatus === 'available'" type="success"
+                                        @click="downloadUpdate">
                                         {{ $t('desktop.download') }}
                                     </el-button>
-                                    <el-button v-if="updateStatus === 'downloaded'" 
-                                        type="warning" @click="upgradeUpdate">
+                                    <el-button v-if="updateStatus === 'downloaded'" type="warning"
+                                        @click="upgradeUpdate">
                                         {{ $t('desktop.executeUpdate') }}
                                     </el-button>
-                                    <el-button v-if="updateStatus === 'upgraded'" 
-                                        type="info" @click="reloadApp">
+                                    <el-button v-if="updateStatus === 'upgraded'" type="info" @click="reloadApp">
                                         {{ $t('desktop.restart') }}
                                     </el-button>
                                 </div>
@@ -255,12 +254,12 @@
 import scIcon from '@/components/scIcon/index.vue';
 
 export default {
-	windowOptions: {
-		icon: 'ms-settings',
-		width: 900,
-		height: 620,
-		resizable: true,
-	},
+    windowOptions: {
+        icon: 'ms-settings',
+        width: 900,
+        height: 620,
+        resizable: true,
+    },
     name: 'Settings',
     components: { scIcon },
     props: {
@@ -313,26 +312,8 @@ export default {
         },
     },
     mounted() {
-        this.appInfo = {
-            code: this.appCode,
-            name: 'Scm.Net',
-            slogan: this.$t('desktop.aboutlogan'),
-            project: 'Scm.Net',
-            website: 'http://www.c-scm.net',
-            content: this.$t('desktop.aboutDesc'),
-            email: 'contact@cscm.net',
-            qchat: '1234567890'
-        };
-        this.verInfo = {
-            major: 1,
-            minor: 0,
-            patch: 0,
-            build: 0,
-            ver_info: '1.0.0',
-            ver_code: '1.0.0',
-            ver_date: '2023-01-01',
-            content: ''
-        };
+        this.loadAppInfo();
+        this.loadVerInfo();
     },
     methods: {
         cloneConfig(cfg) {
@@ -423,6 +404,43 @@ export default {
             this.updateConfig();
             this.$message.info(this.$t('desktop.resetSuccess'));
         },
+        async loadAppInfo() {
+            var res = await this.$API.scmsysupgrade.appInfo.get();
+            if (res != null && res.code == 200) {
+                this.appInfo = res.data;
+                return;
+            }
+
+            this.appInfo = {
+                code: this.appCode,
+                name: 'Scm.Net',
+                slogan: this.$t('desktop.slogan'),
+                project: 'Scm.Net',
+                content: this.$t('desktop.content'),
+                homepage: 'http://www.c-scm.net',
+                helppage: 'https://gitee.com/leadiot/scm.net',
+                email: 'contact@cscm.net',
+                qchat: '1234567890'
+            };
+        },
+        async loadVerInfo() {
+            var res = await this.$API.scmsysupgrade.verInfo.get();
+            if (res != null && res.code == 200) {
+                this.verInfo = res.data;
+                return;
+            }
+
+            this.verInfo = {
+                major: 1,
+                minor: 0,
+                patch: 0,
+                build: 0,
+                ver_info: '1.0.0',
+                ver_code: '1.0.0',
+                ver_date: '2023-01-01',
+                content: ''
+            };
+        },
         async checkUpdate() {
             this.updateStatus = 'checking';
             this.updateMessage = this.$t('desktop.checkingUpdate');
@@ -465,7 +483,7 @@ export default {
             //     const res = await this.$API.scmsysupgrade.download.get(this.latestVersion);
             //     clearInterval(progressInterval);
             //     this.downloadProgress = 100;
-                
+
             //     if (res.code === 200 && res.data) {
             //         this.updateStatus = 'downloaded';
             //         this.updateMessage = this.$t('desktop.downloadComplete');
@@ -507,10 +525,10 @@ export default {
             }, 1500);
         },
         openWebsite() {
-            window.open('http://www.c-scm.net', '_blank');
+            window.open(this.appInfo.homepage || 'http://www.c-scm.net', '_blank');
         },
         openHelp() {
-            window.open('https://gitee.com/leadiot/scm.net', '_blank');
+            window.open(this.appInfo.helppage || 'https://gitee.com/leadiot/scm.net', '_blank');
         },
     },
 };
