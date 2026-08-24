@@ -29,7 +29,7 @@ export default {
         init() {
         },
         async readData() {
-            var res = await this.$API.scmabout.model.get({ info: 'index' });
+            var res = await this.$API.scmabout.info.get({ section: 'index' });
             if (!res || res.code != 200) {
                 return;
             }
