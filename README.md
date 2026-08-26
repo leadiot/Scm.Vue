@@ -279,7 +279,7 @@ Scm.Vue/
 ### 云桌面模式
 | 功能 | 截图 |
 | --- | --- |
-| 桌面首页 | ![用户首页](screenshots/desktop/wos-02-desktop-default.png) |
+| 桌面首页 | ![用户首页](screenshots/desktop/wos-home.png) |
 | 云文件管理 | ![文件管理](screenshots/desktop/wos-09-cloud.png) |
 | 记事本 | ![记事](screenshots/desktop/wos-10-notepad.png) |
 | 图片查看 | ![图像](screenshots/desktop/wos-11-image.png) |
@@ -290,17 +290,20 @@ Scm.Vue/
 ### 桌面主题
 | 主题 | 截图 |
 | --- | --- |
-| 主题设置 | ![主题设置](screenshots/desktop/desktop-theme-setting.png) |
-| Windows 11 | ![Win11](screenshots/desktop/desktop-theme_win11.png) |
-| Windows 10 | ![Win10](screenshots/desktop/desktop-theme_win10.png) |
-| Windows 8 | ![Win8](screenshots/desktop/desktop-theme_win8.png) |
-| Windows 7 | ![Win7](screenshots/desktop/desktop-theme_win7.png) |
-| Windows Vista | ![Vista](screenshots/desktop/desktop-theme_winvista.png) |
-| Windows XP | ![WinXP](screenshots/desktop/desktop-theme_winxp.png) |
-| Windows 2000 | ![Win2K](screenshots/desktop/desktop-theme_win2k.png) |
-| Windows 98 | ![Win98](screenshots/desktop/desktop-theme_win98.png) |
-| Windows 95 | ![Win95](screenshots/desktop/desktop-theme_win95.png) |
-| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/desktop-theme_mactahoe.png) |
+| 主题设置 | ![主题设置](screenshots/desktop/wos-settings.png) |
+| Windows 11 | ![Win11](screenshots/desktop/win_11.png) |
+| Windows 10 | ![Win10](screenshots/desktop/win_10.png) |
+| Windows 8 | ![Win8](screenshots/desktop/win_8.png) |
+| Windows 7 | ![Win7](screenshots/desktop/win_7.png) |
+| Windows Vista | ![Vista](screenshots/desktop/win_vista.png) |
+| Windows XP | ![WinXP](screenshots/desktop/win_xp.png) |
+| Windows 2000 | ![Win2K](screenshots/desktop/win_2k.png) |
+| Windows 98 | ![Win98](screenshots/desktop/win_98.png) |
+| Windows 95 | ![Win95](screenshots/desktop/win_95.png) |
+| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/mac_tahoe.png) |
+| macOS Sequoia | ![macOS Sequoia](screenshots/desktop/mac_sequoia.png) |
+| macOS Sonoma | ![macOS Sonoma](screenshots/desktop/mac_sonoma.png) |
+| macOS Ventura | ![macOS Ventura](screenshots/desktop/mac_ventura.png) |
 
 ---
 
