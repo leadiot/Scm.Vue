@@ -5,6 +5,10 @@
 <h1 align="center">Scm.Vue</h1>
 
 <p align="center">
+  <strong>中文</strong> | <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <a href="https://gitee.com/leadiot/scm.vue">
     <img src="https://gitee.com/leadiot/scm.vue/badge/star.svg?theme=dark" alt="Gitee Stars" />
   </a>
