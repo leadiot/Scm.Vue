@@ -268,6 +268,11 @@ Scm.Vue/
 | 系统监控 | ![系统监控](screenshots/control/control-22-monitor.png) |
 | 在线文档 | ![在线文档](screenshots/control/control-22-docs.png) |
 
+### 大屏幕模式
+| 功能 | 截图 |
+| --- | --- |
+| 控制台首页 | ![后台首页](screenshots/monitor/monitor-01.png) |
+
 ### 云桌面模式
 | 功能 | 截图 |
 | --- | --- |
@@ -278,6 +283,21 @@ Scm.Vue/
 | 音频播放 | ![音频](screenshots/desktop/wos-12-audio.png) |
 | 待办事项 | ![待办](screenshots/desktop/wos-13-gtd.png) |
 | 终端管理 | ![终端管理](screenshots/desktop/wos-14-terminal.png) |
+
+### 桌面主题
+| 主题 | 截图 |
+| --- | --- |
+| 主题设置 | ![主题设置](screenshots/desktop/desktop-theme-setting.png) |
+| Windows 11 | ![Win11](screenshots/desktop/desktop-theme_win11.png) |
+| Windows 10 | ![Win10](screenshots/desktop/desktop-theme_win10.png) |
+| Windows 8 | ![Win8](screenshots/desktop/desktop-theme_win8.png) |
+| Windows 7 | ![Win7](screenshots/desktop/desktop-theme_win7.png) |
+| Windows Vista | ![Vista](screenshots/desktop/desktop-theme_winvista.png) |
+| Windows XP | ![WinXP](screenshots/desktop/desktop-theme_winxp.png) |
+| Windows 2000 | ![Win2K](screenshots/desktop/desktop-theme_win2k.png) |
+| Windows 98 | ![Win98](screenshots/desktop/desktop-theme_win98.png) |
+| Windows 95 | ![Win95](screenshots/desktop/desktop-theme_win95.png) |
+| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/desktop-theme_mactahoe.png) |
 
 ---
 

@@ -267,6 +267,11 @@ Scm.Vue/
 | System Monitor | ![System Monitor](screenshots/web-07-monitor.png) |
 | Online Docs | ![Online Docs](screenshots/web-08-docs.png) |
 
+### Monitor Mode
+| Feature | Screenshot |
+| --- | --- |
+| Dashboard | ![Dashboard](screenshots/monitor/monitor-01.png) |
+
 ### Cloud Desktop Mode
 | Feature | Screenshot |
 | --- | --- |
@@ -277,6 +282,21 @@ Scm.Vue/
 | Audio Player | ![Audio Player](screenshots/wos-12-audio.png) |
 | Todo List | ![Todo List](screenshots/wos-13-gtd.png) |
 | Terminal | ![Terminal](screenshots/wos-14-terminal.png) |
+
+### Desktop Themes
+| Theme | Screenshot |
+| --- | --- |
+| Theme Settings | ![Theme Settings](screenshots/desktop/desktop-theme-setting.png) |
+| Windows 11 | ![Win11](screenshots/desktop/desktop-theme_win11.png) |
+| Windows 10 | ![Win10](screenshots/desktop/desktop-theme_win10.png) |
+| Windows 8 | ![Win8](screenshots/desktop/desktop-theme_win8.png) |
+| Windows 7 | ![Win7](screenshots/desktop/desktop-theme_win7.png) |
+| Windows Vista | ![Vista](screenshots/desktop/desktop-theme_winvista.png) |
+| Windows XP | ![WinXP](screenshots/desktop/desktop-theme_winxp.png) |
+| Windows 2000 | ![Win2K](screenshots/desktop/desktop-theme_win2k.png) |
+| Windows 98 | ![Win98](screenshots/desktop/desktop-theme_win98.png) |
+| Windows 95 | ![Win95](screenshots/desktop/desktop-theme_win95.png) |
+| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/desktop-theme_mactahoe.png) |
 
 ---
 
