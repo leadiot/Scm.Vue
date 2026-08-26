@@ -80,6 +80,57 @@
 
 ---
 
+## 🎨 界面预览
+
+### 登录页
+![用户登录](screenshots/01-login.png)
+
+### 工作台模式
+| 功能 | 截图 |
+| --- | --- |
+| 控制台首页 | ![后台首页](screenshots/control/control-01-home-light.png) |
+| 用户管理 | ![用户管理](screenshots/control/control-19-user.png) |
+| 文件管理 | ![文件管理](screenshots/control/control-16-file.png) |
+| 日程管理 | ![日程管理](screenshots/control/control-20-calendar.png) |
+| 电子邮件 | ![电子邮件](screenshots/control/control-21-email.png) |
+| 在线文档 | ![在线文档](screenshots/control/control-22-docs.png) |
+
+### 大屏幕模式
+| 功能 | 截图 |
+| --- | --- |
+| 控制台首页 | ![后台首页](screenshots/monitor/monitor-01.png) |
+
+### 云桌面模式
+| 功能 | 截图 |
+| --- | --- |
+| 桌面首页 | ![用户首页](screenshots/desktop/wos-home.png) |
+| 云文件管理 | ![文件管理](screenshots/desktop/wos-09-cloud.png) |
+| 记事本 | ![记事](screenshots/desktop/wos-10-notepad.png) |
+| 图片查看 | ![图像](screenshots/desktop/wos-11-image.png) |
+| 音频播放 | ![音频](screenshots/desktop/wos-12-audio.png) |
+| 待办事项 | ![待办](screenshots/desktop/wos-13-gtd.png) |
+| 终端管理 | ![终端管理](screenshots/desktop/wos-14-terminal.png) |
+
+### 桌面主题
+| 主题 | 截图 |
+| --- | --- |
+| 主题设置 | ![主题设置](screenshots/desktop/wos-settings.png) |
+| Windows 11 | ![Win11](screenshots/desktop/win_11.png) |
+| Windows 10 | ![Win10](screenshots/desktop/win_10.png) |
+| Windows 8 | ![Win8](screenshots/desktop/win_8.png) |
+| Windows 7 | ![Win7](screenshots/desktop/win_7.png) |
+| Windows Vista | ![Vista](screenshots/desktop/win_vista.png) |
+| Windows XP | ![WinXP](screenshots/desktop/win_xp.png) |
+| Windows 2000 | ![Win2K](screenshots/desktop/win_2k.png) |
+| Windows 98 | ![Win98](screenshots/desktop/win_98.png) |
+| Windows 95 | ![Win95](screenshots/desktop/win_95.png) |
+| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/mac_tahoe.png) |
+| macOS Sequoia | ![macOS Sequoia](screenshots/desktop/mac_sequoia.png) |
+| macOS Sonoma | ![macOS Sonoma](screenshots/desktop/mac_sonoma.png) |
+| macOS Ventura | ![macOS Ventura](screenshots/desktop/mac_ventura.png) |
+
+---
+
 ## 🛠 技术栈
 
 | 技术 | 版本 | 说明 |
@@ -253,57 +304,6 @@ Scm.Vue/
 ├── package.json                # 项目依赖与脚本
 └── LICENSE                     # MIT 开源协议
 ```
-
----
-
-## 🎨 界面预览
-
-### 登录页
-![用户登录](screenshots/01-login.png)
-
-### 工作台模式
-| 功能 | 截图 |
-| --- | --- |
-| 控制台首页 | ![后台首页](screenshots/control/control-01-home-light.png) |
-| 用户管理 | ![用户管理](screenshots/control/control-19-user.png) |
-| 文件管理 | ![文件管理](screenshots/control/control-16-file.png) |
-| 日程管理 | ![日程管理](screenshots/control/control-20-calendar.png) |
-| 电子邮件 | ![电子邮件](screenshots/control/control-21-email.png) |
-| 在线文档 | ![在线文档](screenshots/control/control-22-docs.png) |
-
-### 大屏幕模式
-| 功能 | 截图 |
-| --- | --- |
-| 控制台首页 | ![后台首页](screenshots/monitor/monitor-01.png) |
-
-### 云桌面模式
-| 功能 | 截图 |
-| --- | --- |
-| 桌面首页 | ![用户首页](screenshots/desktop/wos-home.png) |
-| 云文件管理 | ![文件管理](screenshots/desktop/wos-09-cloud.png) |
-| 记事本 | ![记事](screenshots/desktop/wos-10-notepad.png) |
-| 图片查看 | ![图像](screenshots/desktop/wos-11-image.png) |
-| 音频播放 | ![音频](screenshots/desktop/wos-12-audio.png) |
-| 待办事项 | ![待办](screenshots/desktop/wos-13-gtd.png) |
-| 终端管理 | ![终端管理](screenshots/desktop/wos-14-terminal.png) |
-
-### 桌面主题
-| 主题 | 截图 |
-| --- | --- |
-| 主题设置 | ![主题设置](screenshots/desktop/wos-settings.png) |
-| Windows 11 | ![Win11](screenshots/desktop/win_11.png) |
-| Windows 10 | ![Win10](screenshots/desktop/win_10.png) |
-| Windows 8 | ![Win8](screenshots/desktop/win_8.png) |
-| Windows 7 | ![Win7](screenshots/desktop/win_7.png) |
-| Windows Vista | ![Vista](screenshots/desktop/win_vista.png) |
-| Windows XP | ![WinXP](screenshots/desktop/win_xp.png) |
-| Windows 2000 | ![Win2K](screenshots/desktop/win_2k.png) |
-| Windows 98 | ![Win98](screenshots/desktop/win_98.png) |
-| Windows 95 | ![Win95](screenshots/desktop/win_95.png) |
-| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/mac_tahoe.png) |
-| macOS Sequoia | ![macOS Sequoia](screenshots/desktop/mac_sequoia.png) |
-| macOS Sonoma | ![macOS Sonoma](screenshots/desktop/mac_sonoma.png) |
-| macOS Ventura | ![macOS Ventura](screenshots/desktop/mac_ventura.png) |
 
 ---
 

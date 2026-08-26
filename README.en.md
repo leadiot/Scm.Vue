@@ -80,6 +80,57 @@ The project integrates three UI modes — **Console** (workbench), **Desktop** (
 
 ---
 
+## 🎨 Screenshots
+
+### Login Page
+![User Login](screenshots/01-login.png)
+
+### Console Mode
+| Feature | Screenshot |
+| --- | --- |
+| Dashboard | ![Dashboard](screenshots/control/control-01-home-light.png) |
+| User Management | ![User Management](screenshots/control/control-19-user.png) |
+| File Management | ![File Management](screenshots/control/control-16-file.png) |
+| Calendar | ![Calendar](screenshots/control/control-20-calendar.png) |
+| Email | ![Email](screenshots/control/control-21-email.png) |
+| Online Docs | ![Online Docs](screenshots/control/control-22-docs.png) |
+
+### Monitor Mode
+| Feature | Screenshot |
+| --- | --- |
+| Dashboard | ![Dashboard](screenshots/monitor/monitor-01.png) |
+
+### Cloud Desktop Mode
+| Feature | Screenshot |
+| --- | --- |
+| Desktop Home | ![Desktop Home](screenshots/desktop/wos-home.png) |
+| Cloud | ![Cloud](screenshots/desktop/wos-09-cloud.png) |
+| Notepad | ![Notepad](screenshots/desktop/wos-10-notepad.png) |
+| Image Viewer | ![Image Viewer](screenshots/desktop/wos-11-image.png) |
+| Audio Player | ![Audio Player](screenshots/desktop/wos-12-audio.png) |
+| Todo | ![Todo](screenshots/desktop/wos-13-gtd.png) |
+| Terminal | ![Terminal](screenshots/desktop/wos-14-terminal.png) |
+
+### Desktop Themes
+| Theme | Screenshot |
+| --- | --- |
+| Theme Settings | ![Theme Settings](screenshots/desktop/wos-settings.png) |
+| Windows 11 | ![Win11](screenshots/desktop/win_11.png) |
+| Windows 10 | ![Win10](screenshots/desktop/win_10.png) |
+| Windows 8 | ![Win8](screenshots/desktop/win_8.png) |
+| Windows 7 | ![Win7](screenshots/desktop/win_7.png) |
+| Windows Vista | ![Vista](screenshots/desktop/win_vista.png) |
+| Windows XP | ![WinXP](screenshots/desktop/win_xp.png) |
+| Windows 2000 | ![Win2K](screenshots/desktop/win_2k.png) |
+| Windows 98 | ![Win98](screenshots/desktop/win_98.png) |
+| Windows 95 | ![Win95](screenshots/desktop/win_95.png) |
+| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/mac_tahoe.png) |
+| macOS Sequoia | ![macOS Sequoia](screenshots/desktop/mac_sequoia.png) |
+| macOS Sonoma | ![macOS Sonoma](screenshots/desktop/mac_sonoma.png) |
+| macOS Ventura | ![macOS Ventura](screenshots/desktop/mac_ventura.png) |
+
+---
+
 ## 🛠 Tech Stack
 
 | Technology | Version | Description |
@@ -252,57 +303,6 @@ Scm.Vue/
 ├── package.json                # Project dependencies & scripts
 └── LICENSE                     # MIT License
 ```
-
----
-
-## 🎨 Screenshots
-
-### Login Page
-![User Login](screenshots/01-login.png)
-
-### Console Mode
-| Feature | Screenshot |
-| --- | --- |
-| Dashboard | ![Dashboard](screenshots/control/control-01-home-light.png) |
-| User Management | ![User Management](screenshots/control/control-19-user.png) |
-| File Management | ![File Management](screenshots/control/control-16-file.png) |
-| Calendar | ![Calendar](screenshots/control/control-20-calendar.png) |
-| Email | ![Email](screenshots/control/control-21-email.png) |
-| Online Docs | ![Online Docs](screenshots/control/control-22-docs.png) |
-
-### Monitor Mode
-| Feature | Screenshot |
-| --- | --- |
-| Dashboard | ![Dashboard](screenshots/monitor/monitor-01.png) |
-
-### Cloud Desktop Mode
-| Feature | Screenshot |
-| --- | --- |
-| Desktop Home | ![Desktop Home](screenshots/desktop/wos-home.png) |
-| Cloud | ![Cloud](screenshots/desktop/wos-09-cloud.png) |
-| Notepad | ![Notepad](screenshots/desktop/wos-10-notepad.png) |
-| Image Viewer | ![Image Viewer](screenshots/desktop/wos-11-image.png) |
-| Audio Player | ![Audio Player](screenshots/desktop/wos-12-audio.png) |
-| Todo | ![Todo](screenshots/desktop/wos-13-gtd.png) |
-| Terminal | ![Terminal](screenshots/desktop/wos-14-terminal.png) |
-
-### Desktop Themes
-| Theme | Screenshot |
-| --- | --- |
-| Theme Settings | ![Theme Settings](screenshots/desktop/wos-settings.png) |
-| Windows 11 | ![Win11](screenshots/desktop/win_11.png) |
-| Windows 10 | ![Win10](screenshots/desktop/win_10.png) |
-| Windows 8 | ![Win8](screenshots/desktop/win_8.png) |
-| Windows 7 | ![Win7](screenshots/desktop/win_7.png) |
-| Windows Vista | ![Vista](screenshots/desktop/win_vista.png) |
-| Windows XP | ![WinXP](screenshots/desktop/win_xp.png) |
-| Windows 2000 | ![Win2K](screenshots/desktop/win_2k.png) |
-| Windows 98 | ![Win98](screenshots/desktop/win_98.png) |
-| Windows 95 | ![Win95](screenshots/desktop/win_95.png) |
-| macOS Tahoe | ![macOS Tahoe](screenshots/desktop/mac_tahoe.png) |
-| macOS Sequoia | ![macOS Sequoia](screenshots/desktop/mac_sequoia.png) |
-| macOS Sonoma | ![macOS Sonoma](screenshots/desktop/mac_sonoma.png) |
-| macOS Ventura | ![macOS Ventura](screenshots/desktop/mac_ventura.png) |
 
 ---
 
