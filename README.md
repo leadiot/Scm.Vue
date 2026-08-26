@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  配套后端：<a href="/leadiot/scm.net">.Net 10.0 版本</a> ｜
+  配套后端：<a href="https://gitee.com/leadiot/scm.net">.Net 10.0 版本</a> ｜
   <a href="http://www.c-scm.net">在线演示</a> ｜
   <a href="https://gitee.com/leadiot/scm.net/wikis/项目介绍">在线文档</a>
 </p>
@@ -41,7 +41,7 @@
 
 ## 📖 项目简介
 
-**Scm.Vue** 是 [Scm.Net](/leadiot/scm.net) 快速开发框架的前端部分，采用前后端分离架构，内置权限管理、代码生成、工作流引擎、实时消息、数据可视化等企业级核心能力。
+**Scm.Vue** 是 [Scm.Net](https://gitee.com/leadiot/scm.net) 快速开发框架的前端部分，采用前后端分离架构，内置权限管理、代码生成、工作流引擎、实时消息、数据可视化等企业级核心能力。
 
 项目集成了 **工作台模式**（Console）、**云桌面模式**（Desktop）和 **大屏幕模式**（Monitor）三种 UI 风格，适应不同业务场景需求。
 
