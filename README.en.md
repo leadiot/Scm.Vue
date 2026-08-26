@@ -264,7 +264,6 @@ Scm.Vue/
 | File Management | ![File Management](screenshots/web-04-file.png) |
 | Calendar | ![Calendar](screenshots/web-05-calendar.png) |
 | Email | ![Email](screenshots/web-06-email.png) |
-| System Monitor | ![System Monitor](screenshots/web-07-monitor.png) |
 | Online Docs | ![Online Docs](screenshots/web-08-docs.png) |
 
 ### Monitor Mode

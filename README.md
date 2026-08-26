@@ -265,7 +265,6 @@ Scm.Vue/
 | 文件管理 | ![文件管理](screenshots/control/control-16-file.png) |
 | 日程管理 | ![日程管理](screenshots/control/control-20-calendar.png) |
 | 电子邮件 | ![电子邮件](screenshots/control/control-21-email.png) |
-| 系统监控 | ![系统监控](screenshots/control/control-22-monitor.png) |
 | 在线文档 | ![在线文档](screenshots/control/control-22-docs.png) |
 
 ### 大屏幕模式
