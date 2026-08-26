@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  配套后端：<a href="https://gitee.com/leadiot/scm.net">.Net 10.0 版本</a> ｜
+  配套后端：<a href="/leadiot/scm.net">.Net 10.0 版本</a> ｜
   <a href="http://www.c-scm.net">在线演示</a> ｜
   <a href="https://gitee.com/leadiot/scm.net/wikis/项目介绍">在线文档</a>
 </p>

@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://gitee.com/leadiot/scm.vue">
-    <img src="https://gitee.com/leadiot/scm.vue/badge/star.svg?theme=dark" alt="Gitee Stars" />
+  <a href="/leadiot/scm.vue">
+    <img src="/leadiot/scm.vue/badge/star.svg?theme=dark" alt="Stars" />
   </a>
   <a href="https://vuejs.org/">
     <img src="https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js" alt="Vue 3" />
@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  Backend: <a href="https://gitee.com/leadiot/scm.net">.Net 10.0</a> ｜
+  Backend: <a href="/leadiot/scm.net">.Net 10.0</a> ｜
   <a href="http://www.c-scm.net">Live Demo</a> ｜
   <a href="https://gitee.com/leadiot/scm.net/wikis/项目介绍">Documentation</a>
 </p>
@@ -41,7 +41,7 @@
 
 ## 📖 Introduction
 
-**Scm.Vue** is the frontend of the [Scm.Net](https://gitee.com/leadiot/scm.net) rapid development framework. It adopts a front-end/back-end separation architecture and is equipped with enterprise-grade core capabilities including permission management, code generation, workflow engine, real-time messaging, and data visualization.
+**Scm.Vue** is the frontend of the [Scm.Net](/leadiot/scm.net) rapid development framework. It adopts a front-end/back-end separation architecture and is equipped with enterprise-grade core capabilities including permission management, code generation, workflow engine, real-time messaging, and data visualization.
 
 The project integrates three UI modes — **Console** (workbench), **Desktop** (cloud desktop), and **Monitor** (data dashboard) — to suit diverse business scenarios.
 
@@ -348,7 +348,7 @@ npm run preview
 
 ## 🔗 Related Links
 
-- [Scm.Net Backend](https://gitee.com/leadiot/scm.net) — .Net 10.0 backend framework
+- [Scm.Net Backend](/leadiot/scm.net) — .Net 10.0 backend framework
 - [Online Documentation](https://gitee.com/leadiot/scm.net/wikis/项目介绍) — Full development docs
 - [Live Demo](http://www.c-scm.net) — Experience the system
 
