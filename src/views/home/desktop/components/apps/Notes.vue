@@ -24,7 +24,7 @@
 						<div class="note-item-title">{{ note.title || '未命名' }}</div>
 						<div class="note-item-preview">{{ getPreview(note.content) }}</div>
 						<div class="note-item-meta">
-							<span>{{ formatDate(note.update_time || note.create_time) }}</span>
+							<span>{{ formatDate(note.modify_time) }}</span>
 						</div>
 					</div>
 					<div class="note-item-actions">
