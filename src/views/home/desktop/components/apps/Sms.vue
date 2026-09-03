@@ -148,7 +148,7 @@ export default {
 		filteredConversations() {
 			if (!this.searchQuery) return this.conversations;
 			return this.conversations.filter(
-				(c) => c.name.includes(this.searchQuery) || c.phone.includes(this.searchQuery) || c.lastMessage.includes(this.searchQuery)
+				(c) => c.name.includes(this.searchQuery) || c.address.includes(this.searchQuery)
 			);
 		},
 	},
@@ -342,12 +342,14 @@ export default {
 }
 
 .message.sent .message-bubble {
+	color: var(--color-on-primary);
 	background-color: var(--color-primary);
 	border-bottom-right-radius: 4px;
 }
 
 .message.received .message-bubble {
-	background-color: var(--color-bg-hover);
+	color: var(--color-on-primary);
+	background-color: var(--color-primary);
 	border-bottom-left-radius: 4px;
 }
 
