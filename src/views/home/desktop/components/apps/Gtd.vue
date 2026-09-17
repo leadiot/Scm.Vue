@@ -19,8 +19,8 @@
 		<div class="todo-filters">
 			<el-radio-group v-model="filter" size="small">
 				<el-radio-button value="all">全部 ({{ gtd_list.length }})</el-radio-button>
-				<el-radio-button value="todo">待完成 ({{ todoCount }})</el-radio-button>
-				<el-radio-button value="remind">待提醒 ({{ remindCount }})</el-radio-button>
+				<el-radio-button value="todo">待处理 ({{ todoCount }})</el-radio-button>
+				<el-radio-button value="doing">进行中 ({{ doingCount }})</el-radio-button>
 				<el-radio-button value="done">已完成 ({{ doneCount }})</el-radio-button>
 			</el-radio-group>
 		</div>
@@ -31,32 +31,8 @@
 					:class="{ completed: gtd.handle === 3, 'has-remind': gtd.remind_time && gtd.handle === 1 }">
 					<el-checkbox v-model="gtd.checked" @change="handleTodo(gtd)" />
 					
-					<!-- 编辑模式 -->
-					<div v-if="currentGtd.id === gtd.id" class="edit-form">
-						<el-input v-model="gtd.title" maxlength="256" show-word-limit
-							clearable size="small" class="edit-title" />
-						<el-date-picker
-							v-model="gtd.remind_time"
-							type="datetime"
-							placeholder="设置提醒时间"
-							size="small"
-							:disabled-date="disabledDate"
-						>
-						</el-date-picker>
-						<el-input
-							v-model="gtd.remark"
-							type="textarea"
-							:rows="3"
-							maxlength="500"
-							show-word-limit
-							placeholder="添加备注"
-							size="small"
-						>
-						</el-input>
-					</div>
-					
 					<!-- 显示模式 -->
-					<div v-else class="todo-content">
+					<div class="todo-content">
 						<span class="todo-text" @dblclick="startEdit(gtd)">{{ gtd.title }}</span>
 						<!-- 备注显示 -->
 						<span v-if="gtd.remark" class="todo-remark" @dblclick="startEdit(gtd)">
@@ -71,9 +47,9 @@
 							<sc-icon name="ms-access_alarm" :size="14" />
 							<span>{{ formatRemindTime(gtd.remind_time) }}</span>
 						</div>
-						<span v-else class="todo-time">{{ formatTime(gtd.create_time) }}</span>
+						<span v-else class="todo-time">{{ formatTime(gtd.modify_time) }}</span>
 						
-						<el-button text size="small" @click="startEdit(gtd)" class="edit-btn">
+						<el-button text size="small" @click="startEdit(gtd)">
 							<sc-icon name="ms-edit" :size="16" />
 						</el-button>
 						<el-button text size="small" @click="deleteTodo(gtd)">
@@ -94,6 +70,40 @@
 				清除已完成 ({{ doneCount }})
 			</el-button>
 		</div>
+
+		<!-- 编辑待办对话框 -->
+		<el-dialog v-model="editDialogVisible" title="编辑待办" width="320px"
+			:close-on-click-modal="false" append-to-body destroy-on-close @closed="cancelEdit">
+			<el-form label-position="top" size="small">
+				<el-form-item label="标题">
+					<el-input v-model="currentGtd.title" maxlength="256" show-word-limit clearable />
+				</el-form-item>
+				<el-form-item label="优先级">
+					<el-select v-model="currentGtd.priority" placeholder="设置优先级" style="width: 100%" clearable>
+						<el-option v-for="p in priorityOptions" :key="p.value" :label="p.label" :value="p.value" />
+					</el-select>
+				</el-form-item>
+				<el-form-item label="处理状态">
+					<el-select v-model="currentGtd.handle" placeholder="设置处理状态" style="width: 100%">
+						<el-option v-for="h in handleOptions" :key="h.value" :label="h.label" :value="h.value" />
+					</el-select>
+				</el-form-item>
+				<el-form-item label="备注">
+					<el-input
+						v-model="currentGtd.remark"
+						type="textarea"
+						:rows="3"
+						maxlength="500"
+						show-word-limit
+						placeholder="添加备注"
+					/>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<el-button size="small" @click="editDialogVisible = false">取消</el-button>
+				<el-button size="small" type="primary" @click="finishEdit">保存</el-button>
+			</template>
+		</el-dialog>
 	</div>
 </template>
 
@@ -116,18 +126,30 @@ export default {
 			title: '',
 			gtd_list: [],
 			filter: 'all',
-			currentGtd: {}
+			currentGtd: {},
+			editDialogVisible: false,
+			priorityOptions: [
+				{ value: 1, label: '紧急且重要' },
+				{ value: 2, label: '紧急不重要' },
+				{ value: 3, label: '不紧急但重要' },
+				{ value: 4, label: '不紧急不重要' }
+			],
+			handleOptions: [
+				{ value: 1, label: '待处理' },
+				{ value: 2, label: '进行中' },
+				{ value: 3, label: '已完成' }
+			]
 		};
 	},
 	computed: {
 		filteredTodos() {
 			if (this.filter === 'todo') {
 				return this.gtd_list.filter(todo => todo.handle === 1);
+			} else if (this.filter === 'doing') {
+				return this.gtd_list.filter(todo => todo.handle === 2);
 			} else if (this.filter === 'done') {
 				return this.gtd_list.filter(todo => todo.handle === 3);
-			} else if (this.filter === 'remind') {
-				return this.gtd_list.filter(todo => todo.handle === 1 && todo.remind_time && new Date(todo.remind_time) > new Date());
-			}
+			} 
 			return this.gtd_list;
 		},
 		todoCount() {
@@ -136,14 +158,11 @@ export default {
 		doneCount() {
 			return this.gtd_list.filter(gtd => gtd.handle === 3).length;
 		},
-		remindCount() {
-			return this.gtd_list.filter(gtd => gtd.handle === 1 && gtd.remind_time && new Date(gtd.remind_time) > new Date()).length;
+		doingCount() {
+			return this.gtd_list.filter(gtd => gtd.handle === 2).length;
 		},
 	},
 	methods: {
-		disabledDate(time) {
-			return time.getTime() < Date.now() - 8.64e7;
-		},
 		async addTodo() {
 			const text = this.title.trim();
 			if (!text) return;
@@ -204,10 +223,11 @@ export default {
 			if (todo.remind_time) {
 				this.currentGtd.remind_time = new Date(Number(todo.remind_time));
 			}
+			this.editDialogVisible = true;
 		},
-		finishEdit(todo) {
-			this.saveTodo(todo);
-			this.currentGtd = {};
+		finishEdit() {
+			this.saveTodo(this.currentGtd);
+			this.editDialogVisible = false;
 		},
 		cancelEdit() {
 			this.currentGtd = {};
@@ -222,6 +242,8 @@ export default {
 			var data = {
 				id: gtd.id,
 				title: gtd.title,
+				priority: gtd.priority || 4,
+				handle: gtd.handle || 1,
 				remark: gtd.remark || '',
 				remind_time: gtd.remind_time ? (typeof gtd.remind_time === 'object' ? gtd.remind_time.getTime() : gtd.remind_time) : null
 			};
@@ -314,10 +336,10 @@ export default {
 			switch (this.filter) {
 				case 'todo':
 					return '暂无待办事项';
+				case 'doing':
+					return '暂无进行中事项';
 				case 'done':
 					return '暂无已完成事项';
-				case 'remind':
-					return '暂无待提醒事项';
 				default:
 					return '暂无待办事项';
 			}
@@ -418,21 +440,9 @@ export default {
 	gap: 4px;
 }
 
-.edit-form {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.edit-title {
-	width: 100%;
-}
-
 .todo-actions {
 	display: flex;
 	align-items: center;
-	gap: 8px;
 	white-space: nowrap;
 }
 
