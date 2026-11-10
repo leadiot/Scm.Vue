@@ -350,8 +350,6 @@ export default {
 		delete: "Delete",
 		name: "Name",
 		quickAccess: "Quick Access",
-		myDevices: "My Devices",
-		mySync: "My Sync",
 		modifiedDate: "Modified Date",
 		type: "Type",
 		size: "Size",

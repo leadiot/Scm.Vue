@@ -340,8 +340,6 @@ export default {
 		delete: '削除',
 		name: '名前',
 		quickAccess: 'クイックアクセス',
-		myDevices: 'マイデバイス',
-		mySync: 'マイ同期',
 		modifiedDate: '更新日',
 		type: '種類',
 		size: 'サイズ',

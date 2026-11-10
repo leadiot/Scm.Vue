@@ -47,8 +47,8 @@
 				</div>
 			</div>
 			<div class="toolbar-right">
-				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search" size="small"
-					class="search-input" />
+				<el-input v-model="param.key" :placeholder="$t('desktop.search')" prefix-icon="el-icon-search"
+					size="small" class="search-input" />
 				<div class="view-switch">
 					<button v-for="v in viewModes" :key="v.value" class="view-btn"
 						:class="{ active: viewMode === v.value }" :title="v.label" @click="changeViewMode(v.value)">
@@ -62,10 +62,10 @@
 			<div class="sidebar">
 				<div class="sidebar-section">
 					<div class="sidebar-title">{{ $t('desktop.cloudSpace') }}</div>
-					<div v-for="item in stores" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
+					<div v-for="item in spaceList" :key="item.id" class="sidebar-item"
+						:class="{ active: currentFolder?.id === item.id }" @click="openSpace(item)">
 						<sc-icon :name="item.icon" :size="18" />
-						<span>{{ item.name }}</span>
+						<span>{{ item.label }}</span>
 					</div>
 				</div>
 				<div class="sidebar-section">
@@ -73,28 +73,13 @@
 					<div v-for="item in libs" :key="item.id" class="sidebar-item"
 						:class="{ active: currentFolder?.id === item.id }" @click="openLib(item)">
 						<sc-icon :name="item.icon" :size="18" />
-						<span>{{ item.name }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">{{ $t('desktop.myDevices') }}</div>
-					<div v-for="item in deviceList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openDevice(item)">
-						<sc-icon name="ms-devices" :size="18" />
-						<span>{{ item.names }}</span>
-					</div>
-				</div>
-				<div class="sidebar-section">
-					<div class="sidebar-title">{{ $t('desktop.mySync') }}</div>
-					<div v-for="item in folderList" :key="item.id" class="sidebar-item"
-						:class="{ active: currentFolder?.id === item.id }" @click="openFolder(item)">
-						<sc-icon name="ms-folder" :size="18" />
-						<span>{{ item.name }}</span>
+						<span>{{ item.label }}</span>
 					</div>
 				</div>
 			</div>
 
-			<div class="main-content" ref="contentRef" v-loading="loading" @click.self="clearSelection" @scroll="handleScroll">
+			<div class="main-content" ref="contentRef" v-loading="loading" @click.self="clearSelection"
+				@scroll="handleScroll">
 				<div v-if="viewMode === 'tiles'" class="view-tiles">
 					<div v-for="item in fileList" :key="item.id" class="tile-item"
 						:class="{ selected: selectedItems.includes(item.id) }" @click="handleItemClick($event, item)"
@@ -147,7 +132,8 @@
 								<span>{{ item.name }}</span>
 							</div>
 							<div class="col-date">{{ item.modify_times }}</div>
-							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? $t('desktop.directory') : $t('desktop.file')) }}</div>
+							<div class="col-type">{{ item.typeLabel || (item.type === 10 ? $t('desktop.directory') :
+								$t('desktop.file')) }}</div>
 							<div class="col-size">{{ item.type === 10 ? '' : $TOOL.fileSizeFormat(item.size) }}</div>
 						</div>
 					</div>
@@ -157,7 +143,7 @@
 					<span class="load-more-icon"><sc-icon name="ms-refresh" :size="16" /></span>
 					<span>{{ $t('desktop.loading') }}</span>
 				</div>
-				
+
 				<div v-if="fileList.length === 0 && !loading" class="empty-state">
 					<sc-icon name="ms-folder_open" :size="64" />
 					<p>{{ $t('desktop.folderEmpty') }}</p>
@@ -166,7 +152,9 @@
 		</div>
 
 		<div class="app-statusbar">
-			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{ $t('desktop.items') }}</span>
+			<span>{{ fileList.length }}<template v-if="total > fileList.length"> / {{ total }}</template> {{
+				$t('desktop.items')
+			}}</span>
 			<span v-if="selectedItems.length > 0">· {{ $t('desktop.selectedItems', [selectedItems.length]) }}</span>
 		</div>
 	</div>
@@ -208,22 +196,27 @@ export default {
 				{ value: 'list', label: '列表', icon: 'ms-list' },
 				{ value: 'details', label: '详细信息', icon: 'ms-table_rows' },
 			],
-			stores: [
-				{ id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
+			spaces: [
+				// { id:'desktop', name: 'desktop', label: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
+				// { id:'apps', name: 'apps', label: '应用', icon: 'ms-apps', type: 'folder' },
+				{ id: 'device', name: 'device', label: '设备', icon: 'ms-devices', type: 'folder' },
+				{ id: 'public', name: 'public', label: '公共', icon: 'ms-folder_shared', type: 'folder' },
+				{ id: 'secret', name: 'secret', label: '私密', icon: 'ms-folder_special', type: 'folder' },
+				// { id:'downloads', name: 'downloads', label: '下载', icon: 'ms-download', type: 'folder' },
+				{ id: 'trash', name: 'trash', label: '回收站', icon: 'ms-delete', type: 'folder' },
 			],
 			libs: [
-				// { id: 'desktop', name: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
-				// { id: 'downloads', name: '下载', icon: 'ms-download', type: 'folder' },
-				{ id: 'documents', name: '文档', icon: 'ms-description', type: 'folder', kind: 30 },
-				{ id: 'pictures', name: '图片', icon: 'ms-photo_library', type: 'folder', kind: 41 },
-				{ id: 'music', name: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
-				{ id: 'videos', name: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
-				{ id: 'office', name: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
-				{ id: 'archives', name: '归档', icon: 'ms-archive', type: 'folder', kind: 60 },
+				// { id:'desktop', name: 'desktop', label: '桌面', icon: 'ms-desktop_windows', type: 'folder' },
+				// { id:'downloads', name: 'downloads', label: '下载', icon: 'ms-download', type: 'folder' },
+				{ id: 'documents', name: 'documents', label: '文档', icon: 'ms-description', type: 'folder', kind: 30 },
+				{ id: 'pictures', name: 'pictures', label: '图片', icon: 'ms-photo_library', type: 'folder', kind: 41 },
+				{ id: 'music', name: 'music', label: '音乐', icon: 'ms-music_note', type: 'folder', kind: 42 },
+				{ id: 'videos', name: 'videos', label: '视频', icon: 'ms-videocam', type: 'folder', kind: 43 },
+				{ id: 'office', name: 'office', label: '办公', icon: 'ms-window', type: 'folder', kind: 50 },
+				{ id: 'archives', name: 'archives', label: '归档', icon: 'ms-archive', type: 'folder', kind: 60 },
 			],
 			deviceList: [],
-			folderList: [],
+			spaceList: [],
 			fileList: [],
 			total: 0,
 			loading: false,
@@ -274,7 +267,7 @@ export default {
 	},
 	mounted() {
 		this.loadCfg();
-		this.listFolder();
+		this.listSpace();
 		this.listDevice();
 	},
 	beforeUnmount() {
@@ -283,6 +276,35 @@ export default {
 		}
 	},
 	methods: {
+		async listSpace() {
+			var res = await this.$API.nasresfile.page.get({ opt: '1', dir_id: '0', kind: 0 });
+			if (res.code !== 200) {
+				this.spaceList = [];
+				return;
+			}
+			this.spaceList = res.data.items || [];
+			for (let item of this.spaceList) {
+				item.res_id = item.id;
+				var name = item.name.toLowerCase();
+				if (name === 'devices') {
+					item.icon = 'ms-devices';
+					continue;
+				}
+				if (name === 'public') {
+					item.icon = 'ms-folder_shared';
+					continue;
+				}
+				if (name === 'secret') {
+					item.icon = 'ms-folder_special';
+					continue;
+				}
+				if (name === 'trash') {
+					item.icon = 'ms-delete';
+					continue;
+				}
+				item.icon = 'ms-folder';
+			}
+		},
 		async listDevice() {
 			var res = await this.$API.scmurterminal.list.get("");
 			if (res.code !== 200) {
@@ -290,14 +312,6 @@ export default {
 				return;
 			}
 			this.deviceList = res.data || [];
-		},
-		async listFolder() {
-			var res = await this.$API.nascfgfolder.list.get("");
-			if (res.code !== 200) {
-				this.folderList = [];
-				return;
-			}
-			this.folderList = res.data || [];
 		},
 		async listFile() {
 			// 分页加载：重置到第一页并清空已有数据
@@ -336,6 +350,13 @@ export default {
 				this.fileList = rows;
 			} else {
 				this.fileList = this.fileList.concat(rows);
+			}
+
+			for (let item of this.fileList) {
+				var device = this.deviceList.find(item => item.codes === item.name);
+				if (device) {
+					item.name = device.names;
+				}
 			}
 		},
 		async loadMore() {
@@ -430,6 +451,20 @@ export default {
 			this.saveParam(item, { opt: '2', dir_id: '0', kind: item.kind });
 			this.listFile();
 		},
+		async openSpace(item) {
+			var name = item.name.toLowerCase();
+			if (name === 'apps') {
+				this.openFolder(item);
+			} else if (name === 'devices') {
+				this.openDevice(item);
+			} else if (name === 'public') {
+				this.openPublic(item);
+			} else if (name === 'secret') {
+				this.openSecret(item);
+			} else if (name === 'trash') {
+				this.openTrash(item);
+			}
+		},
 		async openFolder(item) {
 			this.currentPath = [];
 			this.currentPath.push(item);
@@ -443,6 +478,42 @@ export default {
 			this.listFile();
 		},
 		async openDevice(item) {
+			this.currentPath = [];
+			this.currentPath.push(item);
+			this.currentFolder = item;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: item, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
+
+			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.listFile();
+		},
+		async openPublic(item) {
+			this.currentPath = [];
+			this.currentPath.push(item);
+			this.currentFolder = item;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: item, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
+
+			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.listFile();
+		},
+		async openSecret(item) {
+			this.currentPath = [];
+			this.currentPath.push(item);
+			this.currentFolder = item;
+			this.selectedItems = [];
+			this.history = this.history.slice(0, this.historyIndex + 1);
+			this.history.push({ folder: item, path: [...this.currentPath] });
+			this.historyIndex = this.history.length - 1;
+
+			this.saveParam(item, { opt: '1', dir_id: item.res_id, kind: 0 });
+			this.listFile();
+		},
+		async openTrash(item) {
 			this.currentPath = [];
 			this.currentPath.push(item);
 			this.currentFolder = item;
@@ -597,7 +668,6 @@ export default {
 			}
 		},
 		async refresh() {
-			await this.listFolder();
 			await this.listDevice();
 			await this.listFile();
 		},
@@ -1009,8 +1079,13 @@ export default {
 }
 
 @keyframes nas-spin {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .empty-state {

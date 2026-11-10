@@ -372,8 +372,6 @@ export default {
 		delete: "刪除",
 		name: "名稱",
 		quickAccess: "快速存取",
-		myDevices: "我的裝置",
-		mySync: "我的同步",
 		modifiedDate: "修改日期",
 		type: "類型",
 		size: "大小",
